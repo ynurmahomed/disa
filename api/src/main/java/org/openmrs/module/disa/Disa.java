@@ -27,6 +27,8 @@ public class Disa {
 	
 	private Date dateOfBirth;
 	
+	private String healthFacilityLabCode;
+	
 	private String encounter;
 	
 	private String pregnant;
@@ -54,11 +56,17 @@ public class Disa {
 	private String aprovedBy;
 	
 	private String labComments;
+	
+	private String hivViralLoadResult;
 
 	public String getNid() {
 		return nid;
 	}
 
+	public String getHealthFacilityLabCode() {
+		return healthFacilityLabCode;
+	}
+	
 	public String getEncounter() {
 		return encounter;
 	}
@@ -109,5 +117,9 @@ public class Disa {
 
 	public String getLabComments() {
 		return labComments;
+	}
+	
+	public String getHivViralLoadResult() {
+		return hivViralLoadResult;
 	}
 }
