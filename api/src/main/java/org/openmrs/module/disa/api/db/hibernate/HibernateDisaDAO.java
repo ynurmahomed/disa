@@ -13,14 +13,20 @@
  */
 package org.openmrs.module.disa.api.db.hibernate;
 
+import java.lang.reflect.Method;
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.Query;
 import org.hibernate.SessionFactory;
+import org.openmrs.LocationAttribute;
 import org.openmrs.module.disa.api.db.DisaDAO;
 
 /**
  * It is a default implementation of  {@link DisaDAO}.
  */
+@SuppressWarnings("unchecked")
 public class HibernateDisaDAO implements DisaDAO {
 	protected final Log log = LogFactory.getLog(this.getClass());
 	
@@ -39,4 +45,24 @@ public class HibernateDisaDAO implements DisaDAO {
     public SessionFactory getSessionFactory() {
 	    return sessionFactory;
     }
+    
+	private org.hibernate.Session getCurrentSession() {
+		try {
+			return this.sessionFactory.getCurrentSession();
+		} catch (final NoSuchMethodError ex) {
+			try {
+				final Method method = this.sessionFactory.getClass().getMethod("getCurrentSession", null);
+				return (org.hibernate.Session) method.invoke(this.sessionFactory, null);
+			} catch (final Exception e) {
+				throw new RuntimeException("Failed to get the current hibernate session", e);
+			}
+		}
+	}
+
+	@Override
+	public List<LocationAttribute> getAllLocationAttribute() {
+		final String hql = "SELECT  l FROM LocationAttribute l";
+		final Query query = this.getCurrentSession().createQuery(hql);
+		return query.list();
+	}
 }

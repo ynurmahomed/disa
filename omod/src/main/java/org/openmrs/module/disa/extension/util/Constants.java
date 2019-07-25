@@ -23,23 +23,39 @@ public class Constants {
 	public static final String HIV_VIRAL_LOAD_QUALITATIVE = "e1da2704-1d5f-11e0-b929-000c29ad1d07";
 	public static final String APPROVED_BY = "2177105d-c57b-446d-9066-e35a44c5b873";
 	public static final String LAB_COMMENTS = "246b0c6b-66f2-4d0d-988b-a0b867693fe6";
+	public static final String ROUTINE_VIRAL_LOAD = "971cf484-2751-40ce-9f89-d23f544d06e2";
+	public static final String REGIMEN_FAILURE = "e1d616b4-1d5f-11e0-b929-000c29ad1d07";
+	public static final String REPEAT_AFTER_BREASTFEEDING = "6f60eaa1-886d-4891-9d3d-7ade75d67606";
+	public static final String LOCATION_ATTRIBUTE_TYPE_UUID = "132895aa-1c88-11e8-b6fd-7395830b63f3";
 	
 	public static final String YES = "YES";
 	public static final String NO = "NO";
-	public static final String NAO_PREENCHIDO = "Nao preenchido";
+	public static final String NF = "Nao preenchido";
 	
 	public static final String ROUTINE = "Routine";
 	public static final String SUSPECTED_TREATMENT_FAILURE = "Suspected treatment failure";
-	public static final String REPEAT_AFTER_BREASTFEEDING = "Repeat after breastfeeding";
+	public static final String RAB = "Repeat after breastfeeding";
 	
-	public static final String PUNCAO_VENOSA = "Puncao venosa";
-	public static final String PUNCAO_DIGITAL = "Puncao digital";
+	public static final String PV = "Puncao venosa";
+	public static final String PD = "Puncao digital";
 	
-	public static final String DRY_BLOOD_SPOT = "Dry Blood Spot";
+	public static final String DBS = "Dry Blood Spot";
 	
 	public static final String VIRAL_LOAD_RESULT_NULL = "NULL";
 	
 	public static final String GESTATION = "e1cdd58a-1d5f-11e0-b929-000c29ad1d07";
 	public static final String CONCEPT_NO = "e1d81c70-1d5f-11e0-b929-000c29ad1d07";
-	public static final String NOT_FILLED = "e1d81d7e-1d5f-11e0-b929-000c29ad1d07";
+	public static final String CONCEPT_YES = "e1d81b62-1d5f-11e0-b929-000c29ad1d07";
+	public static final String CONCEPT_NOT_FILLED = "e1d81d7e-1d5f-11e0-b929-000c29ad1d07";
+	
+	public static final String VENOUS_PUNCTURE = "3098bd78-a1bb-455c-a724-9c114072b34e";
+	public static final String DIGITAL_PUNCTURE = "9aa935ec-be0f-4038-a1ca-23927bfde672";
+	public static final String DRY_BLOOD_SPOT = "7c288beb-548c-4440-8f12-4f62cd45305a";
+	public static final String BEYOND_DETECTABLE_LIMIT = "e1da2812-1d5f-11e0-b929-000c29ad1d07";
+	
+	public static final String URL_PATH_PROCESSED = "/processed";
+	public static final String URL_PATH_NOT_PROCESSED = "/not-processed";
+	public static final String DISA_URL = "disa.api.url";
+	public static final String DISA_USERNAME = "disa.api.username";
+	public static final String DISA_PASSWORD = "disa.api.password";
 }

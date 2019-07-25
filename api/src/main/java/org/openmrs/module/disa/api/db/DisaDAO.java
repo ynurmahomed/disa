@@ -13,6 +13,9 @@
  */
 package org.openmrs.module.disa.api.db;
 
+import java.util.List;
+
+import org.openmrs.LocationAttribute;
 import org.openmrs.module.disa.api.DisaService;
 
 /**
@@ -23,4 +26,6 @@ public interface DisaDAO {
 	/*
 	 * Add DAO methods here
 	 */
+	
+	public List<LocationAttribute> getAllLocationAttribute();
 }

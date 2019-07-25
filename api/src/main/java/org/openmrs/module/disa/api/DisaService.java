@@ -13,6 +13,9 @@
  */
 package org.openmrs.module.disa.api;
 
+import java.util.List;
+
+import org.openmrs.LocationAttribute;
 import org.openmrs.api.OpenmrsService;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,4 +36,6 @@ public interface DisaService extends OpenmrsService {
 	 * Add service methods here
 	 * 
 	 */
+	
+	public List<LocationAttribute> getAllLocationAttribute();
 }

@@ -13,7 +13,11 @@
  */
 package org.openmrs.module.disa.api.impl;
 
+import org.openmrs.LocationAttribute;
 import org.openmrs.api.impl.BaseOpenmrsService;
+
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.module.disa.api.DisaService;
@@ -41,4 +45,9 @@ public class DisaServiceImpl extends BaseOpenmrsService implements DisaService {
     public DisaDAO getDao() {
 	    return dao;
     }
+
+	@Override
+	public List<LocationAttribute> getAllLocationAttribute() {
+		return dao.getAllLocationAttribute();
+	}
 }
