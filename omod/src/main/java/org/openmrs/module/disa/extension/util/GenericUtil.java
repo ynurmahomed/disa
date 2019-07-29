@@ -11,6 +11,7 @@ public class GenericUtil {
 
 	private static byte[] bs;
 	private static String noSpecialCharacter;
+	private static String wardConcept;
 
 	public static String removeAccents (String specialCharacter) {
 		
@@ -21,5 +22,36 @@ public class GenericUtil {
 			e.printStackTrace();
 		}
 		return noSpecialCharacter;
+	}
+	
+	public static String wardSelection (String we) {
+		switch (we) {
+	      case "CI":	wardConcept="CONSULTA INTEGRADA";
+	      			break;
+	      case "SMI":	wardConcept="SAUDE MATERNO INFANTIL";
+	      			break;
+	      case "CPN": 	wardConcept="CONSULTA PRE-NATAL";
+	      			break;
+	      case "HDD":	wardConcept="HOSPITAL DO DIA";
+	      			break;
+	      case "CCR":	wardConcept="CONSULTA DE CRIANCAS EM RISCO";
+	      			break;
+	      case "TARV":	wardConcept="TARV";
+	      			break;
+	      case "TAP":	wardConcept="TRIAGEM - PEDIATRIA";
+	      			break;
+	      case "TAD":	wardConcept="TRIAGEM - ADULTOS";
+	      			break;
+	      case "PED":	wardConcept="ENF. PEDIATRIA";
+	      			break;
+	      case "LAB":	wardConcept="LABORATORIO";
+	      			break;
+	      default:	wardConcept="";
+		}
+		return wardConcept;
+	}
+	
+	public static void main(String[] args) {
+		System.out.println(GenericUtil.wardSelection("CCR")); 
 	}
 }

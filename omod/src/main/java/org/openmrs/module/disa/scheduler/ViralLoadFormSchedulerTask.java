@@ -99,7 +99,7 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 			obs_23836.setPerson(Context.getPersonService().getPersonByUuid(patientsByIdentifier.get(0).getUuid()));
 			obs_23836.setObsDatetime(new Date());
 			obs_23836.setConcept(Context.getConceptService().getConceptByUuid(Constants.ENCOUNTER_SERVICE));
-			obs_23836.setValueCoded(Context.getConceptService().getConceptByName(disa.getEncounter().trim()));
+			obs_23836.setValueCoded(Context.getConceptService().getConceptByName(GenericUtil.wardSelection(disa.getEncounter().trim())));
 			obs_23836.setEncounter(encounter);
 			Context.getObsService().saveObs(obs_23836, "");
 
