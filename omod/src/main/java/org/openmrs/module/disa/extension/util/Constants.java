@@ -9,6 +9,7 @@ public class Constants {
 	
 	//Concepts
 	public static final String LAB_NUMBER = "e173835b-135c-4fab-9b5e-b255565980e5";
+	public static final String PICKING_LOCATION = "e5269927-e25d-464e-9584-dc6ea2d8af64";
 	public static final String ENCOUNTER_SERVICE = "f448b038-f0af-4a0f-9a48-635e1838d22d";
 	public static final String PREGNANT = "e1e056a6-1d5f-11e0-b929-000c29ad1d07";
 	public static final String LACTATION = "bc4fe755-fc8f-49b8-9956-baf2477e8313";
@@ -27,6 +28,9 @@ public class Constants {
 	public static final String REGIMEN_FAILURE = "e1d616b4-1d5f-11e0-b929-000c29ad1d07";
 	public static final String REPEAT_AFTER_BREASTFEEDING = "6f60eaa1-886d-4891-9d3d-7ade75d67606";
 	public static final String LOCATION_ATTRIBUTE_TYPE_UUID = "132895aa-1c88-11e8-b6fd-7395830b63f3";
+	public static final String DISA_ENCOUNTER_TYPE = "b5b7d21f-efd1-407e-81ce-ba9d93c524f8";
+	public static final String DISA_FORM = "5b7cecc3-4ba3-4710-85ae-fc0c13e83e27";
+	public static final String DISA_PROVIDER = "7013d271-1bc2-4a50-bed6-8932044bc18f";
 	
 	public static final String YES = "YES";
 	public static final String NO = "NO";
@@ -38,7 +42,6 @@ public class Constants {
 	
 	public static final String PV = "Puncao venosa";
 	public static final String PD = "Puncao digital";
-	
 	public static final String DBS = "Dry Blood Spot";
 	
 	public static final String VIRAL_LOAD_RESULT_NULL = "NULL";
@@ -58,4 +61,15 @@ public class Constants {
 	public static final String DISA_URL = "disa.api.url";
 	public static final String DISA_USERNAME = "disa.api.username";
 	public static final String DISA_PASSWORD = "disa.api.password";
+	
+	public static final String CONSULTA_INTEGRADA = "CONSULTA INTEGRADA";
+	public static final String SAUDE_MATERNO_INFANTIL = "SAUDE MATERNO INFANTIL";
+	public static final String CONSULTA_PRE_NATAL = "CONSULTA PRE-NATAL";
+	public static final String HOSPITAL_DO_DIA = "HOSPITAL DO DIA";
+	public static final String CONSULTA_DE_CRIANCAS_EM_RISCO = "CONSULTA DE CRIANCAS EM RISCO";
+	public static final String TARV = "TARV";
+	public static final String TRIAGEM_PEDIATRIA = "TRIAGEM - PEDIATRIA";
+	public static final String TRIAGEM_ADULTOS = "TRIAGEM - ADULTOS";
+	public static final String ENF_PEDIATRIA = "ENF. PEDIATRIA";
+	public static final String LABORATORIO = "LABORATORIO";
 }

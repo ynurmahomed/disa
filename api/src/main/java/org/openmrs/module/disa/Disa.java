@@ -7,6 +7,7 @@ import java.util.Date;
  * @author machabane
  *
  */
+@SuppressWarnings("unused")
 public class Disa {
 	
 	private int id;
@@ -58,6 +59,8 @@ public class Disa {
 	private String labComments;
 	
 	private String hivViralLoadResult;
+	
+	private String requestingFacilityName;
 
 	public String getNid() {
 		return nid;
@@ -121,5 +124,9 @@ public class Disa {
 	
 	public String getHivViralLoadResult() {
 		return hivViralLoadResult;
+	}
+	
+	public String getRequestingFacilityName() {
+		return requestingFacilityName;
 	}
 }

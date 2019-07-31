@@ -4,7 +4,7 @@
 
 	<!-- Module Properties -->
 	<id>disa</id>
-	<name>Disa Module Module</name>
+	<name>Disa Module</name>
 	<version>1.0-SNAPSHOT</version>
 	<package>org.openmrs.module.disa</package>
 	<author>FGH</author>

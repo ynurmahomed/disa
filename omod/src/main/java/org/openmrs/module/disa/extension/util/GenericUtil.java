@@ -26,25 +26,25 @@ public class GenericUtil {
 	
 	public static String wardSelection (String we) {
 		switch (we) {
-	      case "CI":	wardConcept="CONSULTA INTEGRADA";
+	      case "CI":	wardConcept=Constants.CONSULTA_INTEGRADA;
 	      			break;
-	      case "SMI":	wardConcept="SAUDE MATERNO INFANTIL";
+	      case "SMI":	wardConcept=Constants.SAUDE_MATERNO_INFANTIL;
 	      			break;
-	      case "CPN": 	wardConcept="CONSULTA PRE-NATAL";
+	      case "CPN": 	wardConcept=Constants.CONSULTA_PRE_NATAL;
 	      			break;
-	      case "HDD":	wardConcept="HOSPITAL DO DIA";
+	      case "HDD":	wardConcept=Constants.HOSPITAL_DO_DIA;
 	      			break;
-	      case "CCR":	wardConcept="CONSULTA DE CRIANCAS EM RISCO";
+	      case "CCR":	wardConcept=Constants.CONSULTA_DE_CRIANCAS_EM_RISCO;
 	      			break;
-	      case "TARV":	wardConcept="TARV";
+	      case "TARV":	wardConcept=Constants.TARV;
 	      			break;
-	      case "TAP":	wardConcept="TRIAGEM - PEDIATRIA";
+	      case "TAP":	wardConcept=Constants.TRIAGEM_PEDIATRIA;
 	      			break;
-	      case "TAD":	wardConcept="TRIAGEM - ADULTOS";
+	      case "TAD":	wardConcept=Constants.TRIAGEM_ADULTOS;
 	      			break;
-	      case "PED":	wardConcept="ENF. PEDIATRIA";
+	      case "PED":	wardConcept=Constants.ENF_PEDIATRIA;
 	      			break;
-	      case "LAB":	wardConcept="LABORATORIO";
+	      case "LAB":	wardConcept=Constants.LABORATORIO;
 	      			break;
 	      default:	wardConcept="";
 		}
