@@ -37,6 +37,7 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 	private List<String> notProcessed;
 	private RestUtil rest;
 	private DisaService disaService;
+	private Location locationBySismaCode;
 
 	public ViralLoadFormSchedulerTask() {
 		disaService = Context.getService(DisaService.class); 
@@ -72,8 +73,9 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 				encounter.setPatient(patientsByIdentifier.get(0));
 			}
 
+			locationBySismaCode = getLocationBySismaCode(disa.getHealthFacilityLabCode());
 			encounter.setEncounterType(Context.getEncounterService().getEncounterTypeByUuid(Constants.DISA_ENCOUNTER_TYPE));
-			encounter.setLocation(getLocationBySismaCode(disa.getHealthFacilityLabCode()));
+			encounter.setLocation(locationBySismaCode);
 			encounter.setForm(Context.getFormService().getFormByUuid(Constants.DISA_FORM));
 
 			encounter.setProvider(Context.getEncounterService().getEncounterRoleByUuid(EncounterRole.UNKNOWN_ENCOUNTER_ROLE_UUID),
@@ -86,6 +88,7 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 			obs_23835.setObsDatetime(new Date());
 			obs_23835.setConcept(Context.getConceptService().getConceptByUuid(Constants.LAB_NUMBER));
 			obs_23835.setValueText(disa.getHealthFacilityLabCode());
+			obs_23835.setLocation(locationBySismaCode);
 			obs_23835.setEncounter(encounter);
 			Context.getObsService().saveObs(obs_23835, "");
 			
@@ -94,6 +97,7 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 			obs_23883.setObsDatetime(new Date());
 			obs_23883.setConcept(Context.getConceptService().getConceptByUuid(Constants.PICKING_LOCATION));
 			obs_23883.setValueText(disa.getRequestingFacilityName());
+			obs_23883.setLocation(locationBySismaCode); 
 			obs_23883.setEncounter(encounter);
 			Context.getObsService().saveObs(obs_23883, "");
 
@@ -101,6 +105,7 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 			obs_23836.setPerson(Context.getPersonService().getPersonByUuid(patientsByIdentifier.get(0).getUuid()));
 			obs_23836.setObsDatetime(new Date());
 			obs_23836.setConcept(Context.getConceptService().getConceptByUuid(Constants.ENCOUNTER_SERVICE));
+			obs_23836.setLocation(locationBySismaCode); 
 			obs_23836.setEncounter(encounter);
 			if (StringUtils.isNotEmpty(GenericUtil.wardSelection(disa.getEncounter().trim()))) {				
 				obs_23836.setValueCoded(Context.getConceptService().getConceptByName(GenericUtil.wardSelection(disa.getEncounter().trim())));
@@ -111,6 +116,7 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 			obs_1982.setPerson(Context.getPersonService().getPersonByUuid(patientsByIdentifier.get(0).getUuid()));
 			obs_1982.setObsDatetime(new Date());
 			obs_1982.setConcept(Context.getConceptService().getConceptByUuid(Constants.PREGNANT));
+			obs_1982.setLocation(locationBySismaCode); 
 			obs_1982.setEncounter(encounter);
 			if (disa.getPregnant().trim().equalsIgnoreCase(Constants.YES)) {
 				obs_1982.setValueCoded(Context.getConceptService().getConceptByUuid(Constants.GESTATION));
@@ -127,6 +133,7 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 			obs_6332.setPerson(Context.getPersonService().getPersonByUuid(patientsByIdentifier.get(0).getUuid()));
 			obs_6332.setObsDatetime(new Date());
 			obs_6332.setConcept(Context.getConceptService().getConceptByUuid(Constants.LACTATION));
+			obs_6332.setLocation(locationBySismaCode); 
 			obs_6332.setEncounter(encounter);
 			if (disa.getBreastFeeding().trim().equalsIgnoreCase(Constants.YES)) {
 				obs_6332.setValueCoded(Context.getConceptService().getConceptByUuid(Constants.CONCEPT_YES));
@@ -143,6 +150,7 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 			obs_23818.setPerson(Context.getPersonService().getPersonByUuid(patientsByIdentifier.get(0).getUuid()));
 			obs_23818.setObsDatetime(new Date());
 			obs_23818.setConcept(Context.getConceptService().getConceptByUuid(Constants.REASON_FOR_TEST));
+			obs_23818.setLocation(locationBySismaCode); 
 			obs_23818.setEncounter(encounter);
 			if (disa.getReasonForTest().trim().equalsIgnoreCase(Constants.ROUTINE)) {
 				obs_23818.setValueCoded(Context.getConceptService().getConceptByUuid(Constants.ROUTINE_VIRAL_LOAD));
@@ -163,14 +171,18 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 			obs_23821.setPerson(Context.getPersonService().getPersonByUuid(patientsByIdentifier.get(0).getUuid()));
 			obs_23821.setObsDatetime(new Date());
 			obs_23821.setConcept(Context.getConceptService().getConceptByUuid(Constants.SAMPLE_COLLECTION_DATE));
-			obs_23821.setValueDate(DateUtil.deserialize(disa.getHarvestDate()));
+			obs_23821.setLocation(locationBySismaCode); 
 			obs_23821.setEncounter(encounter);
-			Context.getObsService().saveObs(obs_23821, "");
-
+			if (StringUtils.isNotEmpty(disa.getHarvestDate())) {  
+				obs_23821.setValueDate(DateUtil.deserialize(disa.getHarvestDate()));
+				Context.getObsService().saveObs(obs_23821, "");
+			}
+			
 			Obs obs_23824 = new Obs();
 			obs_23824.setPerson(Context.getPersonService().getPersonByUuid(patientsByIdentifier.get(0).getUuid()));
 			obs_23824.setObsDatetime(new Date());
 			obs_23824.setConcept(Context.getConceptService().getConceptByUuid(Constants.SAMPLE_COLLECTION_METHOD));
+			obs_23824.setLocation(locationBySismaCode); 
 			obs_23824.setEncounter(encounter);
 			if (GenericUtil.removeAccents(disa.getHarvestType().trim()).equalsIgnoreCase(Constants.PV)) {
 				obs_23824.setValueCoded(Context.getConceptService().getConceptByUuid(Constants.VENOUS_PUNCTURE));
@@ -184,16 +196,20 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 			obs_23826.setPerson(Context.getPersonService().getPersonByUuid(patientsByIdentifier.get(0).getUuid()));
 			obs_23826.setObsDatetime(new Date());
 			obs_23826.setConcept(Context.getConceptService().getConceptByUuid(Constants.SAMPLE_DATE_RECEIPT));
-			obs_23826.setValueDate(DateUtil.deserialize(disa.getDateOfSampleReceive()));
+			obs_23826.setLocation(locationBySismaCode); 
 			obs_23826.setEncounter(encounter);
-			Context.getObsService().saveObs(obs_23826, "");
-
+			if (StringUtils.isNotEmpty(disa.getDateOfSampleReceive())) {
+				obs_23826.setValueDate(DateUtil.deserialize(disa.getDateOfSampleReceive()));
+				Context.getObsService().saveObs(obs_23826, "");
+			}
+			
 			Obs obs_23833 = new Obs();
 			obs_23833.setPerson(Context.getPersonService().getPersonByUuid(patientsByIdentifier.get(0).getUuid()));
 			obs_23833.setObsDatetime(new Date());
 			obs_23833.setConcept(Context.getConceptService().getConceptByUuid(Constants.SAMPLE_PROCESSING_DATE));
 			Date processingDate = DateUtil.deserialize(disa.getProcessingDate());
 			obs_23833.setValueDate(processingDate);
+			obs_23833.setLocation(locationBySismaCode); 
 			obs_23833.setEncounter(encounter);
 			Context.getObsService().saveObs(obs_23833, "");
 
@@ -201,6 +217,7 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 			obs_23832.setPerson(Context.getPersonService().getPersonByUuid(patientsByIdentifier.get(0).getUuid()));
 			obs_23832.setObsDatetime(new Date());
 			obs_23832.setConcept(Context.getConceptService().getConceptByUuid(Constants.SAMPLE_TYPE));
+			obs_23832.setLocation(locationBySismaCode); 
 			obs_23832.setEncounter(encounter);
 			if (disa.getSampleType().trim().equalsIgnoreCase(Constants.DBS)) {
 				obs_23832.setValueCoded(Context.getConceptService().getConceptByUuid(Constants.DRY_BLOOD_SPOT));
@@ -211,6 +228,7 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 			obs_856.setPerson(Context.getPersonService().getPersonByUuid(patientsByIdentifier.get(0).getUuid()));
 			obs_856.setObsDatetime(new Date());
 			obs_856.setConcept(Context.getConceptService().getConceptByUuid(Constants.VIRAL_LOAD_COPIES));
+			obs_856.setLocation(locationBySismaCode); 
 			obs_856.setEncounter(encounter);
 			if (StringUtils.isNotEmpty(disa.getHivViralLoadResult())) {
 
@@ -222,11 +240,24 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 				obs_1306.setObsDatetime(new Date());
 				obs_1306.setConcept(Context.getConceptService().getConceptByUuid(Constants.HIV_VIRAL_LOAD_QUALITATIVE));
 				obs_1306.setValueCoded(Context.getConceptService().getConceptByUuid(Constants.BEYOND_DETECTABLE_LIMIT));
+				obs_1306.setLocation(locationBySismaCode); 
 				obs_1306.setEncounter(encounter);
 				Context.getObsService().saveObs(obs_1306, "");
-			} else if (NumberUtils.isNumber(disa.getViralLoadResultCopies().trim())) {
-				obs_856.setValueNumeric(Double.valueOf(disa.getViralLoadResultCopies().trim()));
+			} else if (StringUtils.isNotEmpty(disa.getViralLoadResultCopies()) && NumberUtils.isNumber(disa.getViralLoadResultCopies().trim())) {
+					obs_856.setValueNumeric(Double.valueOf(disa.getViralLoadResultCopies().trim()));
+					Context.getObsService().saveObs(obs_856, "");
+			} else if (StringUtils.isNotEmpty(disa.getViralLoadResultCopies()) && disa.getViralLoadResultCopies().contains("<")) {
+				obs_856.setValueNumeric(Double.valueOf(-20));
 				Context.getObsService().saveObs(obs_856, "");
+
+				Obs obs_1306 = new Obs();
+				obs_1306.setPerson(Context.getPersonService().getPersonByUuid(patientsByIdentifier.get(0).getUuid()));
+				obs_1306.setObsDatetime(new Date());
+				obs_1306.setConcept(Context.getConceptService().getConceptByUuid(Constants.HIV_VIRAL_LOAD_QUALITATIVE));
+				obs_1306.setValueCoded(Context.getConceptService().getConceptByUuid(Constants.BEYOND_DETECTABLE_LIMIT));
+				obs_1306.setLocation(locationBySismaCode); 
+				obs_1306.setEncounter(encounter);
+				Context.getObsService().saveObs(obs_1306, "");
 			}
 
 			Obs obs_1518 = new Obs();
@@ -234,7 +265,8 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 			obs_1518.setObsDatetime(new Date());
 			obs_1518.setConcept(Context.getConceptService().getConceptByUuid(Constants.VIRAL_LOAD_LOG));
 			obs_1518.setValueNumeric(disa.getViralLoadResultLog() == null ? Double.valueOf(0.0)
-					: Double.valueOf(disa.getViralLoadResultLog()));
+					: Double.valueOf(disa.getViralLoadResultLog().toString().replace("<", "").trim()));
+			obs_1518.setLocation(locationBySismaCode); 
 			obs_1518.setEncounter(encounter);
 			Context.getObsService().saveObs(obs_1518, "");
 
@@ -243,6 +275,7 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 			obs_23839.setObsDatetime(new Date());
 			obs_23839.setConcept(Context.getConceptService().getConceptByUuid(Constants.APPROVED_BY));
 			obs_23839.setValueText(disa.getAprovedBy().trim());
+			obs_23839.setLocation(locationBySismaCode); 
 			obs_23839.setEncounter(encounter);
 			Context.getObsService().saveObs(obs_23839, "");
 
@@ -251,12 +284,14 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 			obs_23841.setObsDatetime(new Date());
 			obs_23841.setConcept(Context.getConceptService().getConceptByUuid(Constants.LAB_COMMENTS));
 			obs_23841.setValueText(disa.getLabComments().trim());
+			obs_23841.setLocation(locationBySismaCode); 
 			obs_23841.setEncounter(encounter);
 			Context.getObsService().saveObs(obs_23841, "");
+			
+			if(processed.size()>0) updateProcessed();
+			if(notProcessed.size()>0) updateNotProcessed();
 		}
 
-		if(processed.size()>0) updateProcessed();
-		if(notProcessed.size()>0) updateNotProcessed();
 	}
 
 	private List<Disa> getJsonViralLoad() {
