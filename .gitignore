@@ -22,3 +22,7 @@ local.properties
 *.launch
 
 *.class
+
+# idea
+.idea/
+*.iml
