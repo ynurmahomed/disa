@@ -87,9 +87,9 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 			obs_23835.setPerson(Context.getPersonService().getPersonByUuid(patientsByIdentifier.get(0).getUuid()));
 			obs_23835.setObsDatetime(new Date());
 			obs_23835.setConcept(Context.getConceptService().getConceptByUuid(Constants.LAB_NUMBER));
-			obs_23835.setValueText(disa.getHealthFacilityLabCode());
 			obs_23835.setLocation(locationBySismaCode);
 			obs_23835.setEncounter(encounter);
+			obs_23835.setValueText(disa.getHealthFacilityLabCode());
 			Context.getObsService().saveObs(obs_23835, "");
 			
 			Obs obs_23883 = new Obs();
@@ -207,11 +207,12 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 			obs_23833.setPerson(Context.getPersonService().getPersonByUuid(patientsByIdentifier.get(0).getUuid()));
 			obs_23833.setObsDatetime(new Date());
 			obs_23833.setConcept(Context.getConceptService().getConceptByUuid(Constants.SAMPLE_PROCESSING_DATE));
-			Date processingDate = DateUtil.deserialize(disa.getProcessingDate());
-			obs_23833.setValueDate(processingDate);
 			obs_23833.setLocation(locationBySismaCode); 
 			obs_23833.setEncounter(encounter);
-			Context.getObsService().saveObs(obs_23833, "");
+			if (StringUtils.isNotEmpty(disa.getProcessingDate())) {
+				obs_23833.setValueDate(DateUtil.deserialize(disa.getProcessingDate()));
+				Context.getObsService().saveObs(obs_23833, "");
+			}
 
 			Obs obs_23832 = new Obs();
 			obs_23832.setPerson(Context.getPersonService().getPersonByUuid(patientsByIdentifier.get(0).getUuid()));
@@ -288,10 +289,10 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 			obs_23841.setEncounter(encounter);
 			Context.getObsService().saveObs(obs_23841, "");
 			
-			if(processed.size()>0) updateProcessed();
-			if(notProcessed.size()>0) updateNotProcessed();
 		}
 
+		if(processed.size()>0) updateProcessed();
+		if(notProcessed.size()>0) updateNotProcessed();
 	}
 
 	private List<Disa> getJsonViralLoad() {
