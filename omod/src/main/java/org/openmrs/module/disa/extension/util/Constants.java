@@ -31,6 +31,7 @@ public class Constants {
 	public static final String DISA_ENCOUNTER_TYPE = "b5b7d21f-efd1-407e-81ce-ba9d93c524f8";
 	public static final String DISA_FORM = "5b7cecc3-4ba3-4710-85ae-fc0c13e83e27";
 	public static final String DISA_PROVIDER = "7013d271-1bc2-4a50-bed6-8932044bc18f";
+	public static final String ORDER_ID = "e8c63cd6-9113-48b2-99cd-6112103f1448";
 	
 	public static final String YES = "YES";
 	public static final String NO = "NO";
