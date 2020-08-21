@@ -15,6 +15,8 @@ import org.openmrs.LocationAttribute;
 import org.openmrs.LocationAttributeType;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
+import org.openmrs.PatientIdentifier;
+import org.openmrs.PatientIdentifierType;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.disa.Disa;
 import org.openmrs.module.disa.api.DisaService;
@@ -56,12 +58,13 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 
 	@SuppressWarnings("deprecation")
 	private void createViralLoadForm() {
+				
 		// iterate the viral load list and create the encounters
 		processed = new ArrayList<String>();
 		notProcessed = new ArrayList<String>();
 		for (Disa disa : getJsonViralLoad()) {
 			Encounter encounter = new Encounter();
-
+			
 			encounter.setEncounterDatetime(new Date());
 			List<Patient> patientsByIdentifier = Context.getPatientService().getPatientsByIdentifier(disa.getNid().trim(), Boolean.FALSE);
 
