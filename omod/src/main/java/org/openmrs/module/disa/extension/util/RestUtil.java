@@ -178,6 +178,43 @@ public class RestUtil {
         return response;
     }
 	
+	/**
+	 * HTTP GET
+	 * @param sismaCodes 
+	 * @param sismaCodes 
+	 * @param URLPath
+	 * @return
+	 * @throws Exception
+	 */
+	@SuppressWarnings("deprecation")
+	public String getRequestGetFsrByStatus(String urlPathProcessed, List<String> sismaCodes, String viralLoadStatus) throws Exception {
+        String URL = URLBase + urlPathProcessed;
+        String response =  "";
+        DefaultHttpClient httpclient = new DefaultHttpClient();
+        
+        try {
+        	
+        	URIBuilder uriBuilder = new URIBuilder(URL);
+        	uriBuilder.addParameter("locationCodes",sismaCodes.get(0));
+        	uriBuilder.addParameter("viralLoadStatus",viralLoadStatus);
+        	
+        		            	
+            HttpGet httpGet = new HttpGet(uriBuilder.build());
+            
+            UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(username, password);
+            BasicScheme scheme = new BasicScheme();
+            Header authorizationHeader = scheme.authenticate(credentials, httpGet);
+            httpGet.setHeader(authorizationHeader);
+            ResponseHandler<String> responseHandler = new BasicResponseHandler();
+            
+            response = httpclient.execute(httpGet,responseHandler);
+           
+        } finally {
+            httpclient.getConnectionManager().shutdown();
+        }
+        return response;
+    }
+	
 	public void setUsername(String username) {
 		this.username = username;
 	}
