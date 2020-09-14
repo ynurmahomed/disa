@@ -1,0 +1,46 @@
+#vlResultsTable {
+	font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+	border-collapse: collapse;
+	width: 100%;
+}
+
+#vlResultsTable td, #vlResultsTable th {
+	border: 1px solid #ddd;
+	padding: 8px;
+}
+
+#vlResultsTable tr:nth-child(even) {
+	background-color: #f2f2f2;
+}
+
+#vlResultsTable tr:hover {
+	background-color: #ddd;
+}
+
+#vlResultsTable th {
+	padding-top: 12px;
+	padding-bottom: 12px;
+	text-align: left;
+	background-color: #1aac9b;
+	color: white;
+}
+
+.submit-btn {
+	flex: 1;
+	margin: 10px 15px;
+}
+
+.submit-btn input {
+	color: #fff;
+	background: #1aac9b;
+	padding: 8px;
+	width: 12.8em;
+	font-weight: bold;
+	text-shadow: 0 0 .3em black;
+	font-size: 9pt;
+	border-radius: 5px 5px;
+}
+
+#error_msg {
+	background-color: #FFB6C1;
+}

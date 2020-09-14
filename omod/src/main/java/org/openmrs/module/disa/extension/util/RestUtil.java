@@ -22,207 +22,251 @@ public class RestUtil {
 	private String username;
 	private String password;
 	private String URLBase;
-	
+
 	/**
 	 * HTTP POST
+	 * 
 	 * @param URLPath
 	 * @param input
 	 * @return
 	 * @throws Exception
 	 */
 	public Boolean getRequestPost(String URLPath, StringEntity input) throws Exception {
-        String URL = URLBase + URLPath;
-        Boolean response =  false;
-        DefaultHttpClient httpclient = new DefaultHttpClient();
-        try {
-        	HttpPost httpPost = new HttpPost(URL);
-        	System.out.println(URL);
-            UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(username, password);
-            BasicScheme scheme = new BasicScheme();
-            Header authorizationHeader = scheme.authenticate(credentials, httpPost);
-            httpPost.setHeader(authorizationHeader);
-            httpPost.setEntity(input);
-            //System.out.println("Executing request: " + httpGet.getRequestLine());
-            //System.out.println(response);
+		String URL = URLBase + URLPath;
+		Boolean response = false;
+		DefaultHttpClient httpclient = new DefaultHttpClient();
+		try {
+			HttpPost httpPost = new HttpPost(URL);
+			System.out.println(URL);
+			UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(username, password);
+			BasicScheme scheme = new BasicScheme();
+			Header authorizationHeader = scheme.authenticate(credentials, httpPost);
+			httpPost.setHeader(authorizationHeader);
+			httpPost.setEntity(input);
+			// System.out.println("Executing request: " + httpGet.getRequestLine());
+			// System.out.println(response);
 //            response = httpclient.execute(httpGet,responseHandler);
-            HttpResponse responseRequest = httpclient.execute(httpPost);
-            
-    		if (responseRequest.getStatusLine().getStatusCode() != 204 && responseRequest.getStatusLine().getStatusCode() != 201) {
-    			throw new RuntimeException("Failed : HTTP error code : "
-    				+ responseRequest.getStatusLine().getStatusCode());
-    		}
-     
-    		
-    		httpclient.getConnectionManager().shutdown();
-    		response = true;
-        } finally {
-            httpclient.getConnectionManager().shutdown();
-        }
-        return response;
-    }
-	
+			HttpResponse responseRequest = httpclient.execute(httpPost);
+
+			if (responseRequest.getStatusLine().getStatusCode() != 204
+					&& responseRequest.getStatusLine().getStatusCode() != 201) {
+				throw new RuntimeException(
+						"Failed : HTTP error code : " + responseRequest.getStatusLine().getStatusCode());
+			}
+
+			httpclient.getConnectionManager().shutdown();
+			response = true;
+		} finally {
+			httpclient.getConnectionManager().shutdown();
+		}
+		return response;
+	}
+
 	/**
 	 * HTTP PUT
-	 * @param urlPathProcessed 
+	 * 
+	 * @param urlPathProcessed
 	 * @param sismaCodes
 	 * @param input
 	 * @return
 	 * @throws Exception
 	 */
 	public Boolean getRequestPutProcessed(String urlPathProcessed, List<String> sismaCodes) throws Exception {
-        String URL = URLBase + urlPathProcessed;
-        Boolean response =  false;
-        DefaultHttpClient httpclient = new DefaultHttpClient();
-        try {
-        	
-        	URIBuilder uriBuilder = new URIBuilder(URL);
-			for (String sismaCode : sismaCodes) {
-				uriBuilder.addParameter("processedNids",sismaCode);
-			}
-        	
-        	HttpPut httpPut = new HttpPut(uriBuilder.build()); 
-            UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(username, password);
-            BasicScheme scheme = new BasicScheme();
-            Header authorizationHeader = scheme.authenticate(credentials, httpPut);
-            httpPut.setHeader(authorizationHeader);
+		String URL = URLBase + urlPathProcessed;
+		Boolean response = false;
+		DefaultHttpClient httpclient = new DefaultHttpClient();
+		try {
 
-            HttpResponse responseRequest = httpclient.execute(httpPut);
-            
-    		/*if (responseRequest.getStatusLine().getStatusCode() != 204 && responseRequest.getStatusLine().getStatusCode() != 201) {
-    			throw new RuntimeException("Failed : HTTP error code : "
-    				+ responseRequest.getStatusLine().getStatusCode());
-    		}*/
-    		
-    		httpclient.getConnectionManager().shutdown();
-    		response = true;
-        } finally {
-            httpclient.getConnectionManager().shutdown();
-        }
-        return response;
-    }
-	
+			URIBuilder uriBuilder = new URIBuilder(URL);
+			for (String sismaCode : sismaCodes) {
+				uriBuilder.addParameter("processedNids", sismaCode);
+			}
+
+			HttpPut httpPut = new HttpPut(uriBuilder.build());
+			UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(username, password);
+			BasicScheme scheme = new BasicScheme();
+			Header authorizationHeader = scheme.authenticate(credentials, httpPut);
+			httpPut.setHeader(authorizationHeader);
+
+			HttpResponse responseRequest = httpclient.execute(httpPut);
+
+			/*
+			 * if (responseRequest.getStatusLine().getStatusCode() != 204 &&
+			 * responseRequest.getStatusLine().getStatusCode() != 201) { throw new
+			 * RuntimeException("Failed : HTTP error code : " +
+			 * responseRequest.getStatusLine().getStatusCode()); }
+			 */
+
+			httpclient.getConnectionManager().shutdown();
+			response = true;
+		} finally {
+			httpclient.getConnectionManager().shutdown();
+		}
+		return response;
+	}
+
 	/**
 	 * HTTP PUT
-	 * @param urlPathNotProcessed  
+	 * 
+	 * @param urlPathNotProcessed
 	 * @param sismaCodes
 	 * @param input
 	 * @return
 	 * @throws Exception
 	 */
-	public Boolean getRequestPutNotProcessed(String urlPathNotProcessed , List<String> sismaCodes) throws Exception {
-        String URL = URLBase + urlPathNotProcessed;
-        Boolean response =  false;
-        DefaultHttpClient httpclient = new DefaultHttpClient();
-        try {
-        	
-        	URIBuilder uriBuilder = new URIBuilder(URL);
-			for (String sismaCode : sismaCodes) {
-				uriBuilder.addParameter("notProcessedNids",sismaCode);
-			}
-        	
-        	HttpPut httpPut = new HttpPut(uriBuilder.build()); 
-            UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(username, password);
-            BasicScheme scheme = new BasicScheme();
-            Header authorizationHeader = scheme.authenticate(credentials, httpPut);
-            httpPut.setHeader(authorizationHeader);
+	public Boolean getRequestPutNotProcessed(String urlPathNotProcessed, List<String> sismaCodes) throws Exception {
+		String URL = URLBase + urlPathNotProcessed;
+		Boolean response = false;
+		DefaultHttpClient httpclient = new DefaultHttpClient();
+		try {
 
-            HttpResponse responseRequest = httpclient.execute(httpPut);
-            
-    		/*if (responseRequest.getStatusLine().getStatusCode() != 204 && responseRequest.getStatusLine().getStatusCode() != 201) {
-    			throw new RuntimeException("Failed : HTTP error code : "
-    				+ responseRequest.getStatusLine().getStatusCode());
-    		}*/
-    		
-    		httpclient.getConnectionManager().shutdown();
-    		response = true;
-        } finally {
-            httpclient.getConnectionManager().shutdown();
-        }
-        return response;
-    }
-	
+			URIBuilder uriBuilder = new URIBuilder(URL);
+			for (String sismaCode : sismaCodes) {
+				uriBuilder.addParameter("notProcessedNids", sismaCode);
+			}
+
+			HttpPut httpPut = new HttpPut(uriBuilder.build());
+			UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(username, password);
+			BasicScheme scheme = new BasicScheme();
+			Header authorizationHeader = scheme.authenticate(credentials, httpPut);
+			httpPut.setHeader(authorizationHeader);
+
+			HttpResponse responseRequest = httpclient.execute(httpPut);
+
+			/*
+			 * if (responseRequest.getStatusLine().getStatusCode() != 204 &&
+			 * responseRequest.getStatusLine().getStatusCode() != 201) { throw new
+			 * RuntimeException("Failed : HTTP error code : " +
+			 * responseRequest.getStatusLine().getStatusCode()); }
+			 */
+
+			httpclient.getConnectionManager().shutdown();
+			response = true;
+		} finally {
+			httpclient.getConnectionManager().shutdown();
+		}
+		return response;
+	}
+
+	/**
+	 * HTTP PUT
+	 * 
+	 * @param urlPathPending
+	 * @param nids
+	 * @param input
+	 * @return
+	 * @throws Exception
+	 */
+	public Boolean getRequestPutPending(String urlPathPending, List<String> nids) throws Exception {
+		String URL = URLBase + urlPathPending;
+		Boolean response = false;
+		DefaultHttpClient httpclient = new DefaultHttpClient();
+		try {
+
+			URIBuilder uriBuilder = new URIBuilder(URL);
+			for (String nid : nids) {
+				uriBuilder.addParameter("pendingNids", nid);
+			}
+
+			HttpPut httpPut = new HttpPut(uriBuilder.build());
+			UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(username, password);
+			BasicScheme scheme = new BasicScheme();
+			Header authorizationHeader = scheme.authenticate(credentials, httpPut);
+			httpPut.setHeader(authorizationHeader);
+			
+			httpclient.execute(httpPut);
+
+			httpclient.getConnectionManager().shutdown();
+			response = true;
+		} finally {
+			httpclient.getConnectionManager().shutdown();
+		}
+		return response;
+	}
+
 	/**
 	 * HTTP GET
+	 * 
 	 * @param URLPath
 	 * @return
 	 * @throws Exception
 	 */
 	public String getRequestGet(List<String> sismaCodes) throws Exception {
-        String URL = URLBase;
-        String response =  "";
-        DefaultHttpClient httpclient = new DefaultHttpClient();
-        try {
-        	
-        	URIBuilder uriBuilder = new URIBuilder(URL);
+		String URL = URLBase;
+		String response = "";
+		DefaultHttpClient httpclient = new DefaultHttpClient();
+		try {
+
+			URIBuilder uriBuilder = new URIBuilder(URL);
 			for (String sismaCode : sismaCodes) {
-				uriBuilder.addParameter("locationCodes",sismaCode);
+				uriBuilder.addParameter("locationCodes", sismaCode);
 			}
-			
-            HttpGet httpGet = new HttpGet(uriBuilder.build());
 
-            UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(username, password);
-            BasicScheme scheme = new BasicScheme();
-            Header authorizationHeader = scheme.authenticate(credentials, httpGet);
-            httpGet.setHeader(authorizationHeader);
-            ResponseHandler<String> responseHandler = new BasicResponseHandler();
+			HttpGet httpGet = new HttpGet(uriBuilder.build());
 
-            HttpParams params = new BasicHttpParams();
-            params.setParameter("sismaCodes", sismaCodes);
-            httpclient.setParams(params);
-            response = httpclient.execute(httpGet,responseHandler);
-            
-           
-        } finally {
-            httpclient.getConnectionManager().shutdown();
-        }
-        return response;
-    }
-	
+			UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(username, password);
+			BasicScheme scheme = new BasicScheme();
+			Header authorizationHeader = scheme.authenticate(credentials, httpGet);
+			httpGet.setHeader(authorizationHeader);
+			ResponseHandler<String> responseHandler = new BasicResponseHandler();
+
+			HttpParams params = new BasicHttpParams();
+			params.setParameter("sismaCodes", sismaCodes);
+			httpclient.setParams(params);
+			response = httpclient.execute(httpGet, responseHandler);
+
+		} finally {
+			httpclient.getConnectionManager().shutdown();
+		}
+		return response;
+	}
+
 	/**
 	 * HTTP GET
-	 * @param sismaCodes 
-	 * @param sismaCodes 
+	 * 
+	 * @param sismaCodes
+	 * @param sismaCodes
 	 * @param URLPath
 	 * @return
 	 * @throws Exception
 	 */
 	@SuppressWarnings("deprecation")
-	public String getRequestGetFsrByStatus(String urlPathProcessed, List<String> sismaCodes, String viralLoadStatus) throws Exception {
-        String URL = URLBase + urlPathProcessed;
-        String response =  "";
-        DefaultHttpClient httpclient = new DefaultHttpClient();
-        
-        try {
-        	
-        	URIBuilder uriBuilder = new URIBuilder(URL);
-        	uriBuilder.addParameter("locationCodes",sismaCodes.get(0));
-        	uriBuilder.addParameter("viralLoadStatus",viralLoadStatus);
-        	
-        		            	
-            HttpGet httpGet = new HttpGet(uriBuilder.build());
-            
-            UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(username, password);
-            BasicScheme scheme = new BasicScheme();
-            Header authorizationHeader = scheme.authenticate(credentials, httpGet);
-            httpGet.setHeader(authorizationHeader);
-            ResponseHandler<String> responseHandler = new BasicResponseHandler();
-            
-            response = httpclient.execute(httpGet,responseHandler);
-           
-        } finally {
-            httpclient.getConnectionManager().shutdown();
-        }
-        return response;
-    }
-	
+	public String getRequestGetFsrByStatus(String urlPathProcessed, List<String> sismaCodes, String viralLoadStatus)
+			throws Exception {
+		String URL = URLBase + urlPathProcessed;
+		String response = "";
+		DefaultHttpClient httpclient = new DefaultHttpClient();
+
+		try {
+
+			URIBuilder uriBuilder = new URIBuilder(URL);
+			uriBuilder.addParameter("locationCodes", sismaCodes.get(0));
+			uriBuilder.addParameter("viralLoadStatus", viralLoadStatus);
+
+			HttpGet httpGet = new HttpGet(uriBuilder.build());
+
+			UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(username, password);
+			BasicScheme scheme = new BasicScheme();
+			Header authorizationHeader = scheme.authenticate(credentials, httpGet);
+			httpGet.setHeader(authorizationHeader);
+			ResponseHandler<String> responseHandler = new BasicResponseHandler();
+
+			response = httpclient.execute(httpGet, responseHandler);
+
+		} finally {
+			httpclient.getConnectionManager().shutdown();
+		}
+		return response;
+	}
+
 	public void setUsername(String username) {
 		this.username = username;
 	}
-	
+
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	
+
 	public void setURLBase(String uRLBase) {
 		URLBase = uRLBase;
 	}
