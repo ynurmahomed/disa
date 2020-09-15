@@ -1,5 +1,6 @@
 package org.openmrs.module.disa;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -11,69 +12,69 @@ import javax.persistence.Column;
  */
 @SuppressWarnings("unused")
 public class Disa {
-	
+
 	private int id;
-	
+
 	private String requestId;
-	
+
 	private String uuid;
-	
+
 	private String createdBy;
-	
+
 	private String createdAt;
-	
+
 	private String updatedBy;
-	
+
 	private String updatedAt;
-	
+
 	private String entityStatus;
-	
+
 	private String nid;
-	
+
 	private String firstName;
-	
+
 	private String lastName;
-	
+
 	private Date dateOfBirth;
-	
+
 	private String gender;
-	
+
 	private String healthFacilityLabCode;
-	
+
 	private String encounter;
-	
+
 	private String pregnant;
-	
+
 	private String breastFeeding;
-	
+
 	private String reasonForTest;
-	
+
 	private String harvestDate;
-	
+
 	private String harvestType;
-	
+
 	private String dateOfSampleReceive;
-	
+
 	private String processingDate;
-	
+
 	private String sampleType;
-	
+
 	private String viralLoadResultCopies;
-	
+
 	private String viralLoadResultLog;
-	
+
 	private String viralLoadResultDate;
-	
+
 	private String aprovedBy;
-	
+
 	private String labComments;
-	
+
 	private String hivViralLoadResult;
-	
+
 	private String requestingFacilityName;
-	
+
 	private String viralLoadStatus;
-	
+
 	public String getViralLoadStatus() {
 		return viralLoadStatus;
 	}
@@ -320,5 +321,42 @@ public class Disa {
 
 	public void setRequestingFacilityName(String requestingFacilityName) {
 		this.requestingFacilityName = requestingFacilityName;
+	}
+
+	public Integer getAge() {
+		return getAge(null);
+	}
+
+	public Integer getAge(Date onDate) {
+		if (dateOfBirth == null) {
+			return null;
+		}
+
+		// Use default end date as today.
+		Calendar today = Calendar.getInstance();
+		// But if given, use the given date.
+		if (onDate != null) {
+			today.setTime(onDate);
+		}
+
+		Calendar bday = Calendar.getInstance();
+		bday.setTime(dateOfBirth);
+
+		int age = today.get(Calendar.YEAR) - bday.get(Calendar.YEAR);
+
+		// Adjust age when today's date is before the person's birthday
+		int todaysMonth = today.get(Calendar.MONTH);
+		int bdayMonth = bday.get(Calendar.MONTH);
+		int todaysDay = today.get(Calendar.DAY_OF_MONTH);
+		int bdayDay = bday.get(Calendar.DAY_OF_MONTH);
+
+		if (todaysMonth < bdayMonth) {
+			age--;
+		} else if (todaysMonth == bdayMonth && todaysDay < bdayDay) {
+			// we're only comparing on month and day, not minutes, etc
+			age--;
+		}
+
+		return age;
 	}
 }
