@@ -2,11 +2,15 @@ package org.openmrs.module.disa.web.controller;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -31,6 +35,8 @@ import org.openmrs.module.disa.extension.util.RestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -58,9 +64,20 @@ public class ViralLoadResultsController {
 	}
 
 	@RequestMapping(value = "/module/disa/viralLoadStatusList", method = RequestMethod.POST)
-	public ModelAndView showViralLoadList(HttpServletRequest request, @RequestParam("vlState") String state)
-			throws Exception {
+	public ModelAndView showViralLoadList(HttpServletRequest request, @RequestParam("vlState") String state,
+			@RequestParam("startDate") Date startDate, @RequestParam("endDate") Date endDate) throws Exception {
+		ModelAndView model = new ModelAndView();
 
+		if (startDate == null) {
+			model.addObject("errorStartDateRequired", "disa.error.startDate");
+		}
+		if (endDate == null) {
+			model.addObject("errorEndDateRequired", "disa.error.endDate");
+		}
+
+		if (startDate == null || endDate == null) {
+			return model;
+		}
 		rest = new RestUtil();
 		rest.setURLBase(
 				Context.getAdministrationService().getGlobalPropertyObject(Constants.DISA_URL).getPropertyValue());
@@ -71,6 +88,8 @@ public class ViralLoadResultsController {
 
 		HttpSession httpSession = request.getSession();
 		httpSession.setAttribute("vlState", state);
+		httpSession.setAttribute("startDate", startDate);
+		httpSession.setAttribute("endDate", endDate);
 
 		return new ModelAndView(new RedirectView(request.getContextPath() + "/module/disa/viralLoadResultsList.form"));
 	}
@@ -86,9 +105,15 @@ public class ViralLoadResultsController {
 		sismaCodes.add(loAttribute.get(0).getValueReference());
 
 		HttpSession httpSession = request.getSession();
-		String vlState = (String) httpSession.getAttribute("vlState"); // request.getParameter("vlState");
-		String jsonViralLoadInfo = rest.getRequestGetFsrByStatus("/viral-status",
-				new ArrayList<String>(Arrays.asList(loAttribute.get(0).getValueReference())), vlState);
+		String vlState = (String) httpSession.getAttribute("vlState");
+		Date startDate = (Date) httpSession.getAttribute("startDate");
+		Date endDate = (Date) httpSession.getAttribute("endDate");
+		String strStartDate = formatDate(startDate).replace("12:00:00", "00:00:00");
+		String strEndDate = formatDate(endDate).replace("12:00:00", "23:59:59");
+
+		String jsonViralLoadInfo = rest.getRequestGetFsrByStatusAndDates("/viral-status-dates",
+				new ArrayList<String>(Arrays.asList(loAttribute.get(0).getValueReference())), vlState, strStartDate,
+				strEndDate);
 		List<Disa> vlDataLst = new Gson().fromJson(jsonViralLoadInfo, new TypeToken<ArrayList<Disa>>() {
 		}.getType());
 
@@ -106,8 +131,17 @@ public class ViralLoadResultsController {
 
 	@SuppressWarnings({ "unchecked", "deprecation" })
 	@RequestMapping(value = "/module/disa/mapPatientIdentifierForm", method = RequestMethod.GET)
-	public void patientIdentifierMapping(HttpSession session, HttpServletRequest request) {
+	public void patientIdentifierMapping(@ModelAttribute("patient") Patient patient, HttpSession session,
+			HttpServletRequest request,
+			@RequestParam(required = false, value = "errorPatientRequired") String errorPatientRequired,
+			@RequestParam(required = false, value = "errorSelectPatient") String errorSelectPatient) {
 		String nid = (String) request.getParameter("nid");
+		List<Patient> matchingPatients = null;
+
+		if (nid == null) {
+			nid = (String) session.getAttribute("nid");
+			matchingPatients = (List<Patient>) session.getAttribute("patients");
+		}
 
 		List<Disa> vlDataLst = (List<Disa>) session.getAttribute("vlDataLst");
 		Disa selectedPatient = null;
@@ -118,21 +152,65 @@ public class ViralLoadResultsController {
 			}
 		}
 
-		List<Patient> matchingPatients = Context.getPatientService()
-				.getPatientsByName(selectedPatient.getFirstName() + " " + selectedPatient.getLastName());
+		if (matchingPatients == null) {
+			matchingPatients = Context.getPatientService()
+					.getPatientsByName(selectedPatient.getFirstName() + " " + selectedPatient.getLastName());
+		}
 
 		session.setAttribute("selectedPatient", selectedPatient);
 		session.setAttribute("patients", matchingPatients);
+		session.setAttribute("nid", nid);
+		session.setAttribute("errorPatientRequired", errorPatientRequired);
+		session.setAttribute("errorSelectPatient", errorSelectPatient);
+	}
+
+	@SuppressWarnings({ "unchecked" })
+	@RequestMapping(value = "/module/disa/addPatient.form", method = RequestMethod.POST)
+	public ModelAndView addPatient(@ModelAttribute("patient") Patient patient, BindingResult result,
+			HttpServletRequest request, HttpSession session) throws Exception {
+
+		ModelAndView model = new ModelAndView(
+				new RedirectView(request.getContextPath() + "/module/disa/mapPatientIdentifierForm.form"));
+		if (patient.getId() == null) {
+			model.addObject("errorPatientRequired", "disa.error.patient.required");
+			return model;
+		}
+
+		List<Patient> patients = (List<Patient>) session.getAttribute("patients");
+		Patient patientToAdd = Context.getPatientService().getPatient(patient.getId());
+		if (!patients.contains(patientToAdd)) {
+			// TODO This is a workaround to LazyInitialization error when getting
+			// identifiers from patient on jsp
+			Set<PatientIdentifier> identifiers = new TreeSet<PatientIdentifier>();
+			identifiers.add(patientToAdd.getPatientIdentifier());
+			patientToAdd.setIdentifiers(identifiers);
+			patients.add(patientToAdd);
+		}
+
+		session.setAttribute("patients", patients);
+
+		return model;
 	}
 
 	@SuppressWarnings("deprecation")
 	@RequestMapping(value = "/module/disa/mapPatientIdentifierForm", method = RequestMethod.POST)
 	public ModelAndView mapPatientIdentifier(HttpServletRequest request,
-			@RequestParam("patientUuid") String patientUuid, @RequestParam("nid") String nidDisa) throws Exception {
+			@RequestParam(required = false, value = "patientUuid") String patientUuid) throws Exception {
+
+		ModelAndView modelAndView = new ModelAndView(
+				new RedirectView(request.getContextPath() + "/module/disa/mapPatientIdentifierForm.form"));
+
+		if (patientUuid == null) {
+			modelAndView.addObject("errorSelectPatient", "disa.select.patient");
+			return modelAndView;
+		}
+
+		String nidDisa = (String) request.getSession().getAttribute("nid");
 
 		Patient patient = Context.getPatientService().getPatientByUuid(patientUuid);
 		PatientIdentifier patientIdentifier = new PatientIdentifier();
-		PatientIdentifierType identifierType = Context.getPatientService().getPatientIdentifierType(15);
+		PatientIdentifierType identifierType = Context.getPatientService()
+				.getPatientIdentifierTypeByUuid(Constants.DISA_NID);
 
 		List<PatientIdentifier> patIdentidier = Context.getPatientService().getPatientIdentifiers(nidDisa,
 				identifierType);
@@ -152,7 +230,8 @@ public class ViralLoadResultsController {
 		return new ModelAndView(new RedirectView(request.getContextPath() + "/module/disa/viralLoadResultsList.form"));
 	}
 
-	public void createExcelFile(List<Disa> listDisa, HttpServletResponse response) throws Exception {
+	private void createExcelFile(List<Disa> listDisa, HttpServletResponse response) throws Exception {
+		Locale locale = Context.getLocale();
 		try (ByteArrayOutputStream outByteStream = new ByteArrayOutputStream()) {
 			HSSFWorkbook workbook = new HSSFWorkbook();
 			HSSFSheet sheet = workbook.createSheet("ViralLoadData");
@@ -165,13 +244,13 @@ public class ViralLoadResultsController {
 			sheet.setColumnWidth(6, 8000);
 			sheet.setColumnWidth(7, 8000);
 			sheet.setColumnWidth(8, 8000);
-			createHeaderRow(sheet);
+			createHeaderRow(sheet, locale);
 
 			int rowCount = 0;
 
 			for (Disa disa : listDisa) {
 				Row row = sheet.createRow(++rowCount);
-				writeDisaList(disa, row);
+				writeDisaList(disa, row, locale);
 			}
 
 			workbook.write(outByteStream);
@@ -187,21 +266,19 @@ public class ViralLoadResultsController {
 		}
 	}
 
-	private void writeDisaList(Disa disa, Row row) {
+	private void writeDisaList(Disa disa, Row row, Locale locale) {
 		Cell cell = row.createCell(0);
 		cell.setCellValue(disa.getNid());
 
 		cell = row.createCell(1);
-		cell.setCellValue(disa.getFirstName());
+		cell.setCellValue(disa.getFirstName() + " " + disa.getLastName());
 
 		cell = row.createCell(2);
 		cell.setCellValue(disa.getGender());
 
 		cell = row.createCell(3);
 		cell.setCellType(Cell.CELL_TYPE_NUMERIC);
-		SimpleDateFormat datetemp = new SimpleDateFormat("yyyy-MM-dd");
-		String cellValue = datetemp.format(disa.getAge());
-		cell.setCellValue(cellValue);
+		cell.setCellValue(disa.getAge());
 
 		cell = row.createCell(4);
 		cell.setCellValue(disa.getRequestId());
@@ -216,10 +293,19 @@ public class ViralLoadResultsController {
 		cell.setCellValue(disa.getHivViralLoadResult());
 
 		cell = row.createCell(8);
-		cell.setCellValue(disa.getViralLoadStatus());
+		cell.setCellValue(
+				messageSourceService.getMessage("disa.viral.load.status." + disa.getViralLoadStatus(), null, locale));
+
+		cell = row.createCell(9);
+		String notProcessingCause = disa.getNotProcessingCause();
+		if (notProcessingCause == null) {
+			cell.setCellValue(notProcessingCause);
+		} else {
+			cell.setCellValue(messageSourceService.getMessage("disa." + notProcessingCause, null, locale));
+		}
 	}
 
-	public void createHeaderRow(Sheet sheet) {
+	private void createHeaderRow(Sheet sheet, Locale locale) {
 		CellStyle cellStyle = sheet.getWorkbook().createCellStyle();
 		cellStyle.setAlignment(CellStyle.ALIGN_LEFT);
 		Font font = sheet.getWorkbook().createFont();
@@ -227,8 +313,6 @@ public class ViralLoadResultsController {
 		font.setFontHeightInPoints((short) 12);
 		cellStyle.setFont(font);
 		cellStyle.setWrapText(true);
-
-		Locale locale = Context.getLocale();
 
 		Row row = sheet.createRow(0);
 
@@ -267,6 +351,14 @@ public class ViralLoadResultsController {
 		Cell cellCargaViralStatus = row.createCell(8);
 		cellCargaViralStatus.setCellStyle(cellStyle);
 		cellCargaViralStatus.setCellValue("Status");
+
+		Cell causaNaoProcessamento = row.createCell(9);
+		causaNaoProcessamento.setCellStyle(cellStyle);
+		causaNaoProcessamento.setCellValue(messageSourceService.getMessage("disa.not.processing.cause", null, locale));
 	}
 
+	private String formatDate(Date date) {
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+		return dateFormat.format(date);
+	}
 }

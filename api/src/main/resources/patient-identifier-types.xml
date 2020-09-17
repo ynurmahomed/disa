@@ -1,0 +1,4 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+	<patient_identifier_type  patient_identifier_type_id="15" name="NID (DISA)" description="Numero de Identificaçao de Doente, serviço DISA" format="[0-9]{10}/[0-9]{4}/[0-9]{5}" check_digit="false" creator="1" date_created="2020-08-20 09:04:10" required="false" format_description="CCPPDDUUSS/AAAA/NNNNN" retired="false" uuid="a31d7b5c-eafb-4bde-86c5-cb05ce29c240"/>
+</dataset>

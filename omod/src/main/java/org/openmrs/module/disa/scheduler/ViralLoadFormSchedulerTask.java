@@ -35,6 +35,7 @@ import com.google.gson.reflect.TypeToken;
 public class ViralLoadFormSchedulerTask extends AbstractTask {
 	private List<String> processed;
 	private List<String> notProcessed;
+	private List<String> notProcessedNoResult;
 	private RestUtil rest;
 	private DisaService disaService;
 	private Location locationBySismaCode;
@@ -63,6 +64,7 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 		// iterate the viral load list and create the encounters
 		processed = new ArrayList<String>();
 		notProcessed = new ArrayList<String>();
+		notProcessedNoResult = new ArrayList<String>();
 		for (Disa disa : getJsonViralLoad()) {
 			Encounter encounter = new Encounter();
 
@@ -74,8 +76,13 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 				notProcessed.add(disa.getNid());
 				continue;
 			} else {
-				processed.add(disa.getNid());
-				encounter.setPatient(patientsByIdentifier.get(0));
+				if (hasNoResult(disa)) {
+					notProcessedNoResult.add(disa.getNid());
+				} else {
+
+					processed.add(disa.getNid());
+					encounter.setPatient(patientsByIdentifier.get(0));
+				}
 			}
 
 			locationBySismaCode = getLocationBySismaCode(disa.getHealthFacilityLabCode());
@@ -314,6 +321,14 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 			updateProcessed();
 		if (notProcessed.size() > 0)
 			updateNotProcessed();
+		if (notProcessedNoResult.size() > 0)
+			updateNotProcessedNoResult();
+	}
+
+	private boolean hasNoResult(Disa disa) {
+		return (disa.getViralLoadResultCopies() == null || disa.getViralLoadResultCopies().isEmpty())
+				&& (disa.getViralLoadResultLog() == null || disa.getViralLoadResultLog().isEmpty())
+				&& (disa.getHivViralLoadResult() == null || disa.getHivViralLoadResult().isEmpty());
 	}
 
 	private List<Disa> getJsonViralLoad() {
@@ -339,7 +354,15 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 
 	private void updateNotProcessed() {
 		try {
-			rest.getRequestPutNotProcessed(Constants.URL_PATH_NOT_PROCESSED, notProcessed);
+			rest.getRequestPutNotProcessed(Constants.URL_PATH_NOT_PROCESSED, notProcessed, "nid");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void updateNotProcessedNoResult() {
+		try {
+			rest.getRequestPutNotProcessed(Constants.URL_PATH_NOT_PROCESSED, notProcessed, "result");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
