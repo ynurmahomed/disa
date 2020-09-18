@@ -8,6 +8,7 @@
 <%@ include file="template/localHeader.jsp"%>
 
 <h2><openmrs:message code="disa.list.viral.load.results"/></h2>
+<br />
 
 <c:if test="${not empty vlDataLst}">
 	<b class="boxHeader"><spring:message code="disa.list.viral.load.results" /></b>
@@ -40,9 +41,11 @@
 				        <td>${vlData.hivViralLoadResult}</td>
 				        <c:if test="${vlData.viralLoadStatus == 'NOT_PROCESSED'}">
 				        	<td><spring:message code="disa.${vlData.notProcessingCause}" /></td>
-				        	<c:if test="${vlData.notProcessingCause == 'NID_NOT_FOUND'}">
-				        		<td><a href='mapPatientIdentifierForm.form?nid=<c:out value="${vlData.nid}"/>'><spring:message code="disa.map.nid" /></a></td>
-				        	</c:if>
+				        	<td>
+				        		<c:if test="${vlData.notProcessingCause == 'NID_NOT_FOUND'}">
+				        			<a href='mapPatientIdentifierForm.form?nid=<c:out value="${vlData.nid}"/>'><spring:message code="disa.map.nid" /></a>
+				        		</c:if>
+				        	</td>
 				        </c:if>		        
 				    </tr>
 				</c:forEach>
