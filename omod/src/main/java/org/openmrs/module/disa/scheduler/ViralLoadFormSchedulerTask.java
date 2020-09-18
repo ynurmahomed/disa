@@ -78,6 +78,7 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 			} else {
 				if (hasNoResult(disa)) {
 					notProcessedNoResult.add(disa.getNid());
+					continue;
 				} else {
 
 					processed.add(disa.getNid());
@@ -362,7 +363,7 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 
 	private void updateNotProcessedNoResult() {
 		try {
-			rest.getRequestPutNotProcessed(Constants.URL_PATH_NOT_PROCESSED, notProcessed, "result");
+			rest.getRequestPutNotProcessed(Constants.URL_PATH_NOT_PROCESSED, notProcessedNoResult, "result");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
