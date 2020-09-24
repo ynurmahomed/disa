@@ -9,8 +9,10 @@ import javax.servlet.http.HttpSession;
 
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
+import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.disa.Disa;
 import org.openmrs.module.disa.web.delegate.ViralLoadResultsDelegate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -25,6 +27,13 @@ import org.springframework.web.servlet.view.RedirectView;
 public class ViralLoadResultsController {
 
 	private ViralLoadResultsDelegate delegate;
+
+	public MessageSourceService messageSourceService;
+
+	@Autowired
+	public void setMessageSourceService(MessageSourceService messageSourceService) {
+		this.messageSourceService = messageSourceService;
+	}
 
 	@RequestMapping(value = "/module/disa/viralLoadStatusList", method = RequestMethod.GET)
 	public void showViralLoadStatusList(ModelMap model) {
@@ -73,7 +82,7 @@ public class ViralLoadResultsController {
 	@RequestMapping(value = "/module/disa/viralLoadResultsList", method = RequestMethod.POST)
 	public void downloadExcelFile(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		List<Disa> vlDataLst = (List<Disa>) request.getSession().getAttribute("vlDataLst");
-		delegate.createExcelFile(vlDataLst, response);
+		delegate.createExcelFile(vlDataLst, response, messageSourceService);
 	}
 
 	@SuppressWarnings({ "unchecked" })

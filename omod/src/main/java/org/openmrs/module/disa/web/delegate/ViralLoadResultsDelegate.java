@@ -30,7 +30,6 @@ import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.disa.Disa;
 import org.openmrs.module.disa.extension.util.Constants;
 import org.openmrs.module.disa.extension.util.RestUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -38,8 +37,6 @@ import com.google.gson.reflect.TypeToken;
 public class ViralLoadResultsDelegate {
 
 	private RestUtil rest;
-
-	private MessageSourceService messageSourceService;
 
 	public ViralLoadResultsDelegate() {
 
@@ -52,11 +49,6 @@ public class ViralLoadResultsDelegate {
 				Context.getAdministrationService().getGlobalPropertyObject(Constants.DISA_PASSWORD).getPropertyValue());
 	}
 
-	@Autowired
-	public void setMessageSourceService(MessageSourceService messageSourceService) {
-		this.messageSourceService = messageSourceService;
-	}
-
 	public List<Disa> getViralLoadDataList(Date startDate, Date endDate, String vlState) throws Exception {
 
 		List<LocationAttribute> loAttribute = new ArrayList<LocationAttribute>(
@@ -64,11 +56,8 @@ public class ViralLoadResultsDelegate {
 
 		List<String> sismaCodes = Arrays.asList(loAttribute.get(0).getValueReference());
 
-		String strStartDate = formatDate(startDate).replace("12:00:00", "00:00:00");
-		String strEndDate = formatDate(endDate).replace("12:00:00", "23:59:59");
-
 		String jsonViralLoadInfo = rest.getRequestGetFsrByStatusAndDates("/viral-status-dates", sismaCodes, vlState,
-				strStartDate, strEndDate);
+				formatDate(startDate, 1), formatDate(endDate, 2));
 		return new Gson().fromJson(jsonViralLoadInfo, new TypeToken<ArrayList<Disa>>() {
 		}.getType());
 
@@ -117,7 +106,8 @@ public class ViralLoadResultsDelegate {
 		}
 	}
 
-	public void createExcelFile(List<Disa> listDisa, HttpServletResponse response) throws Exception {
+	public void createExcelFile(List<Disa> listDisa, HttpServletResponse response,
+			MessageSourceService messageSourceService) throws Exception {
 		Locale locale = Context.getLocale();
 		try (ByteArrayOutputStream outByteStream = new ByteArrayOutputStream()) {
 			HSSFWorkbook workbook = new HSSFWorkbook();
@@ -131,13 +121,13 @@ public class ViralLoadResultsDelegate {
 			sheet.setColumnWidth(6, 8000);
 			sheet.setColumnWidth(7, 8000);
 			sheet.setColumnWidth(8, 8000);
-			createHeaderRow(sheet, locale);
+			createHeaderRow(sheet, locale, messageSourceService);
 
 			int rowCount = 0;
 
 			for (Disa disa : listDisa) {
 				Row row = sheet.createRow(++rowCount);
-				writeDisaList(disa, row, locale);
+				writeDisaList(disa, row, locale, messageSourceService);
 			}
 
 			workbook.write(outByteStream);
@@ -153,7 +143,7 @@ public class ViralLoadResultsDelegate {
 		}
 	}
 
-	private void writeDisaList(Disa disa, Row row, Locale locale) {
+	private void writeDisaList(Disa disa, Row row, Locale locale, MessageSourceService messageSourceService) {
 		Cell cell = row.createCell(0);
 		cell.setCellValue(disa.getNid());
 
@@ -183,16 +173,18 @@ public class ViralLoadResultsDelegate {
 		cell.setCellValue(
 				messageSourceService.getMessage("disa.viral.load.status." + disa.getViralLoadStatus(), null, locale));
 
-		cell = row.createCell(9);
-		String notProcessingCause = disa.getNotProcessingCause();
-		if (notProcessingCause == null) {
-			cell.setCellValue(notProcessingCause);
-		} else {
-			cell.setCellValue(messageSourceService.getMessage("disa." + notProcessingCause, null, locale));
+		if (disa.getViralLoadStatus().equals("NOT_PROCESSED")) {
+			cell = row.createCell(9);
+			String notProcessingCause = disa.getNotProcessingCause();
+			if (notProcessingCause == null) {
+				cell.setCellValue(notProcessingCause);
+			} else {
+				cell.setCellValue(messageSourceService.getMessage("disa." + notProcessingCause, null, locale));
+			}
 		}
 	}
 
-	private void createHeaderRow(Sheet sheet, Locale locale) {
+	private void createHeaderRow(Sheet sheet, Locale locale, MessageSourceService messageSourceService) {
 		CellStyle cellStyle = sheet.getWorkbook().createCellStyle();
 		cellStyle.setAlignment(CellStyle.ALIGN_LEFT);
 		Font font = sheet.getWorkbook().createFont();
@@ -244,8 +236,8 @@ public class ViralLoadResultsDelegate {
 		causaNaoProcessamento.setCellValue(messageSourceService.getMessage("disa.not.processing.cause", null, locale));
 	}
 
-	private String formatDate(Date date) {
+	private String formatDate(Date date, int i) {
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-		return dateFormat.format(date);
+		return dateFormat.format(date).replace("12:00:00", i == 1 ? "00:00:00" : "23:59:59");
 	}
 }
