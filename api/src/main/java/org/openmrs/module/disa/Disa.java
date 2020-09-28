@@ -75,6 +75,8 @@ public class Disa {
 
 	private String viralLoadStatus;
 
+	private String notProcessingCause;
+
 	public String getViralLoadStatus() {
 		return viralLoadStatus;
 	}
@@ -321,6 +323,14 @@ public class Disa {
 
 	public void setRequestingFacilityName(String requestingFacilityName) {
 		this.requestingFacilityName = requestingFacilityName;
+	}
+
+	public String getNotProcessingCause() {
+		return notProcessingCause;
+	}
+
+	public void setNotProcessingCause(String notProcessingCause) {
+		this.notProcessingCause = notProcessingCause;
 	}
 
 	public Integer getAge() {

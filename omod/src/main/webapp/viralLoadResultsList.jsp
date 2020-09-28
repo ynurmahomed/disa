@@ -25,22 +25,28 @@
 					<th><spring:message code="disa.viralload.result.log" /></th>
 					<th><spring:message code="disa.viralload.result.coded" /></th>
 			        <c:if test="${vlState == 'NOT_PROCESSED'}">
+			        	<th><spring:message code="disa.not.processing.cause" /></th>
 			        	<th><spring:message code="disa.map.nid" /></th>
 			        </c:if>
 				</tr>	
 				<c:forEach items="${vlDataLst}" var="vlData">
 				    <tr>   
-					        <td>${vlData.nid}</td>
-					        <td>${vlData.firstName} ${vlData.lastName}</td>
-					        <td>${vlData.gender}</td>
-					        <td>${vlData.getAge()}</td>
-					        <td>${vlData.requestId}</td>
-					        <td>${vlData.viralLoadResultCopies}</td>
-					        <td>${vlData.viralLoadResultLog}</td>
-					        <td>${vlData.hivViralLoadResult}</td>
-					        <c:if test="${vlData.viralLoadStatus == 'NOT_PROCESSED'}">
-					        	<td><a href='mapPatientIdentifierForm.form?nid=<c:out value="${vlData.nid}"/>'><spring:message code="disa.map.nid" /></a></td>
-					        </c:if>		        
+				        <td>${vlData.nid}</td>
+				        <td>${vlData.firstName} ${vlData.lastName}</td>
+				        <td>${vlData.gender}</td>
+				        <td>${vlData.getAge()}</td>
+				        <td>${vlData.requestId}</td>
+				        <td>${vlData.viralLoadResultCopies}</td>
+				        <td>${vlData.viralLoadResultLog}</td>
+				        <td>${vlData.hivViralLoadResult}</td>
+				        <c:if test="${vlData.viralLoadStatus == 'NOT_PROCESSED'}">
+				        	<td><spring:message code="disa.${vlData.notProcessingCause}" /></td>
+				        	<td>
+				        		<c:if test="${vlData.notProcessingCause == 'NID_NOT_FOUND'}">
+				        			<a href='mapPatientIdentifierForm.form?nid=<c:out value="${vlData.nid}"/>'><spring:message code="disa.map.nid" /></a>
+				        		</c:if>
+				        	</td>
+				        </c:if>		        
 				    </tr>
 				</c:forEach>
 			</table>
@@ -62,12 +68,7 @@
 <c:if test="${empty vlDataLst}">
 	<div id="openmrs_msg">
 		<b> <spring:message code="disa.no.viral.load" /></b>
-		<c:if test="${vlState == 'PROCESSED'}">
-			<b> <spring:message code="disa.viral.load.status.processed" /></b>
-		</c:if>
-		<c:if test="${vlState == 'NOT_PROCESSED'}">
-			<b> <spring:message code="disa.viral.load.status.not_processed" /></b>
-		</c:if>
+		<b> <spring:message code="disa.viral.load.status.${vlState}" /></b>
 	</div>
 </c:if>
 

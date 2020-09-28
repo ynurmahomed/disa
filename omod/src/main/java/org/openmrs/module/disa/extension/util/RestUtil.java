@@ -110,11 +110,13 @@ public class RestUtil {
 	 * 
 	 * @param urlPathNotProcessed
 	 * @param sismaCodes
+	 * @param reasonForNotProcessing
 	 * @param input
 	 * @return
 	 * @throws Exception
 	 */
-	public Boolean getRequestPutNotProcessed(String urlPathNotProcessed, List<String> sismaCodes) throws Exception {
+	public Boolean getRequestPutNotProcessed(String urlPathNotProcessed, List<String> sismaCodes,
+			String reasonForNotProcessing) throws Exception {
 		String URL = URLBase + urlPathNotProcessed;
 		Boolean response = false;
 		DefaultHttpClient httpclient = new DefaultHttpClient();
@@ -124,6 +126,7 @@ public class RestUtil {
 			for (String sismaCode : sismaCodes) {
 				uriBuilder.addParameter("notProcessedNids", sismaCode);
 			}
+			uriBuilder.addParameter("reasonForNotProcessing", reasonForNotProcessing);
 
 			HttpPut httpPut = new HttpPut(uriBuilder.build());
 			UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(username, password);
@@ -173,7 +176,7 @@ public class RestUtil {
 			BasicScheme scheme = new BasicScheme();
 			Header authorizationHeader = scheme.authenticate(credentials, httpPut);
 			httpPut.setHeader(authorizationHeader);
-			
+
 			httpclient.execute(httpPut);
 
 			httpclient.getConnectionManager().shutdown();
@@ -242,6 +245,46 @@ public class RestUtil {
 			URIBuilder uriBuilder = new URIBuilder(URL);
 			uriBuilder.addParameter("locationCodes", sismaCodes.get(0));
 			uriBuilder.addParameter("viralLoadStatus", viralLoadStatus);
+
+			HttpGet httpGet = new HttpGet(uriBuilder.build());
+
+			UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(username, password);
+			BasicScheme scheme = new BasicScheme();
+			Header authorizationHeader = scheme.authenticate(credentials, httpGet);
+			httpGet.setHeader(authorizationHeader);
+			ResponseHandler<String> responseHandler = new BasicResponseHandler();
+
+			response = httpclient.execute(httpGet, responseHandler);
+
+		} finally {
+			httpclient.getConnectionManager().shutdown();
+		}
+		return response;
+	}
+
+	/**
+	 * HTTP GET
+	 * 
+	 * @param sismaCodes
+	 * @param sismaCodes
+	 * @param URLPath
+	 * @return
+	 * @throws Exception
+	 */
+	@SuppressWarnings("deprecation")
+	public String getRequestGetFsrByStatusAndDates(String urlPathProcessed, List<String> sismaCodes,
+			String viralLoadStatus, String startDate, String endDate) throws Exception {
+		String URL = URLBase + urlPathProcessed;
+		String response = "";
+		DefaultHttpClient httpclient = new DefaultHttpClient();
+
+		try {
+
+			URIBuilder uriBuilder = new URIBuilder(URL);
+			uriBuilder.addParameter("locationCodes", sismaCodes.get(0));
+			uriBuilder.addParameter("viralLoadStatus", viralLoadStatus);
+			uriBuilder.addParameter("startDate", startDate);
+			uriBuilder.addParameter("endDate", endDate);
 
 			HttpGet httpGet = new HttpGet(uriBuilder.build());
 
