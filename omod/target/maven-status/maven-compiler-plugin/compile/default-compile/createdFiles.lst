@@ -1,7 +1,10 @@
 org/openmrs/module/disa/extension/util/WardEnum.class
 org/openmrs/module/disa/web/controller/ViralLoadListController.class
+org/openmrs/module/disa/web/controller/ViralLoadResultsController.class
+org/openmrs/module/disa/web/delegate/ViralLoadResultsDelegate$1.class
 org/openmrs/module/disa/web/controller/EditNotProcessedController.class
 cl/ciochile/victoraravena/ApiAuthRest.class
+org/openmrs/module/disa/web/delegate/ViralLoadResultsDelegate.class
 org/openmrs/module/disa/extension/util/GenericUtil.class
 org/openmrs/module/disa/extension/util/Constants.class
 org/openmrs/module/disa/extension/util/DateUtil.class
