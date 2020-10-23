@@ -7,6 +7,19 @@
 
 <%@ include file="template/localHeader.jsp"%>
 
+<openmrs:htmlInclude
+	file="/scripts/jquery/dataTables/css/dataTables_jui.css" />
+<openmrs:htmlInclude
+	file="/scripts/jquery/dataTables/js/jquery.dataTables.min.js" />
+
+<script type="text/javascript">
+	$j(document).ready(function() {
+		$j('#vlResultsTable1').dataTable({
+			"iDisplayLength" : 10
+		});
+	})
+</script>
+
 <h2><openmrs:message code="disa.map.identifiers"/></h2>
 <br /> 
 
@@ -58,26 +71,31 @@
 	</c:if>
 	<form method="post" action="mapPatientIdentifierForm.form">
 		
-		<table  id="vlResultsTable">
-			<tr>
-				<th><spring:message code="disa.nid" /></th>
-				<th><spring:message code="general.name" /></th>
-				<th><spring:message code="disa.gender" /></th>
-				<th><spring:message code="disa.age" /></th>
-				<th><spring:message code="general.select" /></th>
-			</tr>	
-			<c:forEach items="${patients}" var="patient">
-			    <tr>   
-			        <td>${patient.identifiers.iterator().next()}</td>
-			        <td>${patient.givenName} ${patient.middleName} ${patient.familyName}</td>
-			        <td>${patient.gender}</td>
-			        <td>${patient.getAge()}</td>
-				    <td>
-			    		<input type="hidden" id="nid" name="nid" value="${selectedPatient.nid}" />
-	      					<input type="radio" name="patientUuid" id="patientUuid" value="${patient.uuid}" />
-				    </td>
-			    </tr>
-			</c:forEach>
+		<table  id="vlResultsTable1"  class="display" width="100%" cellpadding="2" cellspacing="0"
+				style="font-size: 13px;">
+			<thead>
+				<tr>
+					<th><spring:message code="disa.nid" /></th>
+					<th><spring:message code="general.name" /></th>
+					<th><spring:message code="disa.gender" /></th>
+					<th><spring:message code="disa.age" /></th>
+					<th><spring:message code="general.select" /></th>
+				</tr>
+			</thead>
+			<tbody>
+				<c:forEach items="${patients}" var="patient">
+				    <tr>   
+				        <td>${patient.identifiers.iterator().next()}</td>
+				        <td>${patient.givenName} ${patient.middleName} ${patient.familyName}</td>
+				        <td>${patient.gender}</td>
+				        <td>${patient.getAge()}</td>
+					    <td>
+				    		<input type="hidden" id="nid" name="nid" value="${selectedPatient.nid}" />
+		      					<input type="radio" name="patientUuid" id="patientUuid" value="${patient.uuid}" />
+					    </td>
+				    </tr>
+				</c:forEach>
+			</tbody>
 		</table>
 		<br />
 		<div class="submit-btn" align="center">
