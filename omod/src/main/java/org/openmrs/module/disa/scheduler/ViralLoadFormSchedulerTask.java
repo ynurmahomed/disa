@@ -58,7 +58,6 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 		Context.closeSession();
 	}
 
-	@SuppressWarnings("deprecation")
 	private void createViralLoadForm() {
 
 		// iterate the viral load list and create the encounters
@@ -70,7 +69,7 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 
 			encounter.setEncounterDatetime(new Date());
 			List<Patient> patientsByIdentifier = Context.getPatientService()
-					.getPatientsByIdentifier(disa.getNid().trim(), Boolean.FALSE);
+					.getPatients(null, disa.getNid().trim(), null, Boolean.TRUE);
 
 			if (patientsByIdentifier.isEmpty()) {
 				notProcessed.add(disa.getNid());
@@ -318,12 +317,9 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 
 		}
 
-		if (processed.size() > 0)
-			updateProcessed();
-		if (notProcessed.size() > 0)
-			updateNotProcessed();
-		if (notProcessedNoResult.size() > 0)
-			updateNotProcessedNoResult();
+		if (processed.size() > 0) updateProcessed();
+		if (notProcessed.size() > 0) updateNotProcessed();
+		if (notProcessedNoResult.size() > 0) updateNotProcessedNoResult();
 	}
 
 	private boolean hasNoResult(Disa disa) {

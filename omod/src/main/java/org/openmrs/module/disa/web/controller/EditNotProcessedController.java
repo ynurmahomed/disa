@@ -1,5 +1,6 @@
 package org.openmrs.module.disa.web.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,7 +29,6 @@ public class EditNotProcessedController {
 		model.addAttribute("user", Context.getAuthenticatedUser());		
 	}
 	
-	@SuppressWarnings("deprecation")
 	@RequestMapping(value = "/module/disa/editNotProcessedForm", method = RequestMethod.POST)
 	public ModelAndView submitForm(HttpServletRequest request, @RequestParam("idPatient") String idPatient, @RequestParam("nid") String nidDisa) throws Exception {
 		if(idPatient == null || idPatient == "") {
@@ -38,8 +38,10 @@ public class EditNotProcessedController {
 			Patient patient = Context.getPatientService().getPatient(Integer.parseInt(idPatient));
 			PatientIdentifier patientIdentifier = new PatientIdentifier();
 			PatientIdentifierType identifierType = Context.getPatientService().getPatientIdentifierType(15);
+			List<PatientIdentifierType> patientIdentifierTypes = new ArrayList<PatientIdentifierType>();
+			patientIdentifierTypes.add(identifierType);
 			
-			List<PatientIdentifier> patIdentidier = Context.getPatientService().getPatientIdentifiers(nidDisa, identifierType);
+			List<PatientIdentifier> patIdentidier = Context.getPatientService().getPatientIdentifiers(nidDisa, patientIdentifierTypes, null, null, null);
 				if(patIdentidier.isEmpty()) {
 					patientIdentifier.setPatient(patient);
 					patientIdentifier.setIdentifier(nidDisa);

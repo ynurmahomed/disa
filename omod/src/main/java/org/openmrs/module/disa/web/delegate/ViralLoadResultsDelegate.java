@@ -63,10 +63,9 @@ public class ViralLoadResultsDelegate {
 
 	}
 
-	@SuppressWarnings("deprecation")
 	public List<Patient> getPatients(Disa selectedPatient) {
 		return Context.getPatientService()
-				.getPatientsByName(selectedPatient.getFirstName() + " " + selectedPatient.getLastName());
+				.getPatients(selectedPatient.getFirstName() + " " + selectedPatient.getLastName(), null, null, Boolean.FALSE);
 	}
 
 	public void addPatientToList(List<Patient> patients, Patient patient) {
@@ -82,15 +81,14 @@ public class ViralLoadResultsDelegate {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	public void doMapIdentifier(String patientUuid, String nidDisa) {
 		Patient patient = Context.getPatientService().getPatientByUuid(patientUuid);
 		PatientIdentifier patientIdentifier = new PatientIdentifier();
-		PatientIdentifierType identifierType = Context.getPatientService()
-				.getPatientIdentifierTypeByUuid(Constants.DISA_NID);
+		PatientIdentifierType identifierType = Context.getPatientService().getPatientIdentifierTypeByUuid(Constants.DISA_NID);
+		List<PatientIdentifierType> patientIdentifierTypes = new ArrayList<PatientIdentifierType>();
+		patientIdentifierTypes.add(identifierType);
 
-		List<PatientIdentifier> patIdentidier = Context.getPatientService().getPatientIdentifiers(nidDisa,
-				identifierType);
+		List<PatientIdentifier> patIdentidier = Context.getPatientService().getPatientIdentifiers(nidDisa, patientIdentifierTypes, null, null, null);
 		if (patIdentidier.isEmpty()) {
 			patientIdentifier.setPatient(patient);
 			patientIdentifier.setIdentifier(nidDisa);
