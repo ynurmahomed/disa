@@ -31,6 +31,7 @@ public class RestUtil {
 	 * @return
 	 * @throws Exception
 	 */
+	@SuppressWarnings("deprecation")
 	public Boolean getRequestPost(String URLPath, StringEntity input) throws Exception {
 		String URL = URLBase + URLPath;
 		Boolean response = false;
