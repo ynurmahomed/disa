@@ -1,12 +1,12 @@
 package org.openmrs.module.disa.scheduler;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openmrs.Encounter;
@@ -24,6 +24,7 @@ import org.openmrs.module.disa.extension.util.DateUtil;
 import org.openmrs.module.disa.extension.util.GenericUtil;
 import org.openmrs.module.disa.extension.util.RestUtil;
 import org.openmrs.scheduler.tasks.AbstractTask;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -55,29 +56,31 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 	@Override
 	public void execute() {
 		Context.openSession();
-		createViralLoadForm();
+		try {
+			createViralLoadForm();
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
 		Context.closeSession();
 	}
 
-	@SuppressWarnings("deprecation")
-	private void createViralLoadForm() {
+	@Transactional
+	private void createViralLoadForm() throws ParseException { 
 
 		// iterate the viral load list and create the encounters
 		processed = new ArrayList<String>();
 		notProcessed = new ArrayList<String>();
 		notProcessedNoResult = new ArrayList<String>();
 		
-		List<List<Disa>> jsonViralLoad = ListUtils.partition(getJsonViralLoad(), 10); 
+		List<Disa> jsonViralLoad = getJsonViralLoad(); 
 		System.out.println("There is " + jsonViralLoad.size() + " pending items to be processed");
 		
-		System.out.println("FSR creation started...");
-		for (List<Disa> disaLst : jsonViralLoad) {
+		for (Disa disa : jsonViralLoad) {
 			
-			for (Disa disa : disaLst) { 
-				
 				Encounter encounter = new Encounter();
 	
-				encounter.setEncounterDatetime(new Date());
+				encounter.setEncounterDatetime(DateUtil.stringToDate(disa.getCreatedAt())); 
+				@SuppressWarnings("deprecation")
 				List<Patient> patientsByIdentifier = Context.getPatientService()
 						.getPatientsByIdentifier(disa.getNid().trim(), Boolean.FALSE);
 	
@@ -106,6 +109,8 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 						Context.getProviderService().getProviderByUuid(Constants.DISA_PROVIDER));
 	
 				Context.getEncounterService().saveEncounter(encounter);
+				
+				System.out.println("FSR creation started...");
 	
 				Obs obs_23835 = new Obs();
 				obs_23835.setPerson(Context.getPersonService().getPersonByUuid(patientsByIdentifier.get(0).getUuid()));
@@ -324,17 +329,15 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 				obs_22771.setLocation(locationBySismaCode);
 				obs_22771.setEncounter(encounter);
 				Context.getObsService().saveObs(obs_22771, "");
+								
+				if (processed.size() > 0)
+					updateProcessed();
 		}
 		
-			System.out.println("FSR creation ended...");
-	
-			if (processed.size() > 0)
-				updateProcessed();
-			if (notProcessed.size() > 0)
-				updateNotProcessed();
-			if (notProcessedNoResult.size() > 0)
-				updateNotProcessedNoResult();
-		}
+		if (notProcessed.size() > 0)
+			updateNotProcessed();
+		if (notProcessedNoResult.size() > 0)
+			updateNotProcessedNoResult();
 	}
 
 	private boolean hasNoResult(Disa disa) {

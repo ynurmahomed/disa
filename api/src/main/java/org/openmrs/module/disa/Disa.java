@@ -5,6 +5,8 @@ import java.util.Date;
 
 import javax.persistence.Column;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * 
  * @author machabane

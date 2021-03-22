@@ -72,24 +72,23 @@ public class RestUtil {
 	 * @return
 	 * @throws Exception
 	 */
-	public Boolean getRequestPutProcessed(String urlPathProcessed, List<String> sismaCodes) throws Exception {
+	public Boolean getRequestPutProcessed(String urlPathProcessed, List<String> processedNids) throws Exception {
 		String URL = URLBase + urlPathProcessed;
 		Boolean response = false;
 		DefaultHttpClient httpclient = new DefaultHttpClient();
 		try {
 
 			URIBuilder uriBuilder = new URIBuilder(URL);
-			for (String sismaCode : sismaCodes) {
-				uriBuilder.addParameter("processedNids", sismaCode);
+			for (String processedNid : processedNids) {
+				uriBuilder.addParameter("processedNids", processedNid);
 			}
 
 			HttpPut httpPut = new HttpPut(uriBuilder.build());
 			UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(username, password);
-			BasicScheme scheme = new BasicScheme();
-			Header authorizationHeader = scheme.authenticate(credentials, httpPut);
+		    Header authorizationHeader = BasicScheme.authenticate(credentials, "UTF-8", false);
 			httpPut.setHeader(authorizationHeader);
 
-			HttpResponse responseRequest = httpclient.execute(httpPut);
+			httpclient.execute(httpPut);
 
 			/*
 			 * if (responseRequest.getStatusLine().getStatusCode() != 204 &&
@@ -116,7 +115,7 @@ public class RestUtil {
 	 * @return
 	 * @throws Exception
 	 */
-	public Boolean getRequestPutNotProcessed(String urlPathNotProcessed, List<String> sismaCodes,
+	public Boolean getRequestPutNotProcessed(String urlPathNotProcessed, List<String> processedNids,
 			String reasonForNotProcessing) throws Exception {
 		String URL = URLBase + urlPathNotProcessed;
 		Boolean response = false;
@@ -124,18 +123,17 @@ public class RestUtil {
 		try {
 
 			URIBuilder uriBuilder = new URIBuilder(URL);
-			for (String sismaCode : sismaCodes) {
-				uriBuilder.addParameter("notProcessedNids", sismaCode);
+			for (String processedNid : processedNids) {
+				uriBuilder.addParameter("notProcessedNids", processedNid);
 			}
 			uriBuilder.addParameter("reasonForNotProcessing", reasonForNotProcessing);
 
 			HttpPut httpPut = new HttpPut(uriBuilder.build());
 			UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(username, password);
-			BasicScheme scheme = new BasicScheme();
-			Header authorizationHeader = scheme.authenticate(credentials, httpPut);
+			Header authorizationHeader = BasicScheme.authenticate(credentials, "UTF-8", false);
 			httpPut.setHeader(authorizationHeader);
 
-			HttpResponse responseRequest = httpclient.execute(httpPut);
+			httpclient.execute(httpPut);
 
 			/*
 			 * if (responseRequest.getStatusLine().getStatusCode() != 204 &&
@@ -174,8 +172,7 @@ public class RestUtil {
 
 			HttpPut httpPut = new HttpPut(uriBuilder.build());
 			UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(username, password);
-			BasicScheme scheme = new BasicScheme();
-			Header authorizationHeader = scheme.authenticate(credentials, httpPut);
+			Header authorizationHeader = BasicScheme.authenticate(credentials, "UTF-8", false);
 			httpPut.setHeader(authorizationHeader);
 
 			httpclient.execute(httpPut);
