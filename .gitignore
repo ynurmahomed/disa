@@ -9,6 +9,8 @@ Eclipse
 bin/
 tmp/
 target/
+api/target/
+omod/
 *.tmp
 *.bak
 *.swp
