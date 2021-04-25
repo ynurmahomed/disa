@@ -18,6 +18,7 @@ import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.disa.Disa;
+import org.openmrs.module.disa.FsrLog;
 import org.openmrs.module.disa.api.DisaService;
 import org.openmrs.module.disa.extension.util.Constants;
 import org.openmrs.module.disa.extension.util.DateUtil;
@@ -64,6 +65,7 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 		Context.closeSession();
 	}
 
+	@SuppressWarnings("deprecation")
 	@Transactional
 	private void createViralLoadForm() throws ParseException { 
 
@@ -80,20 +82,19 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 				Encounter encounter = new Encounter();
 	
 				encounter.setEncounterDatetime(DateUtil.stringToDate(disa.getCreatedAt())); 
-				@SuppressWarnings("deprecation")
 				List<Patient> patientsByIdentifier = Context.getPatientService()
 						.getPatientsByIdentifier(disa.getNid().trim(), Boolean.FALSE);
 	
 				if (patientsByIdentifier.isEmpty()) {
-					notProcessed.add(disa.getNid());
+					notProcessed.add(disa.getRequestId());
 					continue;
 				} else {
 					if (hasNoResult(disa)) {
-						notProcessedNoResult.add(disa.getNid());
+						notProcessedNoResult.add(disa.getRequestId());
 						continue;
 					} else {
 	
-						processed.add(disa.getNid());
+						processed.add(disa.getRequestId());
 						encounter.setPatient(patientsByIdentifier.get(0));
 					}
 				}
@@ -329,6 +330,16 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 				obs_22771.setLocation(locationBySismaCode);
 				obs_22771.setEncounter(encounter);
 				Context.getObsService().saveObs(obs_22771, "");
+				
+				//log the fsr in openmrs
+				FsrLog fsrLog = new FsrLog();
+				fsrLog.setPatientId(encounter.getPatientId());
+				fsrLog.setEncounterId(encounter.getEncounterId());
+				fsrLog.setPatientIdentifier(disa.getNid());
+				fsrLog.setRequestId(disa.getRequestId());
+				fsrLog.setCreator(Context.getAuthenticatedUser().getId());     
+				fsrLog.setDateCreated(new Date());
+				disaService.saveFsrLog(fsrLog);
 								
 				if (processed.size() > 0)
 					updateProcessed();

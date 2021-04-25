@@ -83,7 +83,7 @@ public class ViralLoadResultsDelegate {
 	}
 
 	@SuppressWarnings("deprecation")
-	public void doMapIdentifier(String patientUuid, String nidDisa) {
+	public void doMapIdentifier(String patientUuid, String nidDisa, String requestId) {
 		Patient patient = Context.getPatientService().getPatientByUuid(patientUuid);
 		PatientIdentifier patientIdentifier = new PatientIdentifier();
 		PatientIdentifierType identifierType = Context.getPatientService()
@@ -99,7 +99,7 @@ public class ViralLoadResultsDelegate {
 			Context.getPatientService().savePatientIdentifier(patientIdentifier);
 
 			try {
-				rest.getRequestPutPending("/pending", new ArrayList<String>(Arrays.asList(nidDisa)));
+				rest.getRequestPutPending("/pending", new ArrayList<String>(Arrays.asList(requestId))); 
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

@@ -133,7 +133,8 @@ public class ViralLoadResultsController {
 		}
 
 		String nidDisa = (String) session.getAttribute("nid");
-		delegate.doMapIdentifier(patientUuid, nidDisa);
+		Disa selectedPatient =  (Disa) session.getAttribute("selectedPatient");
+		delegate.doMapIdentifier(patientUuid, nidDisa, selectedPatient.getRequestId());
 
 		return new ModelAndView(new RedirectView(request.getContextPath() + "/module/disa/viralLoadResultsList.form"));
 	}

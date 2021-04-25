@@ -16,10 +16,12 @@ package org.openmrs.module.disa.api.impl;
 import org.openmrs.LocationAttribute;
 import org.openmrs.api.impl.BaseOpenmrsService;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.module.disa.FsrLog;
 import org.openmrs.module.disa.api.DisaService;
 import org.openmrs.module.disa.api.db.DisaDAO;
 
@@ -49,5 +51,10 @@ public class DisaServiceImpl extends BaseOpenmrsService implements DisaService {
 	@Override
 	public List<LocationAttribute> getAllLocationAttribute() {
 		return dao.getAllLocationAttribute();
+	}
+
+	@Override
+	public Serializable saveFsrLog(FsrLog fsrLog) {
+		return dao.saveFsrLog(fsrLog); 
 	}
 }

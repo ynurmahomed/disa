@@ -13,10 +13,12 @@
  */
 package org.openmrs.module.disa.api;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.openmrs.LocationAttribute;
 import org.openmrs.api.OpenmrsService;
+import org.openmrs.module.disa.FsrLog;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -38,4 +40,6 @@ public interface DisaService extends OpenmrsService {
 	 */
 	
 	public List<LocationAttribute> getAllLocationAttribute();
+	
+	public Serializable saveFsrLog(FsrLog fsrLog);  
 }
