@@ -25,6 +25,17 @@
 			('disa.api.username', 'disa', 'api username', '23294c5c-871b-11e9-898c-0242ac120002', NULL, NULL, NULL, NULL),
 			('disa.mandatory', 'false', 'true/false whether or not the disa module MUST start when openmrs starts.  This is used to make sure that mission critical modules are always running if openmrs is running.', 'e4705f4d-437b-454a-99cf-9bd6aa126ce7', NULL, NULL, NULL, NULL),
 			('disa.started', 'true', 'DO NOT MODIFY. true/false whether or not the disa module has been started.  This is used to make sure modules that were running  prior to a restart are started again', 'd54c25dd-cbeb-4317-b306-4b1a3e68a8ae', NULL, NULL, NULL, NULL);
+			
+			CREATE TABLE `fsr_log` (
+  				`id` int(11) NOT NULL AUTO_INCREMENT,
+  				`patient_id` int(11) DEFAULT NULL,
+  				`encounter_id` int(11) DEFAULT NULL,
+  				`patient_identifier` varchar(50) DEFAULT NULL,
+  				`request_id` varchar(50) DEFAULT NULL,
+  				`creator` int(11) DEFAULT NULL,
+  				`date_created` datetime DEFAULT NULL,
+  				PRIMARY KEY (`id`)
+			) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 		</sql>
 	</diff>
 	
