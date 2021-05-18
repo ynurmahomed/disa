@@ -21,11 +21,13 @@
 		<sql>
 			INSERT INTO openmrs.global_property VALUES 
 			('disa.api.password', 'disa', 'api password', '2686097c-871b-11e9-898c-0242ac120002', NULL, NULL, NULL, NULL),
+			('disa.api.location.attribute.type.uuid', '132895aa-1c88-11e8-b6fd-7395830b63f3', 'location atribute type uuid', '2686097c-871b-11e9-898c-0242ac129992', NULL, NULL, NULL, NULL),
 			('disa.api.url', 'http://dev.fgh.org.mz:8085/services/viralloads', 'APHL data source to collect viral load data', 'e07cdb3f-871a-11e9-898c-0242ac120002', NULL, NULL, NULL, NULL),
 			('disa.api.username', 'disa', 'api username', '23294c5c-871b-11e9-898c-0242ac120002', NULL, NULL, NULL, NULL),
 			('disa.mandatory', 'false', 'true/false whether or not the disa module MUST start when openmrs starts.  This is used to make sure that mission critical modules are always running if openmrs is running.', 'e4705f4d-437b-454a-99cf-9bd6aa126ce7', NULL, NULL, NULL, NULL),
 			('disa.started', 'true', 'DO NOT MODIFY. true/false whether or not the disa module has been started.  This is used to make sure modules that were running  prior to a restart are started again', 'd54c25dd-cbeb-4317-b306-4b1a3e68a8ae', NULL, NULL, NULL, NULL);
-			
+		</sql>
+		<sql>
 			CREATE TABLE `fsr_log` (
   				`id` int(11) NOT NULL AUTO_INCREMENT,
   				`patient_id` int(11) DEFAULT NULL,
