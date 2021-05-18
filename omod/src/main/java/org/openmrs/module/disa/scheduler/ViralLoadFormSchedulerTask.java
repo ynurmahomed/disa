@@ -399,7 +399,8 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 
 	private Location getLocationBySismaCode(String sismaCode) {
 		LocationAttributeType locationAttributeType = Context.getLocationService()
-				.getLocationAttributeTypeByUuid(Constants.LOCATION_ATTRIBUTE_TYPE_UUID);
+				.getLocationAttributeTypeByUuid(Context.getAdministrationService().
+						getGlobalPropertyObject(Constants.LOCATION_ATTRIBUTE_TYPE_UUID).getPropertyValue());
 		Map<LocationAttributeType, Object> hashMap = new HashMap<LocationAttributeType, Object>();
 		hashMap.put(locationAttributeType, sismaCode);
 		List<Location> locations = Context.getLocationService().getLocations(null, null, hashMap, false, null, null);
