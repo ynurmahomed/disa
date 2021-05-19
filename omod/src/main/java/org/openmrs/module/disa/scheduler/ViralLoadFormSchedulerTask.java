@@ -64,23 +64,27 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 		processed = new ArrayList<String>();
 		notProcessed = new ArrayList<String>();
 		notProcessedNoResult = new ArrayList<String>();
-		for (Disa disa : getJsonViralLoad()) {
+		
+		List<Disa> jsonViralLoad = getJsonViralLoad(); 
+		System.out.println("There is " + jsonViralLoad.size() + " pending items to be processed");
+		
+		for (Disa disa : jsonViralLoad) {
 			Encounter encounter = new Encounter();
 
-			encounter.setEncounterDatetime(new Date());
+			encounter.setEncounterDatetime(DateUtil.deserialize(disa.getCreatedAt())); 
 			List<Patient> patientsByIdentifier = Context.getPatientService()
 					.getPatients(null, disa.getNid().trim(), null, Boolean.TRUE);
 
 			if (patientsByIdentifier.isEmpty()) {
-				notProcessed.add(disa.getNid());
+				notProcessed.add(disa.getRequestId());
 				continue;
 			} else {
 				if (hasNoResult(disa)) {
-					notProcessedNoResult.add(disa.getNid());
+					notProcessedNoResult.add(disa.getRequestId());
 					continue;
 				} else {
 
-					processed.add(disa.getNid());
+					processed.add(disa.getRequestId());
 					encounter.setPatient(patientsByIdentifier.get(0));
 				}
 			}
