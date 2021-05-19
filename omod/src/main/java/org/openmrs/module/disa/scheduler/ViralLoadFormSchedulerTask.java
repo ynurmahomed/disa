@@ -103,17 +103,21 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 			obs_23835.setConcept(Context.getConceptService().getConceptByUuid(Constants.LAB_NUMBER));
 			obs_23835.setLocation(locationBySismaCode);
 			obs_23835.setEncounter(encounter);
-			obs_23835.setValueText(disa.getHealthFacilityLabCode());
-			Context.getObsService().saveObs(obs_23835, "");
+			if (StringUtils.isNotEmpty(disa.getHealthFacilityLabCode())) {
+				obs_23835.setValueText(disa.getHealthFacilityLabCode());
+				Context.getObsService().saveObs(obs_23835, "");
+			}
 
 			Obs obs_23883 = new Obs();
 			obs_23883.setPerson(Context.getPersonService().getPersonByUuid(patientsByIdentifier.get(0).getUuid()));
 			obs_23883.setObsDatetime(new Date());
 			obs_23883.setConcept(Context.getConceptService().getConceptByUuid(Constants.PICKING_LOCATION));
-			obs_23883.setValueText(disa.getRequestingFacilityName());
 			obs_23883.setLocation(locationBySismaCode);
 			obs_23883.setEncounter(encounter);
-			Context.getObsService().saveObs(obs_23883, "");
+			if (StringUtils.isNotEmpty(disa.getRequestingFacilityName())) {
+				obs_23883.setValueText(disa.getRequestingFacilityName());
+				Context.getObsService().saveObs(obs_23883, "");
+			}
 
 			Obs obs_23836 = new Obs();
 			obs_23836.setPerson(Context.getPersonService().getPersonByUuid(patientsByIdentifier.get(0).getUuid()));
@@ -278,43 +282,48 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 				Context.getObsService().saveObs(obs_1306, "");
 			}
 
-			Obs obs_1518 = new Obs();
-			obs_1518.setPerson(Context.getPersonService().getPersonByUuid(patientsByIdentifier.get(0).getUuid()));
-			obs_1518.setObsDatetime(new Date());
-			obs_1518.setConcept(Context.getConceptService().getConceptByUuid(Constants.VIRAL_LOAD_LOG));
-			obs_1518.setValueNumeric(disa.getViralLoadResultLog() == null ? Double.valueOf(0.0)
+			Obs obs_165243 = new Obs();
+			obs_165243.setPerson(Context.getPersonService().getPersonByUuid(patientsByIdentifier.get(0).getUuid()));
+			obs_165243.setObsDatetime(new Date());
+			obs_165243.setConcept(Context.getConceptService().getConceptByUuid(Constants.VIRAL_LOAD_LOG));
+			obs_165243.setLocation(locationBySismaCode);
+			obs_165243.setEncounter(encounter);
+			obs_165243.setValueNumeric(disa.getViralLoadResultLog() == null ? Double.valueOf(0.0)
 					: Double.valueOf(disa.getViralLoadResultLog().toString().replace("<", "").trim()));
-			obs_1518.setLocation(locationBySismaCode);
-			obs_1518.setEncounter(encounter);
-			Context.getObsService().saveObs(obs_1518, "");
+			Context.getObsService().saveObs(obs_165243, "");
 
 			Obs obs_23839 = new Obs();
 			obs_23839.setPerson(Context.getPersonService().getPersonByUuid(patientsByIdentifier.get(0).getUuid()));
 			obs_23839.setObsDatetime(new Date());
 			obs_23839.setConcept(Context.getConceptService().getConceptByUuid(Constants.APPROVED_BY));
-			obs_23839.setValueText(disa.getAprovedBy().trim());
-			obs_23839.setLocation(locationBySismaCode);
 			obs_23839.setEncounter(encounter);
-			Context.getObsService().saveObs(obs_23839, "");
+			obs_23839.setLocation(locationBySismaCode);
+			if (StringUtils.isNotEmpty(disa.getAprovedBy().trim())) {
+				obs_23839.setValueText(disa.getAprovedBy().trim());
+				Context.getObsService().saveObs(obs_23839, "");
+			}
 
 			Obs obs_23841 = new Obs();
 			obs_23841.setPerson(Context.getPersonService().getPersonByUuid(patientsByIdentifier.get(0).getUuid()));
 			obs_23841.setObsDatetime(new Date());
 			obs_23841.setConcept(Context.getConceptService().getConceptByUuid(Constants.LAB_COMMENTS));
-			obs_23841.setValueText(disa.getLabComments().trim());
 			obs_23841.setLocation(locationBySismaCode);
 			obs_23841.setEncounter(encounter);
-			Context.getObsService().saveObs(obs_23841, "");
+			if (StringUtils.isNotEmpty(disa.getLabComments().trim())) {
+				obs_23841.setValueText(disa.getLabComments().trim());
+				Context.getObsService().saveObs(obs_23841, "");
+			}
 
 			Obs obs_22771 = new Obs();
 			obs_22771.setPerson(Context.getPersonService().getPersonByUuid(patientsByIdentifier.get(0).getUuid()));
 			obs_22771.setObsDatetime(new Date());
 			obs_22771.setConcept(Context.getConceptService().getConceptByUuid(Constants.ORDER_ID));
-			obs_22771.setValueText(disa.getRequestId().trim());
 			obs_22771.setLocation(locationBySismaCode);
 			obs_22771.setEncounter(encounter);
-			Context.getObsService().saveObs(obs_22771, "");
-
+			if (StringUtils.isNotEmpty(disa.getRequestId().trim())) {
+				obs_22771.setValueText(disa.getRequestId().trim());
+				Context.getObsService().saveObs(obs_22771, "");
+			}
 		}
 
 		if (processed.size() > 0) updateProcessed();

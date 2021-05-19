@@ -20,7 +20,7 @@ public class Constants {
 	public static final String SAMPLE_PROCESSING_DATE = "502337d4-94a1-4b0a-a728-567340fa3e79";
 	public static final String SAMPLE_TYPE = "47ee9ffd-8103-4788-ab23-e185c144cf1e";
 	public static final String VIRAL_LOAD_COPIES = "e1d6247e-1d5f-11e0-b929-000c29ad1d07";
-	public static final String VIRAL_LOAD_LOG = "e1dc4bf6-1d5f-11e0-b929-000c29ad1d07";
+	public static final String VIRAL_LOAD_LOG = "93fd1384-b639-4269-88c8-4215ea724d95";
 	public static final String HIV_VIRAL_LOAD_QUALITATIVE = "e1da2704-1d5f-11e0-b929-000c29ad1d07";
 	public static final String APPROVED_BY = "2177105d-c57b-446d-9066-e35a44c5b873";
 	public static final String LAB_COMMENTS = "246b0c6b-66f2-4d0d-988b-a0b867693fe6";
