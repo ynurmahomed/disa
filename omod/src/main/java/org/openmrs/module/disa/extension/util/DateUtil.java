@@ -26,4 +26,8 @@ public class DateUtil {
 		}
 		return parsedDate;
 	}
+	
+	public static Date stringToDate(String date) throws ParseException {
+	    return new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").parse(date);  
+	}
 }

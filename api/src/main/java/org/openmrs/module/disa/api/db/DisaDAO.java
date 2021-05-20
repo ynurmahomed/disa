@@ -13,9 +13,11 @@
  */
 package org.openmrs.module.disa.api.db;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.openmrs.LocationAttribute;
+import org.openmrs.module.disa.FsrLog;
 import org.openmrs.module.disa.api.DisaService;
 
 /**
@@ -28,4 +30,6 @@ public interface DisaDAO {
 	 */
 	
 	public List<LocationAttribute> getAllLocationAttribute();
+	
+	public Serializable saveFsrLog(FsrLog fsrLog); 
 }

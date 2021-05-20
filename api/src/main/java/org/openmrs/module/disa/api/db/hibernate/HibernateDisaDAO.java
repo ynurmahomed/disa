@@ -13,6 +13,7 @@
  */
 package org.openmrs.module.disa.api.db.hibernate;
 
+import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.List;
 
@@ -21,6 +22,7 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.openmrs.LocationAttribute;
+import org.openmrs.module.disa.FsrLog;
 import org.openmrs.module.disa.api.db.DisaDAO;
 
 /**
@@ -64,5 +66,10 @@ public class HibernateDisaDAO implements DisaDAO {
 		final String hql = "SELECT  l FROM LocationAttribute l";
 		final Query query = this.getCurrentSession().createQuery(hql);
 		return query.list();
+	}
+	
+	@Override
+	public Serializable saveFsrLog(FsrLog fsrLog) {
+		return this.getCurrentSession().save(fsrLog); 
 	}
 }

@@ -1,5 +1,6 @@
 package org.openmrs.module.disa.scheduler;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -17,6 +18,7 @@ import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.disa.Disa;
+import org.openmrs.module.disa.FsrLog;
 import org.openmrs.module.disa.api.DisaService;
 import org.openmrs.module.disa.extension.util.Constants;
 import org.openmrs.module.disa.extension.util.DateUtil;
@@ -54,11 +56,13 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 	@Override
 	public void execute() {
 		Context.openSession();
-		createViralLoadForm();
+		try {
+			createViralLoadForm();
+		} catch (ParseException e) {e.printStackTrace();}
 		Context.closeSession();
 	}
 
-	private void createViralLoadForm() {
+	private void createViralLoadForm() throws ParseException {
 
 		// iterate the viral load list and create the encounters
 		processed = new ArrayList<String>();
@@ -71,7 +75,7 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 		for (Disa disa : jsonViralLoad) {
 			Encounter encounter = new Encounter();
 
-			encounter.setEncounterDatetime(DateUtil.deserialize(disa.getCreatedAt())); 
+			encounter.setEncounterDatetime(DateUtil.stringToDate(disa.getCreatedAt())); 
 			List<Patient> patientsByIdentifier = Context.getPatientService()
 					.getPatients(null, disa.getNid().trim(), null, Boolean.TRUE);
 
@@ -328,9 +332,20 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 				obs_22771.setValueText(disa.getRequestId().trim());
 				Context.getObsService().saveObs(obs_22771, "");
 			}
+			
+			//log the fsr in openmrs
+			FsrLog fsrLog = new FsrLog();
+			fsrLog.setPatientId(encounter.getPatient().getPatientId());
+			fsrLog.setEncounterId(encounter.getEncounterId());
+			fsrLog.setPatientIdentifier(disa.getNid());
+			fsrLog.setRequestId(disa.getRequestId());
+			fsrLog.setCreator(Context.getAuthenticatedUser().getId());     
+			fsrLog.setDateCreated(new Date());
+			disaService.saveFsrLog(fsrLog);
+							
+			if (processed.size() > 0) updateProcessed();
 		}
 
-		if (processed.size() > 0) updateProcessed();
 		if (notProcessed.size() > 0) updateNotProcessed();
 		if (notProcessedNoResult.size() > 0) updateNotProcessedNoResult();
 	}
