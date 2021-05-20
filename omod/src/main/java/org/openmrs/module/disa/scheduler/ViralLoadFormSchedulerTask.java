@@ -25,6 +25,7 @@ import org.openmrs.module.disa.extension.util.DateUtil;
 import org.openmrs.module.disa.extension.util.GenericUtil;
 import org.openmrs.module.disa.extension.util.RestUtil;
 import org.openmrs.scheduler.tasks.AbstractTask;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -62,6 +63,7 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 		Context.closeSession();
 	}
 
+	@Transactional
 	private void createViralLoadForm() throws ParseException {
 
 		// iterate the viral load list and create the encounters
@@ -72,6 +74,8 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 		List<Disa> jsonViralLoad = getJsonViralLoad(); 
 		System.out.println("There is " + jsonViralLoad.size() + " pending items to be processed");
 		
+		System.out.println("Syncing started...");
+		
 		for (Disa disa : jsonViralLoad) {
 			Encounter encounter = new Encounter();
 
@@ -81,10 +85,14 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 
 			if (patientsByIdentifier.isEmpty()) {
 				notProcessed.add(disa.getRequestId());
+				updateNotProcessed();
+				notProcessed.clear();
 				continue;
 			} else {
 				if (hasNoResult(disa)) {
 					notProcessedNoResult.add(disa.getRequestId());
+					updateNotProcessedNoResult();
+					notProcessedNoResult.clear();
 					continue;
 				} else {
 
@@ -343,11 +351,12 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 			fsrLog.setDateCreated(new Date());
 			disaService.saveFsrLog(fsrLog);
 							
-			if (processed.size() > 0) updateProcessed();
+			updateProcessed();
+			
+			processed.clear();
 		}
-
-		if (notProcessed.size() > 0) updateNotProcessed();
-		if (notProcessedNoResult.size() > 0) updateNotProcessedNoResult();
+		
+		System.out.println("Syncing ended...");
 	}
 
 	private boolean hasNoResult(Disa disa) {
