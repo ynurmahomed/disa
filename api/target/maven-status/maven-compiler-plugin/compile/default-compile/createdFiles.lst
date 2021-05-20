@@ -3,4 +3,5 @@ org/openmrs/module/disa/api/DisaService.class
 org/openmrs/module/disa/api/impl/DisaServiceImpl.class
 org/openmrs/module/disa/api/db/DisaDAO.class
 org/openmrs/module/disa/Disa.class
+org/openmrs/module/disa/FsrLog.class
 org/openmrs/module/disa/api/db/hibernate/HibernateDisaDAO.class
