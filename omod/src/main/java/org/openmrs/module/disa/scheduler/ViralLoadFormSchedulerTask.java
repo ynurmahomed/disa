@@ -56,11 +56,13 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 
 	@Override
 	public void execute() {
+		System.out.println("module started...");
 		Context.openSession();
 		try {
 			createViralLoadForm();
 		} catch (ParseException e) {e.printStackTrace();}
 		Context.closeSession();
+		System.out.println("module ended...");
 	}
 
 	@Transactional
