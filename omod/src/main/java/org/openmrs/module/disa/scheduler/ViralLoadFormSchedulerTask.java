@@ -2,6 +2,7 @@ package org.openmrs.module.disa.scheduler;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -12,7 +13,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.openmrs.Encounter;
 import org.openmrs.EncounterRole;
 import org.openmrs.Location;
-import org.openmrs.LocationAttribute;
 import org.openmrs.LocationAttributeType;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
@@ -36,9 +36,9 @@ import com.google.gson.reflect.TypeToken;
  *
  */
 public class ViralLoadFormSchedulerTask extends AbstractTask {
-	private List<String> processed;
-	private List<String> notProcessed;
-	private List<String> notProcessedNoResult;
+	private String processed;
+	private String notProcessed;
+	private String notProcessedNoResult;
 	private RestUtil rest;
 	private DisaService disaService;
 	private Location locationBySismaCode;
@@ -56,6 +56,7 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 
 	@Override
 	public void execute() {
+		System.out.println("disa-epts sync started...");
 		Context.openSession();
 		try {
 			createViralLoadForm();
@@ -63,6 +64,7 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 			e.printStackTrace();
 		}
 		Context.closeSession();
+		System.out.println("disa-epts sync ended...");
 	}
 
 	@SuppressWarnings("deprecation")
@@ -70,9 +72,6 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 	private void createViralLoadForm() throws ParseException { 
 
 		// iterate the viral load list and create the encounters
-		processed = new ArrayList<String>();
-		notProcessed = new ArrayList<String>();
-		notProcessedNoResult = new ArrayList<String>();
 		
 		List<Disa> jsonViralLoad = getJsonViralLoad(); 
 		System.out.println("There is " + jsonViralLoad.size() + " pending items to be processed");
@@ -86,15 +85,16 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 						.getPatientsByIdentifier(disa.getNid().trim(), Boolean.FALSE);
 	
 				if (patientsByIdentifier.isEmpty()) {
-					notProcessed.add(disa.getRequestId());
+					notProcessed = disa.getRequestId();
+					updateNotProcessed();
 					continue;
 				} else {
 					if (hasNoResult(disa)) {
-						notProcessedNoResult.add(disa.getRequestId());
+						notProcessedNoResult = disa.getRequestId();
+						updateNotProcessedNoResult();
 						continue;
 					} else {
-	
-						processed.add(disa.getRequestId());
+						processed = disa.getRequestId();
 						encounter.setPatient(patientsByIdentifier.get(0));
 					}
 				}
@@ -341,14 +341,8 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 				fsrLog.setDateCreated(new Date());
 				disaService.saveFsrLog(fsrLog);
 								
-				if (processed.size() > 0)
-					updateProcessed();
+				updateProcessed();
 		}
-		
-		if (notProcessed.size() > 0)
-			updateNotProcessed();
-		if (notProcessedNoResult.size() > 0)
-			updateNotProcessedNoResult();
 	}
 
 	private boolean hasNoResult(Disa disa) {
@@ -371,7 +365,6 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 	}
 
 	private void updateProcessed() {
-		System.out.println("updateProcessed called...");
 		try {
 			rest.getRequestPutProcessed(Constants.URL_PATH_PROCESSED, processed);
 		} catch (Exception e) {
@@ -380,7 +373,6 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 	}
 
 	private void updateNotProcessed() {
-		System.out.println("updateNotProcessed called...");
 		try {
 			rest.getRequestPutNotProcessed(Constants.URL_PATH_NOT_PROCESSED, notProcessed, "nid");
 		} catch (Exception e) {
@@ -389,14 +381,13 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 	}
 
 	private void updateNotProcessedNoResult() {
-		System.out.println("updateNotProcessedNoResult called...");
 		try {
 			rest.getRequestPutNotProcessed(Constants.URL_PATH_NOT_PROCESSED, notProcessedNoResult, "result");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-
+		
 	private Location getLocationBySismaCode(String sismaCode) {
 		LocationAttributeType locationAttributeType = Context.getLocationService()
 				.getLocationAttributeTypeByUuid(Context.getAdministrationService().
@@ -409,11 +400,8 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 	}
 
 	private List<String> getAllDisaSismaCodes() {
-		List<String> valueReferences = new ArrayList<String>();
-		List<LocationAttribute> allLocationAttribute = disaService.getAllLocationAttribute();
-		for (LocationAttribute locationAttribute : allLocationAttribute) {
-			valueReferences.add(locationAttribute.getValueReference());
-		}
-		return valueReferences;
+		List<String> sismaCodes = Arrays.asList(Context.getAdministrationService()
+				.getGlobalPropertyObject(Constants.DISA_SISMA_CODE).getPropertyValue().split(",")); 
+		return sismaCodes;
 	}
 }

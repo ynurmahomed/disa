@@ -72,16 +72,14 @@ public class RestUtil {
 	 * @return
 	 * @throws Exception
 	 */
-	public Boolean getRequestPutProcessed(String urlPathProcessed, List<String> processedNids) throws Exception {
+	public Boolean getRequestPutProcessed(String urlPathProcessed, String processedNid) throws Exception {
 		String URL = URLBase + urlPathProcessed;
 		Boolean response = false;
 		DefaultHttpClient httpclient = new DefaultHttpClient();
 		try {
 
 			URIBuilder uriBuilder = new URIBuilder(URL);
-			for (String processedNid : processedNids) {
-				uriBuilder.addParameter("processedNids", processedNid);
-			}
+			uriBuilder.addParameter("processedNids", processedNid);
 
 			HttpPut httpPut = new HttpPut(uriBuilder.build());
 			UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(username, password);
@@ -115,7 +113,7 @@ public class RestUtil {
 	 * @return
 	 * @throws Exception
 	 */
-	public Boolean getRequestPutNotProcessed(String urlPathNotProcessed, List<String> processedNids,
+	public Boolean getRequestPutNotProcessed(String urlPathNotProcessed, String processedNid,
 			String reasonForNotProcessing) throws Exception {
 		String URL = URLBase + urlPathNotProcessed;
 		Boolean response = false;
@@ -123,9 +121,7 @@ public class RestUtil {
 		try {
 
 			URIBuilder uriBuilder = new URIBuilder(URL);
-			for (String processedNid : processedNids) {
-				uriBuilder.addParameter("notProcessedNids", processedNid);
-			}
+			uriBuilder.addParameter("notProcessedNids", processedNid);
 			uriBuilder.addParameter("reasonForNotProcessing", reasonForNotProcessing);
 
 			HttpPut httpPut = new HttpPut(uriBuilder.build());
@@ -192,6 +188,7 @@ public class RestUtil {
 	 * @return
 	 * @throws Exception
 	 */
+	@SuppressWarnings("deprecation")
 	public String getRequestGet(List<String> sismaCodes) throws Exception {
 		String URL = URLBase;
 		String response = "";
