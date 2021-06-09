@@ -21,7 +21,6 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.openmrs.LocationAttribute;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.PatientIdentifierType;
@@ -51,16 +50,13 @@ public class ViralLoadResultsDelegate {
 
 	public List<Disa> getViralLoadDataList(Date startDate, Date endDate, String vlState) throws Exception {
 
-		List<LocationAttribute> loAttribute = new ArrayList<LocationAttribute>(
-				Context.getLocationService().getDefaultLocation().getAttributes());
-
-		List<String> sismaCodes = Arrays.asList(loAttribute.get(0).getValueReference());
+		List<String> sismaCodes = Arrays.asList(Context.getAdministrationService()
+				.getGlobalPropertyObject(Constants.DISA_SISMA_CODE).getPropertyValue().split(","));
 
 		String jsonViralLoadInfo = rest.getRequestGetFsrByStatusAndDates("/viral-status-dates", sismaCodes, vlState,
 				formatDate(startDate, 1), formatDate(endDate, 2));
 		return new Gson().fromJson(jsonViralLoadInfo, new TypeToken<ArrayList<Disa>>() {
 		}.getType());
-
 	}
 
 	@SuppressWarnings("deprecation")
