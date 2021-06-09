@@ -29,7 +29,7 @@ public interface DisaDAO {
 	 * Add DAO methods here
 	 */
 	
-	public List<LocationAttribute> getAllLocationAttribute();
+	public List<LocationAttribute> getAllLocationAttribute(String valueReference);
 	
 	public Serializable saveFsrLog(FsrLog fsrLog); 
 }

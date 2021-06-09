@@ -62,9 +62,9 @@ public class HibernateDisaDAO implements DisaDAO {
 	}
 
 	@Override
-	public List<LocationAttribute> getAllLocationAttribute() {
-		final String hql = "SELECT  l FROM LocationAttribute l";
-		final Query query = this.getCurrentSession().createQuery(hql);
+	public List<LocationAttribute> getAllLocationAttribute(String valueReference) {
+		final String hql = "SELECT  l FROM LocationAttribute l WHERE l.valueReference = :valueReference AND l.voided = 0";
+		final Query query = this.getCurrentSession().createQuery(hql).setParameter("valueReference", valueReference);
 		return query.list();
 	}
 	

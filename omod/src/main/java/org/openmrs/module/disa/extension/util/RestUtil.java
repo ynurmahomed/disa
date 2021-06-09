@@ -71,16 +71,14 @@ public class RestUtil {
 	 * @return
 	 * @throws Exception
 	 */
-	public Boolean getRequestPutProcessed(String urlPathProcessed, List<String> sismaCodes) throws Exception {
+	public Boolean getRequestPutProcessed(String urlPathProcessed, String processedNid) throws Exception {
 		String URL = URLBase + urlPathProcessed;
 		Boolean response = false;
 		DefaultHttpClient httpclient = new DefaultHttpClient();
 		try {
 
 			URIBuilder uriBuilder = new URIBuilder(URL);
-			for (String sismaCode : sismaCodes) {
-				uriBuilder.addParameter("processedNids", sismaCode);
-			}
+			uriBuilder.addParameter("processedNids", processedNid);
 
 			HttpPut httpPut = new HttpPut(uriBuilder.build());
 			UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(username, password);
@@ -109,13 +107,13 @@ public class RestUtil {
 	 * HTTP PUT
 	 * 
 	 * @param urlPathNotProcessed
-	 * @param sismaCodes
+	 * @param notProcessed
 	 * @param reasonForNotProcessing
 	 * @param input
 	 * @return
 	 * @throws Exception
 	 */
-	public Boolean getRequestPutNotProcessed(String urlPathNotProcessed, List<String> sismaCodes,
+	public Boolean getRequestPutNotProcessed(String urlPathNotProcessed, String processedNid,
 			String reasonForNotProcessing) throws Exception {
 		String URL = URLBase + urlPathNotProcessed;
 		Boolean response = false;
@@ -123,9 +121,7 @@ public class RestUtil {
 		try {
 
 			URIBuilder uriBuilder = new URIBuilder(URL);
-			for (String sismaCode : sismaCodes) {
-				uriBuilder.addParameter("notProcessedNids", sismaCode);
-			}
+			uriBuilder.addParameter("notProcessedNids", processedNid);
 			uriBuilder.addParameter("reasonForNotProcessing", reasonForNotProcessing);
 
 			HttpPut httpPut = new HttpPut(uriBuilder.build());
@@ -281,7 +277,9 @@ public class RestUtil {
 		try {
 
 			URIBuilder uriBuilder = new URIBuilder(URL);
-			uriBuilder.addParameter("locationCodes", sismaCodes.get(0));
+			for (String sismaCode : sismaCodes) {
+				uriBuilder.addParameter("locationCodes", sismaCode);
+			}
 			uriBuilder.addParameter("viralLoadStatus", viralLoadStatus);
 			uriBuilder.addParameter("startDate", startDate);
 			uriBuilder.addParameter("endDate", endDate);

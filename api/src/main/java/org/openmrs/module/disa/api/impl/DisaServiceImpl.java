@@ -48,8 +48,8 @@ public class DisaServiceImpl extends BaseOpenmrsService implements DisaService {
     }
 
 	@Override
-	public List<LocationAttribute> getAllLocationAttribute() {
-		return dao.getAllLocationAttribute();
+	public List<LocationAttribute> getAllLocationAttribute(String valueReference) {
+		return dao.getAllLocationAttribute(valueReference);
 	}
 	
 	@Override

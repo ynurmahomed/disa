@@ -2,6 +2,7 @@ package org.openmrs.module.disa.scheduler;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -12,7 +13,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.openmrs.Encounter;
 import org.openmrs.EncounterRole;
 import org.openmrs.Location;
-import org.openmrs.LocationAttribute;
 import org.openmrs.LocationAttributeType;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
@@ -36,9 +36,9 @@ import com.google.gson.reflect.TypeToken;
  *
  */
 public class ViralLoadFormSchedulerTask extends AbstractTask {
-	private List<String> processed;
-	private List<String> notProcessed;
-	private List<String> notProcessedNoResult;
+	private String processed;
+	private String notProcessed;
+	private String notProcessedNoResult;
 	private RestUtil rest;
 	private DisaService disaService;
 	private Location locationBySismaCode;
@@ -69,9 +69,6 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 	private void createViralLoadForm() throws ParseException {
 
 		// iterate the viral load list and create the encounters
-		processed = new ArrayList<String>();
-		notProcessed = new ArrayList<String>();
-		notProcessedNoResult = new ArrayList<String>();
 		
 		List<Disa> jsonViralLoad = getJsonViralLoad(); 
 		System.out.println("There is " + jsonViralLoad.size() + " pending items to be processed");
@@ -86,19 +83,16 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 					.getPatients(null, disa.getNid().trim(), null, Boolean.TRUE);
 
 			if (patientsByIdentifier.isEmpty()) {
-				notProcessed.add(disa.getRequestId());
+				notProcessed = disa.getRequestId();
 				updateNotProcessed();
-				notProcessed.clear();
 				continue;
 			} else {
 				if (hasNoResult(disa)) {
-					notProcessedNoResult.add(disa.getRequestId());
+					notProcessedNoResult = disa.getRequestId();
 					updateNotProcessedNoResult();
-					notProcessedNoResult.clear();
 					continue;
 				} else {
-
-					processed.add(disa.getRequestId());
+					processed = disa.getRequestId();
 					encounter.setPatient(patientsByIdentifier.get(0));
 				}
 			}
@@ -354,8 +348,6 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 			disaService.saveFsrLog(fsrLog);
 							
 			updateProcessed();
-			
-			processed.clear();
 		}
 		
 		System.out.println("Syncing ended...");
@@ -406,7 +398,8 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 
 	private Location getLocationBySismaCode(String sismaCode) {
 		LocationAttributeType locationAttributeType = Context.getLocationService()
-				.getLocationAttributeTypeByUuid(Constants.LOCATION_ATTRIBUTE_TYPE_UUID);
+				.getLocationAttributeTypeByUuid(Context.getAdministrationService().
+						getGlobalPropertyObject(Constants.LOCATION_ATTRIBUTE_TYPE_UUID).getPropertyValue());
 		Map<LocationAttributeType, Object> hashMap = new HashMap<LocationAttributeType, Object>();
 		hashMap.put(locationAttributeType, sismaCode);
 		List<Location> locations = Context.getLocationService().getLocations(null, null, hashMap, false, null, null);
@@ -415,11 +408,8 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 	}
 
 	private List<String> getAllDisaSismaCodes() {
-		List<String> valueReferences = new ArrayList<String>();
-		List<LocationAttribute> allLocationAttribute = disaService.getAllLocationAttribute();
-		for (LocationAttribute locationAttribute : allLocationAttribute) {
-			valueReferences.add(locationAttribute.getValueReference());
-		}
-		return valueReferences;
+		List<String> sismaCodes = Arrays.asList(Context.getAdministrationService()
+				.getGlobalPropertyObject(Constants.DISA_SISMA_CODE).getPropertyValue().split(",")); 
+		return sismaCodes;
 	}
 }
