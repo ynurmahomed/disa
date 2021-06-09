@@ -339,7 +339,7 @@ public class Disa {
 
 	public Integer getAge(Date onDate) {
 		if (dateOfBirth == null) {
-			return null;
+			return 0;
 		}
 
 		// Use default end date as today.
