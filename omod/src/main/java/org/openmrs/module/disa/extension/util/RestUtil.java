@@ -276,7 +276,9 @@ public class RestUtil {
 		try {
 
 			URIBuilder uriBuilder = new URIBuilder(URL);
-			uriBuilder.addParameter("locationCodes", sismaCodes.get(0));
+			for (String sismaCode : sismaCodes) {
+				uriBuilder.addParameter("locationCodes", sismaCode);
+			}
 			uriBuilder.addParameter("viralLoadStatus", viralLoadStatus);
 			uriBuilder.addParameter("startDate", startDate);
 			uriBuilder.addParameter("endDate", endDate);
