@@ -58,6 +58,13 @@ public class ViralLoadResultsDelegate {
 		return new Gson().fromJson(jsonViralLoadInfo, new TypeToken<ArrayList<Disa>>() {
 		}.getType());
 	}
+	
+	public List<Disa> getViralLoadDataList(String requestId) throws Exception {
+
+		String jsonViralLoadInfo = rest.getRequestByForm("/search-form", requestId);
+		return new Gson().fromJson(jsonViralLoadInfo, new TypeToken<ArrayList<Disa>>() {
+		}.getType());
+	}
 
 	@SuppressWarnings("deprecation")
 	public List<Patient> getPatients(Disa selectedPatient) {
