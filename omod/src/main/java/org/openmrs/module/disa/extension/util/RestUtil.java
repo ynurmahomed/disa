@@ -307,7 +307,8 @@ public class RestUtil {
 	 * @throws Exception
 	 */
 	@SuppressWarnings("deprecation")
-	public String getRequestByForm(String urlPathProcessed, String requestId) throws Exception {
+	public String getRequestByForm(String urlPathProcessed, String requestId, String nid, 
+			String vlSisma, String referringId, String vlState, String startDate, String endDate) throws Exception {
 		String URL = URLBase + urlPathProcessed;
 		String response = "";
 		DefaultHttpClient httpclient = new DefaultHttpClient();
@@ -315,7 +316,34 @@ public class RestUtil {
 		try {
 
 			URIBuilder uriBuilder = new URIBuilder(URL);
-			uriBuilder.addParameter("requestId", requestId);
+			
+			if(!requestId.isEmpty()) {
+				uriBuilder.addParameter("requestId", requestId);
+			}
+			
+			if(!nid.isEmpty()) {
+				uriBuilder.addParameter("nid", nid);
+			}
+			
+			if(!vlSisma.isEmpty()) {
+				uriBuilder.addParameter("healthFacilityLabCode", vlSisma);
+			}
+			
+			if(!referringId.isEmpty()) {
+				uriBuilder.addParameter("referringRequestID", referringId);
+			}
+			
+			if(!vlState.isEmpty()) {
+				uriBuilder.addParameter("viralLoadStatus", vlState);
+			}
+			
+			if (!startDate.isEmpty()) {
+				uriBuilder.addParameter("startDate", startDate);
+			}
+			
+			if (!endDate.isEmpty()) {
+				uriBuilder.addParameter("endDate", endDate);
+			}
 
 			HttpGet httpGet = new HttpGet(uriBuilder.build());
 

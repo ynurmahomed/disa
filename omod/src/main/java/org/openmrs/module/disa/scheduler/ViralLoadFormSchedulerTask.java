@@ -80,7 +80,7 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 			
 				Encounter encounter = new Encounter();
 	
-				encounter.setEncounterDatetime(DateUtil.stringToDate(disa.getCreatedAt())); 
+				encounter.setEncounterDatetime(DateUtil.dateWithLeadingZeros()); 
 				List<Patient> patientsByIdentifier = Context.getPatientService()
 						.getPatientsByIdentifier(disa.getNid().trim(), Boolean.FALSE);
 	
