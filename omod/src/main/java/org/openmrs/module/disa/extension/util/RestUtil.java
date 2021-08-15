@@ -299,6 +299,69 @@ public class RestUtil {
 		}
 		return response;
 	}
+	
+	
+	/**
+	 * 
+	 * @param urlPathProcessed
+	 * @param requestId
+	 * @return
+	 * @throws Exception
+	 */
+	@SuppressWarnings("deprecation")
+	public String getRequestByForm(String urlPathProcessed, String requestId, String nid, 
+			String vlSisma, String referringId, String vlState, String startDate, String endDate) throws Exception {
+		String URL = URLBase + urlPathProcessed;
+		String response = "";
+		DefaultHttpClient httpclient = new DefaultHttpClient();
+
+		try {
+
+			URIBuilder uriBuilder = new URIBuilder(URL);
+			
+			if(!requestId.isEmpty()) {
+				uriBuilder.addParameter("requestId", requestId);
+			}
+			
+			if(!nid.isEmpty()) {
+				uriBuilder.addParameter("nid", nid);
+			}
+			
+			if(!vlSisma.isEmpty()) {
+				uriBuilder.addParameter("healthFacilityLabCode", vlSisma);
+			}
+			
+			if(!referringId.isEmpty()) {
+				uriBuilder.addParameter("referringRequestID", referringId);
+			}
+			
+			if(!vlState.isEmpty()) {
+				uriBuilder.addParameter("viralLoadStatus", vlState);
+			}
+			
+			if (!startDate.isEmpty()) {
+				uriBuilder.addParameter("startDate", startDate);
+			}
+			
+			if (!endDate.isEmpty()) {
+				uriBuilder.addParameter("endDate", endDate);
+			}
+
+			HttpGet httpGet = new HttpGet(uriBuilder.build());
+
+			UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(username, password);
+			BasicScheme scheme = new BasicScheme();
+			Header authorizationHeader = scheme.authenticate(credentials, httpGet);
+			httpGet.setHeader(authorizationHeader);
+			ResponseHandler<String> responseHandler = new BasicResponseHandler();
+
+			response = httpclient.execute(httpGet, responseHandler);
+
+		} finally {
+			httpclient.getConnectionManager().shutdown();
+		}
+		return response;
+	}
 
 	public void setUsername(String username) {
 		this.username = username;

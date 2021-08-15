@@ -5,6 +5,8 @@ import java.util.Date;
 
 import javax.persistence.Column;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * 
  * @author machabane
@@ -16,8 +18,8 @@ public class Disa {
 	private int id;
 
 	private String requestId;
-
-	private String uuid;
+	
+	private String location;
 
 	private String createdBy;
 
@@ -27,9 +29,9 @@ public class Disa {
 
 	private String updatedAt;
 
-	private String entityStatus;
-
 	private String nid;
+	
+	private String referringRequestID;
 
 	private String firstName;
 
@@ -72,6 +74,8 @@ public class Disa {
 	private String hivViralLoadResult;
 
 	private String requestingFacilityName;
+	
+	private String requestingDistrictName;
 
 	private String viralLoadStatus;
 
@@ -99,14 +103,6 @@ public class Disa {
 
 	public void setRequestId(String requestId) {
 		this.requestId = requestId;
-	}
-
-	public String getUuid() {
-		return uuid;
-	}
-
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
 	}
 
 	public String getCreatedBy() {
@@ -139,14 +135,6 @@ public class Disa {
 
 	public void setUpdatedAt(String updatedAt) {
 		this.updatedAt = updatedAt;
-	}
-
-	public String getEntityStatus() {
-		return entityStatus;
-	}
-
-	public void setEntityStatus(String entityStatus) {
-		this.entityStatus = entityStatus;
 	}
 
 	public String getNid() {
@@ -331,6 +319,30 @@ public class Disa {
 
 	public void setNotProcessingCause(String notProcessingCause) {
 		this.notProcessingCause = notProcessingCause;
+	}
+	
+	public String getRequestingDistrictName() {
+		return requestingDistrictName;
+	}
+
+	public void setRequestingDistrictName(String requestingDistrictName) {
+		this.requestingDistrictName = requestingDistrictName;
+	}
+	
+	public String getReferringRequestID() {
+		return referringRequestID;
+	}
+
+	public void setReferringRequestID(String referringRequestID) {
+		this.referringRequestID = referringRequestID;
+	}
+	
+	public String getLocation() {
+		return location;
+	}
+
+	public void setLocation(String location) {
+		this.location = location;
 	}
 
 	public Integer getAge() {

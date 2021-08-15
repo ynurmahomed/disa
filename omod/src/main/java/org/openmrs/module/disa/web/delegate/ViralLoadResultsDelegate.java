@@ -59,6 +59,15 @@ public class ViralLoadResultsDelegate {
 		}.getType());
 
 	}
+	
+	public List<Disa> getViralLoadDataList(String requestId, String nid, String vlSisma, 
+			String referringId, String vlState, Date startDate, Date endDate) throws Exception {
+
+		String jsonViralLoadInfo = rest.getRequestByForm("/search-form", requestId, nid, vlSisma, referringId, vlState, 
+				formatDate(startDate, 1), formatDate(endDate, 2));
+		return new Gson().fromJson(jsonViralLoadInfo, new TypeToken<ArrayList<Disa>>() {
+		}.getType());
+	}
 
 	public List<Patient> getPatients(Disa selectedPatient) {
 		return Context.getPatientService()
@@ -137,7 +146,55 @@ public class ViralLoadResultsDelegate {
 			workbook.close();
 		}
 	}
+	
+	public void createExcelFileStaging(List<Disa> listDisa, HttpServletResponse response,
+			MessageSourceService messageSourceService) throws Exception {
+		Locale locale = Context.getLocale();
+		try (ByteArrayOutputStream outByteStream = new ByteArrayOutputStream()) {
+			HSSFWorkbook workbook = new HSSFWorkbook();
+			HSSFSheet sheet = workbook.createSheet("ViralLoadData Staging Server");
+			sheet.setColumnWidth(0, 8000);
+			sheet.setColumnWidth(1, 8000);
+			sheet.setColumnWidth(2, 8000);
+			sheet.setColumnWidth(3, 8000);
+			sheet.setColumnWidth(4, 8000);
+			sheet.setColumnWidth(5, 8000);
+			sheet.setColumnWidth(6, 8000);
+			sheet.setColumnWidth(7, 8000);
+			sheet.setColumnWidth(8, 8000);
+			sheet.setColumnWidth(9, 8000);
+			sheet.setColumnWidth(10, 8000);
+			sheet.setColumnWidth(11, 8000);
+			sheet.setColumnWidth(12, 8000);
+			sheet.setColumnWidth(13, 8000);
+			sheet.setColumnWidth(14, 8000);
+			sheet.setColumnWidth(15, 8000);
+			sheet.setColumnWidth(16, 8000);
+			sheet.setColumnWidth(17, 8000);
+			sheet.setColumnWidth(18, 8000);
+			sheet.setColumnWidth(19, 8000);
+			createHeaderRowStaging(sheet, locale, messageSourceService);
 
+			int rowCount = 0;
+
+			for (Disa disa : listDisa) {
+				Row row = sheet.createRow(++rowCount);
+				writeDisaListStaging(disa, row, locale, messageSourceService);
+			}
+
+			workbook.write(outByteStream);
+			byte[] outArray = outByteStream.toByteArray();
+			response.setContentType("application/ms-excel");
+			response.setContentLength(outArray.length);
+			response.setHeader("Expires:", "0");
+			response.setHeader("Content-Disposition", "attachment; filename=Viral Load Data Details Staging Server.xls");
+			OutputStream outStream = response.getOutputStream();
+			outStream.write(outArray);
+			outStream.flush();
+			workbook.close();
+		}
+	}
+	
 	private void writeDisaList(Disa disa, Row row, Locale locale, MessageSourceService messageSourceService) {
 		Cell cell = row.createCell(0);
 		cell.setCellValue(disa.getNid());
@@ -177,6 +234,66 @@ public class ViralLoadResultsDelegate {
 				cell.setCellValue(messageSourceService.getMessage("disa." + notProcessingCause, null, locale));
 			}
 		}
+	}
+	
+	private void writeDisaListStaging(Disa disa, Row row, Locale locale, MessageSourceService messageSourceService) {
+		Cell cell = row.createCell(0);
+		cell.setCellValue(disa.getLocation());
+
+		cell = row.createCell(1);
+		cell.setCellValue(disa.getRequestingFacilityName());
+
+		cell = row.createCell(2);
+		cell.setCellValue(disa.getRequestingDistrictName());
+
+		cell = row.createCell(3);
+		cell.setCellValue(disa.getHealthFacilityLabCode());
+
+		cell = row.createCell(4);
+		cell.setCellValue(disa.getReferringRequestID());
+
+		cell = row.createCell(5);
+		cell.setCellValue(disa.getNid());
+
+		cell = row.createCell(6);
+		cell.setCellValue(disa.getFirstName() + " " + disa.getLastName());
+
+		cell = row.createCell(7);
+		cell.setCellValue(disa.getGender());
+
+		cell = row.createCell(8);
+		cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+		cell.setCellValue(disa.getAge());
+
+		cell = row.createCell(9);
+		cell.setCellValue(disa.getRequestId());
+		
+		cell = row.createCell(10);
+		cell.setCellValue(disa.getProcessingDate());
+		
+		cell = row.createCell(11);
+		cell.setCellValue(disa.getViralLoadResultDate());
+		
+		cell = row.createCell(12);
+		cell.setCellValue(disa.getViralLoadResultCopies());
+		
+		cell = row.createCell(13);
+		cell.setCellValue(disa.getViralLoadResultLog());
+		
+		cell = row.createCell(14);
+		cell.setCellValue(disa.getHivViralLoadResult());
+		
+		cell = row.createCell(15);
+		cell.setCellValue(disa.getViralLoadStatus());
+		
+		cell = row.createCell(16);
+		cell.setCellValue(disa.getCreatedAt());
+		
+		cell = row.createCell(17);
+		cell.setCellValue(disa.getUpdatedAt());
+		
+		cell = row.createCell(18);
+		cell.setCellValue(disa.getNotProcessingCause());
 	}
 
 	private void createHeaderRow(Sheet sheet, Locale locale, MessageSourceService messageSourceService) {
@@ -229,6 +346,94 @@ public class ViralLoadResultsDelegate {
 		Cell causaNaoProcessamento = row.createCell(9);
 		causaNaoProcessamento.setCellStyle(cellStyle);
 		causaNaoProcessamento.setCellValue(messageSourceService.getMessage("disa.not.processing.cause", null, locale));
+	}
+	
+	private void createHeaderRowStaging(Sheet sheet, Locale locale, MessageSourceService messageSourceService) {
+		CellStyle cellStyle = sheet.getWorkbook().createCellStyle();
+		cellStyle.setAlignment(CellStyle.ALIGN_LEFT);
+		Font font = sheet.getWorkbook().createFont();
+		font.setBold(true);
+		font.setFontHeightInPoints((short) 12);
+		cellStyle.setFont(font);
+		cellStyle.setWrapText(true);
+
+		Row row = sheet.createRow(0);
+
+		Cell cellNid = row.createCell(0);
+		cellNid.setCellStyle(cellStyle);
+		cellNid.setCellValue(messageSourceService.getMessage("disa.location", null, locale));
+
+		Cell cellNome = row.createCell(1);
+		cellNome.setCellStyle(cellStyle);
+		cellNome.setCellValue(messageSourceService.getMessage("disa.requesting.facility.name", null, locale));
+
+		Cell cellSexo = row.createCell(2);
+		cellSexo.setCellStyle(cellStyle);
+		cellSexo.setCellValue(messageSourceService.getMessage("disa.requesting.district.name", null, locale));
+
+		Cell cellIdade = row.createCell(3);
+		cellIdade.setCellStyle(cellStyle);
+		cellIdade.setCellValue(messageSourceService.getMessage("disa.sisma.code", null, locale));
+
+		Cell cellIDRequisacao = row.createCell(4);
+		cellIDRequisacao.setCellStyle(cellStyle);
+		cellIDRequisacao.setCellValue(messageSourceService.getMessage("disa.referring.request.id", null, locale));
+
+		Cell cellCargaViralCopies = row.createCell(5);
+		cellCargaViralCopies.setCellStyle(cellStyle);
+		cellCargaViralCopies.setCellValue(messageSourceService.getMessage("disa.nid", null, locale));
+
+		Cell cellCargaViralLog = row.createCell(6);
+		cellCargaViralLog.setCellStyle(cellStyle);
+		cellCargaViralLog.setCellValue(messageSourceService.getMessage("general.name", null, locale));
+
+		Cell cellCargaViralCoded = row.createCell(7);
+		cellCargaViralCoded.setCellStyle(cellStyle);
+		cellCargaViralCoded.setCellValue(messageSourceService.getMessage("disa.gender", null, locale));
+
+		Cell cellCargaViralStatus = row.createCell(8);
+		cellCargaViralStatus.setCellStyle(cellStyle);
+		cellCargaViralStatus.setCellValue(messageSourceService.getMessage("disa.age", null, locale));
+
+		Cell cellRequestId = row.createCell(9);
+		cellRequestId.setCellStyle(cellStyle);
+		cellRequestId.setCellValue(messageSourceService.getMessage("disa.request.id", null, locale));
+		
+		Cell cellAnalysisDateTime = row.createCell(10);
+		cellAnalysisDateTime.setCellStyle(cellStyle);
+		cellAnalysisDateTime.setCellValue(messageSourceService.getMessage("disa.analysis.date.time", null, locale));
+		
+		Cell cellAuthorisedDateTime = row.createCell(11);
+		cellAuthorisedDateTime.setCellStyle(cellStyle);
+		cellAuthorisedDateTime.setCellValue(messageSourceService.getMessage("disa.authorised.date.time", null, locale));
+		
+		Cell cellViralLoadCopy = row.createCell(12);
+		cellViralLoadCopy.setCellStyle(cellStyle);
+		cellViralLoadCopy.setCellValue(messageSourceService.getMessage("disa.viralload.result.copy", null, locale));
+		
+		Cell cellViralLoadLog = row.createCell(13);
+		cellViralLoadLog.setCellStyle(cellStyle);
+		cellViralLoadLog.setCellValue(messageSourceService.getMessage("disa.viralload.result.log", null, locale));
+		
+		Cell cellViralLoadCoded = row.createCell(14);
+		cellViralLoadCoded.setCellStyle(cellStyle);
+		cellViralLoadCoded.setCellValue(messageSourceService.getMessage("disa.viralload.result.coded", null, locale));
+		
+		Cell cellViralLoadStatus = row.createCell(15);
+		cellViralLoadStatus.setCellStyle(cellStyle);
+		cellViralLoadStatus.setCellValue(messageSourceService.getMessage("disa.status", null, locale));
+		
+		Cell cellViralLoadCreatedAt = row.createCell(16);
+		cellViralLoadCreatedAt.setCellStyle(cellStyle);
+		cellViralLoadCreatedAt.setCellValue(messageSourceService.getMessage("disa.created.at", null, locale));
+		
+		Cell cellViralLoadCreated = row.createCell(17);
+		cellViralLoadCreated.setCellStyle(cellStyle);
+		cellViralLoadCreated.setCellValue(messageSourceService.getMessage("disa.updated.at", null, locale));
+		
+		Cell cellViralLoadProcessing = row.createCell(18);
+		cellViralLoadProcessing.setCellStyle(cellStyle);
+		cellViralLoadProcessing.setCellValue(messageSourceService.getMessage("disa.not.processing.cause", null, locale));
 	}
 
 	private String formatDate(Date date, int i) {
