@@ -7,7 +7,7 @@
 	<artifactId>disa</artifactId>
 	<version>1.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	<name>Disa Module</name>
+	<name>Disa_Interoperability Module</name>
 	<description>Allows integration with disa data</description>
 	<url>https://wiki.openmrs.org/display/docs/Disa+Module+Module+Module</url>
 

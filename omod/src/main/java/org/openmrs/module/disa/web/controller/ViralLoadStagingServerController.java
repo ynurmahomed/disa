@@ -1,5 +1,6 @@
 package org.openmrs.module.disa.web.controller;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -38,9 +39,12 @@ public class ViralLoadStagingServerController {
 	public void showViralLoadStagingQueryForm(ModelMap model, HttpSession session) {
 		List<String> sismaCodes = Arrays.asList(Context.getAdministrationService()
 				.getGlobalPropertyObject(Constants.DISA_SISMA_CODE).getPropertyValue().split(","));
+		List<String> sismaCodesTodos = new ArrayList<String>();
+		sismaCodesTodos.add(Constants.TODOS);
+		sismaCodesTodos.addAll(sismaCodes);
 		delegate = new ViralLoadResultsDelegate();
 		model.addAttribute("user", Context.getAuthenticatedUser());
-		session.setAttribute("sismaCodes", sismaCodes);
+		session.setAttribute("sismaCodes", sismaCodesTodos);
 	}
 	
 	@SuppressWarnings("unchecked")

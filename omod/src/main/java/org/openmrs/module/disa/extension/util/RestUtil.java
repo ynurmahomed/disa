@@ -327,7 +327,7 @@ public class RestUtil {
 				uriBuilder.addParameter("nid", nid);
 			}
 			
-			if(!vlSisma.isEmpty()) {
+			if(!vlSisma.isEmpty() && !vlSisma.equals(Constants.TODOS)) {
 				uriBuilder.addParameter("healthFacilityLabCode", vlSisma);
 			}
 			
@@ -335,7 +335,7 @@ public class RestUtil {
 				uriBuilder.addParameter("referringRequestID", referringId);
 			}
 			
-			if(!vlState.isEmpty()) {
+			if(!vlState.isEmpty() && !vlState.equals(Constants.ALL)) {
 				uriBuilder.addParameter("viralLoadStatus", vlState);
 			}
 			

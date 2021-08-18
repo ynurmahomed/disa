@@ -76,4 +76,6 @@ public class Constants {
 	public static final String TRIAGEM_ADULTOS = "TRIAGEM - ADULTOS";
 	public static final String ENF_PEDIATRIA = "ENF. PEDIATRIA";
 	public static final String LABORATORIO = "LABORATORIO";
+	public static final String TODOS = "TODOS";
+	public static final String ALL = "ALL";     
 }

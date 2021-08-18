@@ -52,7 +52,8 @@
 	            <td><input type="text" size=22 maxlength="16" name="requestId" id="requestId" ></td>
 			    <td><label for="vlState"><openmrs:message code="disa.frm.status"/>:</label></td>
 	            <td>
-		            <select id="selValue" name="vlState"> 
+		            <select id="selValue" name="vlState">
+		            	<option value="ALL"><openmrs:message code="disa.viral.load.status.ALL"/></option> 
 		         		<option value="PROCESSED"><openmrs:message code="disa.viral.load.status.PROCESSED"/></option>
 		         		<option value="NOT_PROCESSED"><openmrs:message code="disa.viral.load.status.NOT_PROCESSED"/></option>
 		         		<option value="PENDING"><openmrs:message code="disa.viral.load.status.PENDING"/></option>
