@@ -29,7 +29,6 @@ public class Constants {
 	public static final String REPEAT_AFTER_BREASTFEEDING = "6f60eaa1-886d-4891-9d3d-7ade75d67606";
 	public static final String DISA_ENCOUNTER_TYPE = "b5b7d21f-efd1-407e-81ce-ba9d93c524f8";
 	public static final String DISA_FORM = "5b7cecc3-4ba3-4710-85ae-fc0c13e83e27";
-	public static final String DISA_PROVIDER = "51928702-8b84-11e0-a34e-888888888788";
 	public static final String ORDER_ID = "e8c63cd6-9113-48b2-99cd-6112103f1448";
 	public static final String DISA_NID = "79ad599a-50df-48f8-865c-0095ec9a9d01";
 	
@@ -65,6 +64,7 @@ public class Constants {
 	public static final String DISA_USERNAME = "disa.api.username";
 	public static final String DISA_PASSWORD = "disa.api.password";
 	public static final String DISA_SISMA_CODE = "disa.api.sisma.code";
+	public static final String DISA_PROVIDER = "disa.provider";
 	
 	public static final String CONSULTA_INTEGRADA = "CONSULTA INTEGRADA";
 	public static final String SAUDE_MATERNO_INFANTIL = "SAUDE MATERNO INFANTIL";

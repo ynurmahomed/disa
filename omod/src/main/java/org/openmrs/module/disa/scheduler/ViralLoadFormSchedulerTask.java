@@ -105,7 +105,8 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 
 			encounter.setProvider(
 					Context.getEncounterService().getEncounterRoleByUuid(EncounterRole.UNKNOWN_ENCOUNTER_ROLE_UUID),
-					Context.getProviderService().getProviderByUuid(Constants.DISA_PROVIDER));
+					Context.getProviderService().getProviderByUuid(Context.getAdministrationService()
+							.getGlobalPropertyObject(Constants.DISA_PROVIDER).getPropertyValue()));
 
 			Context.getEncounterService().saveEncounter(encounter);
 
