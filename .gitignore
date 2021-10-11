@@ -24,8 +24,9 @@ hs_err_pid*
 
 .DS_Store
 .mvn/*
+disa-api-core/.mvn/*
+disa-api-integ/.mvn/*
 .classpath
 .project
 .settings/
 
-target/
