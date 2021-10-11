@@ -49,8 +49,8 @@ public class Constants {
 	public static final String VIRAL_LOAD_RESULT_NULL = "NULL";
 	
 	public static final String GESTATION = "e1cdd58a-1d5f-11e0-b929-000c29ad1d07";
-	public static final String CONCEPT_NO = "e1d81c70-1d5f-11e0-b929-000c29ad1d07";
-	public static final String CONCEPT_YES = "e1d81b62-1d5f-11e0-b929-000c29ad1d07";
+	public static final String CONCEPT_NO = "1066AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+	public static final String CONCEPT_YES = "1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 	public static final String CONCEPT_NOT_FILLED = "1067AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 	
 	public static final String VENOUS_PUNCTURE = "3098bd78-a1bb-455c-a724-9c114072b34e";
