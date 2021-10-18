@@ -46,7 +46,7 @@ public class GenericUtil {
 	      			break;
 	      case "LAB":	wardConcept=Constants.LABORATORIO;
 	      			break;
-	      default:	wardConcept="";
+	      default:		wardConcept=Constants.OUTRO_NAO_CODIFICADO;
 		}
 		return wardConcept;
 	}

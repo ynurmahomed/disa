@@ -35,7 +35,9 @@ public class Constants {
 	public static final String LOCATION_ATTRIBUTE_TYPE_UUID = "disa.api.location.attribute.type.uuid";
 	
 	public static final String YES = "YES";
+	public static final String SIM = "SIM";
 	public static final String NO = "NO";
+	public static final String NAO = "NAO";
 	public static final String NF = "Nao preenchido";
 	
 	public static final String ROUTINE = "Routine";
@@ -76,6 +78,7 @@ public class Constants {
 	public static final String TRIAGEM_ADULTOS = "TRIAGEM - ADULTOS";
 	public static final String ENF_PEDIATRIA = "ENF. PEDIATRIA";
 	public static final String LABORATORIO = "LABORATORIO";
+	public static final String OUTRO_NAO_CODIFICADO = "OUTRO, NAO CODIFICADO";
 	public static final String TODOS = "TODOS";
 	public static final String ALL = "ALL";     
 }

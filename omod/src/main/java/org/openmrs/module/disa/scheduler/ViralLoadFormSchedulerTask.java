@@ -116,7 +116,7 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 			obs_23835.setConcept(Context.getConceptService().getConceptByUuid(Constants.LAB_NUMBER));
 			obs_23835.setLocation(locationBySismaCode);
 			obs_23835.setEncounter(encounter);
-			if (StringUtils.isNotEmpty(disa.getHealthFacilityLabCode())) {
+			if (StringUtils.isNotEmpty(disa.getHealthFacilityLabCode())) {//RequestingFacilityCode
 				obs_23835.setValueText(disa.getHealthFacilityLabCode());
 				Context.getObsService().saveObs(obs_23835, "");
 			}
@@ -127,7 +127,7 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 			obs_23883.setConcept(Context.getConceptService().getConceptByUuid(Constants.PICKING_LOCATION));
 			obs_23883.setLocation(locationBySismaCode);
 			obs_23883.setEncounter(encounter);
-			if (StringUtils.isNotEmpty(disa.getRequestingFacilityName())) {
+			if (StringUtils.isNotEmpty(disa.getRequestingFacilityName())) {//RequestingFacilityName
 				obs_23883.setValueText(disa.getRequestingFacilityName());
 				Context.getObsService().saveObs(obs_23883, "");
 			}
@@ -138,7 +138,7 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 			obs_23836.setConcept(Context.getConceptService().getConceptByUuid(Constants.ENCOUNTER_SERVICE));
 			obs_23836.setLocation(locationBySismaCode);
 			obs_23836.setEncounter(encounter);
-			if (StringUtils.isNotEmpty(GenericUtil.wardSelection(disa.getEncounter().trim()))) {
+			if (!(disa.getEncounter()==null) && StringUtils.isNotEmpty(GenericUtil.wardSelection(disa.getEncounter().trim()))) {//WARD
 				obs_23836.setValueCoded(Context.getConceptService()
 						.getConceptByName(GenericUtil.wardSelection(disa.getEncounter().trim())));
 				Context.getObsService().saveObs(obs_23836, "");
@@ -150,13 +150,13 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 			obs_1982.setConcept(Context.getConceptService().getConceptByUuid(Constants.PREGNANT));
 			obs_1982.setLocation(locationBySismaCode);
 			obs_1982.setEncounter(encounter);
-			if (disa.getPregnant().trim().equalsIgnoreCase(Constants.YES)) {
+			if (disa.getPregnant().trim().equalsIgnoreCase(Constants.YES) || disa.getPregnant().trim().equalsIgnoreCase(Constants.SIM)) {//Pregnant
 				obs_1982.setValueCoded(Context.getConceptService().getConceptByUuid(Constants.GESTATION));
 				Context.getObsService().saveObs(obs_1982, "");
-			} else if (disa.getPregnant().trim().equalsIgnoreCase(Constants.NO)) {
+			} else if (disa.getPregnant().trim().equalsIgnoreCase(Constants.NO) || StringUtils.stripAccents(disa.getPregnant().trim()).equalsIgnoreCase(Constants.NAO)) {
 				obs_1982.setValueCoded(Context.getConceptService().getConceptByUuid(Constants.CONCEPT_NO));
 				Context.getObsService().saveObs(obs_1982, "");
-			} else if (GenericUtil.removeAccents(disa.getPregnant().trim()).equalsIgnoreCase(Constants.NF)) {
+			} else {
 				obs_1982.setValueCoded(Context.getConceptService().getConceptByUuid(Constants.CONCEPT_NOT_FILLED));
 				Context.getObsService().saveObs(obs_1982, "");
 			}
@@ -167,13 +167,13 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 			obs_6332.setConcept(Context.getConceptService().getConceptByUuid(Constants.LACTATION));
 			obs_6332.setLocation(locationBySismaCode);
 			obs_6332.setEncounter(encounter);
-			if (disa.getBreastFeeding().trim().equalsIgnoreCase(Constants.YES)) {
+			if (disa.getBreastFeeding().trim().equalsIgnoreCase(Constants.YES) || disa.getPregnant().trim().equalsIgnoreCase(Constants.SIM)) {//BreastFeeding
 				obs_6332.setValueCoded(Context.getConceptService().getConceptByUuid(Constants.CONCEPT_YES));
 				Context.getObsService().saveObs(obs_6332, "");
-			} else if (disa.getBreastFeeding().trim().equalsIgnoreCase(Constants.NO)) {
+			} else if (disa.getBreastFeeding().trim().equalsIgnoreCase(Constants.NO) || StringUtils.stripAccents(disa.getPregnant().trim()).equalsIgnoreCase(Constants.NAO)) {
 				obs_6332.setValueCoded(Context.getConceptService().getConceptByUuid(Constants.CONCEPT_NO));
 				Context.getObsService().saveObs(obs_6332, "");
-			} else if (GenericUtil.removeAccents(disa.getBreastFeeding().trim()).equalsIgnoreCase(Constants.NF)) {
+			} else {
 				obs_6332.setValueCoded(Context.getConceptService().getConceptByUuid(Constants.CONCEPT_NOT_FILLED));
 				Context.getObsService().saveObs(obs_6332, "");
 			}
@@ -184,7 +184,7 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 			obs_23818.setConcept(Context.getConceptService().getConceptByUuid(Constants.REASON_FOR_TEST));
 			obs_23818.setLocation(locationBySismaCode);
 			obs_23818.setEncounter(encounter);
-			if (disa.getReasonForTest().trim().equalsIgnoreCase(Constants.ROUTINE)) {
+			if (disa.getReasonForTest().trim().equalsIgnoreCase(Constants.ROUTINE)) {//ReasonForTest
 				obs_23818.setValueCoded(Context.getConceptService().getConceptByUuid(Constants.ROUTINE_VIRAL_LOAD));
 				Context.getObsService().saveObs(obs_23818, "");
 			} else if (disa.getReasonForTest().trim().equalsIgnoreCase(Constants.SUSPECTED_TREATMENT_FAILURE)) {
@@ -194,7 +194,7 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 				obs_23818.setValueCoded(
 						Context.getConceptService().getConceptByUuid(Constants.REPEAT_AFTER_BREASTFEEDING));
 				Context.getObsService().saveObs(obs_23818, "");
-			} else if (GenericUtil.removeAccents(disa.getReasonForTest().trim()).equalsIgnoreCase(Constants.NF)) {
+			} else {
 				obs_23818.setValueCoded(Context.getConceptService().getConceptByUuid(Constants.CONCEPT_NOT_FILLED));
 				Context.getObsService().saveObs(obs_23818, "");
 			}
@@ -205,7 +205,7 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 			obs_23821.setConcept(Context.getConceptService().getConceptByUuid(Constants.SAMPLE_COLLECTION_DATE));
 			obs_23821.setLocation(locationBySismaCode);
 			obs_23821.setEncounter(encounter);
-			if (StringUtils.isNotEmpty(disa.getHarvestDate())) {
+			if (!(disa.getHarvestDate()==null) && StringUtils.isNotEmpty(disa.getHarvestDate())) {//SpecimenDatetime
 				obs_23821.setValueDate(DateUtil.deserialize(disa.getHarvestDate()));
 				Context.getObsService().saveObs(obs_23821, "");
 			}
@@ -216,12 +216,14 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 			obs_23824.setConcept(Context.getConceptService().getConceptByUuid(Constants.SAMPLE_COLLECTION_METHOD));
 			obs_23824.setLocation(locationBySismaCode);
 			obs_23824.setEncounter(encounter);
-			if (GenericUtil.removeAccents(disa.getHarvestType().trim()).equalsIgnoreCase(Constants.PV)) {
-				obs_23824.setValueCoded(Context.getConceptService().getConceptByUuid(Constants.VENOUS_PUNCTURE));
-				Context.getObsService().saveObs(obs_23824, "");
-			} else if (GenericUtil.removeAccents(disa.getHarvestType().trim()).equalsIgnoreCase(Constants.PD)) {
-				obs_23824.setValueCoded(Context.getConceptService().getConceptByUuid(Constants.DIGITAL_PUNCTURE));
-				Context.getObsService().saveObs(obs_23824, "");
+			if (!(disa.getHarvestType()==null)) {
+				if (GenericUtil.removeAccents(disa.getHarvestType().trim()).equalsIgnoreCase(Constants.PV)) {//TypeOfSampleCollection
+					obs_23824.setValueCoded(Context.getConceptService().getConceptByUuid(Constants.VENOUS_PUNCTURE));
+					Context.getObsService().saveObs(obs_23824, "");
+				} else if (GenericUtil.removeAccents(disa.getHarvestType().trim()).equalsIgnoreCase(Constants.PD)) {
+					obs_23824.setValueCoded(Context.getConceptService().getConceptByUuid(Constants.DIGITAL_PUNCTURE));
+					Context.getObsService().saveObs(obs_23824, "");
+				}
 			}
 
 			Obs obs_23826 = new Obs();
@@ -230,7 +232,7 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 			obs_23826.setConcept(Context.getConceptService().getConceptByUuid(Constants.SAMPLE_DATE_RECEIPT));
 			obs_23826.setLocation(locationBySismaCode);
 			obs_23826.setEncounter(encounter);
-			if (StringUtils.isNotEmpty(disa.getDateOfSampleReceive())) {
+			if (!(disa.getDateOfSampleReceive()==null) && StringUtils.isNotEmpty(disa.getDateOfSampleReceive())) {//ReceivedDateTime
 				obs_23826.setValueDate(DateUtil.deserialize(disa.getDateOfSampleReceive()));
 				Context.getObsService().saveObs(obs_23826, "");
 			}
@@ -241,7 +243,7 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 			obs_23833.setConcept(Context.getConceptService().getConceptByUuid(Constants.SAMPLE_PROCESSING_DATE));
 			obs_23833.setLocation(locationBySismaCode);
 			obs_23833.setEncounter(encounter);
-			if (StringUtils.isNotEmpty(disa.getProcessingDate())) {
+			if (!(disa.getProcessingDate()==null) && StringUtils.isNotEmpty(disa.getProcessingDate())) {//AnalysisDateTime
 				obs_23833.setValueDate(DateUtil.deserialize(disa.getProcessingDate()));
 				Context.getObsService().saveObs(obs_23833, "");
 			}
@@ -252,7 +254,7 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 			obs_23832.setConcept(Context.getConceptService().getConceptByUuid(Constants.SAMPLE_TYPE));
 			obs_23832.setLocation(locationBySismaCode);
 			obs_23832.setEncounter(encounter);
-			if (disa.getSampleType().trim().equalsIgnoreCase(Constants.DBS)) {
+			if (!(disa.getSampleType()==null) && disa.getSampleType().trim().equalsIgnoreCase(Constants.DBS)) {//LIMSSpecimenSourceDesc
 				obs_23832.setValueCoded(Context.getConceptService().getConceptByUuid(Constants.DRY_BLOOD_SPOT));
 				Context.getObsService().saveObs(obs_23832, "");
 			}
@@ -263,7 +265,7 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 			obs_856.setConcept(Context.getConceptService().getConceptByUuid(Constants.VIRAL_LOAD_COPIES));
 			obs_856.setLocation(locationBySismaCode);
 			obs_856.setEncounter(encounter);
-			if (StringUtils.isNotEmpty(disa.getHivViralLoadResult())) {
+			if (!(disa.getHivViralLoadResult()==null) && StringUtils.isNotEmpty(disa.getHivViralLoadResult())) {
 
 				obs_856.setValueNumeric(Double.valueOf(-20));
 				Context.getObsService().saveObs(obs_856, "");
@@ -276,11 +278,11 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 				obs_1306.setLocation(locationBySismaCode);
 				obs_1306.setEncounter(encounter);
 				Context.getObsService().saveObs(obs_1306, "");
-			} else if (StringUtils.isNotEmpty(disa.getViralLoadResultCopies())
+			} else if (!(disa.getViralLoadResultCopies()==null) && StringUtils.isNotEmpty(disa.getViralLoadResultCopies())
 					&& NumberUtils.isNumber(disa.getViralLoadResultCopies().trim())) {
 				obs_856.setValueNumeric(Double.valueOf(disa.getViralLoadResultCopies().trim()));
 				Context.getObsService().saveObs(obs_856, "");
-			} else if (StringUtils.isNotEmpty(disa.getViralLoadResultCopies())
+			} else if (!(disa.getViralLoadResultCopies()==null) && StringUtils.isNotEmpty(disa.getViralLoadResultCopies())
 					&& disa.getViralLoadResultCopies().contains("<")) {
 				obs_856.setValueNumeric(Double.valueOf(-20));
 				Context.getObsService().saveObs(obs_856, "");
@@ -311,7 +313,7 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 			obs_23839.setConcept(Context.getConceptService().getConceptByUuid(Constants.APPROVED_BY));
 			obs_23839.setEncounter(encounter);
 			obs_23839.setLocation(locationBySismaCode);
-			if (StringUtils.isNotEmpty(disa.getAprovedBy().trim())) {
+			if (!(disa.getAprovedBy()==null) && StringUtils.isNotEmpty(disa.getAprovedBy().trim())) {
 				obs_23839.setValueText(disa.getAprovedBy().trim());
 				Context.getObsService().saveObs(obs_23839, "");
 			}
@@ -322,7 +324,7 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 			obs_23841.setConcept(Context.getConceptService().getConceptByUuid(Constants.LAB_COMMENTS));
 			obs_23841.setLocation(locationBySismaCode);
 			obs_23841.setEncounter(encounter);
-			if (StringUtils.isNotEmpty(disa.getLabComments().trim())) {
+			if (!(disa.getLabComments()==null) && StringUtils.isNotEmpty(disa.getLabComments().trim())) {
 				obs_23841.setValueText(disa.getLabComments().trim());
 				Context.getObsService().saveObs(obs_23841, "");
 			}
@@ -333,7 +335,7 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 			obs_22771.setConcept(Context.getConceptService().getConceptByUuid(Constants.ORDER_ID));
 			obs_22771.setLocation(locationBySismaCode);
 			obs_22771.setEncounter(encounter);
-			if (StringUtils.isNotEmpty(disa.getRequestId().trim())) {
+			if (!(disa.getRequestId()==null) && StringUtils.isNotEmpty(disa.getRequestId().trim())) {
 				obs_22771.setValueText(disa.getRequestId().trim());
 				Context.getObsService().saveObs(obs_22771, "");
 			}
