@@ -303,8 +303,17 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 			obs_165243.setConcept(Context.getConceptService().getConceptByUuid(Constants.VIRAL_LOAD_LOG));
 			obs_165243.setLocation(locationBySismaCode);
 			obs_165243.setEncounter(encounter);
-			obs_165243.setValueNumeric(disa.getViralLoadResultLog() == null ? Double.valueOf(0.0)
-					: Double.valueOf(disa.getViralLoadResultLog().toString().replace("<", "").trim()));
+			
+			if(disa.getViralLoadResultLog() == null){
+				obs_165243.setValueNumeric(Double.valueOf(0.0));
+			}
+			if (disa.getViralLoadResultLog().contains(">") ){
+				obs_165243.setValueNumeric(Double.valueOf(disa.getViralLoadResultLog().toString().replace(">", "").trim()));
+			}
+			if (disa.getViralLoadResultLog().contains("<") ){
+				obs_165243.setValueNumeric(Double.valueOf(disa.getViralLoadResultLog().toString().replace("<", "").trim()));
+			}
+
 			Context.getObsService().saveObs(obs_165243, "");
 
 			Obs obs_23839 = new Obs();
