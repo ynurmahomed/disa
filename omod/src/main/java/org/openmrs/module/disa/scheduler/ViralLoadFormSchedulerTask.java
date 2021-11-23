@@ -1,6 +1,7 @@
 package org.openmrs.module.disa.scheduler;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -8,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openmrs.Encounter;
@@ -60,7 +62,22 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 		Context.openSession();
 		try {
 			createViralLoadForm();
-		} catch (ParseException e) {e.printStackTrace();}
+		} catch (Exception e) {
+		  //e.printStackTrace();
+			  String exceprionMessage = ExceptionUtils.getStackTrace(e); //send email
+			  GenericUtil.SendMail(
+				  Context.getAdministrationService().getGlobalPropertyObject(Constants.DISA_MAIL_TO).getPropertyValue(),
+				  Context.getAdministrationService().getGlobalPropertyObject(Constants.DISA_MAIL_FROM).getPropertyValue(),
+				  Constants.DISA_MAIL_SUBJECT
+				  +Context.getLocationService().getDefaultLocation().getDescription(),
+				  Constants.DISA_MAIL_ERROR
+				  +new SimpleDateFormat("dd/MM/yyyy").format(new Date())+"\n\n\n" + exceprionMessage,
+				  Context.getAdministrationService().getGlobalPropertyObject(Constants.DISA_MAIL_HOST).getPropertyValue(), 
+				  Context.getAdministrationService().getGlobalPropertyObject(Constants.DISA_MAIL_FROM_PASSWORD).getPropertyValue(), 
+				  Context.getAdministrationService().getGlobalPropertyObject(Constants.DISA_MAIL_FROM_PORT).getPropertyValue());
+		} finally {
+			
+		}
 		Context.closeSession();
 		System.out.println("module ended...");
 	}
@@ -306,12 +323,12 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 			
 			if(disa.getViralLoadResultLog() == null){
 				obs_165243.setValueNumeric(Double.valueOf(0.0));
-			}
-			if (disa.getViralLoadResultLog().contains(">") ){
+			} else if (!(disa.getViralLoadResultLog()==null) && disa.getViralLoadResultLog().contains(">") ){
 				obs_165243.setValueNumeric(Double.valueOf(disa.getViralLoadResultLog().toString().replace(">", "").trim()));
-			}
-			if (disa.getViralLoadResultLog().contains("<") ){
+			} else if (!(disa.getViralLoadResultLog()==null) && disa.getViralLoadResultLog().contains("<") ){
 				obs_165243.setValueNumeric(Double.valueOf(disa.getViralLoadResultLog().toString().replace("<", "").trim()));
+			} else {
+				obs_165243.setValueNumeric(Double.valueOf(disa.getViralLoadResultLog()));
 			}
 
 			Context.getObsService().saveObs(obs_165243, "");

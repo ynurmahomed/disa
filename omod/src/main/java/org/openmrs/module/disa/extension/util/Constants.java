@@ -80,5 +80,13 @@ public class Constants {
 	public static final String LABORATORIO = "LABORATORIO";
 	public static final String OUTRO_NAO_CODIFICADO = "OUTRO, NAO CODIFICADO";
 	public static final String TODOS = "TODOS";
-	public static final String ALL = "ALL";     
+	public static final String ALL = "ALL";
+	
+	public static final String DISA_MAIL_TO = "disa.api.mail.to";
+	public static final String DISA_MAIL_FROM = "disa.api.mail.from";
+	public static final String DISA_MAIL_SUBJECT = "Notificação de Erro Interoperabilidade Disa-EPTS ";
+	public static final String DISA_MAIL_ERROR = "Ocorreu um erro durante a sincronização de dados em ";
+	public static final String DISA_MAIL_HOST = "disa.api.mail.host";
+	public static final String DISA_MAIL_FROM_PASSWORD = "disa.api.mail.from.password";
+	public static final String DISA_MAIL_FROM_PORT = "disa.api.mail.from.port";
 }
