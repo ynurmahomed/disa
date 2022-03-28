@@ -72,4 +72,12 @@ public class HibernateDisaDAO implements DisaDAO {
 	public Serializable saveFsrLog(FsrLog fsrLog) {
 		return this.getCurrentSession().save(fsrLog); 
 	}
+
+	@Override
+	public Long countFsrLogByRequestId(String requestId) {
+		final String hql = "SELECT f FROM FsrLog f WHERE f.requestId = :requestId ";
+		final Query query = this.getCurrentSession().createQuery(hql).setParameter("requestId", requestId);
+		List list=query.list();
+		return list!=null && list.isEmpty()?(Long) list.get(0):0;
+	}
 }

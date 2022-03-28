@@ -82,8 +82,8 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 		System.out.println("module ended...");
 	}
 
-	@Transactional
-	private void createViralLoadForm() throws ParseException {
+	@Transactional(rollbackFor =Exception.class )
+	private void createViralLoadForm() throws Exception {
 
 		// iterate the viral load list and create the encounters
 		
@@ -93,8 +93,9 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 		System.out.println("Syncing started...");
 		
 		for (Disa disa : jsonViralLoad) {
+		
+		if(disaService.countFsrLogByRequestId(disa.getRequestId())==0) {
 			Encounter encounter = new Encounter();
-
 			encounter.setEncounterDatetime(DateUtil.dateWithLeadingZeros()); 
 			List<Patient> patientsByIdentifier = Context.getPatientService()
 					.getPatients(null, disa.getNid().trim(), null, Boolean.TRUE);
@@ -374,9 +375,11 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 			fsrLog.setRequestId(disa.getRequestId());
 			fsrLog.setCreator(Context.getAuthenticatedUser().getId());     
 			fsrLog.setDateCreated(new Date());
-			disaService.saveFsrLog(fsrLog);
-							
-			updateProcessed();
+			disaService.saveFsrLog(fsrLog);					
+			
+			}
+		
+		  updateProcessed();
 		}
 		
 		System.out.println("Syncing ended...");
@@ -401,12 +404,9 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 		}.getType());
 	}
 
-	private void updateProcessed() {
-		try {
+	private void updateProcessed() throws Exception {
 			rest.getRequestPutProcessed(Constants.URL_PATH_PROCESSED, processed);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		
 	}
 
 	private void updateNotProcessed() {

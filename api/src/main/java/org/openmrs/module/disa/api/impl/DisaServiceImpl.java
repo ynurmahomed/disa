@@ -56,4 +56,9 @@ public class DisaServiceImpl extends BaseOpenmrsService implements DisaService {
 	public Serializable saveFsrLog(FsrLog fsrLog) {
 		return dao.saveFsrLog(fsrLog); 
 	}
+
+	@Override
+	public Long countFsrLogByRequestId(String requestId) {
+		return dao.countFsrLogByRequestId(requestId);
+	}
 }
