@@ -94,7 +94,7 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 		
 		for (Disa disa : jsonViralLoad) {
 		
-		if(disaService.countFsrLogByRequestId(disa.getRequestId())==0) {
+		if(!disaService.existsByRequestId(disa.getRequestId())) {
 			Encounter encounter = new Encounter();
 			encounter.setEncounterDatetime(DateUtil.dateWithLeadingZeros()); 
 			List<Patient> patientsByIdentifier = Context.getPatientService()

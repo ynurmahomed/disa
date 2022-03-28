@@ -58,7 +58,7 @@ public class DisaServiceImpl extends BaseOpenmrsService implements DisaService {
 	}
 
 	@Override
-	public Long countFsrLogByRequestId(String requestId) {
-		return dao.countFsrLogByRequestId(requestId);
+	public boolean existsByRequestId(String requestId) {
+		return dao.existsByRequestId(requestId);
 	}
 }

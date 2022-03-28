@@ -33,5 +33,5 @@ public interface DisaDAO {
 	
 	public Serializable saveFsrLog(FsrLog fsrLog);
 
-	public Long countFsrLogByRequestId(String requestId); 
+	public boolean existsByRequestId(String requestId); 
 }

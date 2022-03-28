@@ -43,7 +43,7 @@ public interface DisaService extends OpenmrsService {
 	
 	public Serializable saveFsrLog(FsrLog fsrLog);
 	
-	Long countFsrLogByRequestId(String requestId);
+	boolean existsByRequestId(String requestId);
 	
 	
 }

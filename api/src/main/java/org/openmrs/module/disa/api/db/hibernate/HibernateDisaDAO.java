@@ -74,10 +74,10 @@ public class HibernateDisaDAO implements DisaDAO {
 	}
 
 	@Override
-	public Long countFsrLogByRequestId(String requestId) {
+	public boolean existsByRequestId(String requestId) {
 		final String hql = "SELECT f FROM FsrLog f WHERE f.requestId = :requestId ";
 		final Query query = this.getCurrentSession().createQuery(hql).setParameter("requestId", requestId);
 		List list=query.list();
-		return list!=null && list.isEmpty()?(Long) list.get(0):0;
+		return list!=null && !list.isEmpty();
 	}
 }
