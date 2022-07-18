@@ -8,7 +8,7 @@
 
 <%@ include file="template/localHeader.jsp"%>
 
-<h2><openmrs:message code="disa.list.viral.load.results"/></h2>
+<h2><openmrs:message code="disa.pesquisa.nids.resultados.nao.processados11"/></h2>
 <br />
 
 <b class="boxHeader"><spring:message code="disa.select.viral.load.status" /></b>
@@ -38,7 +38,7 @@
             	<br />
             	</td>
             </tr>
-            <tr>
+<!--             <tr>
 	            <td><label for="vlState"><openmrs:message code="disa.viral.load.status"/>:</label></td>
 	            <td>
 		            <select id="selValue" name="vlState"> 
@@ -46,7 +46,7 @@
 		         		<option value="NOT_PROCESSED"><openmrs:message code="disa.viral.load.status.NOT_PROCESSED"/></option>
 		      		</select>
 		      	</td>
-    			</tr>
+    			</tr> -->
 		</table>
         <div class="submit-btn">
             <input id="subValue" type="submit" value='<openmrs:message code="general.next"/>'>

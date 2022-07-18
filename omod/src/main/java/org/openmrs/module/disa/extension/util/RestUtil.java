@@ -31,6 +31,7 @@ public class RestUtil {
 	 * @return
 	 * @throws Exception
 	 */
+	@SuppressWarnings("deprecation")
 	public Boolean getRequestPost(String URLPath, StringEntity input) throws Exception {
 		String URL = URLBase + URLPath;
 		Boolean response = false;
@@ -71,6 +72,7 @@ public class RestUtil {
 	 * @return
 	 * @throws Exception
 	 */
+	@SuppressWarnings({ "deprecation", "unused" })
 	public Boolean getRequestPutProcessed(String urlPathProcessed, String processedNid) throws Exception {
 		String URL = URLBase + urlPathProcessed;
 		Boolean response = false;
@@ -113,6 +115,7 @@ public class RestUtil {
 	 * @return
 	 * @throws Exception
 	 */
+	@SuppressWarnings({ "deprecation", "unused" })
 	public Boolean getRequestPutNotProcessed(String urlPathNotProcessed, String processedNid,
 			String reasonForNotProcessing) throws Exception {
 		String URL = URLBase + urlPathNotProcessed;
@@ -156,6 +159,7 @@ public class RestUtil {
 	 * @return
 	 * @throws Exception
 	 */
+	@SuppressWarnings("deprecation")
 	public Boolean getRequestPutPending(String urlPathPending, List<String> nids) throws Exception {
 		String URL = URLBase + urlPathPending;
 		Boolean response = false;
@@ -190,7 +194,8 @@ public class RestUtil {
 	 * @return
 	 * @throws Exception
 	 */
-	public String getRequestGet(List<String> sismaCodes) throws Exception {
+	@SuppressWarnings("deprecation")
+	public String getRequestGet(List<String> sismaCodes, String requestingProvinceName) throws Exception {
 		String URL = URLBase;
 		String response = "";
 		DefaultHttpClient httpclient = new DefaultHttpClient();
@@ -199,6 +204,7 @@ public class RestUtil {
 			URIBuilder uriBuilder = new URIBuilder(URL);
 			for (String sismaCode : sismaCodes) {
 				uriBuilder.addParameter("locationCodes", sismaCode);
+				uriBuilder.addParameter("requestingProvinceName", requestingProvinceName);
 			}
 
 			HttpGet httpGet = new HttpGet(uriBuilder.build());
@@ -209,9 +215,11 @@ public class RestUtil {
 			httpGet.setHeader(authorizationHeader);
 			ResponseHandler<String> responseHandler = new BasicResponseHandler();
 
-			HttpParams params = new BasicHttpParams();
+			/*HttpParams params = new BasicHttpParams();
 			params.setParameter("sismaCodes", sismaCodes);
-			httpclient.setParams(params);
+			params.setParameter("requestingProvinceName", requestingProvinceName);
+			httpclient.setParams(params);*/
+			
 			response = httpclient.execute(httpGet, responseHandler);
 
 		} finally {

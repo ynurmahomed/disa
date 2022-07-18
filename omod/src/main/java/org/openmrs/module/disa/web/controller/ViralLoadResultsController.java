@@ -11,6 +11,7 @@ import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.disa.Disa;
+import org.openmrs.module.disa.extension.util.Constants;
 import org.openmrs.module.disa.web.delegate.ViralLoadResultsDelegate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -43,7 +44,7 @@ public class ViralLoadResultsController {
 
 	@RequestMapping(value = "/module/disa/viralLoadStatusList", method = RequestMethod.POST)
 	public ModelAndView showViralLoadList(HttpServletRequest request, HttpSession session,
-			@RequestParam("vlState") String state, @RequestParam("startDate") Date startDate,
+			@RequestParam("startDate") Date startDate,
 			@RequestParam("endDate") Date endDate) throws Exception {
 		ModelAndView model = new ModelAndView();
 
@@ -58,7 +59,7 @@ public class ViralLoadResultsController {
 			return model;
 		}
 
-		session.setAttribute("vlState", state);
+		session.setAttribute("vlState", Constants.NOT_PROCESSED);
 		session.setAttribute("startDate", startDate);
 		session.setAttribute("endDate", endDate);
 

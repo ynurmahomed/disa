@@ -29,4 +29,5 @@ disa-api-integ/.mvn/*
 .classpath
 .project
 .settings/
+api/target/
 

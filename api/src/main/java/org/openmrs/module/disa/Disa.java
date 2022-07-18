@@ -3,10 +3,6 @@ package org.openmrs.module.disa;
 import java.util.Calendar;
 import java.util.Date;
 
-import javax.persistence.Column;
-
-import org.apache.commons.lang3.StringUtils;
-
 /**
  * 
  * @author machabane
@@ -80,6 +76,60 @@ public class Disa {
 	private String viralLoadStatus;
 
 	private String notProcessingCause;
+	
+	private String lastViralLoadResult;
+	
+	private String lastViralLoadDate;
+	
+	private String artRegimen;
+	
+	private String primeiraLinha;
+	
+	private String segundaLinha;
+	
+	private String dataDeInicioDoTARV;
+	
+	private String finalViralLoadResult;
+	
+	public String getFinalViralLoadResult() {
+		return finalViralLoadResult;
+	}
+
+	public void setFinalViralLoadResult(String finalViralLoadResult) {
+		this.finalViralLoadResult = finalViralLoadResult;
+	}
+
+	public String getDataDeInicioDoTARV() {
+		return dataDeInicioDoTARV;
+	}
+
+	public void setDataDeInicioDoTARV(String dataDeInicioDoTARV) {
+		this.dataDeInicioDoTARV = dataDeInicioDoTARV;
+	}
+
+	public String getPrimeiraLinha() {
+		return primeiraLinha;
+	}
+
+	public void setPrimeiraLinha(String primeiraLinha) {
+		this.primeiraLinha = primeiraLinha;
+	}
+
+	public String getSegundaLinha() {
+		return segundaLinha;
+	}
+
+	public void setSegundaLinha(String segundaLinha) {
+		this.segundaLinha = segundaLinha;
+	}
+
+	public String getArtRegimen() {
+		return artRegimen;
+	}
+
+	public void setArtRegimen(String artRegimen) {
+		this.artRegimen = artRegimen;
+	}
 
 	public String getViralLoadStatus() {
 		return viralLoadStatus;
@@ -321,6 +371,22 @@ public class Disa {
 		this.notProcessingCause = notProcessingCause;
 	}
 	
+	public String getLastViralLoadResult() {
+		return lastViralLoadResult;
+	}
+
+	public void setLastViralLoadResult(String lastViralLoadResult) {
+		this.lastViralLoadResult = lastViralLoadResult;
+	}
+
+	public String getLastViralLoadDate() {
+		return lastViralLoadDate;
+	}
+
+	public void setLastViralLoadDate(String lastViralLoadDate) {
+		this.lastViralLoadDate = lastViralLoadDate;
+	}
+
 	public String getRequestingDistrictName() {
 		return requestingDistrictName;
 	}

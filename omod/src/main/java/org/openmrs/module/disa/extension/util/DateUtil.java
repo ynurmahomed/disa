@@ -32,6 +32,10 @@ public class DateUtil {
 	    return new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").parse(date);  
 	}
 	
+	public static Date string_To_Date(String date) throws ParseException {
+	    return new SimpleDateFormat("dd/MM/yyyy").parse(date);  
+	}
+	
 	public static Date dateWithLeadingZeros() {
 		Calendar now = Calendar.getInstance();
         now.set(Calendar.HOUR, 0);
@@ -40,5 +44,19 @@ public class DateUtil {
         now.set(Calendar.MILLISECOND, 0);
         
         return now.getTime();
+	}
+	
+	public static boolean isValidDate(String inDate) {
+		
+		if(inDate==null) return false;
+		
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        dateFormat.setLenient(false);
+        try {
+            dateFormat.parse(inDate.trim());
+        } catch (ParseException pe) {
+            return false;
+        }
+        return true;
 	}
 }

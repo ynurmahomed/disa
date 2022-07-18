@@ -7,16 +7,16 @@
 
 <%@ include file="template/localHeader.jsp"%>
 
-<h2><openmrs:message code="disa.list.viral.load.results.staging.server"/></h2>
+<h2><openmrs:message code="disa.pesquisa.resultados.laboratoriais11"/></h2>
 <br />
 
-<b class="boxHeader"><spring:message code="disa.list.viral.load.results.staging.server" /></b>
+<b class="boxHeader"><spring:message code="disa.pesquisa.resultados.laboratoriais11" /></b>
 <fieldset>
 	<form method="post">
 	    <table>
     		<tr>
-    			<td><label for="startDate"><openmrs:message code="disa.referring.request.id" />:</label></td>
-	            <td><input type="text" size=22 maxlength="16" name="referringId" id="referringId" ><br /></td>
+    		    <td><label for="startDate"><openmrs:message code="disa.requestId" />:</label></td>
+	            <td><input type="text" size=22 maxlength="16" name="requestId" id="requestId" ></td>
 	            <td><label for="startDate"><openmrs:message code="disa.nid" />:</label></td>
 	            <td><input type="text" size=24 maxlength="21" name="nid" id="nid" ></td>
 	            <td><label for="startDate"><openmrs:message code="disa.sisma.code" />:</label></td>
@@ -48,8 +48,8 @@
             	</td>
             </tr>
             <tr>
-            	<td><label for="startDate"><openmrs:message code="disa.requestId" />:</label></td>
-	            <td><input type="text" size=22 maxlength="16" name="requestId" id="requestId" ></td>
+    			<td><label for="startDate"><openmrs:message code="disa.referring.request.id" />:</label></td>
+	            <td><input type="text" size=22 maxlength="16" name="referringId" id="referringId" ><br /></td>
 			    <td><label for="vlState"><openmrs:message code="disa.frm.status"/>:</label></td>
 	            <td>
 		            <select id="selValue" name="vlState">

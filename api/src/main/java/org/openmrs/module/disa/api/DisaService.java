@@ -42,4 +42,6 @@ public interface DisaService extends OpenmrsService {
 	public List<LocationAttribute> getAllLocationAttribute(String valueReference);
 	
 	public Serializable saveFsrLog(FsrLog fsrLog);
+	
+	public boolean existsByRequestId(String requestId);
 }

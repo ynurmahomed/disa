@@ -19,12 +19,80 @@
 		<date></date>
 		<description></description>
 		<sql>
-			INSERT INTO openmrs.global_property VALUES 
-			('disa.api.password', 'disa', 'api password', '2686097c-871b-11e9-898c-0242ac120002', NULL, NULL, NULL, NULL, NULL, NULL),
-			('disa.api.url', 'http://dev.fgh.org.mz:8085/services/viralloads', 'APHL data source to collect viral load data', 'e07cdb3f-871a-11e9-898c-0242ac120002', NULL, NULL, NULL, NULL, NULL, NULL),
-			('disa.api.username', 'disa', 'api username', '23294c5c-871b-11e9-898c-0242ac120002', NULL, NULL, NULL, NULL, NULL, NULL),
-			('disa.mandatory', 'false', 'true/false whether or not the disa module MUST start when openmrs starts.  This is used to make sure that mission critical modules are always running if openmrs is running.', 'e4705f4d-437b-454a-99cf-9bd6aa126ce7', NULL, NULL, NULL, NULL, NULL, NULL),
-			('disa.started', 'true', 'DO NOT MODIFY. true/false whether or not the disa module has been started.  This is used to make sure modules that were running  prior to a restart are started again', 'd54c25dd-cbeb-4317-b306-4b1a3e68a8ae', NULL, NULL, NULL, NULL, NULL, NULL);
+			CREATE TABLE IF NOT EXISTS `fsr_log` (
+			  `id` int(11) NOT NULL AUTO_INCREMENT,
+			  `patient_id` int(11) DEFAULT NULL,
+			  `encounter_id` int(11) DEFAULT NULL,
+			  `patient_identifier` varchar(50) DEFAULT NULL,
+			  `request_id` varchar(50) DEFAULT NULL,
+			  `creator` int(11) DEFAULT NULL,
+			  `date_created` datetime DEFAULT NULL,
+			  PRIMARY KEY (`id`)
+			) ENGINE=InnoDB AUTO_INCREMENT=1524 DEFAULT CHARSET=utf8;
+		
+			INSERT INTO global_property 
+			(property,property_value,description,uuid,datatype,datatype_config,preferred_handler,handler_config,date_changed,changed_by) 
+			VALUES ('disa.api.location.attribute.type.uuid','132895aa-1c88-11e8-b6fd-7395830b63f3','location atribute type uuid','2686097c-871b-11e9-898c-0242ac129982',NULL,NULL,NULL,NULL,NULL,NULL);
+							
+			INSERT INTO global_property 
+			(property,property_value,description,uuid,datatype,datatype_config,preferred_handler,handler_config,date_changed,changed_by) 
+			VALUES ('disa.api.password','disa','api password','2686097c-871b-11e9-898c-0242ac120002',NULL,NULL,NULL,NULL,NULL,NULL);
+							
+			INSERT INTO global_property 
+			(property,property_value,description,uuid,datatype,datatype_config,preferred_handler,handler_config,date_changed,changed_by) 
+			VALUES ('disa.api.sisma.code','1040114',NULL,'0baa0527-9667-4a9a-be7a-60acae798458',NULL,NULL,NULL,NULL,NULL,NULL);
+							
+			INSERT INTO global_property 
+			(property,property_value,description,uuid,datatype,datatype_config,preferred_handler,handler_config,date_changed,changed_by) 
+			VALUES ('disa.api.url','http://disa-api-integ:8080/services/viralloads','APHL data source to collect viral load data','e07cdb3f-871a-11e9-898c-0242ac120002',NULL,NULL,NULL,NULL,NULL,NULL);
+							
+			INSERT INTO global_property 
+			(property,property_value,description,uuid,datatype,datatype_config,preferred_handler,handler_config,date_changed,changed_by) 
+			VALUES ('disa.api.username','disa','api username','23294c5c-871b-11e9-898c-0242ac120002',NULL,NULL,NULL,NULL,NULL,NULL);
+							
+			INSERT INTO global_property 
+			(property,property_value,description,uuid,datatype,datatype_config,preferred_handler,handler_config,date_changed,changed_by) 
+			VALUES ('disa.database_version','1.0-SNAPSHOT','DO NOT MODIFY.  Current database version number for the disa module.','edd00864-b35e-4dd4-a765-2194a3c47c6e',NULL,NULL,NULL,NULL,NULL,NULL);
+							
+			INSERT INTO global_property 
+			(property,property_value,description,uuid,datatype,datatype_config,preferred_handler,handler_config,date_changed,changed_by) 
+			VALUES ('disa.mandatory','false','true/false whether or not the disa module MUST start when openmrs starts.  This is used to make sure that mission critical modules are always running if openmrs is running.','e4705f4d-437b-454a-99cf-9bd6aa126ce7',NULL,NULL,NULL,NULL,NULL,NULL);
+							
+			INSERT INTO global_property 
+			(property,property_value,description,uuid,datatype,datatype_config,preferred_handler,handler_config,date_changed,changed_by) 
+			VALUES ('disa.openmrs.user','b0fb57b1-43e7-46dc-ad93-5e2429866b30','disa openmrs user creator','bf2c082e-b50a-11e9-b627-941882ab9f93',NULL,NULL,NULL,NULL,NULL,NULL);
+							
+			INSERT INTO global_property 
+			(property,property_value,description,uuid,datatype,datatype_config,preferred_handler,handler_config,date_changed,changed_by) 
+			VALUES ('disa.provider','7013d271-1bc2-4a50-bed6-8932044bc18f','disa openmrs provider','d54c25dd-cbeb-4317-b306-4b1a3e67a7ae',NULL,NULL,NULL,NULL,NULL,NULL);
+							
+			INSERT INTO global_property 
+			(property,property_value,description,uuid,datatype,datatype_config,preferred_handler,handler_config,date_changed,changed_by) 
+			VALUES ('disa.started','false','DO NOT MODIFY. true/false whether or not the disa module has been started.  This is used to make sure modules that were running  prior to a restart are started again','d54c25dd-cbeb-4317-b306-4b1a3e68a8ae',NULL,NULL,NULL,NULL,NULL,NULL);
+							
+			INSERT INTO global_property 
+			(property,property_value,description,uuid,datatype,datatype_config,preferred_handler,handler_config,date_changed,changed_by) 
+			VALUES ('disa.api.mail.to','helio.machabane@fgh.org.mz,judiao.mbaua@fgh.org.mz,eurico.jose@fgh.org.mz','Recipients','2686097c-871b-11e9-898c-0242ac128882',NULL,NULL,NULL,NULL,NULL,NULL);
+							
+			INSERT INTO global_property 
+			(property,property_value,description,uuid,datatype,datatype_config,preferred_handler,handler_config,date_changed,changed_by) 
+			VALUES ('disa.api.mail.from','vlstaging@fgh.org.mz','Sender','2686097c-871b-11e9-898c-0242ac121172',NULL,NULL,NULL,NULL,NULL,NULL);
+							
+			INSERT INTO global_property 
+			(property,property_value,description,uuid,datatype,datatype_config,preferred_handler,handler_config,date_changed,changed_by) 
+			VALUES ('disa.api.mail.host','smtp.gmail.com','Host','0baa0527-9667-4a9a-be7a-60acae797333',NULL,NULL,NULL,NULL,NULL,NULL);
+							
+			INSERT INTO global_property 
+			(property,property_value,description,uuid,datatype,datatype_config,preferred_handler,handler_config,date_changed,changed_by) 
+			VALUES ('disa.api.mail.from.password','P@ssword123*','From password','e07cdb3f-871a-11e9-898c-0242ac124442',NULL,NULL,NULL,NULL,NULL,NULL);
+							
+			INSERT INTO global_property 
+			(property,property_value,description,uuid,datatype,datatype_config,preferred_handler,handler_config,date_changed,changed_by) 
+			VALUES ('disa.api.mail.from.port','465','Port','e07cdb3f-871a-11e9-898c-0242ac127772',NULL,NULL,NULL,NULL,NULL,NULL);
+			
+			INSERT INTO global_property 
+			(property,property_value,description,uuid,datatype,datatype_config,preferred_handler,handler_config,date_changed,changed_by) 
+			VALUES ('disa.province.request','Zambezia','province requesting the viral load results','e07cdb3f-871a-11e9-898c-0242ac121112',NULL,NULL,NULL,NULL,NULL,NULL);
 		</sql>
 	</diff>
 	

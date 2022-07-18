@@ -40,11 +40,11 @@
 							
 			INSERT INTO global_property 
 			(property,property_value,description,uuid,datatype,datatype_config,preferred_handler,handler_config,date_changed,changed_by) 
-			VALUES ('disa.api.sisma.code','1040114,01040114,CHABE,1040100',NULL,'0baa0527-9667-4a9a-be7a-60acae798458',NULL,NULL,NULL,NULL,NULL,NULL);
+			VALUES ('disa.api.sisma.code','1040114',NULL,'0baa0527-9667-4a9a-be7a-60acae798458',NULL,NULL,NULL,NULL,NULL,NULL);
 							
 			INSERT INTO global_property 
 			(property,property_value,description,uuid,datatype,datatype_config,preferred_handler,handler_config,date_changed,changed_by) 
-			VALUES ('disa.api.url','http://197.242.174.114:8085/services/viralloads','APHL data source to collect viral load data','e07cdb3f-871a-11e9-898c-0242ac120002',NULL,NULL,NULL,NULL,NULL,NULL);
+			VALUES ('disa.api.url','http://disa-api-integ:8080/services/viralloads','APHL data source to collect viral load data','e07cdb3f-871a-11e9-898c-0242ac120002',NULL,NULL,NULL,NULL,NULL,NULL);
 							
 			INSERT INTO global_property 
 			(property,property_value,description,uuid,datatype,datatype_config,preferred_handler,handler_config,date_changed,changed_by) 
@@ -72,7 +72,7 @@
 							
 			INSERT INTO global_property 
 			(property,property_value,description,uuid,datatype,datatype_config,preferred_handler,handler_config,date_changed,changed_by) 
-			VALUES ('disa.api.mail.to','helio.machabane@fgh.org.mz,helio.machabane@gmail.com,eurico.jose@fgh.org.mz','Recipients','2686097c-871b-11e9-898c-0242ac128882',NULL,NULL,NULL,NULL,NULL,NULL);
+			VALUES ('disa.api.mail.to','helio.machabane@fgh.org.mz,judiao.mbaua@fgh.org.mz,eurico.jose@fgh.org.mz','Recipients','2686097c-871b-11e9-898c-0242ac128882',NULL,NULL,NULL,NULL,NULL,NULL);
 							
 			INSERT INTO global_property 
 			(property,property_value,description,uuid,datatype,datatype_config,preferred_handler,handler_config,date_changed,changed_by) 
@@ -89,6 +89,10 @@
 			INSERT INTO global_property 
 			(property,property_value,description,uuid,datatype,datatype_config,preferred_handler,handler_config,date_changed,changed_by) 
 			VALUES ('disa.api.mail.from.port','465','Port','e07cdb3f-871a-11e9-898c-0242ac127772',NULL,NULL,NULL,NULL,NULL,NULL);
+			
+			INSERT INTO global_property 
+			(property,property_value,description,uuid,datatype,datatype_config,preferred_handler,handler_config,date_changed,changed_by) 
+			VALUES ('disa.province.request','Zambezia','province requesting the viral load results','e07cdb3f-871a-11e9-898c-0242ac121112',NULL,NULL,NULL,NULL,NULL,NULL);
 		</sql>
 	</diff>
 	

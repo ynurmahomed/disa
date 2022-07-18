@@ -32,6 +32,14 @@ public class Constants {
 	public static final String ORDER_ID = "e8c63cd6-9113-48b2-99cd-6112103f1448";
 	public static final String DISA_NID = "79ad599a-50df-48f8-865c-0095ec9a9d01";
 	
+	public static final String LAST_VIRALLOAD_RESULT = "79c69931-b656-4b88-9f13-39274a1f6e45";
+	public static final String ART_REGIMEN = "d5506770-307c-4d44-b975-f17c6bd1da53";
+	public static final String LINHA_TERAPEUTICA = "fdff0637-b36f-4dce-90c7-fe9f1ec586f0";
+	public static final String PRIMEIRA_LINHA = "a6bbe1ac-5243-40e4-98cb-7d4a1467dfbe";
+	public static final String SEGUNDA_LINHA = "7f367983-9911-4f8c-bbfc-a85678801f64";
+	public static final String ART_START_DATE = "e1d8f690-1d5f-11e0-b929-000c29ad1d07";
+	public static final String VIRAL_LOAD_REQUEST_DATE = "b39fbc70-5dc1-49ac-acad-21eebb86fba0";
+	
 	public static final String LOCATION_ATTRIBUTE_TYPE_UUID = "disa.api.location.attribute.type.uuid";
 	
 	public static final String YES = "YES";
@@ -39,6 +47,7 @@ public class Constants {
 	public static final String NO = "NO";
 	public static final String NAO = "NAO";
 	public static final String NF = "Nao preenchido";
+	public static final String UNREPORTED = "Unreported";
 	
 	public static final String ROUTINE = "Routine";
 	public static final String SUSPECTED_TREATMENT_FAILURE = "Suspected treatment failure";
@@ -47,6 +56,9 @@ public class Constants {
 	public static final String PV = "Puncao venosa";
 	public static final String PD = "Puncao digital";
 	public static final String DBS = "Dry Blood Spot";
+	
+	public static final String PLASMA = "PL";
+	public static final String DRYBLOODSPOT = "DBS";
 	
 	public static final String VIRAL_LOAD_RESULT_NULL = "NULL";
 	
@@ -58,7 +70,10 @@ public class Constants {
 	public static final String VENOUS_PUNCTURE = "3098bd78-a1bb-455c-a724-9c114072b34e";
 	public static final String DIGITAL_PUNCTURE = "9aa935ec-be0f-4038-a1ca-23927bfde672";
 	public static final String DRY_BLOOD_SPOT = "7c288beb-548c-4440-8f12-4f62cd45305a";
+	public static final String PLASMA_ = "1002AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 	public static final String BEYOND_DETECTABLE_LIMIT = "e1da2812-1d5f-11e0-b929-000c29ad1d07";
+	public static final String UNDETECTABLE_VIRAL_LOAD = "cc8ef88c-6ab6-4404-a036-d415bc42cc1c";
+	public static final String LESSTHAN = "4df535db-b8c9-4759-85bb-f4bcb5bebdc6";
 	
 	public static final String URL_PATH_PROCESSED = "/processed";
 	public static final String URL_PATH_NOT_PROCESSED = "/not-processed";
@@ -89,4 +104,17 @@ public class Constants {
 	public static final String DISA_MAIL_HOST = "disa.api.mail.host";
 	public static final String DISA_MAIL_FROM_PASSWORD = "disa.api.mail.from.password";
 	public static final String DISA_MAIL_FROM_PORT = "disa.api.mail.from.port";
+	
+	public static final String DISA_PROVINCE = "disa.province.request";
+	
+	public static final String FORWARD_SLASH = "/";
+	public static final String COPIES = "copias";
+	public static final String ML = "ml";
+	public static final String POS = "POS";
+	public static final String TARGET_NOT_DETECTED = "Target not detected";
+	public static final String NOT_DETECTED = "NOT DETECTED";
+	public static final String NOT_PROCESSED = "NOT_PROCESSED";
+	
+	public static final String INDETECTAVEL = "INDETECTAVEL";
+	public static final String LESS_THAN = "<";
 }

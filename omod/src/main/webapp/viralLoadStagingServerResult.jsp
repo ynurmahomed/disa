@@ -19,18 +19,17 @@
 	})
 </script>
 
-<h2><openmrs:message code="disa.list.viral.load.results"/></h2>
+<h2><openmrs:message code="disa.lista.resultados.laboratoriais333"/></h2>
 <br />
 
 <c:if test="${not empty vlDataLst}">
-	<b class="boxHeader"><spring:message code="disa.list.viral.load.results" /></b>
+	<b class="boxHeader"><spring:message code="disa.lista.resultados.laboratoriais333" /></b>
 	<fieldset>
 		<form method="post" action="viralLoadStagingServerResult.form">
 			<table  id="vlResultsTable" class="display" width="100%" cellpadding="2" cellspacing="0"
 				style="font-size: 13px;">
 				<thead>
 					<tr>
-						<th><spring:message code="disa.location"/></th>
 						<th><spring:message code="disa.requesting.facility.name"/></th>
 						<th><spring:message code="disa.requesting.district.name"/></th>
 						<th><spring:message code="disa.sisma.code"/></th>
@@ -43,8 +42,6 @@
 						<th><spring:message code="disa.analysis.date.time" /></th>
 						<th><spring:message code="disa.authorised.date.time" /></th>
 						<th><spring:message code="disa.viralload.result.copy" /></th>
-						<th><spring:message code="disa.viralload.result.log" /></th>
-						<th><spring:message code="disa.viralload.result.coded" /></th>
 				        <th><spring:message code="disa.status" /></th>
 				        <th><spring:message code="disa.created.at" /></th>
 				        <th><spring:message code="disa.updated.at" /></th>
@@ -54,7 +51,6 @@
 				<tbody>
 					<c:forEach items="${vlDataLst}" var="vlData">
 					    <tr>
-							<td>${vlData.location}</td>
 					    	<td>${vlData.requestingFacilityName}</td>
 					    	<td>${vlData.requestingDistrictName}</td>
 					    	<td>${vlData.healthFacilityLabCode}</td>
@@ -66,9 +62,7 @@
 					        <td>${vlData.requestId}</td>
 					        <td>${vlData.processingDate}</td>
 					        <td>${vlData.viralLoadResultDate}</td>
-					        <td>${vlData.viralLoadResultCopies}</td>
-					        <td>${vlData.viralLoadResultLog}</td>
-					        <td>${vlData.hivViralLoadResult}</td>
+					        <td>${vlData.finalViralLoadResult}</td>
 					        <td>${vlData.viralLoadStatus}</td>
 					        <td>${vlData.createdAt}</td>
 					        <td>${vlData.updatedAt}</td>

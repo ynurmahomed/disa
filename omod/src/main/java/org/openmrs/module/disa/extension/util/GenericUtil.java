@@ -2,6 +2,7 @@ package org.openmrs.module.disa.extension.util;
 
 import java.text.Normalizer;
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -21,6 +22,7 @@ public class GenericUtil {
 	private static byte[] bs;
 	private static String noSpecialCharacter;
 	private static String wardConcept;
+	static Pattern pattern = Pattern.compile("-?\\d+(\\.\\d+)?");
 
 	public static String removeAccents (String specialCharacter) {
 		
@@ -31,6 +33,17 @@ public class GenericUtil {
 			e.printStackTrace();
 		}
 		return noSpecialCharacter;
+	}
+	
+	public static boolean isNumeric(String strNum) {
+	    if (strNum == null) { return false; }
+	    return pattern.matcher(strNum).matches();
+	}
+	
+	public static String unaccent(String src) {
+		return Normalizer
+				.normalize(src, Normalizer.Form.NFD)
+				.replaceAll("[^\\p{ASCII}]", "");
 	}
 	
 	public static String wardSelection (String we) {
@@ -107,5 +120,17 @@ public class GenericUtil {
         } catch (MessagingException mex) {
             mex.printStackTrace();
         }
+	}
+	
+	public static void main(String[] args) {
+		String hh = " < 20 copias/ml";
+		System.out.println(hh
+				.trim()
+				.substring(1)
+				.replace("<", "")
+				.replace(Constants.COPIES, "")
+				.replace(Constants.FORWARD_SLASH, "")
+				.replace(Constants.ML, "")
+				.trim()); 
 	}
 }
