@@ -49,5 +49,5 @@ public interface DisaService extends OpenmrsService {
 	public List<Integer> getPatientByNid(String identifier);
 
 	public List<Patient> getPatientByPatientId(Integer patientId);
-
+	
 }

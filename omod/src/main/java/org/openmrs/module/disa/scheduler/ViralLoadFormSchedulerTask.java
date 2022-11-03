@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.http.conn.HttpHostConnectException;
 import org.openmrs.Encounter;
 import org.openmrs.EncounterRole;
@@ -79,7 +80,7 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 		Context.closeSession();
 		System.out.println("module ended...");
 	}
-
+	
 	@Transactional(rollbackFor=Exception.class )
 	private void createViralLoadForm() throws Exception, HttpHostConnectException {
 
@@ -105,17 +106,22 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
         Provider provider=Context.getProviderService().getProvidersByPerson(user.getPerson()).iterator().next();
 		
 		for (Disa disa : jsonViralLoad) {
-			
-			if(!disaService.existsByRequestId(disa.getRequestId())) {
-			
-				Encounter encounter = new Encounter();
-				encounter.setEncounterDatetime(DateUtil.dateWithLeadingZeros()); 
-				
-				patientIds = disaService.getPatientByNid(disa.getNid().trim());
-	
-				if (patientIds.isEmpty()) {
-					notProcessed = disa.getRequestId();
-					updateNotProcessed();
+		
+		if(!disaService.existsByRequestId(disa.getRequestId())) {
+			Encounter encounter = new Encounter();
+			encounter.setEncounterDatetime(DateUtil.dateWithLeadingZeros()); 
+			List<Patient> patientsByIdentifier = Context.getPatientService()
+					.getPatients(null, disa.getNid().trim(), null, Boolean.TRUE);
+
+			if (patientsByIdentifier.isEmpty()) {
+				notProcessed = disa.getRequestId();
+				updateNotProcessed();
+				continue;
+			} else {
+				if (hasNoResult(disa)) {
+					notProcessedNoResult = disa.getRequestId();
+					updateNotProcessedNoResult();
+
 					continue;
 				} else {
 					if (patientIds.size()>1) {
@@ -138,7 +144,7 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 						continue;
 					} else {
 						processed = disa.getRequestId();
-						lstPatient = disaService.getPatientByPatientId(patientIds.get(0)); 
+						lstPatient = disaService.getPatientByPatientId(patientIds.get(0));
 						encounter.setPatient(lstPatient.get(0));  
 					}
 				}
@@ -460,6 +466,143 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 								
 				updateProcessed();
 			}
+
+			Obs obs_23826 = new Obs();
+			obs_23826.setPerson(Context.getPersonService().getPersonByUuid(patientsByIdentifier.get(0).getUuid()));
+			obs_23826.setObsDatetime(new Date());
+			obs_23826.setConcept(Context.getConceptService().getConceptByUuid(Constants.SAMPLE_DATE_RECEIPT));
+			obs_23826.setLocation(locationBySismaCode);
+			obs_23826.setEncounter(encounter);
+			if (!(disa.getDateOfSampleReceive()==null) && StringUtils.isNotEmpty(disa.getDateOfSampleReceive())) {//ReceivedDateTime
+				obs_23826.setValueDate(DateUtil.deserialize(disa.getDateOfSampleReceive()));
+				Context.getObsService().saveObs(obs_23826, "");
+			}
+
+			Obs obs_23833 = new Obs();
+			obs_23833.setPerson(Context.getPersonService().getPersonByUuid(patientsByIdentifier.get(0).getUuid()));
+			obs_23833.setObsDatetime(new Date());
+			obs_23833.setConcept(Context.getConceptService().getConceptByUuid(Constants.SAMPLE_PROCESSING_DATE));
+			obs_23833.setLocation(locationBySismaCode);
+			obs_23833.setEncounter(encounter);
+			if (!(disa.getProcessingDate()==null) && StringUtils.isNotEmpty(disa.getProcessingDate())) {//AnalysisDateTime
+				obs_23833.setValueDate(DateUtil.deserialize(disa.getProcessingDate()));
+				Context.getObsService().saveObs(obs_23833, "");
+			}
+
+			Obs obs_23832 = new Obs();
+			obs_23832.setPerson(Context.getPersonService().getPersonByUuid(patientsByIdentifier.get(0).getUuid()));
+			obs_23832.setObsDatetime(new Date());
+			obs_23832.setConcept(Context.getConceptService().getConceptByUuid(Constants.SAMPLE_TYPE));
+			obs_23832.setLocation(locationBySismaCode);
+			obs_23832.setEncounter(encounter);
+			if (!(disa.getSampleType()==null) && disa.getSampleType().trim().equalsIgnoreCase(Constants.DBS)) {//LIMSSpecimenSourceDesc
+				obs_23832.setValueCoded(Context.getConceptService().getConceptByUuid(Constants.DRY_BLOOD_SPOT));
+				Context.getObsService().saveObs(obs_23832, "");
+			}
+
+			Obs obs_856 = new Obs();
+			obs_856.setPerson(Context.getPersonService().getPersonByUuid(patientsByIdentifier.get(0).getUuid()));
+			obs_856.setObsDatetime(new Date());
+			obs_856.setConcept(Context.getConceptService().getConceptByUuid(Constants.VIRAL_LOAD_COPIES));
+			obs_856.setLocation(locationBySismaCode);
+			obs_856.setEncounter(encounter);
+			if (!(disa.getHivViralLoadResult()==null) && StringUtils.isNotEmpty(disa.getHivViralLoadResult())) {
+
+				obs_856.setValueNumeric(Double.valueOf(-20));
+				Context.getObsService().saveObs(obs_856, "");
+
+				Obs obs_1306 = new Obs();
+				obs_1306.setPerson(Context.getPersonService().getPersonByUuid(patientsByIdentifier.get(0).getUuid()));
+				obs_1306.setObsDatetime(new Date());
+				obs_1306.setConcept(Context.getConceptService().getConceptByUuid(Constants.HIV_VIRAL_LOAD_QUALITATIVE));
+				obs_1306.setValueCoded(Context.getConceptService().getConceptByUuid(Constants.BEYOND_DETECTABLE_LIMIT));
+				obs_1306.setLocation(locationBySismaCode);
+				obs_1306.setEncounter(encounter);
+				Context.getObsService().saveObs(obs_1306, "");
+			} else if (!(disa.getViralLoadResultCopies()==null) && StringUtils.isNotEmpty(disa.getViralLoadResultCopies())
+					&& NumberUtils.isNumber(disa.getViralLoadResultCopies().trim())) {
+				obs_856.setValueNumeric(Double.valueOf(disa.getViralLoadResultCopies().trim()));
+				Context.getObsService().saveObs(obs_856, "");
+			} else if (!(disa.getViralLoadResultCopies()==null) && StringUtils.isNotEmpty(disa.getViralLoadResultCopies())
+					&& disa.getViralLoadResultCopies().contains("<")) {
+				obs_856.setValueNumeric(Double.valueOf(-20));
+				Context.getObsService().saveObs(obs_856, "");
+
+				Obs obs_1306 = new Obs();
+				obs_1306.setPerson(Context.getPersonService().getPersonByUuid(patientsByIdentifier.get(0).getUuid()));
+				obs_1306.setObsDatetime(new Date());
+				obs_1306.setConcept(Context.getConceptService().getConceptByUuid(Constants.HIV_VIRAL_LOAD_QUALITATIVE));
+				obs_1306.setValueCoded(Context.getConceptService().getConceptByUuid(Constants.BEYOND_DETECTABLE_LIMIT));
+				obs_1306.setLocation(locationBySismaCode);
+				obs_1306.setEncounter(encounter);
+				Context.getObsService().saveObs(obs_1306, "");
+			}
+
+			Obs obs_165243 = new Obs();
+			obs_165243.setPerson(Context.getPersonService().getPersonByUuid(patientsByIdentifier.get(0).getUuid()));
+			obs_165243.setObsDatetime(new Date());
+			obs_165243.setConcept(Context.getConceptService().getConceptByUuid(Constants.VIRAL_LOAD_LOG));
+			obs_165243.setLocation(locationBySismaCode);
+			obs_165243.setEncounter(encounter);
+			
+			if(disa.getViralLoadResultLog() == null){
+				obs_165243.setValueNumeric(Double.valueOf(0.0));
+			} else if (!(disa.getViralLoadResultLog()==null) && disa.getViralLoadResultLog().contains(">") ){
+				obs_165243.setValueNumeric(Double.valueOf(disa.getViralLoadResultLog().toString().replace(">", "").trim()));
+			} else if (!(disa.getViralLoadResultLog()==null) && disa.getViralLoadResultLog().contains("<") ){
+				obs_165243.setValueNumeric(Double.valueOf(disa.getViralLoadResultLog().toString().replace("<", "").trim()));
+			} else {
+				obs_165243.setValueNumeric(Double.valueOf(disa.getViralLoadResultLog()));
+			}
+
+			Context.getObsService().saveObs(obs_165243, "");
+
+			Obs obs_23839 = new Obs();
+			obs_23839.setPerson(Context.getPersonService().getPersonByUuid(patientsByIdentifier.get(0).getUuid()));
+			obs_23839.setObsDatetime(new Date());
+			obs_23839.setConcept(Context.getConceptService().getConceptByUuid(Constants.APPROVED_BY));
+			obs_23839.setEncounter(encounter);
+			obs_23839.setLocation(locationBySismaCode);
+			if (!(disa.getAprovedBy()==null) && StringUtils.isNotEmpty(disa.getAprovedBy().trim())) {
+				obs_23839.setValueText(disa.getAprovedBy().trim());
+				Context.getObsService().saveObs(obs_23839, "");
+			}
+
+			Obs obs_23841 = new Obs();
+			obs_23841.setPerson(Context.getPersonService().getPersonByUuid(patientsByIdentifier.get(0).getUuid()));
+			obs_23841.setObsDatetime(new Date());
+			obs_23841.setConcept(Context.getConceptService().getConceptByUuid(Constants.LAB_COMMENTS));
+			obs_23841.setLocation(locationBySismaCode);
+			obs_23841.setEncounter(encounter);
+			if (!(disa.getLabComments()==null) && StringUtils.isNotEmpty(disa.getLabComments().trim())) {
+				obs_23841.setValueText(disa.getLabComments().trim());
+				Context.getObsService().saveObs(obs_23841, "");
+			}
+
+			Obs obs_22771 = new Obs();
+			obs_22771.setPerson(Context.getPersonService().getPersonByUuid(patientsByIdentifier.get(0).getUuid()));
+			obs_22771.setObsDatetime(new Date());
+			obs_22771.setConcept(Context.getConceptService().getConceptByUuid(Constants.ORDER_ID));
+			obs_22771.setLocation(locationBySismaCode);
+			obs_22771.setEncounter(encounter);
+			if (!(disa.getRequestId()==null) && StringUtils.isNotEmpty(disa.getRequestId().trim())) {
+				obs_22771.setValueText(disa.getRequestId().trim());
+				Context.getObsService().saveObs(obs_22771, "");
+			}
+			
+			//log the fsr in openmrs
+			FsrLog fsrLog = new FsrLog();
+			fsrLog.setPatientId(encounter.getPatient().getPatientId());
+			fsrLog.setEncounterId(encounter.getEncounterId());
+			fsrLog.setPatientIdentifier(disa.getNid());
+			fsrLog.setRequestId(disa.getRequestId());
+			fsrLog.setCreator(Context.getAuthenticatedUser().getId());     
+			fsrLog.setDateCreated(new Date());
+			disaService.saveFsrLog(fsrLog);					
+			
+			}
+		
+		  updateProcessed();
 		}
 		
 		lstPatient.clear();
