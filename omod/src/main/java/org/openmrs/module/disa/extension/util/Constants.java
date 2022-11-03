@@ -98,8 +98,9 @@ public class Constants {
 	public static final String ALL = "ALL";
 	
 	public static final String DISA_MAIL_TO = "disa.api.mail.to";
+	public static final String DISA_MAIL_OTHERS_TO = "disa.api.mail.others.to";
 	public static final String DISA_MAIL_FROM = "disa.api.mail.from";
-	public static final String DISA_MAIL_SUBJECT = "Notificação de Erro Interoperabilidade Disa-EPTS ";
+	public static final String DISA_MAIL_SUBJECT = "Notificação de Erro de Interoperabilidade Disa-EPTS ";
 	public static final String DISA_MAIL_ERROR = "Ocorreu um erro durante a sincronização de dados em ";
 	public static final String DISA_MAIL_HOST = "disa.api.mail.host";
 	public static final String DISA_MAIL_FROM_PASSWORD = "disa.api.mail.from.password";
@@ -117,4 +118,8 @@ public class Constants {
 	
 	public static final String INDETECTAVEL = "INDETECTAVEL";
 	public static final String LESS_THAN = "<";
+	
+	public static final String NID_SERVICO_TARV = "e2b966d0-1d5f-11e0-b929-000c29ad1d07";
+	public static final String NID_DISA = "79ad599a-50df-48f8-865c-0095ec9a9d01";
+
 }

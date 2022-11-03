@@ -225,6 +225,46 @@ public class RestUtil {
 		}
 		return response;
 	}
+	
+	/**
+	 * HTTP GET
+	 * 
+	 * @param URLPath
+	 * @return
+	 * @throws Exception
+	 */
+	@SuppressWarnings("deprecation")
+	public String getRequestGet(List<String> sismaCodes) throws Exception {
+		String URL = URLBase;
+		String response = "";
+		DefaultHttpClient httpclient = new DefaultHttpClient();
+		try {
+
+			URIBuilder uriBuilder = new URIBuilder(URL);
+			for (String sismaCode : sismaCodes) {
+				uriBuilder.addParameter("locationCodes", sismaCode);
+			}
+
+			HttpGet httpGet = new HttpGet(uriBuilder.build());
+
+			UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(username, password);
+			BasicScheme scheme = new BasicScheme();
+			Header authorizationHeader = scheme.authenticate(credentials, httpGet);
+			httpGet.setHeader(authorizationHeader);
+			ResponseHandler<String> responseHandler = new BasicResponseHandler();
+
+			/*HttpParams params = new BasicHttpParams();
+			params.setParameter("sismaCodes", sismaCodes);
+			params.setParameter("requestingProvinceName", requestingProvinceName);
+			httpclient.setParams(params);*/
+			
+			response = httpclient.execute(httpGet, responseHandler);
+
+		} finally {
+			httpclient.getConnectionManager().shutdown();
+		}
+		return response;
+	}
 
 	/**
 	 * HTTP GET

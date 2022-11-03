@@ -19,6 +19,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.LocationAttribute;
+import org.openmrs.Patient;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.disa.FsrLog;
 import org.openmrs.module.disa.api.DisaService;
@@ -60,5 +61,15 @@ public class DisaServiceImpl extends BaseOpenmrsService implements DisaService {
 	@Override
 	public boolean existsByRequestId(String requestId) {
 		return dao.existsByRequestId(requestId);
+	}
+
+	@Override
+	public List<Integer> getPatientByNid(String identifier) {
+		return dao.getPatientByNid(identifier);
+	}
+
+	@Override
+	public List<Patient>  getPatientByPatientId(Integer patientId) {
+		return dao.getPatientByPatientId(patientId); 
 	}
 }

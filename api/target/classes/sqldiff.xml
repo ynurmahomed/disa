@@ -27,6 +27,7 @@
 			  `request_id` varchar(50) DEFAULT NULL,
 			  `creator` int(11) DEFAULT NULL,
 			  `date_created` datetime DEFAULT NULL,
+			  INDEX (request_id),
 			  PRIMARY KEY (`id`)
 			) ENGINE=InnoDB AUTO_INCREMENT=1524 DEFAULT CHARSET=utf8;
 		
@@ -44,7 +45,7 @@
 							
 			INSERT INTO global_property 
 			(property,property_value,description,uuid,datatype,datatype_config,preferred_handler,handler_config,date_changed,changed_by) 
-			VALUES ('disa.api.url','http://disa-api-integ:8080/services/viralloads','APHL data source to collect viral load data','e07cdb3f-871a-11e9-898c-0242ac120002',NULL,NULL,NULL,NULL,NULL,NULL);
+			VALUES ('disa.api.url','http://160.242.33.26:8085/services/viralloads/requestProvince','APHL data source to collect viral load data','e07cdb3f-871a-11e9-898c-0242ac120002',NULL,NULL,NULL,NULL,NULL,NULL);
 							
 			INSERT INTO global_property 
 			(property,property_value,description,uuid,datatype,datatype_config,preferred_handler,handler_config,date_changed,changed_by) 
@@ -64,16 +65,16 @@
 							
 			INSERT INTO global_property 
 			(property,property_value,description,uuid,datatype,datatype_config,preferred_handler,handler_config,date_changed,changed_by) 
-			VALUES ('disa.provider','7013d271-1bc2-4a50-bed6-8932044bc18f','disa openmrs provider','d54c25dd-cbeb-4317-b306-4b1a3e67a7ae',NULL,NULL,NULL,NULL,NULL,NULL);
-							
-			INSERT INTO global_property 
-			(property,property_value,description,uuid,datatype,datatype_config,preferred_handler,handler_config,date_changed,changed_by) 
 			VALUES ('disa.started','false','DO NOT MODIFY. true/false whether or not the disa module has been started.  This is used to make sure modules that were running  prior to a restart are started again','d54c25dd-cbeb-4317-b306-4b1a3e68a8ae',NULL,NULL,NULL,NULL,NULL,NULL);
 							
 			INSERT INTO global_property 
 			(property,property_value,description,uuid,datatype,datatype_config,preferred_handler,handler_config,date_changed,changed_by) 
-			VALUES ('disa.api.mail.to','helio.machabane@fgh.org.mz,judiao.mbaua@fgh.org.mz,eurico.jose@fgh.org.mz','Recipients','2686097c-871b-11e9-898c-0242ac128882',NULL,NULL,NULL,NULL,NULL,NULL);
-							
+			VALUES ('disa.api.mail.to','helio.machabane@fgh.org.mz,eurico.jose@fgh.org.mz','Recipients','2686097c-871b-11e9-898c-0242ac128882',NULL,NULL,NULL,NULL,NULL,NULL);
+			
+			INSERT INTO global_property 
+			(property,property_value,description,uuid,datatype,datatype_config,preferred_handler,handler_config,date_changed,changed_by) 
+			VALUES ('disa.api.mail.others.to','helio.machabane@fgh.org.mz,eurico.jose@fgh.org.mz,sis.quelimane@fgh.org.mz','Other Recipients','2686097c-871b-11e9-191c-0242ac128992',NULL,NULL,NULL,NULL,NULL,NULL);
+			
 			INSERT INTO global_property 
 			(property,property_value,description,uuid,datatype,datatype_config,preferred_handler,handler_config,date_changed,changed_by) 
 			VALUES ('disa.api.mail.from','vlstaging@fgh.org.mz','Sender','2686097c-871b-11e9-898c-0242ac121172',NULL,NULL,NULL,NULL,NULL,NULL);
