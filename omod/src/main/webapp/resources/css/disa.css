@@ -44,3 +44,13 @@
 #error_msg {
 	background-color: #FFB6C1;
 }
+
+#searchForm .cds--css-grid {
+	margin-left: 0;
+	padding-left: 5px;
+	margin-bottom: 3px;
+}
+
+#searchForm .error {
+	font-size: small;
+}

@@ -83,4 +83,3 @@ public class SearchForm {
     }
 
 }
-
