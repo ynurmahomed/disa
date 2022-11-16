@@ -5,27 +5,35 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 
 import org.openmrs.api.context.Context;
 import org.openmrs.module.disa.Disa;
 import org.openmrs.module.disa.extension.util.Constants;
+import org.openmrs.module.disa.web.delegate.DelegateException;
 import org.openmrs.module.disa.web.delegate.ViralLoadResultsDelegate;
 import org.openmrs.module.disa.web.model.SearchForm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.servlet.ModelAndView;
 
 @Controller
-@RequestMapping(value = "/module/disa/manageVLResults")
+@RequestMapping(value = "/module/disa/managevlresults")
 public class ManageVLResultsController {
 
     @InitBinder
@@ -40,31 +48,34 @@ public class ManageVLResultsController {
         binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, true));
     }
 
-    @RequestMapping(value = "search", method = RequestMethod.GET)
-    public SearchForm search(ModelMap model) {
-        return new SearchForm();
-    }
+    @RequestMapping(value = "/search", method = RequestMethod.GET)
+    public ModelAndView search(
+            @RequestParam Map<String, String> params,
+            @Valid SearchForm searchForm,
+            BindingResult result) throws Exception {
 
-    @RequestMapping(value = "search", method = RequestMethod.POST)
-    public String search(@Valid SearchForm searchForm,
-            BindingResult result,
-            RedirectAttributes redir) throws Exception {
+        ModelAndView mav = new ModelAndView();
 
-        if (result.hasErrors()) {
-            return "/module/disa/manageVLResults/search";
+        if (params.isEmpty()) {
+            mav.setViewName("/module/disa/managevlresults/search");
+            mav.addObject(new SearchForm());
+
+        } else if (result.hasErrors()) {
+            mav.setViewName("/module/disa/managevlresults/search");
+            mav.addObject(searchForm);
+        } else {
+            ViralLoadResultsDelegate delegate = new ViralLoadResultsDelegate();
+            mav.setViewName("/module/disa/managevlresults/searchResults");
+            mav.addObject(delegate.getViralLoadDataList(searchForm));
         }
 
-        ViralLoadResultsDelegate delegate = new ViralLoadResultsDelegate();
-        List<Disa> vlDataLst = delegate.getViralLoadDataList(searchForm);
-
-        redir.addFlashAttribute("vlDataLst", vlDataLst);
-
-        return "redirect:searchResults.form";
+        return mav;
     }
 
-    @RequestMapping(value = "searchResults", method = RequestMethod.GET)
-    public void searchResults() {
-        // TODO document why this method is empty
+    @RequestMapping(value = "/{requestId}", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable String requestId) throws DelegateException {
+        new ViralLoadResultsDelegate().deleteLabResult(requestId);
     }
 
     /**

@@ -6,24 +6,24 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 public class SearchForm {
-    
+
     @Size(max = 22)
     private String requestId;
-    
+
     @Size(max = 21)
     private String nid;
-    
+
     private String vlSisma;
-    
+
     @Size(max = 16)
     private String referringId;
-    
+
     private String vlState;
 
-    @NotNull()
+    @NotNull
     private Date startDate;
 
-    @NotNull()
+    @NotNull
     private Date endDate;
 
     public String getRequestId() {

@@ -17,7 +17,7 @@
 	<spring:message code="disa.pesquisa.resultados.laboratoriais11" />
 </b>
 
-<form:form commandName="searchForm" method="post">
+<form:form commandName="searchForm" method="GET">
 	<fieldset>
 		<div class="cds--css-grid">
 			<div class="cds-css-grid-column">

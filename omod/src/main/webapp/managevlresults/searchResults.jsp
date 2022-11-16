@@ -12,20 +12,43 @@
 	file="/scripts/jquery/dataTables/js/jquery.dataTables.min.js" />
 
 <script type="text/javascript">
+	async function handleDelete(event) {
+        event.preventDefault();
+        const anchor = event.currentTarget;
+        const requestId = anchor.dataset.requestid;
+
+        // TODO localize question.
+        if (confirm(`<spring:message code='disa.viralload.delete.confirmation.javascript'/>`)) {
+            const response = await fetch(`\${requestId}.form`, { method: "DELETE" });
+            if (response.status === 204) {
+                location.reload();
+            } else {
+                alert("<spring:message code='disa.viralload.delete.error'/>");
+            }
+
+        }
+    }
+
+
 	$j(document).ready(function() {
 		$j('#vlResultsTable').dataTable({
 			"iDisplayLength" : 10
 		});
+
+		const anchors = document.querySelectorAll(".delete-vl");
+		for (const a of anchors) {
+			a.addEventListener('click', handleDelete);
+		}
 	})
 </script>
 
 <h2><openmrs:message code="disa.list.viral.load.results.manage"/></h2>
 <br />
 
-<c:if test="${not empty vlDataLst}">
+<c:if test="${not empty disaList}">
 	<b class="boxHeader"><spring:message code="disa.lista.resultados.laboratoriais333" /></b>
 	<fieldset>
-		<!-- TODO: Handle download. The controller expects vlDataLst in the session -->
+		<!-- TODO: Handle download. The controller expects disaList in the session -->
 		<form method="post" action="/openmrs/module/disa/viralLoadStagingServerResult.form">
 			<table  id="vlResultsTable" class="display" width="100%" cellpadding="2" cellspacing="0"
 				style="font-size: 13px;">
@@ -47,10 +70,11 @@
 				        <th><spring:message code="disa.created.at" /></th>
 				        <th><spring:message code="disa.updated.at" /></th>
 				        <th><spring:message code="disa.not.processing.cause" /></th>
+						<th></th>
 					</tr>
 				</thead>
 				<tbody>
-					<c:forEach items="${vlDataLst}" var="vlData">
+					<c:forEach items="${disaList}" var="vlData">
 					    <tr>
 					    	<td>${vlData.requestingFacilityName}</td>
 					    	<td>${vlData.requestingDistrictName}</td>
@@ -68,10 +92,15 @@
 					        <td>${vlData.createdAt}</td>
 					        <td>${vlData.updatedAt}</td>
 					        <td>
-								<c:if test="${not empty vlData.notProcessingCause}">
-									<openmrs:message code="disa.${vlData.notProcessingCause}"/>
-								</c:if>
-							</td>
+							<c:if test="${not empty vlData.notProcessingCause}">
+								<openmrs:message code="disa.${vlData.notProcessingCause}"/>
+							</c:if>
+					        </td>
+						<td>
+							<a href="#" data-requestid="${vlData.requestId}" class="delete-vl">
+								<spring:message code="disa.viralload.delete" />
+							</a>
+						</td>
 					    </tr>
 					</c:forEach>
 				</tbody>
@@ -89,7 +118,7 @@
 	</fieldset>
 </c:if>
 
-<c:if test="${empty vlDataLst}">
+<c:if test="${empty disaList}">
 	<div id="openmrs_msg">
 		<b> <spring:message code="disa.no.viral.load.form" /></b>
 	</div>

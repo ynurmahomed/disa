@@ -15,8 +15,8 @@
 	</li>
 
 	<li
-		<c:if test='<%= request.getRequestURI().contains("/manageVLResults") %>'>class="active"</c:if>>
-		<a href="${pageContext.request.contextPath}/module/disa/manageVLResults/search.form"><spring:message code="disa.list.viral.load.results.manage" /></a>
+		<c:if test='<%= request.getRequestURI().contains("/managevlresults") %>'>class="active"</c:if>>
+		<a href="${pageContext.request.contextPath}/module/disa/managevlresults/search.form"><spring:message code="disa.list.viral.load.results.manage" /></a>
 	</li>
 
 	<!-- Add further links here -->

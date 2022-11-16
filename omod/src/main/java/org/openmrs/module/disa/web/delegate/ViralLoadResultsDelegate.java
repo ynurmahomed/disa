@@ -1,7 +1,9 @@
 package org.openmrs.module.disa.web.delegate;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URISyntaxException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -14,6 +16,7 @@ import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.http.client.HttpResponseException;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -30,11 +33,15 @@ import org.openmrs.module.disa.Disa;
 import org.openmrs.module.disa.extension.util.Constants;
 import org.openmrs.module.disa.extension.util.RestUtil;
 import org.openmrs.module.disa.web.model.SearchForm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 public class ViralLoadResultsDelegate {
+
+	private static final Logger log = LoggerFactory.getLogger(RestUtil.class);
 
 	private RestUtil rest;
 
@@ -449,5 +456,20 @@ public class ViralLoadResultsDelegate {
 	private String formatDate(Date date, int i) {
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 		return dateFormat.format(date).replace("12:00:00", i == 1 ? "00:00:00" : "23:59:59");
+	}
+
+	public void deleteLabResult(String requestId) throws DelegateException {
+		try {
+			log.info("Deleting requestId {}", requestId);
+			rest.delete(requestId);
+		} catch (IOException | URISyntaxException e) {
+			String message = e.getMessage();
+			if (e instanceof HttpResponseException) {
+				message = "" + ((HttpResponseException) e).getStatusCode();
+			}
+			log.error("Error processing delete: {}", message);
+			e.printStackTrace();
+			throw new DelegateException("Unexpected error.");
+		}
 	}
 }
