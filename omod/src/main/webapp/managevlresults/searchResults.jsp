@@ -31,14 +31,13 @@
 
 
 	$j(document).ready(function() {
+		for (const a of document.querySelectorAll(".delete-vl")) {
+			a.addEventListener('click', handleDelete);
+		}
+
 		$j('#vlResultsTable').dataTable({
 			"iDisplayLength" : 10
 		});
-
-		const anchors = document.querySelectorAll(".delete-vl");
-		for (const a of anchors) {
-			a.addEventListener('click', handleDelete);
-		}
 	})
 </script>
 
