@@ -4,17 +4,17 @@ import java.util.Calendar;
 import java.util.Date;
 
 /**
- * 
+ *
  * @author machabane
  *
  */
 @SuppressWarnings("unused")
 public class Disa {
 
-	private int id;
+	private transient int id;
 
 	private String requestId;
-	
+
 	private String location;
 
 	private String createdBy;
@@ -26,7 +26,7 @@ public class Disa {
 	private String updatedAt;
 
 	private String nid;
-	
+
 	private String referringRequestID;
 
 	private String firstName;
@@ -70,27 +70,27 @@ public class Disa {
 	private String hivViralLoadResult;
 
 	private String requestingFacilityName;
-	
+
 	private String requestingDistrictName;
 
 	private String viralLoadStatus;
 
 	private String notProcessingCause;
-	
+
 	private String lastViralLoadResult;
-	
+
 	private String lastViralLoadDate;
-	
+
 	private String artRegimen;
-	
+
 	private String primeiraLinha;
-	
+
 	private String segundaLinha;
-	
+
 	private String dataDeInicioDoTARV;
-	
+
 	private String finalViralLoadResult;
-	
+
 	public String getFinalViralLoadResult() {
 		return finalViralLoadResult;
 	}
@@ -370,7 +370,7 @@ public class Disa {
 	public void setNotProcessingCause(String notProcessingCause) {
 		this.notProcessingCause = notProcessingCause;
 	}
-	
+
 	public String getLastViralLoadResult() {
 		return lastViralLoadResult;
 	}
@@ -394,7 +394,7 @@ public class Disa {
 	public void setRequestingDistrictName(String requestingDistrictName) {
 		this.requestingDistrictName = requestingDistrictName;
 	}
-	
+
 	public String getReferringRequestID() {
 		return referringRequestID;
 	}
@@ -402,7 +402,7 @@ public class Disa {
 	public void setReferringRequestID(String referringRequestID) {
 		this.referringRequestID = referringRequestID;
 	}
-	
+
 	public String getLocation() {
 		return location;
 	}

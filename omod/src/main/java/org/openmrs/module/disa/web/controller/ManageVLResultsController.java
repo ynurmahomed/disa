@@ -15,10 +15,9 @@ import org.openmrs.module.disa.extension.util.Constants;
 import org.openmrs.module.disa.web.delegate.DelegateException;
 import org.openmrs.module.disa.web.delegate.ViralLoadResultsDelegate;
 import org.openmrs.module.disa.web.model.SearchForm;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -26,6 +25,7 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -76,6 +76,12 @@ public class ManageVLResultsController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable String requestId) throws DelegateException {
         new ViralLoadResultsDelegate().deleteLabResult(requestId);
+    }
+
+    @RequestMapping(value = "/{requestId}", method = RequestMethod.PATCH, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    public void update(@PathVariable String requestId, @RequestBody Disa disa) throws DelegateException {
+        new ViralLoadResultsDelegate().updateLabResult(requestId, disa);
     }
 
     /**

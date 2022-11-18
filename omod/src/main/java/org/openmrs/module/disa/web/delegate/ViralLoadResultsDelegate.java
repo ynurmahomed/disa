@@ -460,7 +460,7 @@ public class ViralLoadResultsDelegate {
 
 	public void deleteLabResult(String requestId) throws DelegateException {
 		try {
-			log.info("Deleting requestId {}", requestId);
+			log.info("Deleting Lab Result {}", requestId);
 			rest.delete(requestId);
 		} catch (IOException | URISyntaxException e) {
 			String message = e.getMessage();
@@ -468,6 +468,22 @@ public class ViralLoadResultsDelegate {
 				message = "" + ((HttpResponseException) e).getStatusCode();
 			}
 			log.error("Error processing delete: {}", message);
+			e.printStackTrace();
+			throw new DelegateException("Unexpected error.");
+		}
+	}
+
+	public Disa updateLabResult(String requestId, Disa updates) throws DelegateException {
+		try {
+			log.info("Updating Lab Result {}", requestId);
+			String response = rest.patch(requestId, new Gson().toJson(updates));
+			return new Gson().fromJson(response, Disa.class);
+		} catch (IOException | URISyntaxException e) {
+			String message = e.getMessage();
+			if (e instanceof HttpResponseException) {
+				message = "" + ((HttpResponseException) e).getStatusCode();
+			}
+			log.error("Error processing update: {}", message);
 			e.printStackTrace();
 			throw new DelegateException("Unexpected error.");
 		}

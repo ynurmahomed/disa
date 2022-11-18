@@ -17,6 +17,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.BasicResponseHandler;
@@ -432,6 +433,25 @@ public class RestUtil {
 		ResponseHandler<String> responseHandler = new BasicResponseHandler();
 
 		executor.execute(Request.Delete(url))
+				.handleResponse(responseHandler);
+	}
+
+	public String patch(String requestId, String payload) throws IOException, URISyntaxException {
+		URI url;
+
+		url = new URIBuilder(URLBase)
+				.setPath(String.format("/services/viralloads/%s", requestId))
+				.build();
+
+		Executor executor = Executor.newInstance()
+				.auth(username, password);
+
+		Request request = Request.Patch(url)
+				.bodyString(payload, ContentType.APPLICATION_JSON);
+
+		ResponseHandler<String> responseHandler = new BasicResponseHandler();
+
+		return executor.execute(request)
 				.handleResponse(responseHandler);
 	}
 

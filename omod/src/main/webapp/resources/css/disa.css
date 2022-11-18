@@ -1,28 +1,49 @@
-#vlResultsTable, #vlResultsTable1 {
+#vlResultsTable,
+#vlResultsTable1 {
 	font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
 	border-collapse: collapse;
 	width: 100%;
 }
 
-#vlResultsTable td, #vlResultsTable th, #vlResultsTable1 td, #vlResultsTable1 th {
+#vlResultsTable td,
+#vlResultsTable th,
+#vlResultsTable1 td,
+#vlResultsTable1 th {
 	border: 1px solid #ddd;
 	padding: 8px;
 }
 
-#vlResultsTable tr:nth-child(even), #vlResultsTable1 tr:nth-child(even) {
+#vlResultsTable tr:nth-child(even),
+#vlResultsTable1 tr:nth-child(even) {
 	background-color: #f2f2f2;
 }
 
-#vlResultsTable tr:hover, #vlResultsTable1 tr:hover {
+#vlResultsTable tr:hover,
+#vlResultsTable1 tr:hover {
 	background-color: #ddd;
 }
 
-#vlResultsTable th, #vlResultsTable1 th {
+#vlResultsTable th,
+#vlResultsTable1 th {
 	padding-top: 12px;
 	padding-bottom: 12px;
 	text-align: left;
 	background-color: #1aac9b;
 	color: white;
+}
+
+#vlResultsTable .actions {
+	list-style: none;
+}
+
+#vlResultsTable .actions li:not(:last-child) {
+	border-right: 1px solid black;
+}
+
+#vlResultsTable .actions li {
+	display: inline-block;
+	padding: 0 0.5rem;
+	text-align: center;
 }
 
 .submit-btn {

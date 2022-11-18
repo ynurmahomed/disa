@@ -12,12 +12,36 @@
 	file="/scripts/jquery/dataTables/js/jquery.dataTables.min.js" />
 
 <script type="text/javascript">
-	async function handleDelete(event) {
-        event.preventDefault();
-        const anchor = event.currentTarget;
-        const requestId = anchor.dataset.requestid;
+	async function handleReschedule(event) {
 
-        // TODO localize question.
+		event.preventDefault();
+
+		const anchor = event.currentTarget;
+		const requestId = anchor.dataset.requestid;
+		const headers = {"Content-Type": "application/json"}
+		const body = JSON.stringify({viralLoadStatus: "PENDING"});
+		const options = { method: "PATCH", headers, body };
+
+		try {
+			const response = await fetch(`\${requestId}.form`, options);
+
+			if (response.status === 200) {
+				location.reload();
+			} else {
+				throw new Error(`Reschedule was not successful.`)
+			}
+		} catch (error) {
+			console.error(error);
+			alert("<spring:message code='disa.viralload.delete.error'/>");
+		}
+	}
+
+	async function handleDelete(event) {
+
+		event.preventDefault();
+
+		const anchor = event.currentTarget;
+        const requestId = anchor.dataset.requestid;
         if (confirm(`<spring:message code='disa.viralload.delete.confirmation.javascript'/>`)) {
 			try {
 				document.body.style.cursor = 'wait';
@@ -41,6 +65,10 @@
 	$j(document).ready(function() {
 		for (const a of document.querySelectorAll(".delete-vl")) {
 			a.addEventListener('click', handleDelete);
+		}
+
+		for (const a of document.querySelectorAll(".reschedule-vl")) {
+			a.addEventListener('click', handleReschedule);
 		}
 
 		$j('#vlResultsTable').dataTable({
@@ -104,9 +132,20 @@
 							</c:if>
 					        </td>
 						<td>
-							<a href="#" data-requestid="${vlData.requestId}" class="delete-vl">
-								<spring:message code="disa.viralload.delete" />
-							</a>
+							<ul class="actions">
+								<c:if test="${vlData.viralLoadStatus == 'NOT_PROCESSED'}">
+									<li>
+										<a href="#" data-requestid="${vlData.requestId}" class="reschedule-vl">
+											<spring:message code="disa.viralload.reschedule" />
+										</a>
+									</li>
+								</c:if>
+								<li>
+									<a href="#" data-requestid="${vlData.requestId}" class="delete-vl">
+										<spring:message code="disa.viralload.delete" />
+									</a>
+								</li>
+							</ul>
 						</td>
 					    </tr>
 					</c:forEach>
