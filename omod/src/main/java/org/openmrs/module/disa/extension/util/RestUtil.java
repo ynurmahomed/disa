@@ -429,17 +429,10 @@ public class RestUtil {
 		Executor executor = Executor.newInstance()
 				.auth(username, password);
 
-		HttpResponse response = executor.execute(Request.Delete(url))
-				.returnResponse();
+		ResponseHandler<String> responseHandler = new BasicResponseHandler();
 
-		StatusLine status = response.getStatusLine();
-
-		if (status.getStatusCode() != 200) {
-			throw new HttpResponseException(
-					status.getStatusCode(),
-					status.getReasonPhrase());
-		}
-
+		executor.execute(Request.Delete(url))
+				.handleResponse(responseHandler);
 	}
 
 	public void setUsername(String username) {

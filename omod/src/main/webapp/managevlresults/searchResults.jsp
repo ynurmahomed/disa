@@ -19,12 +19,17 @@
 
         // TODO localize question.
         if (confirm(`<spring:message code='disa.viralload.delete.confirmation.javascript'/>`)) {
-            const response = await fetch(`\${requestId}.form`, { method: "DELETE" });
-            if (response.status === 204) {
-                location.reload();
-            } else {
-                alert("<spring:message code='disa.viralload.delete.error'/>");
-            }
+			try {
+				const response = await fetch(`\${requestId}.form`, { method: "DELETE" });
+				if (response.status === 204) {
+					location.reload();
+				} else {
+					throw new Error(`Delete was not successful.`);
+				}
+			} catch (error) {
+				console.error(error);
+				alert("<spring:message code='disa.viralload.delete.error'/>");
+			}
 
         }
     }
