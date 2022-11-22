@@ -20,6 +20,7 @@
         // TODO localize question.
         if (confirm(`<spring:message code='disa.viralload.delete.confirmation.javascript'/>`)) {
 			try {
+				document.body.style.cursor = 'wait';
 				const response = await fetch(`\${requestId}.form`, { method: "DELETE" });
 				if (response.status === 204) {
 					location.reload();
@@ -29,6 +30,8 @@
 			} catch (error) {
 				console.error(error);
 				alert("<spring:message code='disa.viralload.delete.error'/>");
+			} finally {
+				document.body.style.cursor = 'default';
 			}
 
         }
