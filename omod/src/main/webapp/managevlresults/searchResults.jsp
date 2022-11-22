@@ -23,6 +23,9 @@
 		const options = { method: "PATCH", headers, body };
 
 		try {
+
+			document.body.style.cursor = 'wait';
+
 			const response = await fetch(`\${requestId}.form`, options);
 
 			if (response.status === 200) {
@@ -33,6 +36,8 @@
 		} catch (error) {
 			console.error(error);
 			alert("<spring:message code='disa.viralload.delete.error'/>");
+		} finally {
+			document.body.style.cursor = 'default';
 		}
 	}
 
