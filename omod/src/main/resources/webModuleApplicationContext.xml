@@ -16,10 +16,7 @@
 						http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
 						http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
-	<!-- Add here beans related to the web context -->
-
 	<!-- Annotation based controllers -->
 	<mvc:annotation-driven />
 
-	<context:component-scan base-package="org.openmrs.module.disa.web.controller" />
 </beans>

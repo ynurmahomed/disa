@@ -56,6 +56,22 @@ public class ViralLoadResultsDelegate {
 				Context.getAdministrationService().getGlobalPropertyObject(Constants.DISA_PASSWORD).getPropertyValue());
 	}
 
+	public Disa getViralLoadData(String requestId) throws DelegateException {
+		try {
+			log.info("Fetching Lab Result {}", requestId);
+			String response = rest.getViralLoad(requestId);
+			return new Gson().fromJson(response, Disa.class);
+		} catch (IOException | URISyntaxException e) {
+			String message = e.getMessage();
+			if (e instanceof HttpResponseException) {
+				message = "" + ((HttpResponseException) e).getStatusCode();
+			}
+			log.error("Error fetching Lab Result: {}", message);
+			e.printStackTrace();
+			throw new DelegateException("Unexpected error.");
+		}
+	}
+
 	public List<Disa> getViralLoadDataList(Date startDate, Date endDate, String vlState) throws Exception {
 
 		List<String> sismaCodes = Arrays.asList(Context.getAdministrationService()

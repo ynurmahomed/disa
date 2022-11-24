@@ -21,7 +21,7 @@
 </script>
 
 <h2><openmrs:message code="disa.map.identifiers"/></h2>
-<br /> 
+<br />
 
 <b class="boxHeader"><spring:message code="disa.patient" /></b>
 <fieldset>
@@ -31,8 +31,8 @@
 			<th><spring:message code="general.name" /></th>
 			<th><spring:message code="disa.gender" /></th>
 			<th><spring:message code="disa.age" /></th>
-		</tr>	
-	    <tr>   
+		</tr>
+	    <tr>
 	        <td>${selectedPatient.nid}</td>
 	        <td>${selectedPatient.firstName} ${selectedPatient.lastName}</td>
 	        <td>${selectedPatient.gender}</td>
@@ -70,7 +70,7 @@
 		</div>
 	</c:if>
 	<form method="post" action="mapPatientIdentifierForm.form">
-		
+
 		<table  id="vlResultsTable1"  class="display" width="100%" cellpadding="2" cellspacing="0"
 				style="font-size: 13px;">
 			<thead>
@@ -84,7 +84,7 @@
 			</thead>
 			<tbody>
 				<c:forEach items="${patients}" var="patient">
-				    <tr>   
+				    <tr>
 				        <td>${patient.identifiers.iterator().next()}</td>
 				        <td>${patient.givenName} ${patient.middleName} ${patient.familyName}</td>
 				        <td>${patient.gender}</td>
@@ -98,7 +98,7 @@
 			</tbody>
 		</table>
 		<br />
-		<div class="submit-btn" align="center">
+		<div class="submit-btn center">
 			<input type="button" value='<spring:message code="general.previous"/>'
 				name="previous"  onclick="history.back()"/>
 			<input type="submit" value='<spring:message code="disa.btn.map"/>'

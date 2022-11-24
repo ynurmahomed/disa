@@ -73,6 +73,8 @@ public class Disa {
 
 	private String requestingDistrictName;
 
+	private String requestingProvinceName;
+
 	private String viralLoadStatus;
 
 	private String notProcessingCause;
@@ -446,5 +448,13 @@ public class Disa {
 		}
 
 		return age;
+	}
+
+	public String getRequestingProvinceName() {
+		return requestingProvinceName;
+	}
+
+	public void setRequestingProvinceName(String requestingProvinceName) {
+		this.requestingProvinceName = requestingProvinceName;
 	}
 }

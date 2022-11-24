@@ -455,6 +455,24 @@ public class RestUtil {
 				.handleResponse(responseHandler);
 	}
 
+	public String getViralLoad(String requestId) throws URISyntaxException, IOException {
+		URI url;
+
+		url = new URIBuilder(URLBase)
+				.setPathSegments("services", "viralloads", requestId)
+				.build();
+
+		Executor executor = Executor.newInstance()
+				.auth(username, password);
+
+		Request request = Request.Get(url);
+
+		ResponseHandler<String> responseHandler = new BasicResponseHandler();
+
+		return executor.execute(request)
+				.handleResponse(responseHandler);
+	}
+
 	public void setUsername(String username) {
 		this.username = username;
 	}

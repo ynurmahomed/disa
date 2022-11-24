@@ -47,8 +47,13 @@
 }
 
 .submit-btn {
-	flex: 1;
+	display: flex;
 	margin: 10px 15px;
+	gap: 10px;
+}
+
+.submit-btn.center {
+	justify-content: center;
 }
 
 .submit-btn input {
@@ -74,4 +79,18 @@
 
 #searchForm .error {
 	font-size: small;
+}
+
+.reallocate-form .field {
+	display: flex;
+}
+
+.reallocate-form .field > .label {
+	margin: 0 10px;
+	display: flex;
+	align-items: center;
+}
+
+.reallocate-form .field > .input {
+	width: 405px;
 }

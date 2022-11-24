@@ -45,7 +45,7 @@
 				</thead>
 				<tbody>
 					<c:forEach items="${vlDataLst}" var="vlData">
-					    <tr>   
+					    <tr>
 					        <td>${vlData.nid}</td>
         					<td>${vlData.firstName} ${vlData.lastName}</td>
         					<td>${vlData.gender}</td>
@@ -59,13 +59,13 @@
 					        			<a href='mapPatientIdentifierForm.form?nid=<c:out value="${vlData.nid}"/>'><spring:message code="disa.map.nid" /></a>
 					        		</c:if>
 					        	</td>
-					        </c:if>	
+					        </c:if>
 					    </tr>
 					</c:forEach>
 				</tbody>
 			</table>
 			<br />
-			<div class="submit-btn" align="center">
+			<div class="submit-btn center">
 				<input type="button"
 					value='<spring:message code="general.previous"/>'
 					name="previous"  onclick="history.back()"/>

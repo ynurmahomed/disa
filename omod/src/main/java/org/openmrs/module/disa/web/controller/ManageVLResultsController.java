@@ -1,5 +1,6 @@
 package org.openmrs.module.disa.web.controller;
 
+import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -7,19 +8,26 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.openmrs.api.context.Context;
 import org.openmrs.module.disa.Disa;
+import org.openmrs.module.disa.OrgUnit;
 import org.openmrs.module.disa.extension.util.Constants;
 import org.openmrs.module.disa.web.delegate.DelegateException;
+import org.openmrs.module.disa.web.delegate.OrgUnitDelegate;
 import org.openmrs.module.disa.web.delegate.ViralLoadResultsDelegate;
+import org.openmrs.module.disa.web.model.ReallocateForm;
 import org.openmrs.module.disa.web.model.SearchForm;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -31,10 +39,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 
 @Controller
 @RequestMapping(value = "/module/disa/managevlresults")
 public class ManageVLResultsController {
+
+    @Autowired
+    private OrgUnitDelegate orgUnitDelegate;
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -50,18 +62,20 @@ public class ManageVLResultsController {
 
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     public ModelAndView search(
-            @RequestParam Map<String, String> params,
+            @RequestParam MultiValueMap<String, String> params,
             @Valid SearchForm searchForm,
-            BindingResult result) throws Exception {
+            BindingResult result,
+            ModelMap model) throws Exception {
 
         ModelAndView mav = new ModelAndView();
 
         if (params.isEmpty()) {
             mav.setViewName("/module/disa/managevlresults/search");
+            populateSismaCodes(model);
             mav.addObject(new SearchForm());
-
         } else if (result.hasErrors()) {
             mav.setViewName("/module/disa/managevlresults/search");
+            populateSismaCodes(model);
             mav.addObject(searchForm);
         } else {
             ViralLoadResultsDelegate delegate = new ViralLoadResultsDelegate();
@@ -84,10 +98,61 @@ public class ManageVLResultsController {
         new ViralLoadResultsDelegate().updateLabResult(requestId, disa);
     }
 
+    @RequestMapping(value = "/{requestId}/reallocate", method = RequestMethod.GET)
+    public ModelAndView reallocateForm(@PathVariable String requestId,
+            SearchForm searchForm,
+            HttpSession session) throws DelegateException {
+
+        ModelAndView mav = new ModelAndView();
+
+        Disa vl = new ViralLoadResultsDelegate().getViralLoadData(requestId);
+        OrgUnit orgUnit = this.orgUnitDelegate.getOrgUnit(vl.getHealthFacilityLabCode());
+
+        mav.setViewName("/module/disa/managevlresults/reallocate");
+        mav.addObject(new ReallocateForm());
+        mav.addObject(orgUnit);
+        return mav;
+    }
+
+    @RequestMapping(value = "/{requestId}/reallocate", method = RequestMethod.POST)
+    public ModelAndView reallocate(@PathVariable String requestId,
+            @Valid @ModelAttribute ReallocateForm reallocateForm,
+            BindingResult result) throws DelegateException {
+
+        ModelAndView mav = new ModelAndView();
+
+        if (result.hasErrors()) {
+            Disa vl = new ViralLoadResultsDelegate().getViralLoadData(requestId);
+            OrgUnit orgUnit = this.orgUnitDelegate.getOrgUnit(vl.getHealthFacilityLabCode());
+            mav.setViewName("/module/disa/managevlresults/reallocate");
+            mav.addObject(reallocateForm);
+            mav.addObject(orgUnit);
+            return mav;
+        }
+
+        OrgUnit orgUnit = this.orgUnitDelegate.getOrgUnit(reallocateForm.getHealthFacilityLabCode());
+
+        Disa update = new Disa();
+        update.setHealthFacilityLabCode(orgUnit.getCode());
+        update.setRequestingFacilityName(orgUnit.getFacility());
+        update.setRequestingDistrictName(orgUnit.getDistrict());
+        update.setRequestingProvinceName(orgUnit.getProvince());
+
+        new ViralLoadResultsDelegate().updateLabResult(requestId, update);
+
+        mav.setViewName("redirect:reallocate.form");
+        return mav;
+    }
+
+    @RequestMapping(value = "/orgunits/search", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    public List<OrgUnit> searchOrgUnits(@RequestParam String term, Model model) throws DelegateException {
+        return this.orgUnitDelegate.search(term);
+    }
+
     /**
      * Populates SISMA code dropdown options.
      */
-    @ModelAttribute
     private void populateSismaCodes(ModelMap model) {
         String propertyValue = Context.getAdministrationService()
                 .getGlobalPropertyObject(Constants.DISA_SISMA_CODE).getPropertyValue();
