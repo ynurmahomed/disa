@@ -40,6 +40,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping(value = "/module/disa/managevlresults")
@@ -65,7 +66,8 @@ public class ManageVLResultsController {
             @RequestParam MultiValueMap<String, String> params,
             @Valid SearchForm searchForm,
             BindingResult result,
-            ModelMap model) throws Exception {
+            ModelMap model,
+            HttpSession session) throws Exception {
 
         ModelAndView mav = new ModelAndView();
 
@@ -81,6 +83,7 @@ public class ManageVLResultsController {
             ViralLoadResultsDelegate delegate = new ViralLoadResultsDelegate();
             mav.setViewName("/module/disa/managevlresults/searchResults");
             mav.addObject(delegate.getViralLoadDataList(searchForm));
+            session.setAttribute("lastSearchParams", params);
         }
 
         return mav;
@@ -117,7 +120,9 @@ public class ManageVLResultsController {
     @RequestMapping(value = "/{requestId}/reallocate", method = RequestMethod.POST)
     public ModelAndView reallocate(@PathVariable String requestId,
             @Valid @ModelAttribute ReallocateForm reallocateForm,
-            BindingResult result) throws DelegateException {
+            BindingResult result,
+            HttpSession session,
+            RedirectAttributes redirectAttrs) throws DelegateException {
 
         ModelAndView mav = new ModelAndView();
 
@@ -140,7 +145,11 @@ public class ManageVLResultsController {
 
         new ViralLoadResultsDelegate().updateLabResult(requestId, update);
 
-        mav.setViewName("redirect:reallocate.form");
+        @SuppressWarnings("unchecked")
+        Map<String, String> params = ((Map<String, String>) session.getAttribute("lastSearchParams"));
+        redirectAttrs.addAllAttributes(params);
+        redirectAttrs.addFlashAttribute("flashMessage", "disa.viralload.reallocate.successful");
+        mav.setViewName("redirect:/module/disa/managevlresults/search.form");
         return mav;
     }
 

@@ -94,3 +94,14 @@
 .reallocate-form .field > .input {
 	width: 405px;
 }
+
+.success {
+    background-color: #93fbef;
+}
+
+span.success, div.success {
+    border: 1px dashed #0e5c52;
+    padding: 1px 6px 1px 6px;
+    margin: 4px 0;
+    vertical-align: middle;
+}

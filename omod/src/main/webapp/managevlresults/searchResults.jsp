@@ -85,6 +85,12 @@
 <h2><openmrs:message code="disa.list.viral.load.results.manage"/></h2>
 <br />
 
+<c:if test="${not empty flashMessage}">
+	<div class="success">
+		<openmrs:message code="${flashMessage}"/>
+	</div>
+</c:if>
+
 <c:if test="${not empty disaList}">
 	<b class="boxHeader"><spring:message code="disa.lista.resultados.laboratoriais333" /></b>
 	<fieldset>
@@ -165,7 +171,7 @@
 			<div class="submit-btn center">
 				<input type="button"
 					value='<spring:message code="general.previous"/>'
-					name="previous"  onclick="history.back()"/>
+					name="previous"  onclick="window.location.href = '${pageContext.request.contextPath}/module/disa/managevlresults/search.form';"/>
 				<input type="submit"
 					value='<spring:message code="disa.btn.export"/>'
 					name="exportViralLoadResults" />
