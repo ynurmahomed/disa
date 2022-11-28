@@ -6,10 +6,14 @@ import java.net.URISyntaxException;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
+import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.fluent.Executor;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.module.disa.extension.util.Constants;
@@ -21,7 +25,7 @@ import org.springframework.stereotype.Component;
  * A HTTP client for the OrgUnit resource from DISA API.
  */
 @Component
-public class OrgUnitDisaHttpClient {
+public class DisaAPIHttpClient {
 
     @Autowired
     @Qualifier("adminService")
@@ -75,6 +79,66 @@ public class OrgUnitDisaHttpClient {
         return executor.execute(request)
                 .handleResponse(responseHandler);
     }
+
+    public String getViralLoad(String requestId) throws URISyntaxException, IOException {
+		URI url;
+
+		url = new URIBuilder(URLBase)
+				.setPathSegments("services", "viralloads", requestId)
+				.build();
+
+		Executor executor = Executor.newInstance()
+				.auth(username, password);
+
+		Request request = Request.Get(url);
+
+		ResponseHandler<String> responseHandler = new BasicResponseHandler();
+
+		return executor.execute(request)
+				.handleResponse(responseHandler);
+	}
+
+    public void deleteViralLoad(String requestId) throws IOException, URISyntaxException {
+		URI url;
+
+		url = new URIBuilder(URLBase)
+				.setPath(String.format("/services/viralloads/%s", requestId))
+				.build();
+
+		Executor executor = Executor.newInstance()
+				.auth(username, password);
+
+		HttpResponse response = executor.execute(Request.Delete(url))
+				.returnResponse();
+
+		StatusLine status = response.getStatusLine();
+
+		if (status.getStatusCode() != 200) {
+			throw new HttpResponseException(
+					status.getStatusCode(),
+					status.getReasonPhrase());
+		}
+
+	}
+
+	public String updateViralLoad(String requestId, String payload) throws IOException, URISyntaxException {
+		URI url;
+
+		url = new URIBuilder(URLBase)
+				.setPath(String.format("/services/viralloads/%s", requestId))
+				.build();
+
+		Executor executor = Executor.newInstance()
+				.auth(username, password);
+
+		Request request = Request.Patch(url)
+				.bodyString(payload, ContentType.APPLICATION_JSON);
+
+		ResponseHandler<String> responseHandler = new BasicResponseHandler();
+
+		return executor.execute(request)
+				.handleResponse(responseHandler);
+	}
 
     public String getUsername() {
         return username;

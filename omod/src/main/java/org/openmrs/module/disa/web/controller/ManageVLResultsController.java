@@ -1,6 +1,5 @@
 package org.openmrs.module.disa.web.controller;
 
-import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,7 +15,7 @@ import org.openmrs.module.disa.Disa;
 import org.openmrs.module.disa.OrgUnit;
 import org.openmrs.module.disa.extension.util.Constants;
 import org.openmrs.module.disa.web.delegate.DelegateException;
-import org.openmrs.module.disa.web.delegate.OrgUnitDelegate;
+import org.openmrs.module.disa.web.delegate.ManageVLResultsDelegate;
 import org.openmrs.module.disa.web.delegate.ViralLoadResultsDelegate;
 import org.openmrs.module.disa.web.model.ReallocateForm;
 import org.openmrs.module.disa.web.model.SearchForm;
@@ -39,7 +38,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -47,7 +45,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class ManageVLResultsController {
 
     @Autowired
-    private OrgUnitDelegate orgUnitDelegate;
+    private ManageVLResultsDelegate manageVLResultsDelegate;
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -92,13 +90,13 @@ public class ManageVLResultsController {
     @RequestMapping(value = "/{requestId}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable String requestId) throws DelegateException {
-        new ViralLoadResultsDelegate().deleteLabResult(requestId);
+        this.manageVLResultsDelegate.deleteViralLoad(requestId);
     }
 
     @RequestMapping(value = "/{requestId}", method = RequestMethod.PATCH, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public void update(@PathVariable String requestId, @RequestBody Disa disa) throws DelegateException {
-        new ViralLoadResultsDelegate().updateLabResult(requestId, disa);
+        this.manageVLResultsDelegate.updateViralLoad(requestId, disa);
     }
 
     @RequestMapping(value = "/{requestId}/reallocate", method = RequestMethod.GET)
@@ -108,8 +106,8 @@ public class ManageVLResultsController {
 
         ModelAndView mav = new ModelAndView();
 
-        Disa vl = new ViralLoadResultsDelegate().getViralLoadData(requestId);
-        OrgUnit orgUnit = this.orgUnitDelegate.getOrgUnit(vl.getHealthFacilityLabCode());
+        Disa vl = this.manageVLResultsDelegate.getViralLoad(requestId);
+        OrgUnit orgUnit = this.manageVLResultsDelegate.getOrgUnit(vl.getHealthFacilityLabCode());
 
         mav.setViewName("/module/disa/managevlresults/reallocate");
         mav.addObject(new ReallocateForm());
@@ -127,15 +125,15 @@ public class ManageVLResultsController {
         ModelAndView mav = new ModelAndView();
 
         if (result.hasErrors()) {
-            Disa vl = new ViralLoadResultsDelegate().getViralLoadData(requestId);
-            OrgUnit orgUnit = this.orgUnitDelegate.getOrgUnit(vl.getHealthFacilityLabCode());
+            Disa vl = this.manageVLResultsDelegate.getViralLoad(requestId);
+            OrgUnit orgUnit = this.manageVLResultsDelegate.getOrgUnit(vl.getHealthFacilityLabCode());
             mav.setViewName("/module/disa/managevlresults/reallocate");
             mav.addObject(reallocateForm);
             mav.addObject(orgUnit);
             return mav;
         }
 
-        OrgUnit orgUnit = this.orgUnitDelegate.getOrgUnit(reallocateForm.getHealthFacilityLabCode());
+        OrgUnit orgUnit = this.manageVLResultsDelegate.getOrgUnit(reallocateForm.getHealthFacilityLabCode());
 
         Disa update = new Disa();
         update.setHealthFacilityLabCode(orgUnit.getCode());
@@ -143,7 +141,7 @@ public class ManageVLResultsController {
         update.setRequestingDistrictName(orgUnit.getDistrict());
         update.setRequestingProvinceName(orgUnit.getProvince());
 
-        new ViralLoadResultsDelegate().updateLabResult(requestId, update);
+        this.manageVLResultsDelegate.updateViralLoad(requestId, update);
 
         @SuppressWarnings("unchecked")
         Map<String, String> params = ((Map<String, String>) session.getAttribute("lastSearchParams"));
@@ -156,7 +154,7 @@ public class ManageVLResultsController {
     @RequestMapping(value = "/orgunits/search", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public List<OrgUnit> searchOrgUnits(@RequestParam String term, Model model) throws DelegateException {
-        return this.orgUnitDelegate.search(term);
+        return this.manageVLResultsDelegate.searchOrgUnits(term);
     }
 
     /**

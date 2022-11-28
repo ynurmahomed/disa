@@ -56,22 +56,6 @@ public class ViralLoadResultsDelegate {
 				Context.getAdministrationService().getGlobalPropertyObject(Constants.DISA_PASSWORD).getPropertyValue());
 	}
 
-	public Disa getViralLoadData(String requestId) throws DelegateException {
-		try {
-			log.info("Fetching Lab Result {}", requestId);
-			String response = rest.getViralLoad(requestId);
-			return new Gson().fromJson(response, Disa.class);
-		} catch (IOException | URISyntaxException e) {
-			String message = e.getMessage();
-			if (e instanceof HttpResponseException) {
-				message = "" + ((HttpResponseException) e).getStatusCode();
-			}
-			log.error("Error fetching Lab Result: {}", message);
-			e.printStackTrace();
-			throw new DelegateException("Unexpected error.");
-		}
-	}
-
 	public List<Disa> getViralLoadDataList(Date startDate, Date endDate, String vlState) throws Exception {
 
 		List<String> sismaCodes = Arrays.asList(Context.getAdministrationService()
@@ -472,36 +456,5 @@ public class ViralLoadResultsDelegate {
 	private String formatDate(Date date, int i) {
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 		return dateFormat.format(date).replace("12:00:00", i == 1 ? "00:00:00" : "23:59:59");
-	}
-
-	public void deleteLabResult(String requestId) throws DelegateException {
-		try {
-			log.info("Deleting Lab Result {}", requestId);
-			rest.delete(requestId);
-		} catch (IOException | URISyntaxException e) {
-			String message = e.getMessage();
-			if (e instanceof HttpResponseException) {
-				message = "" + ((HttpResponseException) e).getStatusCode();
-			}
-			log.error("Error processing delete: {}", message);
-			e.printStackTrace();
-			throw new DelegateException("Unexpected error.");
-		}
-	}
-
-	public Disa updateLabResult(String requestId, Disa updates) throws DelegateException {
-		try {
-			log.info("Updating Lab Result {}", requestId);
-			String response = rest.patch(requestId, new Gson().toJson(updates));
-			return new Gson().fromJson(response, Disa.class);
-		} catch (IOException | URISyntaxException e) {
-			String message = e.getMessage();
-			if (e instanceof HttpResponseException) {
-				message = "" + ((HttpResponseException) e).getStatusCode();
-			}
-			log.error("Error processing update: {}", message);
-			e.printStackTrace();
-			throw new DelegateException("Unexpected error.");
-		}
 	}
 }

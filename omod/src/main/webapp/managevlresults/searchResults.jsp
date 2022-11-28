@@ -2,6 +2,8 @@
 <%@ include file="/WEB-INF/template/include.jsp"%>
 <%@ include file="/WEB-INF/template/header.jsp"%>
 
+<openmrs:require privilege="Manage VL Results" otherwise="/login.htm" redirect="/admin/index.htm"/>
+
 <openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/css/disa.css"/>
 
 <%@ include file="../template/localHeader.jsp"%>

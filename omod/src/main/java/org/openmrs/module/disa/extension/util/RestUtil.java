@@ -420,59 +420,6 @@ public class RestUtil {
 		return response;
 	}
 
-	public void delete(String requestId) throws IOException, URISyntaxException {
-		URI url;
-
-		url = new URIBuilder(URLBase)
-				.setPath(String.format("/services/viralloads/%s", requestId))
-				.build();
-
-		Executor executor = Executor.newInstance()
-				.auth(username, password);
-
-		ResponseHandler<String> responseHandler = new BasicResponseHandler();
-
-		executor.execute(Request.Delete(url))
-				.handleResponse(responseHandler);
-	}
-
-	public String patch(String requestId, String payload) throws IOException, URISyntaxException {
-		URI url;
-
-		url = new URIBuilder(URLBase)
-				.setPath(String.format("/services/viralloads/%s", requestId))
-				.build();
-
-		Executor executor = Executor.newInstance()
-				.auth(username, password);
-
-		Request request = Request.Patch(url)
-				.bodyString(payload, ContentType.APPLICATION_JSON);
-
-		ResponseHandler<String> responseHandler = new BasicResponseHandler();
-
-		return executor.execute(request)
-				.handleResponse(responseHandler);
-	}
-
-	public String getViralLoad(String requestId) throws URISyntaxException, IOException {
-		URI url;
-
-		url = new URIBuilder(URLBase)
-				.setPathSegments("services", "viralloads", requestId)
-				.build();
-
-		Executor executor = Executor.newInstance()
-				.auth(username, password);
-
-		Request request = Request.Get(url);
-
-		ResponseHandler<String> responseHandler = new BasicResponseHandler();
-
-		return executor.execute(request)
-				.handleResponse(responseHandler);
-	}
-
 	public void setUsername(String username) {
 		this.username = username;
 	}
