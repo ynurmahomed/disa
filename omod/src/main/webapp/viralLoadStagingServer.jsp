@@ -23,11 +23,11 @@
 					<form:select path="vlSisma" id="selSisma" items="${sismaCodes}"/>
 		      	</td>
 		      	<td><label for="startDate"><openmrs:message code="disa.start.date" />:</label></td>
-	            <td><form:input path="startDate"  size="10" id="startDate" onclick="showCalendar(this);"/>
+	            <td><form:input path="startDate"  size="10" id="startDate" onclick="showCalendar(this);" autocomplete="off"/>
 					<form:errors path="startDate" cssClass="error"/>
 	            <br /></td>
 		      	<td><label for="endDate"><openmrs:message code="disa.end.date"/>:</label></td>
-            	<td><form:input path="endDate" size="10" id="endDate" onclick="showCalendar(this);"/>
+            	<td><form:input path="endDate" size="10" id="endDate" onclick="showCalendar(this);" autocomplete="off"/>
 					<form:errors path="endDate" cssClass="error"/>
             	<br />
             	</td>
