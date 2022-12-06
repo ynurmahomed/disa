@@ -15,6 +15,7 @@
     $j(document).ready(() => {
 
         $j(".facility-search").selectize({
+            plugins: ["clear_button"],
             load: async (term, callback) => {
                 let results = [];
 
