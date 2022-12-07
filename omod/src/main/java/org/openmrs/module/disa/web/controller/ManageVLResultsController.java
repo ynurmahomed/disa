@@ -7,10 +7,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.openmrs.api.context.Context;
+import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.disa.Disa;
 import org.openmrs.module.disa.OrgUnit;
 import org.openmrs.module.disa.extension.util.Constants;
@@ -39,6 +42,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @Controller
 @RequestMapping(value = "/module/disa/managevlresults")
@@ -46,6 +50,9 @@ public class ManageVLResultsController {
 
     @Autowired
     private ManageVLResultsDelegate manageVLResultsDelegate;
+
+    @Autowired
+    private MessageSourceService messageSourceService;
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -65,7 +72,8 @@ public class ManageVLResultsController {
             @Valid SearchForm searchForm,
             BindingResult result,
             ModelMap model,
-            HttpSession session) throws Exception {
+            HttpSession session,
+            HttpServletRequest request) throws Exception {
 
         ModelAndView mav = new ModelAndView();
 
@@ -78,13 +86,32 @@ public class ManageVLResultsController {
             populateSismaCodes(model);
             mav.addObject(searchForm);
         } else {
+            String exportUri = ServletUriComponentsBuilder.fromServletMapping(request)
+                    .queryParams(params)
+                    .pathSegment("module", "disa", "managevlresults", "search", "export.form")
+                    .build()
+                    .toUriString();
+            mav.addObject("exportUri", exportUri);
+
             ViralLoadResultsDelegate delegate = new ViralLoadResultsDelegate();
-            mav.setViewName("/module/disa/managevlresults/searchResults");
             mav.addObject(delegate.getViralLoadDataList(searchForm));
+            mav.setViewName("/module/disa/managevlresults/searchResults");
             session.setAttribute("lastSearchParams", params);
         }
 
         return mav;
+    }
+
+    @RequestMapping(value = "/search/export", method = RequestMethod.GET)
+    public void export(
+            @RequestParam MultiValueMap<String, String> params,
+            @Valid SearchForm searchForm,
+            BindingResult result,
+            ModelMap model,
+            HttpServletResponse response) throws Exception {
+
+        ViralLoadResultsDelegate delegate = new ViralLoadResultsDelegate();
+        delegate.createExcelFileStaging(delegate.getViralLoadDataList(searchForm), response, messageSourceService);
     }
 
     @RequestMapping(value = "/{requestId}", method = RequestMethod.DELETE)
