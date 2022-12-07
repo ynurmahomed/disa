@@ -2,7 +2,7 @@
 <%@ include file="/WEB-INF/template/include.jsp"%>
 <%@ include file="/WEB-INF/template/header.jsp"%>
 
-<openmrs:require privilege="Manage VL Results" otherwise="/login.htm"/>
+<openmrs:require privilege="Manage VL Results" otherwise="/login.htm" redirect="/module/disa/managevlresults/${requestId}/reallocate.form"/>
 
 <openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/css/disa.css"/>
 <openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/css/selectize.legacy.css" />
