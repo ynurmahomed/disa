@@ -15,6 +15,7 @@
     $j(document).ready(() => {
 
         $j(".facility-search").selectize({
+            placeholder: '<spring:message code="disa.viralload.reallocate.select.placeholder" htmlEscape="false"/>',
             plugins: ["clear_button"],
             load: async (term, callback) => {
                 let results = [];
