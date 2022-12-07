@@ -116,7 +116,7 @@
 					<th><spring:message code="disa.created.at" /></th>
 					<th><spring:message code="disa.updated.at" /></th>
 					<th><spring:message code="disa.not.processing.cause" /></th>
-					<th></th>
+					<th><spring:message code="disa.manage.options" /></th>
 				</tr>
 			</thead>
 			<tbody>
