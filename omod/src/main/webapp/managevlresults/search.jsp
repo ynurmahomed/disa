@@ -5,7 +5,8 @@
 
 <openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/css/disa.css" />
 <openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/css/carbon-grid-11.17.0-min.css" />
-<openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/calendar.js" />
+<openmrs:htmlInclude
+	file="/scripts/jquery/dataTables/css/dataTables_jui.css" />
 
 <%@ include file="../template/localHeader.jsp" %>
 
@@ -15,104 +16,195 @@
 
 <br/>
 
+<div id="alert-box">
+	<c:if test="${not empty flashMessage}">
+		<div class="success">
+			<openmrs:message code="${flashMessage}"/>
+		</div>
+	</c:if>
+</div>
+
 <b class="boxHeader">
 	<spring:message code="disa.pesquisa.resultados.laboratoriais11" />
 </b>
 
-<form:form commandName="searchForm" method="GET">
-	<fieldset>
-		<div class="cds--css-grid">
-			<div class="cds-css-grid-column">
-				<label for="requestId">
-					<openmrs:message code="disa.requestId" />:
-				</label>
-			</div>
-			<div class="cds-css-grid-column cds--col-span-2">
-				<form:input path="requestId" size="22" maxlength="16" id="requestId"/>
-			</div>
-			<div class="cds-css-grid-column">
-				<label for="nid">
-					<openmrs:message code="disa.nid" />:
-				</label>
-			</div>
-			<div class="cds-css-grid-column cds--col-span-2">
-				<form:input path="nid" size="22" maxlength="21" id="nid"/>
-			</div>
-			<div class="cds-css-grid-column">
-				<label for="selSisma">
-					<openmrs:message code="disa.sisma.code" />:
-				</label>
-			</div>
-			<div class="cds-css-grid-column">
-				<form:select path="vlSisma" id="selSisma" items="${sismaCodes}"/>
-			</div>
-			<div class="cds-css-grid-column">
-				<label for="startDate">
-					<openmrs:message code="disa.start.date" />:
-				</label>
-			</div>
-			<div class="cds-css-grid-column">
-				<form:input path="startDate"  size="10" id="startDate" onclick="showCalendar(this);" autocomplete="off"/>
-			</div>
-			<spring:hasBindErrors name="searchForm">
-				<c:if test="${errors.hasFieldErrors('startDate')}">
-					<div class="cds-css-grid-column cds--col-span-2">
-						<form:errors path="startDate" cssClass="error"/>
-					</div>
-				</c:if>
-			</spring:hasBindErrors>
-			<div class="cds-css-grid-column">
-				<label for="endDate">
-					<openmrs:message code="disa.end.date" />:
-				</label>
-			</div>
-			<div class="cds-css-grid-column">
-				<form:input path="endDate" size="10" id="endDate" onclick="showCalendar(this);" autocomplete="off"/>
-			</div>
-			<spring:hasBindErrors name="searchForm">
-				<c:if test="${errors.hasFieldErrors('endDate')}">
-					<div class="cds-css-grid-column cds--col-span-2">
-						<form:errors path="endDate" cssClass="error"/>
-					</div>
-				</c:if>
-			</spring:hasBindErrors>
-		</div>
-		<div class="cds--css-grid">
-			<div class="cds-css-grid-column">
-				<label for="referringId">
-					<openmrs:message code="disa.referring.request.id" />:
-				</label>
-			</div>
-			<div class="cds-css-grid-column cds--col-span-2">
-				<form:input path="referringId" size="22" maxlength="16" id="referringId"/>
-			</div>
-			<div class="cds-css-grid-column">
-				<label for="vlState">
-					<openmrs:message code="disa.frm.status" />:
-				</label>
-			</div>
-			<div class="cds-css-grid-column cds--col-span-2">
-				<form:select path="vlState" id="selValue">
-				<form:option value="ALL">
-					<openmrs:message code="disa.viral.load.status.ALL" />
-				</form:option>
-				<form:option value="PROCESSED">
-					<openmrs:message code="disa.viral.load.status.PROCESSED" />
-				</form:option>
-				<form:option value="NOT_PROCESSED">
-					<openmrs:message code="disa.viral.load.status.NOT_PROCESSED" />
-				</form:option>
-				<form:option value="PENDING">
-					<openmrs:message code="disa.viral.load.status.PENDING" />
-				</form:option>
-			</form:select>
-			</div>
-		</div>
+<%@ include file="_searchForm.jsp" %>
 
-		<div class="submit-btn">
-			<input id="subValue" type="submit" value='<openmrs:message code="general.next"/>'/>
+<c:if test="${not empty disaList}">
+	<b class="boxHeader"><spring:message code="disa.lista.resultados.laboratoriais333" /></b>
+	<fieldset>
+		<table  id="vlResultsTable" class="display" width="100%" cellpadding="2" cellspacing="0"
+			style="font-size: 13px;">
+			<thead>
+				<tr>
+					<th><spring:message code="disa.requesting.facility.name"/></th>
+					<th><spring:message code="disa.requesting.district.name"/></th>
+					<th><spring:message code="disa.sisma.code"/></th>
+					<th><spring:message code="disa.referring.request.id"/></th>
+					<th><spring:message code="disa.nid" /></th>
+					<th><spring:message code="general.name" /></th>
+					<th><spring:message code="disa.gender" /></th>
+					<th><spring:message code="disa.age" /></th>
+					<th><spring:message code="disa.request.id" /></th>
+					<th><spring:message code="disa.analysis.date.time" /></th>
+					<th><spring:message code="disa.authorised.date.time" /></th>
+					<th><spring:message code="disa.viralload.result.copy" /></th>
+					<th><spring:message code="disa.status" /></th>
+					<th><spring:message code="disa.created.at" /></th>
+					<th><spring:message code="disa.updated.at" /></th>
+					<th><spring:message code="disa.not.processing.cause" /></th>
+					<th><spring:message code="disa.manage.options" /></th>
+				</tr>
+			</thead>
+			<tbody>
+				<c:forEach items="${disaList}" var="vlData">
+					<tr>
+					    	<td>${vlData.requestingFacilityName}</td>
+					    	<td>${vlData.requestingDistrictName}</td>
+					    	<td>${vlData.healthFacilityLabCode}</td>
+					    	<td>${vlData.referringRequestID}</td>
+					        <td>${vlData.nid}</td>
+					    	<td>${vlData.firstName} ${vlData.lastName}</td>
+					        <td>${vlData.gender}</td>
+					        <td>${vlData.getAge()}</td>
+					        <td>${vlData.requestId}</td>
+					        <td>${vlData.processingDate}</td>
+					        <td>${vlData.viralLoadResultDate}</td>
+					        <td>${vlData.finalViralLoadResult}</td>
+					        <td><openmrs:message code="disa.viral.load.status.${vlData.viralLoadStatus}"/></td>
+					        <td>${vlData.createdAt}</td>
+					        <td>${vlData.updatedAt}</td>
+					        <td>
+							<c:if test="${not empty vlData.notProcessingCause}">
+								<openmrs:message code="disa.${vlData.notProcessingCause}"/>
+							</c:if>
+					        </td>
+						<td>
+							<ul class="actions">
+								<c:if test="${vlData.viralLoadStatus == 'NOT_PROCESSED'}">
+									<li>
+										<a href="#" data-requestid="${vlData.requestId}" class="reschedule-vl">
+											<spring:message code="disa.viralload.reschedule" />
+										</a>
+									</li>
+								</c:if>
+								<c:if test="${vlData.viralLoadStatus == 'NOT_PROCESSED'}">
+									<li>
+										<a href="${pageContext.request.contextPath}/module/disa/managevlresults/${vlData.requestId}/reallocate.form">
+											<spring:message code="disa.viralload.reallocate" />
+										</a>
+									</li>
+								</c:if>
+								<li>
+									<a href="#" data-requestid="${vlData.requestId}" class="delete-vl">
+										<spring:message code="disa.viralload.delete" />
+									</a>
+								</li>
+							</ul>
+						</td>
+					</tr>
+				</c:forEach>
+			</tbody>
+		</table>
+		<br />
+		<div class="submit-btn center">
+			<input type="button"
+				value='<spring:message code="disa.btn.export"/>'
+				name="exportViralLoadResults" onclick="window.location.href = '${exportUri}'"/>
 		</div>
 	</fieldset>
-</form:form>
+</c:if>
+
+<c:if test="${empty disaList}">
+	<div id="openmrs_msg">
+		<b> <spring:message code="disa.no.viral.load.form" /></b>
+	</div>
+</c:if>
+
+<openmrs:htmlInclude
+	file="/scripts/jquery/dataTables/js/jquery.dataTables.min.js" />
+
+<script type="text/javascript">
+	async function handleReschedule(event) {
+
+		event.preventDefault();
+
+		const anchor = event.currentTarget;
+		const requestId = anchor.dataset.requestid;
+		const headers = {"Content-Type": "application/json"}
+		const body = JSON.stringify({viralLoadStatus: "PENDING"});
+		const options = { method: "PATCH", headers, body };
+
+		try {
+
+			document.body.style.cursor = 'wait';
+
+			const response = await fetch(`\${requestId}.form`, options);
+
+			if (response.status === 200) {
+				sessionStorage.setItem("flashMessage", "<spring:message code='disa.viralload.reschedule.successful'/>");
+				location.reload();
+			} else {
+				throw new Error(`Reschedule was not successful.`)
+			}
+		} catch (error) {
+			console.error(error);
+			alert("<spring:message code='disa.viralload.delete.error'/>");
+		} finally {
+			document.body.style.cursor = 'default';
+		}
+	}
+
+	async function handleDelete(event) {
+
+		event.preventDefault();
+
+		const anchor = event.currentTarget;
+	        const requestId = anchor.dataset.requestid;
+        	if (confirm(`<spring:message code='disa.viralload.delete.confirmation.javascript'/>`)) {
+			try {
+				document.body.style.cursor = 'wait';
+				const response = await fetch(`\${requestId}.form`, { method: "DELETE" });
+				if (response.status === 204) {
+					location.reload();
+				} else {
+					throw new Error(`Delete was not successful.`);
+				}
+			} catch (error) {
+				console.error(error);
+				alert("<spring:message code='disa.viralload.delete.error'/>");
+			} finally {
+				document.body.style.cursor = 'default';
+			}
+
+        	}
+    	}
+
+
+	$j(document).ready(function() {
+		for (const a of document.querySelectorAll(".delete-vl")) {
+			a.addEventListener('click', handleDelete);
+		}
+
+		for (const a of document.querySelectorAll(".reschedule-vl")) {
+			a.addEventListener('click', handleReschedule);
+		}
+
+		$j('#vlResultsTable').dataTable({
+			"iDisplayLength" : 10
+		});
+
+		// Display a temporary success message if present on sessionStorage
+		const alertBox = document.getElementById("alert-box");
+		const message = sessionStorage.getItem("flashMessage");
+		if(message) {
+			const success = document.createElement("div");
+			success.innerText = message;
+			success.className = "success";
+			alertBox.appendChild(success);
+			sessionStorage.removeItem("flashMessage");
+		}
+	});
+</script>
 
 <%@ include file="/WEB-INF/template/footer.jsp" %>

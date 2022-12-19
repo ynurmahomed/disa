@@ -67,7 +67,7 @@ public class ManageVLResultsController {
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.GET)
-    public ModelAndView search(
+    public String search(
             @RequestParam MultiValueMap<String, String> params,
             @Valid SearchForm searchForm,
             BindingResult result,
@@ -75,31 +75,26 @@ public class ManageVLResultsController {
             HttpSession session,
             HttpServletRequest request) throws Exception {
 
-        ModelAndView mav = new ModelAndView();
+        populateSismaCodes(model);
 
         if (params.isEmpty()) {
-            mav.setViewName("/module/disa/managevlresults/search");
-            populateSismaCodes(model);
-            mav.addObject(new SearchForm());
+            model.addAttribute(new SearchForm());
         } else if (result.hasErrors()) {
-            mav.setViewName("/module/disa/managevlresults/search");
-            populateSismaCodes(model);
-            mav.addObject(searchForm);
+            model.addAttribute(searchForm);
         } else {
             String exportUri = ServletUriComponentsBuilder.fromServletMapping(request)
                     .queryParams(params)
                     .pathSegment("module", "disa", "managevlresults", "search", "export.form")
                     .build()
                     .toUriString();
-            mav.addObject("exportUri", exportUri);
+            model.addAttribute("exportUri", exportUri);
 
             ViralLoadResultsDelegate delegate = new ViralLoadResultsDelegate();
-            mav.addObject(delegate.getViralLoadDataList(searchForm));
-            mav.setViewName("/module/disa/managevlresults/searchResults");
+            model.addAttribute(delegate.getViralLoadDataList(searchForm));
             session.setAttribute("lastSearchParams", params);
         }
 
-        return mav;
+        return "/module/disa/managevlresults/search";
     }
 
     @RequestMapping(value = "/search/export", method = RequestMethod.GET)
