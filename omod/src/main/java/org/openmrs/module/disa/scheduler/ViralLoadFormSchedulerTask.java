@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.conn.HttpHostConnectException;
 import org.openmrs.Encounter;
@@ -35,6 +34,8 @@ import org.openmrs.module.disa.extension.util.DateUtil;
 import org.openmrs.module.disa.extension.util.GenericUtil;
 import org.openmrs.module.disa.extension.util.RestUtil;
 import org.openmrs.scheduler.tasks.AbstractTask;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -50,6 +51,9 @@ import com.google.gson.reflect.TypeToken;
  */
 @Component
 public class ViralLoadFormSchedulerTask extends AbstractTask {
+
+	private static final Logger logger = LoggerFactory.getLogger(ViralLoadFormSchedulerTask.class);
+
 	private String processed;
 	private String notProcessed;
 	private String notProcessedNoResult;
@@ -103,22 +107,21 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 
 	@Override
 	public void execute() {
-		System.out.println("module started...");
+		logger.info("module started...");
 		Context.openSession();
 		try {
 			createViralLoadForm();
 		} catch (HttpHostConnectException e) {
 			// ignora a exception
 		} catch (Exception e) {
-			String exceprionMessage = ExceptionUtils.getStackTrace(e); // send email
-			System.out.println("O erro " + exceprionMessage);
+			logger.error("O erro ", e);
 			// sendEmail(exceprionMessage,
 			// administrationService.getGlobalPropertyObject(Constants.DISA_MAIL_TO).getPropertyValue());
 		} finally {
 
 		}
 		Context.closeSession();
-		System.out.println("module ended...");
+		logger.info("module ended...");
 	}
 
 	@Transactional(rollbackFor = Exception.class)
@@ -127,9 +130,9 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 		// iterate the viral load list and create the encounters
 
 		jsonViralLoad = getJsonViralLoad();
-		System.out.println("There is " + jsonViralLoad.size() + " pending items to be processed");
+		logger.info("There is {} pending items to be processed", jsonViralLoad.size() );
 
-		System.out.println("Syncing started...");
+		logger.info("Syncing started...");
 
 		User user = userService.getUserByUsername("generic.provider");
 		if (user == null) {
@@ -137,8 +140,7 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 		}
 
 		if (user == null) {
-			String message = "O provedor generic.provider ou provedor.desconhecido nao foi encontrado no openmrs.";
-			System.out.println("O erro " + message);
+			logger.error("O erro O provedor generic.provider ou provedor.desconhecido nao foi encontrado no openmrs.");
 			// sendEmail(message,
 			// administrationService.getGlobalPropertyObject(Constants.DISA_MAIL_TO).getPropertyValue());
 			return;
@@ -165,7 +167,7 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 						String notification = "Os pacientes do OpenMRS com os Ids: "
 								+ Arrays.toString(patientIds.toArray()) + " partilham o mesmo NID: "
 								+ disa.getNid().trim();
-						System.out.println("O erro " + notification);
+						logger.info("O erro {}", notification);
 						// sendEmail(notification,
 						// administrationService.getGlobalPropertyObject(Constants.DISA_MAIL_OTHERS_TO).getPropertyValue());
 						notProcessedDuplicateNid = disa.getRequestId();
@@ -525,7 +527,7 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 		jsonViralLoad.clear();
 		patientIds.clear();
 
-		System.out.println("Syncing ended...");
+		logger.info("Syncing ended...");
 	}
 
 	private boolean hasNoResult(Disa disa) {
