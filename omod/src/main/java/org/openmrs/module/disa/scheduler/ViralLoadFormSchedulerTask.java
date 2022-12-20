@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.conn.HttpHostConnectException;
 import org.openmrs.Encounter;
@@ -20,6 +22,7 @@ import org.openmrs.User;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.EncounterService;
+import org.openmrs.api.FormService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.ObsService;
 import org.openmrs.api.PersonService;
@@ -73,6 +76,7 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 	private ConceptService conceptService;
 	private LocationService locationService;
 	private ObsService obsService;
+	private FormService formService;
 
 	@Autowired
 	public ViralLoadFormSchedulerTask(
@@ -84,7 +88,8 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 			@Qualifier("personService") PersonService personService,
 			@Qualifier("conceptService") ConceptService conceptService,
 			@Qualifier("locationService") LocationService locationService,
-			@Qualifier("obsService") ObsService obsService) {
+			@Qualifier("obsService") ObsService obsService,
+			@Qualifier("formService") FormService formService) {
 
 		this.administrationService = administrationService;
 		this.userService = userService;
@@ -95,7 +100,11 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 		this.locationService = locationService;
 		this.obsService = obsService;
 		this.disaService = disaService;
+		this.formService = formService;
+	}
 
+	@PostConstruct
+	public void postConstruct() {
 		rest = new RestUtil();
 		rest.setURLBase(
 				administrationService.getGlobalPropertyObject(Constants.DISA_URL).getPropertyValue());
@@ -194,7 +203,7 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 				encounter.setEncounterType(
 						encounterService.getEncounterTypeByUuid(Constants.DISA_ENCOUNTER_TYPE));
 				encounter.setLocation(locationBySismaCode);
-				encounter.setForm(Context.getFormService().getFormByUuid(Constants.DISA_FORM));
+				encounter.setForm(formService.getFormByUuid(Constants.DISA_FORM));
 
 				encounter.setProvider(
 						encounterService.getEncounterRoleByUuid(EncounterRole.UNKNOWN_ENCOUNTER_ROLE_UUID),
@@ -637,5 +646,9 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 						.getPropertyValue(),
 				administrationService.getGlobalPropertyObject(Constants.DISA_MAIL_FROM_PASSWORD)
 						.getPropertyValue());
+	}
+
+	public void setRestUtil(RestUtil rest) {
+		this.rest = rest;
 	}
 }
