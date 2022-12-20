@@ -452,16 +452,16 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 
 				// field: dropbox with answer label Indectetável
 				if (disa.getFinalViralLoadResult().trim().equalsIgnoreCase(Constants.INDETECTAVEL)) {
-					Obs obs_1306 = new Obs();
-					obs_1306.setPerson(personService.getPersonByUuid(lstPatient.get(0).getUuid()));
-					obs_1306.setObsDatetime(new Date());
-					obs_1306.setConcept(
+					Obs obs_1305 = new Obs();
+					obs_1305.setPerson(personService.getPersonByUuid(lstPatient.get(0).getUuid()));
+					obs_1305.setObsDatetime(new Date());
+					obs_1305.setConcept(
 							conceptService.getConceptByUuid(Constants.HIV_VIRAL_LOAD_QUALITATIVE));
-					obs_1306.setValueCoded(
+					obs_1305.setValueCoded(
 							conceptService.getConceptByUuid(Constants.UNDETECTABLE_VIRAL_LOAD));
-					obs_1306.setLocation(locationBySismaCode);
-					obs_1306.setEncounter(encounter);
-					obsService.saveObs(obs_1306, "");
+					obs_1305.setLocation(locationBySismaCode);
+					obs_1305.setEncounter(encounter);
+					obsService.saveObs(obs_1305, "");
 				} else
 
 				// field: dropbox with answer <
@@ -597,9 +597,10 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 	}
 
 	private Location getLocationBySismaCode(String sismaCode) {
+		String locationAttrType = administrationService
+				.getGlobalPropertyObject(Constants.LOCATION_ATTRIBUTE_TYPE_UUID).getPropertyValue();
 		LocationAttributeType locationAttributeType = locationService
-				.getLocationAttributeTypeByUuid(administrationService
-						.getGlobalPropertyObject(Constants.LOCATION_ATTRIBUTE_TYPE_UUID).getPropertyValue());
+				.getLocationAttributeTypeByUuid(locationAttrType);
 		Map<LocationAttributeType, Object> hashMap = new HashMap<LocationAttributeType, Object>();
 		hashMap.put(locationAttributeType, sismaCode);
 		List<Location> locations = locationService.getLocations(null, null, hashMap, false, null, null);
