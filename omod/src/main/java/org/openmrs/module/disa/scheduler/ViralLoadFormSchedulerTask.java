@@ -7,8 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.conn.HttpHostConnectException;
 import org.openmrs.Encounter;
@@ -39,9 +37,7 @@ import org.openmrs.module.disa.extension.util.RestUtil;
 import org.openmrs.scheduler.tasks.AbstractTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.gson.Gson;
@@ -52,7 +48,6 @@ import com.google.gson.reflect.TypeToken;
  * @author machabane
  *
  */
-@Component
 public class ViralLoadFormSchedulerTask extends AbstractTask {
 
 	private static final Logger logger = LoggerFactory.getLogger(ViralLoadFormSchedulerTask.class);
@@ -78,7 +73,20 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 	private ObsService obsService;
 	private FormService formService;
 
-	@Autowired
+	public ViralLoadFormSchedulerTask() {
+		this.administrationService = Context.getAdministrationService();
+		this.userService = Context.getUserService();
+		this.providerService = Context.getProviderService();
+		this.encounterService = Context.getEncounterService();
+		this.personService = Context.getPersonService();
+		this.conceptService = Context.getConceptService();
+		this.locationService = Context.getLocationService();
+		this.obsService = Context.getObsService();
+		this.disaService = Context.getService(DisaService.class);
+		this.formService = Context.getFormService();
+		postConstruct();
+	}
+
 	public ViralLoadFormSchedulerTask(
 			DisaService disaService,
 			@Qualifier("adminService") AdministrationService administrationService,
@@ -103,7 +111,6 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 		this.formService = formService;
 	}
 
-	@PostConstruct
 	public void postConstruct() {
 		rest = new RestUtil();
 		rest.setURLBase(
