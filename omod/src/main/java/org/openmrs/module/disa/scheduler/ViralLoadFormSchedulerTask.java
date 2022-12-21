@@ -466,15 +466,15 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 
 				// field: dropbox with answer <
 				if (disa.getFinalViralLoadResult().contains(Constants.LESS_THAN)) {
-					Obs obs_1306 = new Obs();
-					obs_1306.setPerson(personService.getPersonByUuid(lstPatient.get(0).getUuid()));
-					obs_1306.setObsDatetime(new Date());
-					obs_1306.setConcept(
+					Obs obs_1305 = new Obs();
+					obs_1305.setPerson(personService.getPersonByUuid(lstPatient.get(0).getUuid()));
+					obs_1305.setObsDatetime(new Date());
+					obs_1305.setConcept(
 							conceptService.getConceptByUuid(Constants.HIV_VIRAL_LOAD_QUALITATIVE));
-					obs_1306.setValueCoded(conceptService.getConceptByUuid(Constants.LESSTHAN));
-					obs_1306.setLocation(locationBySismaCode);
-					obs_1306.setEncounter(encounter);
-					obs_1306.setComment(disa.getFinalViralLoadResult()
+					obs_1305.setValueCoded(conceptService.getConceptByUuid(Constants.LESSTHAN));
+					obs_1305.setLocation(locationBySismaCode);
+					obs_1305.setEncounter(encounter);
+					obs_1305.setComment(disa.getFinalViralLoadResult()
 							.trim()
 							.substring(1)
 							.replace(Constants.LESS_THAN, "")
@@ -482,7 +482,7 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 							.replace(Constants.FORWARD_SLASH, "")
 							.replace(Constants.ML, "")
 							.trim());
-					obsService.saveObs(obs_1306, "");
+					obsService.saveObs(obs_1305, "");
 				}
 
 				Obs obs_23839 = new Obs();
