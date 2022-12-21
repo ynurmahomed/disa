@@ -139,7 +139,7 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 		// iterate the viral load list and create the encounters
 
 		jsonViralLoad = getJsonViralLoad();
-		logger.info("There is {} pending items to be processed", jsonViralLoad.size() );
+		logger.info("There is {} pending items to be processed", jsonViralLoad.size());
 
 		logger.info("Syncing started...");
 
@@ -188,6 +188,7 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 						continue;
 					} else if (!GenericUtil.isNumeric(disa.getFinalViralLoadResult().trim())
 							&& !(disa.getFinalViralLoadResult().contains(Constants.LESS_THAN))
+							&& !(disa.getFinalViralLoadResult().contains(Constants.MORE_THAN))
 							&& !(disa.getFinalViralLoadResult().trim().equalsIgnoreCase(Constants.INDETECTAVEL))) {
 						notProcessedFlaggedReview = disa.getRequestId();
 						updateNotProcessedFlaggedForReview();
@@ -483,6 +484,17 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 							.replace(Constants.ML, "")
 							.trim());
 					obsService.saveObs(obs_1305, "");
+				} else if (disa.getFinalViralLoadResult().contains(Constants.MORE_THAN)) {
+					Obs obs_856 = new Obs();
+					obs_856.setPerson(personService.getPersonByUuid(lstPatient.get(0).getUuid()));
+					obs_856.setObsDatetime(new Date());
+					obs_856.setConcept(conceptService.getConceptByUuid(Constants.VIRAL_LOAD_COPIES));
+					obs_856.setLocation(locationBySismaCode);
+					obs_856.setEncounter(encounter);
+					String trim = disa.getFinalViralLoadResult().trim();
+					String numericPart = trim.substring(trim.indexOf(Constants.MORE_THAN) + 1);
+					obs_856.setValueNumeric(Double.valueOf(numericPart));
+					obsService.saveObs(obs_856, "");
 				}
 
 				Obs obs_23839 = new Obs();

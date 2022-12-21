@@ -487,7 +487,7 @@ public class ViralLoadFormSchedulerTaskTest extends BaseContextMockTest {
 		assertThat(obsCaptor.getAllValues(),
 				hasItem(allOf(
 						hasProperty("concept", equalTo(viralLoadCopies)),
-						hasProperty("valueNumeric", equalTo(10_000_000)))));
+						hasProperty("valueNumeric", equalTo(10_000_000.0)))));
 
 		// Viral load qualitative should empty
 		assertThat(obsCaptor.getAllValues(),
