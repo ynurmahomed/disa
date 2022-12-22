@@ -162,6 +162,7 @@ public class ManageVLResultsController {
         update.setRequestingFacilityName(orgUnit.getFacility());
         update.setRequestingDistrictName(orgUnit.getDistrict());
         update.setRequestingProvinceName(orgUnit.getProvince());
+        update.setViralLoadStatus("PENDING");
 
         this.manageVLResultsDelegate.updateViralLoad(requestId, update);
 
