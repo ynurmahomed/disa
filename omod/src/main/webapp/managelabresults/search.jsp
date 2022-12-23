@@ -27,7 +27,7 @@
 	<spring:message code="disa.pesquisa.resultados.laboratoriais11" />
 </b>
 
-<%@ include file="../_searchForm.jsp" %>
+<%@ include file="../common/searchForm.jsp" %>
 
 <c:if test="${not empty disaList}">
 	<b class="boxHeader"><spring:message code="disa.lista.resultados.laboratoriais333" /></b>
