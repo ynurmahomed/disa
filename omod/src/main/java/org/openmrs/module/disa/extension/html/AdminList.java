@@ -46,7 +46,7 @@ public class AdminList extends AdministrationSectionExt {
 		LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
 		map.put("/module/disa/mapunprocessed/viralLoadStatusList.form", "disa.list.viral.load.results");
 		map.put("/module/disa/searchlabresults/viralLoadStagingServer.form", "disa.list.viral.load.results.staging.server");
-		map.put("/module/disa/managelabresults/search.form", "disa.list.viral.load.results.manage");
+		map.put("/module/disa/managelabresults.form", "disa.list.viral.load.results.manage");
 		return map;
 	}
 

@@ -16,7 +16,7 @@
 
 	<li
 		<c:if test='<%= request.getRequestURI().contains("/managelabresults") %>'>class="active"</c:if>>
-		<a href="${pageContext.request.contextPath}/module/disa/managelabresults/search.form"><spring:message code="disa.list.viral.load.results.manage" /></a>
+		<a href="${pageContext.request.contextPath}/module/disa/managelabresults.form"><spring:message code="disa.list.viral.load.results.manage" /></a>
 	</li>
 
 	<!-- Add further links here -->
