@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @Controller
-public class ViralLoadStagingServerController {
+public class SearchLabResultsController {
 
 	private MessageSourceService messageSourceService;
 
@@ -48,7 +48,7 @@ public class ViralLoadStagingServerController {
 		this.messageSourceService = messageSourceService;
 	}
 
-	@RequestMapping(value = "/module/disa/viralLoadStagingServer", method = RequestMethod.GET)
+	@RequestMapping(value = "/module/disa/searchlabresults/viralLoadStagingServer", method = RequestMethod.GET)
 	public String showViralLoadStagingQueryForm(
 			@RequestParam MultiValueMap<String, String> params,
 			@Valid SearchForm searchForm,
@@ -66,7 +66,7 @@ public class ViralLoadStagingServerController {
 		} else {
 			String exportUri = ServletUriComponentsBuilder.fromServletMapping(request)
 					.queryParams(params)
-					.pathSegment("module", "disa", "viralLoadStagingServer", "export.form")
+					.pathSegment("module", "disa", "searchlabresults", "export.form")
 					.build()
 					.toUriString();
 			model.addAttribute("exportUri", exportUri);
@@ -76,10 +76,10 @@ public class ViralLoadStagingServerController {
 			session.setAttribute("lastSearchParams", params);
 		}
 
-		return "/module/disa/viralLoadStagingServer";
+		return "/module/disa/searchlabresults/viralLoadStagingServer";
 	}
 
-	@RequestMapping(value = "/module/disa/viralLoadStagingServer/export", method = RequestMethod.GET)
+	@RequestMapping(value = "/module/disa/searchlabresults/export", method = RequestMethod.GET)
 	public void export(
 			@RequestParam MultiValueMap<String, String> params,
 			@Valid SearchForm searchForm,

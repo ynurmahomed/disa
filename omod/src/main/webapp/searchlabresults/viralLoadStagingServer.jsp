@@ -1,19 +1,19 @@
 <%@ include file="/WEB-INF/template/include.jsp"%>
 <%@ include file="/WEB-INF/template/header.jsp"%>
 
-<openmrs:require anyPrivilege="true" otherwise="/login.htm" redirect="/module/disa/viralLoadStagingServer.form"/>
+<openmrs:require anyPrivilege="true" otherwise="/login.htm" redirect="/module/disa/searchlabresults/viralLoadStagingServer.form"/>
 
 <openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/css/disa.css"/>
 <openmrs:htmlInclude file="/scripts/jquery/dataTables/css/dataTables_jui.css" />
 
-<%@ include file="template/localHeader.jsp"%>
+<%@ include file="../template/localHeader.jsp"%>
 
 <h2><openmrs:message code="disa.pesquisa.resultados.laboratoriais11"/></h2>
 <br />
 
 <b class="boxHeader"><spring:message code="disa.pesquisa.resultados.laboratoriais11" /></b>
 
-<%@ include file="_searchForm.jsp" %>
+<%@ include file="../_searchForm.jsp" %>
 
 <c:if test="${not empty disaList}">
 	<b class="boxHeader"><spring:message code="disa.lista.resultados.laboratoriais333" /></b>

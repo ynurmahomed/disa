@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/template/include.jsp" %>
 <%@ include file="/WEB-INF/template/header.jsp" %>
 
-<openmrs:require privilege="Manage VL Results" otherwise="/login.htm" redirect="/module/disa/managevlresults/search.form"/>
+<openmrs:require privilege="Manage VL Results" otherwise="/login.htm" redirect="/module/disa/managelabresults/search.form"/>
 
 <openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/css/disa.css" />
 <openmrs:htmlInclude
@@ -89,7 +89,7 @@
 								</c:if>
 								<c:if test="${vlData.viralLoadStatus == 'NOT_PROCESSED'}">
 									<li>
-										<a href="${pageContext.request.contextPath}/module/disa/managevlresults/${vlData.requestId}/reallocate.form">
+										<a href="${pageContext.request.contextPath}/module/disa/managelabresults/${vlData.requestId}/reallocate.form">
 											<spring:message code="disa.viralload.reallocate" />
 										</a>
 									</li>

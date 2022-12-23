@@ -45,7 +45,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @Controller
-@RequestMapping(value = "/module/disa/managevlresults")
+@RequestMapping(value = "/module/disa/managelabresults")
 public class ManageVLResultsController {
 
     @Autowired
@@ -94,7 +94,7 @@ public class ManageVLResultsController {
             session.setAttribute("lastSearchParams", params);
         }
 
-        return "/module/disa/managevlresults/search";
+        return "/module/disa/managelabresults/search";
     }
 
     @RequestMapping(value = "/search/export", method = RequestMethod.GET)
@@ -131,7 +131,7 @@ public class ManageVLResultsController {
         Disa vl = this.manageVLResultsDelegate.getViralLoad(requestId);
         OrgUnit orgUnit = this.manageVLResultsDelegate.getOrgUnit(vl.getHealthFacilityLabCode());
 
-        mav.setViewName("/module/disa/managevlresults/reallocate");
+        mav.setViewName("/module/disa/managelabresults/reallocate");
         mav.addObject(new ReallocateForm());
         mav.addObject(orgUnit);
         return mav;
@@ -149,7 +149,7 @@ public class ManageVLResultsController {
         if (result.hasErrors()) {
             Disa vl = this.manageVLResultsDelegate.getViralLoad(requestId);
             OrgUnit orgUnit = this.manageVLResultsDelegate.getOrgUnit(vl.getHealthFacilityLabCode());
-            mav.setViewName("/module/disa/managevlresults/reallocate");
+            mav.setViewName("/module/disa/managelabresults/reallocate");
             mav.addObject(reallocateForm);
             mav.addObject(orgUnit);
             return mav;
@@ -170,7 +170,7 @@ public class ManageVLResultsController {
         Map<String, String> params = ((Map<String, String>) session.getAttribute("lastSearchParams"));
         redirectAttrs.addAllAttributes(params);
         redirectAttrs.addFlashAttribute("flashMessage", "disa.viralload.reallocate.successful");
-        mav.setViewName("redirect:/module/disa/managevlresults/search.form");
+        mav.setViewName("redirect:/module/disa/managelabresults/search.form");
         return mav;
     }
 

@@ -3,12 +3,12 @@
 <%@ include file="/WEB-INF/template/include.jsp"%>
 <%@ include file="/WEB-INF/template/header.jsp"%>
 
-<openmrs:require anyPrivilege="true" otherwise="/login.htm" redirect="/module/disa/viralLoadStatusList.form"/>
+<openmrs:require anyPrivilege="true" otherwise="/login.htm" redirect="/module/disa/mapundprocessed/viralLoadStatusList.form"/>
 
 <openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/css/disa.css"/>
 <openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/calendar.js"/>
 
-<%@ include file="template/localHeader.jsp"%>
+<%@ include file="../template/localHeader.jsp"%>
 
 <h2><openmrs:message code="disa.pesquisa.nids.resultados.nao.processados11"/></h2>
 <br />

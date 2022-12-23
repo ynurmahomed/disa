@@ -9,7 +9,7 @@
 				</label>
 			</div>
 			<div class="cds-css-grid-column cds--col-span-2">
-				<form:input path="requestId" size="22" maxlength="16" id="requestId"/>
+				<form:input path="requestId" size="22" maxlength="26" id="requestId"/>
 			</div>
 			<div class="cds-css-grid-column">
 				<label for="nid">
@@ -17,7 +17,7 @@
 				</label>
 			</div>
 			<div class="cds-css-grid-column cds--col-span-2">
-				<form:input path="nid" size="22" maxlength="21" id="nid"/>
+				<form:input path="nid" size="22" maxlength="31" id="nid"/>
 			</div>
 			<div class="cds-css-grid-column">
 				<label for="selSisma">
