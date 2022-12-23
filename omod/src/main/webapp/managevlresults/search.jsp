@@ -4,7 +4,6 @@
 <openmrs:require privilege="Manage VL Results" otherwise="/login.htm" redirect="/module/disa/managevlresults/search.form"/>
 
 <openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/css/disa.css" />
-<openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/css/carbon-grid-11.17.0-min.css" />
 <openmrs:htmlInclude
 	file="/scripts/jquery/dataTables/css/dataTables_jui.css" />
 
@@ -28,7 +27,7 @@
 	<spring:message code="disa.pesquisa.resultados.laboratoriais11" />
 </b>
 
-<%@ include file="_searchForm.jsp" %>
+<%@ include file="../_searchForm.jsp" %>
 
 <c:if test="${not empty disaList}">
 	<b class="boxHeader"><spring:message code="disa.lista.resultados.laboratoriais333" /></b>
@@ -115,10 +114,12 @@
 	</fieldset>
 </c:if>
 
-<c:if test="${empty disaList}">
-	<div id="openmrs_msg">
-		<b> <spring:message code="disa.no.viral.load.form" /></b>
-	</div>
+<c:if test="${not empty searchForm.startDate && not empty searchForm.endDate}">
+	<c:if test="${empty disaList}">
+		<div id="openmrs_msg">
+			<b> <spring:message code="disa.no.viral.load.form" /></b>
+		</div>
+	</c:if>
 </c:if>
 
 <openmrs:htmlInclude

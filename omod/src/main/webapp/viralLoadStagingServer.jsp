@@ -1,8 +1,10 @@
 <%@ include file="/WEB-INF/template/include.jsp"%>
 <%@ include file="/WEB-INF/template/header.jsp"%>
 
+<openmrs:require anyPrivilege="true" otherwise="/login.htm" redirect="/module/disa/viralLoadStagingServer.form"/>
+
 <openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/css/disa.css"/>
-<openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/calendar.js"/>
+<openmrs:htmlInclude file="/scripts/jquery/dataTables/css/dataTables_jui.css" />
 
 <%@ include file="template/localHeader.jsp"%>
 
@@ -10,46 +12,87 @@
 <br />
 
 <b class="boxHeader"><spring:message code="disa.pesquisa.resultados.laboratoriais11" /></b>
-<fieldset>
-	<form:form commandName="searchForm" method="post">
-	    <table>
-    		<tr>
-    		    <td><label for="requestId"><openmrs:message code="disa.requestId" />:</label></td>
-	            <td><form:input path="requestId" size="22" maxlength="16" id="requestId"/></td>
-	            <td><label for="nid"><openmrs:message code="disa.nid" />:</label></td>
-	            <td><form:input path="nid" size="24" maxlength="21" id="nid"/></td>
-	            <td><label for="selSisma"><openmrs:message code="disa.sisma.code" />:</label></td>
-				<td>
-					<form:select path="vlSisma" id="selSisma" items="${sismaCodes}"/>
-		      	</td>
-		      	<td><label for="startDate"><openmrs:message code="disa.start.date" />:</label></td>
-	            <td><form:input path="startDate"  size="10" id="startDate" onclick="showCalendar(this);" autocomplete="off"/>
-					<form:errors path="startDate" cssClass="error"/>
-	            <br /></td>
-		      	<td><label for="endDate"><openmrs:message code="disa.end.date"/>:</label></td>
-            	<td><form:input path="endDate" size="10" id="endDate" onclick="showCalendar(this);" autocomplete="off"/>
-					<form:errors path="endDate" cssClass="error"/>
-            	<br />
-            	</td>
-            </tr>
-            <tr>
-    			<td><label for="referringId"><openmrs:message code="disa.referring.request.id" />:</label></td>
-	            <td><form:input path="referringId" size="22" maxlength="16" id="referringId"/><br /></td>
-			    <td><label for="vlState"><openmrs:message code="disa.frm.status"/>:</label></td>
-	            <td>
-		            <form:select path="vlState" id="selValue">
-		            	<form:option value="ALL"><openmrs:message code="disa.viral.load.status.ALL"/></form:option>
-		         		<form:option value="PROCESSED"><openmrs:message code="disa.viral.load.status.PROCESSED"/></form:option>
-		         		<form:option value="NOT_PROCESSED"><openmrs:message code="disa.viral.load.status.NOT_PROCESSED"/></form:option>
-		         		<form:option value="PENDING"><openmrs:message code="disa.viral.load.status.PENDING"/></form:option>
-		      		</form:select>
-		      	</td>
-          </tr>
+
+<%@ include file="_searchForm.jsp" %>
+
+<c:if test="${not empty disaList}">
+	<b class="boxHeader"><spring:message code="disa.lista.resultados.laboratoriais333" /></b>
+	<fieldset>
+		<table  id="vlResultsTable" class="display" width="100%" cellpadding="2" cellspacing="0"
+	style="font-size: 13px;">
+			<thead>
+				<tr>
+					<th><spring:message code="disa.requesting.facility.name"/></th>
+					<th><spring:message code="disa.requesting.district.name"/></th>
+					<th><spring:message code="disa.sisma.code"/></th>
+					<th><spring:message code="disa.referring.request.id"/></th>
+					<th><spring:message code="disa.nid" /></th>
+					<th><spring:message code="general.name" /></th>
+					<th><spring:message code="disa.gender" /></th>
+					<th><spring:message code="disa.age" /></th>
+					<th><spring:message code="disa.request.id" /></th>
+					<th><spring:message code="disa.analysis.date.time" /></th>
+					<th><spring:message code="disa.authorised.date.time" /></th>
+					<th><spring:message code="disa.viralload.result.copy" /></th>
+					<th><spring:message code="disa.status" /></th>
+					<th><spring:message code="disa.created.at" /></th>
+					<th><spring:message code="disa.updated.at" /></th>
+					<th><spring:message code="disa.not.processing.cause" /></th>
+				</tr>
+			</thead>
+			<tbody>
+				<c:forEach items="${disaList}" var="vlData">
+					<tr>
+						<td>${vlData.requestingFacilityName}</td>
+						<td>${vlData.requestingDistrictName}</td>
+						<td>${vlData.healthFacilityLabCode}</td>
+						<td>${vlData.referringRequestID}</td>
+						<td>${vlData.nid}</td>
+						<td>${vlData.firstName} ${vlData.lastName}</td>
+						<td>${vlData.gender}</td>
+						<td>${vlData.getAge()}</td>
+						<td>${vlData.requestId}</td>
+						<td>${vlData.processingDate}</td>
+						<td>${vlData.viralLoadResultDate}</td>
+						<td>${vlData.finalViralLoadResult}</td>
+						<td><openmrs:message code="disa.viral.load.status.${vlData.viralLoadStatus}"/></td>
+						<td>${vlData.createdAt}</td>
+						<td>${vlData.updatedAt}</td>
+						<td>
+							<c:if test="${not empty vlData.notProcessingCause}">
+								<openmrs:message code="disa.${vlData.notProcessingCause}"/>
+							</c:if>
+						</td>
+					</tr>
+				</c:forEach>
+			</tbody>
 		</table>
-        <div class="submit-btn">
-            <input id="subValue" type="submit" value='<openmrs:message code="general.next"/>'>
-	    </div>
-	</form:form>
-</fieldset>
+		<br/>
+		<div class="submit-btn center">
+			<input type="button"
+				value='<spring:message code="disa.btn.export"/>'
+				name="exportViralLoadResults" onclick="window.location.href = '${exportUri}'"/>
+		</div>
+	</fieldset>
+</c:if>
+
+<c:if test="${not empty searchForm.startDate && not empty searchForm.endDate}">
+	<c:if test="${empty disaList}">
+		<div id="openmrs_msg">
+			<b> <spring:message code="disa.no.viral.load.form" /></b>
+		</div>
+	</c:if>
+</c:if>
+
+<openmrs:htmlInclude
+	file="/scripts/jquery/dataTables/js/jquery.dataTables.min.js" />
+
+<script type="text/javascript">
+	$j(document).ready(function() {
+		$j('#vlResultsTable').dataTable({
+			"iDisplayLength" : 10
+		});
+	})
+</script>
 
 <%@ include file="/WEB-INF/template/footer.jsp"%>

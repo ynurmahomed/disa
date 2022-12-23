@@ -13,7 +13,6 @@ import javax.validation.Valid;
 
 import org.openmrs.api.context.Context;
 import org.openmrs.messagesource.MessageSourceService;
-import org.openmrs.module.disa.Disa;
 import org.openmrs.module.disa.extension.util.Constants;
 import org.openmrs.module.disa.web.delegate.ViralLoadResultsDelegate;
 import org.openmrs.module.disa.web.model.SearchForm;
@@ -21,18 +20,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @Controller
 public class ViralLoadStagingServerController {
-
-	private ViralLoadResultsDelegate delegate;
 
 	private MessageSourceService messageSourceService;
 
@@ -51,69 +49,51 @@ public class ViralLoadStagingServerController {
 	}
 
 	@RequestMapping(value = "/module/disa/viralLoadStagingServer", method = RequestMethod.GET)
-	public SearchForm showViralLoadStagingQueryForm(ModelMap model, HttpSession session) {
-		delegate = new ViralLoadResultsDelegate();
-		model.addAttribute("user", Context.getAuthenticatedUser());
-		return new SearchForm();
-	}
-
-	@SuppressWarnings("unchecked")
-	@RequestMapping(value = "/module/disa/viralLoadStagingServerResult", method = RequestMethod.POST)
-	public void downloadExcelFile(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		List<Disa> vlDataLst = (List<Disa>) request.getSession().getAttribute("vlDataLst");
-		delegate.createExcelFileStaging(vlDataLst, response, messageSourceService);
-	}
-
-	@RequestMapping(value = "/module/disa/viralLoadStagingServer", method = RequestMethod.POST)
-	public String showViralLoadList(
+	public String showViralLoadStagingQueryForm(
+			@RequestParam MultiValueMap<String, String> params,
 			@Valid SearchForm searchForm,
 			BindingResult result,
-			HttpServletRequest request,
-			HttpSession session) throws Exception {
+			ModelMap model,
+			HttpSession session,
+			HttpServletRequest request) throws Exception {
 
-		if (result.hasErrors()) {
-			return "/module/disa/viralLoadStagingServer";
+		populateSismaCodes(model);
+
+		if (params.isEmpty()) {
+			model.addAttribute(new SearchForm());
+		} else if (result.hasErrors()) {
+			model.addAttribute(searchForm);
+		} else {
+			String exportUri = ServletUriComponentsBuilder.fromServletMapping(request)
+					.queryParams(params)
+					.pathSegment("module", "disa", "viralLoadStagingServer", "export.form")
+					.build()
+					.toUriString();
+			model.addAttribute("exportUri", exportUri);
+
+			ViralLoadResultsDelegate delegate = new ViralLoadResultsDelegate();
+			model.addAttribute(delegate.getViralLoadDataList(searchForm));
+			session.setAttribute("lastSearchParams", params);
 		}
 
-		session.setAttribute("requestId", searchForm.getRequestId());
-		session.setAttribute("nid", searchForm.getNid());
-		session.setAttribute("vlSisma", searchForm.getVlSisma());
-		session.setAttribute("referringId", searchForm.getReferringId());
-		session.setAttribute("vlState", searchForm.getVlState());
-		session.setAttribute("startDate", searchForm.getStartDate());
-		session.setAttribute("endDate", searchForm.getEndDate());
-
-		return "redirect:viralLoadStagingServerResult.form";
+		return "/module/disa/viralLoadStagingServer";
 	}
 
-	@RequestMapping(value = "/module/disa/viralLoadStagingServerResult", method = RequestMethod.GET)
-	public void showViralLoadResultList(HttpServletRequest request, HttpSession session, ModelMap model,
-			@RequestParam(required = false, value = "openmrs_msg") String openmrs_msg) throws Exception {
+	@RequestMapping(value = "/module/disa/viralLoadStagingServer/export", method = RequestMethod.GET)
+	public void export(
+			@RequestParam MultiValueMap<String, String> params,
+			@Valid SearchForm searchForm,
+			BindingResult result,
+			ModelMap model,
+			HttpServletResponse response) throws Exception {
 
-		String requestId = (String) session.getAttribute("requestId");
-
-		String nid = (String) session.getAttribute("nid");
-
-		String vlSisma = (String) session.getAttribute("vlSisma");
-
-		String referringId = (String) session.getAttribute("referringId");
-
-		String vlState = (String) session.getAttribute("vlState");
-
-		Date startDate = (Date) session.getAttribute("startDate");
-
-		Date endDate = (Date) session.getAttribute("endDate");
-
-		List<Disa> vlDataLst = delegate.getViralLoadDataList(requestId, nid, vlSisma, referringId, vlState, startDate,
-				endDate);
-		session.setAttribute("vlDataLst", vlDataLst);
-		session.setAttribute("openmrs_msg", openmrs_msg);
+		ViralLoadResultsDelegate delegate = new ViralLoadResultsDelegate();
+		delegate.createExcelFileStaging(delegate.getViralLoadDataList(searchForm), response, messageSourceService);
 	}
 
 	/**
 	 * Populates SISMA code dropdown options.
 	 */
-	@ModelAttribute
 	private void populateSismaCodes(ModelMap model) {
 		String propertyValue = Context.getAdministrationService()
 				.getGlobalPropertyObject(Constants.DISA_SISMA_CODE).getPropertyValue();

@@ -1,4 +1,4 @@
-<openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/calendar.js" />
+<openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/css/carbon-grid-11.17.0-min.css" />
 
 <form:form commandName="searchForm" method="GET">
 	<fieldset>
@@ -95,3 +95,5 @@
 		</div>
 	</fieldset>
 </form:form>
+
+<openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/calendar.js" />
