@@ -63,10 +63,14 @@
 					        <td>${vlData.processingDate}</td>
 					        <td>${vlData.viralLoadResultDate}</td>
 					        <td>${vlData.finalViralLoadResult}</td>
-					        <td>${vlData.viralLoadStatus}</td>
+					        <td><openmrs:message code="disa.viral.load.status.${vlData.viralLoadStatus}"/></td>
 					        <td>${vlData.createdAt}</td>
 					        <td>${vlData.updatedAt}</td>
-					        <td>${vlData.notProcessingCause}</td>
+					        <td>
+								<c:if test="${not empty vlData.notProcessingCause}">
+									<openmrs:message code="disa.${vlData.notProcessingCause}"/>
+								</c:if>
+							</td>
 					    </tr>
 					</c:forEach>
 				</tbody>

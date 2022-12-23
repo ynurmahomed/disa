@@ -1,11 +1,13 @@
 package org.openmrs.module.disa.web.controller;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
@@ -13,10 +15,14 @@ import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.disa.Disa;
 import org.openmrs.module.disa.extension.util.Constants;
 import org.openmrs.module.disa.web.delegate.ViralLoadResultsDelegate;
+import org.openmrs.module.disa.web.model.SearchForm;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -31,6 +37,15 @@ public class ViralLoadResultsController {
 
 	public MessageSourceService messageSourceService;
 
+	@InitBinder
+	public void initBinder(WebDataBinder binder) {
+
+		SimpleDateFormat dateFormat = Context.getDateFormat();
+		// Allow converting empty String to null when binding Dates.
+		// Without this validation will throw a typeMismatch error.
+		binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, true));
+	}
+
 	@Autowired
 	public void setMessageSourceService(MessageSourceService messageSourceService) {
 		this.messageSourceService = messageSourceService;
@@ -40,30 +55,26 @@ public class ViralLoadResultsController {
 	public void showViralLoadStatusList(ModelMap model) {
 		delegate = new ViralLoadResultsDelegate();
 		model.addAttribute("user", Context.getAuthenticatedUser());
+		model.addAttribute(new SearchForm());
 	}
 
 	@RequestMapping(value = "/module/disa/viralLoadStatusList", method = RequestMethod.POST)
-	public ModelAndView showViralLoadList(HttpServletRequest request, HttpSession session,
-			@RequestParam("startDate") Date startDate,
-			@RequestParam("endDate") Date endDate) throws Exception {
-		ModelAndView model = new ModelAndView();
+	public String showViralLoadList(
+			@Valid SearchForm searchForm,
+			BindingResult result,
+			ModelMap model,
+			HttpServletRequest request,
+			HttpSession session) throws Exception {
 
-		if (startDate == null) {
-			model.addObject("errorStartDateRequired", "disa.error.startDate");
-		}
-		if (endDate == null) {
-			model.addObject("errorEndDateRequired", "disa.error.endDate");
-		}
-
-		if (startDate == null || endDate == null) {
-			return model;
+		if (result.hasErrors()) {
+			return "/module/disa/viralLoadStatusList";
 		}
 
 		session.setAttribute("vlState", Constants.NOT_PROCESSED);
-		session.setAttribute("startDate", startDate);
-		session.setAttribute("endDate", endDate);
+		session.setAttribute("startDate", searchForm.getStartDate());
+		session.setAttribute("endDate", searchForm.getEndDate());
 
-		return new ModelAndView(new RedirectView(request.getContextPath() + "/module/disa/viralLoadResultsList.form"));
+		return "redirect:viralLoadResultsList.form";
 	}
 
 	@RequestMapping(value = "/module/disa/viralLoadResultsList", method = RequestMethod.GET)
@@ -134,7 +145,7 @@ public class ViralLoadResultsController {
 		}
 
 		String nidDisa = (String) session.getAttribute("nid");
-		Disa selectedPatient =  (Disa) session.getAttribute("selectedPatient");
+		Disa selectedPatient = (Disa) session.getAttribute("selectedPatient");
 		delegate.doMapIdentifier(patientUuid, nidDisa, selectedPatient.getRequestId());
 
 		return new ModelAndView(new RedirectView(request.getContextPath() + "/module/disa/viralLoadResultsList.form"));

@@ -1,15 +1,23 @@
 package org.openmrs.module.disa.extension.util;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
 import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.fluent.Executor;
+import org.apache.http.client.fluent.Request;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.BasicResponseHandler;
@@ -23,7 +31,7 @@ public class RestUtil {
 
 	/**
 	 * HTTP POST
-	 * 
+	 *
 	 * @param URLPath
 	 * @param input
 	 * @return
@@ -44,7 +52,7 @@ public class RestUtil {
 			httpPost.setEntity(input);
 			// System.out.println("Executing request: " + httpGet.getRequestLine());
 			// System.out.println(response);
-//            response = httpclient.execute(httpGet,responseHandler);
+			// response = httpclient.execute(httpGet,responseHandler);
 			HttpResponse responseRequest = httpclient.execute(httpPost);
 
 			if (responseRequest.getStatusLine().getStatusCode() != 204
@@ -63,7 +71,7 @@ public class RestUtil {
 
 	/**
 	 * HTTP PUT
-	 * 
+	 *
 	 * @param urlPathProcessed
 	 * @param sismaCodes
 	 * @param input
@@ -105,7 +113,7 @@ public class RestUtil {
 
 	/**
 	 * HTTP PUT
-	 * 
+	 *
 	 * @param urlPathNotProcessed
 	 * @param notProcessed
 	 * @param reasonForNotProcessing
@@ -150,7 +158,7 @@ public class RestUtil {
 
 	/**
 	 * HTTP PUT
-	 * 
+	 *
 	 * @param urlPathPending
 	 * @param nids
 	 * @param input
@@ -187,7 +195,7 @@ public class RestUtil {
 
 	/**
 	 * HTTP GET
-	 * 
+	 *
 	 * @param URLPath
 	 * @return
 	 * @throws Exception
@@ -213,11 +221,13 @@ public class RestUtil {
 			httpGet.setHeader(authorizationHeader);
 			ResponseHandler<String> responseHandler = new BasicResponseHandler();
 
-			/*HttpParams params = new BasicHttpParams();
-			params.setParameter("sismaCodes", sismaCodes);
-			params.setParameter("requestingProvinceName", requestingProvinceName);
-			httpclient.setParams(params);*/
-			
+			/*
+			 * HttpParams params = new BasicHttpParams();
+			 * params.setParameter("sismaCodes", sismaCodes);
+			 * params.setParameter("requestingProvinceName", requestingProvinceName);
+			 * httpclient.setParams(params);
+			 */
+
 			response = httpclient.execute(httpGet, responseHandler);
 
 		} finally {
@@ -225,10 +235,10 @@ public class RestUtil {
 		}
 		return response;
 	}
-	
+
 	/**
 	 * HTTP GET
-	 * 
+	 *
 	 * @param URLPath
 	 * @return
 	 * @throws Exception
@@ -253,11 +263,13 @@ public class RestUtil {
 			httpGet.setHeader(authorizationHeader);
 			ResponseHandler<String> responseHandler = new BasicResponseHandler();
 
-			/*HttpParams params = new BasicHttpParams();
-			params.setParameter("sismaCodes", sismaCodes);
-			params.setParameter("requestingProvinceName", requestingProvinceName);
-			httpclient.setParams(params);*/
-			
+			/*
+			 * HttpParams params = new BasicHttpParams();
+			 * params.setParameter("sismaCodes", sismaCodes);
+			 * params.setParameter("requestingProvinceName", requestingProvinceName);
+			 * httpclient.setParams(params);
+			 */
+
 			response = httpclient.execute(httpGet, responseHandler);
 
 		} finally {
@@ -268,7 +280,7 @@ public class RestUtil {
 
 	/**
 	 * HTTP GET
-	 * 
+	 *
 	 * @param sismaCodes
 	 * @param sismaCodes
 	 * @param URLPath
@@ -306,7 +318,7 @@ public class RestUtil {
 
 	/**
 	 * HTTP GET
-	 * 
+	 *
 	 * @param sismaCodes
 	 * @param sismaCodes
 	 * @param URLPath
@@ -345,17 +357,16 @@ public class RestUtil {
 		}
 		return response;
 	}
-	
-	
+
 	/**
-	 * 
+	 *
 	 * @param urlPathProcessed
 	 * @param requestId
 	 * @return
 	 * @throws Exception
 	 */
 	@SuppressWarnings("deprecation")
-	public String getRequestByForm(String urlPathProcessed, String requestId, String nid, 
+	public String getRequestByForm(String urlPathProcessed, String requestId, String nid,
 			String vlSisma, String referringId, String vlState, String startDate, String endDate) throws Exception {
 		String URL = URLBase + urlPathProcessed;
 		String response = "";
@@ -364,31 +375,31 @@ public class RestUtil {
 		try {
 
 			URIBuilder uriBuilder = new URIBuilder(URL);
-			
-			if(!requestId.isEmpty()) {
+
+			if (!requestId.isEmpty()) {
 				uriBuilder.addParameter("requestId", requestId);
 			}
-			
-			if(!nid.isEmpty()) {
+
+			if (!nid.isEmpty()) {
 				uriBuilder.addParameter("nid", nid);
 			}
-			
-			if(!vlSisma.isEmpty() && !vlSisma.equals(Constants.TODOS)) {
+
+			if (!vlSisma.isEmpty() && !vlSisma.equals(Constants.TODOS)) {
 				uriBuilder.addParameter("healthFacilityLabCode", vlSisma);
 			}
-			
-			if(!referringId.isEmpty()) {
+
+			if (!referringId.isEmpty()) {
 				uriBuilder.addParameter("referringRequestID", referringId);
 			}
-			
-			if(!vlState.isEmpty() && !vlState.equals(Constants.ALL)) {
+
+			if (!vlState.isEmpty() && !vlState.equals(Constants.ALL)) {
 				uriBuilder.addParameter("viralLoadStatus", vlState);
 			}
-			
+
 			if (!startDate.isEmpty()) {
 				uriBuilder.addParameter("startDate", startDate);
 			}
-			
+
 			if (!endDate.isEmpty()) {
 				uriBuilder.addParameter("endDate", endDate);
 			}

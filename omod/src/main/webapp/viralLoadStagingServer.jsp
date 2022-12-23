@@ -1,4 +1,3 @@
-<%@ taglib prefix="springform" uri="http://www.springframework.org/tags/form"%>
 <%@ include file="/WEB-INF/template/include.jsp"%>
 <%@ include file="/WEB-INF/template/header.jsp"%>
 
@@ -12,59 +11,45 @@
 
 <b class="boxHeader"><spring:message code="disa.pesquisa.resultados.laboratoriais11" /></b>
 <fieldset>
-	<form method="post">
+	<form:form commandName="searchForm" method="post">
 	    <table>
     		<tr>
-    		    <td><label for="startDate"><openmrs:message code="disa.requestId" />:</label></td>
-	            <td><input type="text" size=22 maxlength="16" name="requestId" id="requestId" ></td>
-	            <td><label for="startDate"><openmrs:message code="disa.nid" />:</label></td>
-	            <td><input type="text" size=24 maxlength="21" name="nid" id="nid" ></td>
-	            <td><label for="startDate"><openmrs:message code="disa.sisma.code" />:</label></td>
+    		    <td><label for="requestId"><openmrs:message code="disa.requestId" />:</label></td>
+	            <td><form:input path="requestId" size="22" maxlength="16" id="requestId"/></td>
+	            <td><label for="nid"><openmrs:message code="disa.nid" />:</label></td>
+	            <td><form:input path="nid" size="24" maxlength="21" id="nid"/></td>
+	            <td><label for="selSisma"><openmrs:message code="disa.sisma.code" />:</label></td>
 				<td>
-		            <select id="selSisma" name="vlSisma"> 
-						<c:forEach items="${sismaCodes}" var="sismaCode">
-	            			<option value="${sismaCode}">${sismaCode}</option>
-        				</c:forEach>
-		      		</select>
+					<form:select path="vlSisma" id="selSisma" items="${sismaCodes}"/>
 		      	</td>
 		      	<td><label for="startDate"><openmrs:message code="disa.start.date" />:</label></td>
-	            <td><input type="text" size=10 name="startDate" id="startDate" onClick="showCalendar(this);" >
-					<c:if test="${not empty errorStartDateRequired}">
-						<span class="error"> <spring:message
-								code="${errorStartDateRequired}"
-								text="${errorStartDateRequired}" />
-						</span>
-					</c:if>
+	            <td><form:input path="startDate"  size="10" id="startDate" onclick="showCalendar(this);" autocomplete="off"/>
+					<form:errors path="startDate" cssClass="error"/>
 	            <br /></td>
 		      	<td><label for="endDate"><openmrs:message code="disa.end.date"/>:</label></td>
-            	<td><input type="text" size=10 name="endDate" id="endDate" onClick="showCalendar(this);" >
-					<c:if test="${not empty errorEndDateRequired}">
-						<span class="error"> <spring:message
-								code="${errorEndDateRequired}"
-								text="${errorEndDateRequired}" />
-						</span>
-					</c:if>
+            	<td><form:input path="endDate" size="10" id="endDate" onclick="showCalendar(this);" autocomplete="off"/>
+					<form:errors path="endDate" cssClass="error"/>
             	<br />
             	</td>
             </tr>
             <tr>
-    			<td><label for="startDate"><openmrs:message code="disa.referring.request.id" />:</label></td>
-	            <td><input type="text" size=22 maxlength="16" name="referringId" id="referringId" ><br /></td>
+    			<td><label for="referringId"><openmrs:message code="disa.referring.request.id" />:</label></td>
+	            <td><form:input path="referringId" size="22" maxlength="16" id="referringId"/><br /></td>
 			    <td><label for="vlState"><openmrs:message code="disa.frm.status"/>:</label></td>
 	            <td>
-		            <select id="selValue" name="vlState">
-		            	<option value="ALL"><openmrs:message code="disa.viral.load.status.ALL"/></option> 
-		         		<option value="PROCESSED"><openmrs:message code="disa.viral.load.status.PROCESSED"/></option>
-		         		<option value="NOT_PROCESSED"><openmrs:message code="disa.viral.load.status.NOT_PROCESSED"/></option>
-		         		<option value="PENDING"><openmrs:message code="disa.viral.load.status.PENDING"/></option>
-		      		</select>
+		            <form:select path="vlState" id="selValue">
+		            	<form:option value="ALL"><openmrs:message code="disa.viral.load.status.ALL"/></form:option>
+		         		<form:option value="PROCESSED"><openmrs:message code="disa.viral.load.status.PROCESSED"/></form:option>
+		         		<form:option value="NOT_PROCESSED"><openmrs:message code="disa.viral.load.status.NOT_PROCESSED"/></form:option>
+		         		<form:option value="PENDING"><openmrs:message code="disa.viral.load.status.PENDING"/></form:option>
+		      		</form:select>
 		      	</td>
           </tr>
 		</table>
         <div class="submit-btn">
             <input id="subValue" type="submit" value='<openmrs:message code="general.next"/>'>
 	    </div>
-	</form>
+	</form:form>
 </fieldset>
 
 <%@ include file="/WEB-INF/template/footer.jsp"%>

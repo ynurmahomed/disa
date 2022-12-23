@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
- 
+
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
@@ -8,5 +8,13 @@
         See http://www.liquibase.org/manual/home#available_database_refactorings
         for a list of supported elements and attributes
     -->
-    
+
+    <changeSet id="disa-2022-11-29-10:41" author="yassin">
+        <insert tableName="privilege">
+            <column name="privilege">Manage VL Results</column>
+            <column name="description">Able to create, read, update and destroy DISA viral load results.</column>
+            <column name="uuid">d78d2826-f81c-4e55-a36a-3bf53d17e841</column>
+        </insert>
+    </changeSet>
+
 </databaseChangeLog>

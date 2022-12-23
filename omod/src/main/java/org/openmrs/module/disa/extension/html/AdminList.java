@@ -21,24 +21,24 @@ import org.openmrs.module.web.extension.AdministrationSectionExt;
 
 /**
  * This class defines the links that will appear on the administration page under the
- * "disa.title" heading. 
+ * "disa.title" heading.
  */
 public class AdminList extends AdministrationSectionExt {
-	
+
 	/**
 	 * @see AdministrationSectionExt#getMediaType()
 	 */
 	public Extension.MEDIA_TYPE getMediaType() {
 		return Extension.MEDIA_TYPE.html;
 	}
-	
+
 	/**
 	 * @see AdministrationSectionExt#getTitle()
 	 */
 	public String getTitle() {
 		return "disa.title";
 	}
-	
+
 	/**
 	 * @see AdministrationSectionExt#getLinks()
 	 */
@@ -46,7 +46,8 @@ public class AdminList extends AdministrationSectionExt {
 		LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
 		map.put("/module/disa/viralLoadStatusList.form", "disa.list.viral.load.results");
 		map.put("/module/disa/viralLoadStagingServer.form", "disa.list.viral.load.results.staging.server");
+		map.put("/module/disa/managevlresults/search.form", "disa.list.viral.load.results.manage");
 		return map;
 	}
-	
+
 }
