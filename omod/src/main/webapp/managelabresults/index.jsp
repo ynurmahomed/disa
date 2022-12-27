@@ -1,10 +1,9 @@
 <%@ include file="/WEB-INF/template/include.jsp" %>
 <%@ include file="/WEB-INF/template/header.jsp" %>
 
-<openmrs:require privilege="Manage VL Results" otherwise="/login.htm" redirect="/module/disa/managevlresults/search.form"/>
+<openmrs:require privilege="Manage VL Results" otherwise="/login.htm" redirect="/module/disa/managelabresults.form"/>
 
 <openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/css/disa.css" />
-<openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/css/carbon-grid-11.17.0-min.css" />
 <openmrs:htmlInclude
 	file="/scripts/jquery/dataTables/css/dataTables_jui.css" />
 
@@ -28,7 +27,7 @@
 	<spring:message code="disa.pesquisa.resultados.laboratoriais11" />
 </b>
 
-<%@ include file="_searchForm.jsp" %>
+<%@ include file="../common/searchForm.jsp" %>
 
 <c:if test="${not empty disaList}">
 	<b class="boxHeader"><spring:message code="disa.lista.resultados.laboratoriais333" /></b>
@@ -90,7 +89,7 @@
 								</c:if>
 								<c:if test="${vlData.viralLoadStatus == 'NOT_PROCESSED'}">
 									<li>
-										<a href="${pageContext.request.contextPath}/module/disa/managevlresults/${vlData.requestId}/reallocate.form">
+										<a href="${pageContext.request.contextPath}/module/disa/managelabresults/${vlData.requestId}/reallocate.form">
 											<spring:message code="disa.viralload.reallocate" />
 										</a>
 									</li>
@@ -115,10 +114,12 @@
 	</fieldset>
 </c:if>
 
-<c:if test="${empty disaList}">
-	<div id="openmrs_msg">
-		<b> <spring:message code="disa.no.viral.load.form" /></b>
-	</div>
+<c:if test="${not empty searchForm.startDate && not empty searchForm.endDate}">
+	<c:if test="${empty disaList}">
+		<div id="openmrs_msg">
+			<b> <spring:message code="disa.no.viral.load.form" /></b>
+		</div>
+	</c:if>
 </c:if>
 
 <openmrs:htmlInclude

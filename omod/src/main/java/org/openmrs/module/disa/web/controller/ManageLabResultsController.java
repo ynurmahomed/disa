@@ -40,13 +40,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @Controller
-@RequestMapping(value = "/module/disa/managevlresults")
-public class ManageVLResultsController {
+@RequestMapping(value = "/module/disa/managelabresults")
+public class ManageLabResultsController {
 
     @Autowired
     private ManageVLResultsDelegate manageVLResultsDelegate;
@@ -66,7 +65,7 @@ public class ManageVLResultsController {
         binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, true));
     }
 
-    @RequestMapping(value = "/search", method = RequestMethod.GET)
+    @RequestMapping(value = "", method = RequestMethod.GET)
     public String search(
             @RequestParam MultiValueMap<String, String> params,
             @Valid SearchForm searchForm,
@@ -84,7 +83,7 @@ public class ManageVLResultsController {
         } else {
             String exportUri = ServletUriComponentsBuilder.fromServletMapping(request)
                     .queryParams(params)
-                    .pathSegment("module", "disa", "managevlresults", "search", "export.form")
+                    .pathSegment("module", "disa", "managelabresults", "export.form")
                     .build()
                     .toUriString();
             model.addAttribute("exportUri", exportUri);
@@ -94,10 +93,10 @@ public class ManageVLResultsController {
             session.setAttribute("lastSearchParams", params);
         }
 
-        return "/module/disa/managevlresults/search";
+        return "/module/disa/managelabresults/index";
     }
 
-    @RequestMapping(value = "/search/export", method = RequestMethod.GET)
+    @RequestMapping(value = "/export", method = RequestMethod.GET)
     public void export(
             @RequestParam MultiValueMap<String, String> params,
             @Valid SearchForm searchForm,
@@ -122,37 +121,35 @@ public class ManageVLResultsController {
     }
 
     @RequestMapping(value = "/{requestId}/reallocate", method = RequestMethod.GET)
-    public ModelAndView reallocateForm(@PathVariable String requestId,
+    public String reallocateForm(
+            @PathVariable String requestId,
+            ModelMap model,
             SearchForm searchForm,
             HttpSession session) throws DelegateException {
-
-        ModelAndView mav = new ModelAndView();
 
         Disa vl = this.manageVLResultsDelegate.getViralLoad(requestId);
         OrgUnit orgUnit = this.manageVLResultsDelegate.getOrgUnit(vl.getHealthFacilityLabCode());
 
-        mav.setViewName("/module/disa/managevlresults/reallocate");
-        mav.addObject(new ReallocateForm());
-        mav.addObject(orgUnit);
-        return mav;
+        model.addAttribute(new ReallocateForm());
+        model.addAttribute(orgUnit);
+
+        return "/module/disa/managelabresults/reallocate";
     }
 
     @RequestMapping(value = "/{requestId}/reallocate", method = RequestMethod.POST)
-    public ModelAndView reallocate(@PathVariable String requestId,
+    public String reallocate(@PathVariable String requestId,
             @Valid @ModelAttribute ReallocateForm reallocateForm,
             BindingResult result,
+            ModelMap model,
             HttpSession session,
             RedirectAttributes redirectAttrs) throws DelegateException {
-
-        ModelAndView mav = new ModelAndView();
 
         if (result.hasErrors()) {
             Disa vl = this.manageVLResultsDelegate.getViralLoad(requestId);
             OrgUnit orgUnit = this.manageVLResultsDelegate.getOrgUnit(vl.getHealthFacilityLabCode());
-            mav.setViewName("/module/disa/managevlresults/reallocate");
-            mav.addObject(reallocateForm);
-            mav.addObject(orgUnit);
-            return mav;
+            model.addAttribute(reallocateForm);
+            model.addAttribute(orgUnit);
+            return "/module/disa/managelabresults/reallocate";
         }
 
         OrgUnit orgUnit = this.manageVLResultsDelegate.getOrgUnit(reallocateForm.getHealthFacilityLabCode());
@@ -170,8 +167,7 @@ public class ManageVLResultsController {
         Map<String, String> params = ((Map<String, String>) session.getAttribute("lastSearchParams"));
         redirectAttrs.addAllAttributes(params);
         redirectAttrs.addFlashAttribute("flashMessage", "disa.viralload.reallocate.successful");
-        mav.setViewName("redirect:/module/disa/managevlresults/search.form");
-        return mav;
+        return "redirect:/module/disa/managelabresults.form";
     }
 
     @RequestMapping(value = "/orgunits/search", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
