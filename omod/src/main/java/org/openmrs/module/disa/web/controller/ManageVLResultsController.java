@@ -56,13 +56,9 @@ public class ManageVLResultsController {
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
-
         SimpleDateFormat dateFormat = Context.getDateFormat();
-        // true passed to CustomDateEditor constructor means convert empty String to
-        // null
-        // otherwise validation will throw a typeMismatch error.
+        // true passed to CustomDateEditor constructor means convert empty String to null
         // TODO configure this editor globally
-        // https://docs.spring.io/spring-framework/docs/4.1.4.RELEASE/spring-framework-reference/html/validation.html#beans-beans-conversion-customeditor-registration
         binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, true));
     }
 
@@ -71,7 +67,7 @@ public class ManageVLResultsController {
             @RequestParam MultiValueMap<String, String> params,
             @Valid SearchForm searchForm,
             BindingResult result,
-            ModelMap model,
+            /*ModelMap model,*/
             HttpSession session,
             HttpServletRequest request) throws Exception {
 
@@ -79,11 +75,11 @@ public class ManageVLResultsController {
 
         if (params.isEmpty()) {
             mav.setViewName("/module/disa/managevlresults/search");
-            populateSismaCodes(model);
+            populateSismaCodes(mav);
             mav.addObject(new SearchForm());
         } else if (result.hasErrors()) {
             mav.setViewName("/module/disa/managevlresults/search");
-            populateSismaCodes(model);
+            populateSismaCodes(mav);
             mav.addObject(searchForm);
         } else {
             String exportUri = ServletUriComponentsBuilder.fromServletMapping(request)
@@ -187,7 +183,7 @@ public class ManageVLResultsController {
     /**
      * Populates SISMA code dropdown options.
      */
-    private void populateSismaCodes(ModelMap model) {
+    private void populateSismaCodes(ModelAndView model) {
         String propertyValue = Context.getAdministrationService()
                 .getGlobalPropertyObject(Constants.DISA_SISMA_CODE).getPropertyValue();
         List<String> sismaCodes = Arrays.asList(propertyValue.split(","));
@@ -196,6 +192,6 @@ public class ManageVLResultsController {
         sismaCodesTodos.add(Constants.TODOS);
         sismaCodesTodos.addAll(sismaCodes);
 
-        model.addAttribute("sismaCodes", sismaCodesTodos);
+        model.addObject("sismaCodes", sismaCodesTodos);
     }
 }

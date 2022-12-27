@@ -59,4 +59,9 @@ public class DateUtil {
         }
         return true;
 	}
+	
+	public static Date getDateWithoutTime() throws ParseException {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	    return sdf.parse(sdf.format(new Date()));
+	}
 }

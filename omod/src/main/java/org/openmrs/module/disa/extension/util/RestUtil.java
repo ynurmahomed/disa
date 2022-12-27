@@ -1,23 +1,15 @@
 package org.openmrs.module.disa.extension.util;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.List;
 
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
-import org.apache.http.StatusLine;
 import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.fluent.Executor;
-import org.apache.http.client.fluent.Request;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.BasicResponseHandler;
@@ -79,7 +71,7 @@ public class RestUtil {
 	 * @throws Exception
 	 */
 	@SuppressWarnings({ "deprecation", "unused" })
-	public Boolean getRequestPutProcessed(String urlPathProcessed, String processedNid) throws Exception {
+	public Boolean getRequestPutProcessed(String urlPathProcessed, String processedNid, String defaultLocationUuid) throws Exception {
 		String URL = URLBase + urlPathProcessed;
 		Boolean response = false;
 		DefaultHttpClient httpclient = new DefaultHttpClient();
@@ -87,6 +79,7 @@ public class RestUtil {
 
 			URIBuilder uriBuilder = new URIBuilder(URL);
 			uriBuilder.addParameter("processedNids", processedNid);
+			uriBuilder.addParameter("defaultLocationUuid", defaultLocationUuid);
 
 			HttpPut httpPut = new HttpPut(uriBuilder.build());
 			UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(username, password);
@@ -123,7 +116,7 @@ public class RestUtil {
 	 */
 	@SuppressWarnings({ "deprecation", "unused" })
 	public Boolean getRequestPutNotProcessed(String urlPathNotProcessed, String processedNid,
-			String reasonForNotProcessing) throws Exception {
+			String reasonForNotProcessing, String defaultLocationUuid) throws Exception {
 		String URL = URLBase + urlPathNotProcessed;
 		Boolean response = false;
 		DefaultHttpClient httpclient = new DefaultHttpClient();
@@ -132,6 +125,7 @@ public class RestUtil {
 			URIBuilder uriBuilder = new URIBuilder(URL);
 			uriBuilder.addParameter("notProcessedNids", processedNid);
 			uriBuilder.addParameter("reasonForNotProcessing", reasonForNotProcessing);
+			uriBuilder.addParameter("defaultLocationUuid", defaultLocationUuid);
 
 			HttpPut httpPut = new HttpPut(uriBuilder.build());
 			UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(username, password);
