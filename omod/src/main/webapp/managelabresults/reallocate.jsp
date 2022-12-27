@@ -2,7 +2,7 @@
 <%@ include file="/WEB-INF/template/include.jsp"%>
 <%@ include file="/WEB-INF/template/header.jsp"%>
 
-<openmrs:require privilege="Manage VL Results" otherwise="/login.htm" redirect="/module/disa/managevlresults/${requestId}/reallocate.form"/>
+<openmrs:require privilege="Manage VL Results" otherwise="/login.htm" redirect="/module/disa/managelabresults/${requestId}/reallocate.form"/>
 
 <openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/css/disa.css"/>
 <openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/css/selectize.legacy.css" />
@@ -24,7 +24,7 @@
 
                 try {
                     document.body.style.cursor = 'wait';
-                    const url = `/openmrs/module/disa/managevlresults/orgunits/search.form?term=\${term}`;
+                    const url = `/openmrs/module/disa/managelabresults/orgunits/search.form?term=\${term}`;
                     const fetchResponse = await fetch(url);
                     if (fetchResponse.status !== 200) {
                         throw new Error(`Search was not successful.`);
