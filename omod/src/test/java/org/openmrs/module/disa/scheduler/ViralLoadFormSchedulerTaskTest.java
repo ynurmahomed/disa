@@ -1,7 +1,7 @@
 package org.openmrs.module.disa.scheduler;
 
-import static org.hamcrest.Matchers.both;
 import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.both;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasProperty;
@@ -20,8 +20,12 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -497,5 +501,39 @@ public class ViralLoadFormSchedulerTaskTest extends BaseContextMockTest {
 		// Viral load qualitative should empty
 		assertThat(obsCaptor.getAllValues(),
 				not(hasItem(hasProperty("concept", equalTo(viralLoadQualitative)))));
+	}
+
+	@Test
+	public void executeShouldCreateEncounterAtStartOfDay() throws Exception {
+
+		disa.setFinalViralLoadResult(" 123456     ");
+		when(restUtil.getRequestGet(anyListOf(String.class), eq(province)))
+				.thenReturn(new Gson().toJson(new Disa[] { disa }));
+
+		when(userService.getUserByUsername(anyString())).thenReturn(user);
+
+		when(providerService.getProvidersByPerson(person))
+				.thenReturn(Collections.singleton(provider));
+
+		when(disaService.existsByRequestId(disa.getRequestId()))
+				.thenReturn(false);
+
+		when(disaService.getPatientByNid(disa.getNid()))
+				.thenReturn(Collections.singletonList(1));
+
+		task.execute();
+
+		ArgumentCaptor<Encounter> encounterCaptor = ArgumentCaptor.forClass(Encounter.class);
+		verify(encounterService, times(1))
+				.saveEncounter(encounterCaptor.capture());
+
+		Date date = encounterCaptor.getValue().getEncounterDatetime();
+		LocalDateTime encounterDateTime = Instant.ofEpochMilli(date.getTime())
+				.atZone(ZoneId.systemDefault())
+				.toLocalDateTime();
+
+		assertThat(encounterDateTime.getHour(), is(0));
+		assertThat(encounterDateTime.getMinute(), is(0));
+		assertThat(encounterDateTime.getSecond(), is(0));
 	}
 }
