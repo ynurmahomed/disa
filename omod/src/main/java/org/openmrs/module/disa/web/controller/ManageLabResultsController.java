@@ -55,13 +55,10 @@ public class ManageLabResultsController {
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
-
         SimpleDateFormat dateFormat = Context.getDateFormat();
         // true passed to CustomDateEditor constructor means convert empty String to
         // null
-        // otherwise validation will throw a typeMismatch error.
         // TODO configure this editor globally
-        // https://docs.spring.io/spring-framework/docs/4.1.4.RELEASE/spring-framework-reference/html/validation.html#beans-beans-conversion-customeditor-registration
         binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, true));
     }
 

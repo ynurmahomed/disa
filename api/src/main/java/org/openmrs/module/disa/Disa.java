@@ -8,7 +8,6 @@ import java.util.Date;
  * @author machabane
  *
  */
-@SuppressWarnings("unused")
 public class Disa {
 
 	private transient int id;
@@ -92,6 +91,16 @@ public class Disa {
 	private String dataDeInicioDoTARV;
 
 	private String finalViralLoadResult;
+	
+	private String synchronizedBy;
+	
+	public String getSynchronizedBy() {
+		return synchronizedBy;
+	}
+
+	public void setSynchronizedBy(String synchronizedBy) {
+		this.synchronizedBy = synchronizedBy;
+	}
 
 	public String getFinalViralLoadResult() {
 		return finalViralLoadResult;

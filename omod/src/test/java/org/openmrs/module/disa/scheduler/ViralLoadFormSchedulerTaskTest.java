@@ -1,7 +1,7 @@
 package org.openmrs.module.disa.scheduler;
 
-import static org.hamcrest.Matchers.both;
 import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.both;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasProperty;
@@ -20,8 +20,12 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -117,6 +121,7 @@ public class ViralLoadFormSchedulerTaskTest extends BaseContextMockTest {
 	private Concept recomendingEncounter;
 	private Concept pregnant;
 	private Concept orderId;
+	private Location location;
 
 	@Before
 	public void setUp() throws Exception {
@@ -161,7 +166,8 @@ public class ViralLoadFormSchedulerTaskTest extends BaseContextMockTest {
 		when(locationService.getLocationAttributeTypeByUuid(uuid))
 				.thenReturn(locationAttrType);
 
-		Location location = new Location();
+		location = new Location();
+		location.setUuid("c5242910-b396-41d1-9729-a3fbc03057b1");
 		when(locationService.getLocations(
 				isNull(String.class),
 				isNull(Location.class),
@@ -226,6 +232,9 @@ public class ViralLoadFormSchedulerTaskTest extends BaseContextMockTest {
 		orderId.setUuid(Constants.ORDER_ID);
 		when(conceptService.getConceptByUuid(Constants.ORDER_ID))
 				.thenReturn(orderId);
+
+		when(locationService.getDefaultLocation())
+			.thenReturn(location);
 	}
 
 	@Test
@@ -256,7 +265,7 @@ public class ViralLoadFormSchedulerTaskTest extends BaseContextMockTest {
 		task.execute();
 
 		verify(restUtil, times(1))
-				.getRequestPutNotProcessed(Constants.URL_PATH_NOT_PROCESSED, disa.getRequestId(), "nid");
+				.getRequestPutNotProcessed(Constants.URL_PATH_NOT_PROCESSED, disa.getRequestId(), "nid", location.getUuid());
 
 	}
 
@@ -277,7 +286,7 @@ public class ViralLoadFormSchedulerTaskTest extends BaseContextMockTest {
 		task.execute();
 
 		verify(restUtil, times(1))
-				.getRequestPutNotProcessed(Constants.URL_PATH_NOT_PROCESSED, disa.getRequestId(), "duplicate");
+				.getRequestPutNotProcessed(Constants.URL_PATH_NOT_PROCESSED, disa.getRequestId(), "duplicate", location.getUuid());
 
 	}
 
@@ -302,7 +311,7 @@ public class ViralLoadFormSchedulerTaskTest extends BaseContextMockTest {
 		task.execute();
 
 		verify(restUtil, times(1))
-				.getRequestPutNotProcessed(Constants.URL_PATH_NOT_PROCESSED, disa.getRequestId(), "result");
+				.getRequestPutNotProcessed(Constants.URL_PATH_NOT_PROCESSED, disa.getRequestId(), "result", location.getUuid());
 
 	}
 
@@ -327,7 +336,7 @@ public class ViralLoadFormSchedulerTaskTest extends BaseContextMockTest {
 		task.execute();
 
 		verify(restUtil, times(1))
-				.getRequestPutNotProcessed(Constants.URL_PATH_NOT_PROCESSED, disa.getRequestId(), "review");
+				.getRequestPutNotProcessed(Constants.URL_PATH_NOT_PROCESSED, disa.getRequestId(), "review", location.getUuid());
 
 	}
 
@@ -492,5 +501,39 @@ public class ViralLoadFormSchedulerTaskTest extends BaseContextMockTest {
 		// Viral load qualitative should empty
 		assertThat(obsCaptor.getAllValues(),
 				not(hasItem(hasProperty("concept", equalTo(viralLoadQualitative)))));
+	}
+
+	@Test
+	public void executeShouldCreateEncounterAtStartOfDay() throws Exception {
+
+		disa.setFinalViralLoadResult(" 123456     ");
+		when(restUtil.getRequestGet(anyListOf(String.class), eq(province)))
+				.thenReturn(new Gson().toJson(new Disa[] { disa }));
+
+		when(userService.getUserByUsername(anyString())).thenReturn(user);
+
+		when(providerService.getProvidersByPerson(person))
+				.thenReturn(Collections.singleton(provider));
+
+		when(disaService.existsByRequestId(disa.getRequestId()))
+				.thenReturn(false);
+
+		when(disaService.getPatientByNid(disa.getNid()))
+				.thenReturn(Collections.singletonList(1));
+
+		task.execute();
+
+		ArgumentCaptor<Encounter> encounterCaptor = ArgumentCaptor.forClass(Encounter.class);
+		verify(encounterService, times(1))
+				.saveEncounter(encounterCaptor.capture());
+
+		Date date = encounterCaptor.getValue().getEncounterDatetime();
+		LocalDateTime encounterDateTime = Instant.ofEpochMilli(date.getTime())
+				.atZone(ZoneId.systemDefault())
+				.toLocalDateTime();
+
+		assertThat(encounterDateTime.getHour(), is(0));
+		assertThat(encounterDateTime.getMinute(), is(0));
+		assertThat(encounterDateTime.getSecond(), is(0));
 	}
 }

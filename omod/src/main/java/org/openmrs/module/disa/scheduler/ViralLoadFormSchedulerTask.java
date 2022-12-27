@@ -57,6 +57,7 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 	private String notProcessedNoResult;
 	private String notProcessedFlaggedReview;
 	private String notProcessedDuplicateNid;
+	private String defaultLocationUuid;
 	private RestUtil rest;
 	private DisaService disaService;
 	private Location locationBySismaCode;
@@ -164,6 +165,8 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 
 		Provider provider = providerService.getProvidersByPerson(user.getPerson()).iterator().next();
 
+		defaultLocationUuid = locationService.getDefaultLocation().getUuid();
+
 		for (Disa disa : jsonViralLoad) {
 
 			if (!disaService.existsByRequestId(disa.getRequestId())) {
@@ -175,7 +178,7 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 
 				if (patientIds.isEmpty()) {
 					notProcessed = disa.getRequestId();
-					updateNotProcessed();
+					updateViralLoadStatus(notProcessed, Constants.NID);
 					continue;
 				} else {
 					if (patientIds.size() > 1) {
@@ -187,18 +190,18 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 						// sendEmail(notification,
 						// administrationService.getGlobalPropertyObject(Constants.DISA_MAIL_OTHERS_TO).getPropertyValue());
 						notProcessedDuplicateNid = disa.getRequestId();
-						updateNotProcessedDuplicateNid();
+						updateViralLoadStatus(notProcessedDuplicateNid, Constants.DUPLICATED_NID);
 						continue;
 					} else if (hasNoResult(disa)) {
 						notProcessedNoResult = disa.getRequestId();
-						updateNotProcessedNoResult();
+						updateViralLoadStatus(notProcessedNoResult, Constants.VIRAL_LOAD_NO_RESULT);
 						continue;
 					} else if (!GenericUtil.isNumeric(disa.getFinalViralLoadResult().trim())
 							&& !(disa.getFinalViralLoadResult().contains(Constants.LESS_THAN))
 							&& !(disa.getFinalViralLoadResult().contains(Constants.MORE_THAN))
 							&& !(disa.getFinalViralLoadResult().trim().equalsIgnoreCase(Constants.INDETECTAVEL))) {
 						notProcessedFlaggedReview = disa.getRequestId();
-						updateNotProcessedFlaggedForReview();
+						updateViralLoadStatus(notProcessedFlaggedReview, Constants.FLAGGED_FOR_REVIEW);
 						continue;
 					} else {
 						processed = disa.getRequestId();
@@ -548,6 +551,10 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 				disaService.saveFsrLog(fsrLog);
 
 				updateProcessed();
+			} else {
+				//update with not processing cause DUPLICATE_REQUEST_ID
+				notProcessed = disa.getRequestId();
+				updateViralLoadStatus(notProcessed, Constants.DUPLICATED_REQUEST_ID);
 			}
 		}
 
@@ -575,41 +582,17 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 		}.getType());
 	}
 
+	private void updateViralLoadStatus(String notProcessedNid, String reasonForNotProcessing) throws Exception {
+		try {
+			rest.getRequestPutNotProcessed(Constants.URL_PATH_NOT_PROCESSED, notProcessedNid, reasonForNotProcessing, defaultLocationUuid);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	private void updateProcessed() throws Exception {
 		try {
-			rest.getRequestPutProcessed(Constants.URL_PATH_PROCESSED, processed);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	private void updateNotProcessed() throws Exception {
-		try {
-			rest.getRequestPutNotProcessed(Constants.URL_PATH_NOT_PROCESSED, notProcessed, "nid");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	private void updateNotProcessedNoResult() throws Exception {
-		try {
-			rest.getRequestPutNotProcessed(Constants.URL_PATH_NOT_PROCESSED, notProcessedNoResult, "result");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	private void updateNotProcessedFlaggedForReview() throws Exception {
-		try {
-			rest.getRequestPutNotProcessed(Constants.URL_PATH_NOT_PROCESSED, notProcessedFlaggedReview, "review");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	private void updateNotProcessedDuplicateNid() {
-		try {
-			rest.getRequestPutNotProcessed(Constants.URL_PATH_NOT_PROCESSED, notProcessedDuplicateNid, "duplicate");
+			rest.getRequestPutProcessed(Constants.URL_PATH_PROCESSED, processed, defaultLocationUuid);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

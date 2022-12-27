@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.TimeZone;
 
 /**
- * 
+ *
  * @author machabane
  *
  */
@@ -27,29 +27,29 @@ public class DateUtil {
 		}
 		return parsedDate;
 	}
-	
+
 	public static Date stringToDate(String date) throws ParseException {
-	    return new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").parse(date);  
+	    return new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").parse(date);
 	}
-	
+
 	public static Date string_To_Date(String date) throws ParseException {
-	    return new SimpleDateFormat("dd/MM/yyyy").parse(date);  
+	    return new SimpleDateFormat("dd/MM/yyyy").parse(date);
 	}
-	
+
 	public static Date dateWithLeadingZeros() {
 		Calendar now = Calendar.getInstance();
-        now.set(Calendar.HOUR, 0);
+        now.set(Calendar.HOUR_OF_DAY, 0);
         now.set(Calendar.MINUTE, 0);
         now.set(Calendar.SECOND, 0);
         now.set(Calendar.MILLISECOND, 0);
-        
+
         return now.getTime();
 	}
-	
+
 	public static boolean isValidDate(String inDate) {
-		
+
 		if(inDate==null) return false;
-		
+
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         dateFormat.setLenient(false);
         try {
@@ -58,5 +58,10 @@ public class DateUtil {
             return false;
         }
         return true;
+	}
+
+	public static Date getDateWithoutTime() throws ParseException {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	    return sdf.parse(sdf.format(new Date()));
 	}
 }

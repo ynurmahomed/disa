@@ -121,6 +121,13 @@ public class Constants {
 
 	public static final String NID_SERVICO_TARV = "e2b966d0-1d5f-11e0-b929-000c29ad1d07";
 	public static final String NID_DISA = "79ad599a-50df-48f8-865c-0095ec9a9d01";
+
+	public static final String NID = "nid";
+	public static final String DUPLICATED_REQUEST_ID = "duplicatedReqId";
+	public static final String VIRAL_LOAD_NO_RESULT = "result";
+	public static final String FLAGGED_FOR_REVIEW = "review";
+	public static final String DUPLICATED_NID = "duplicate";
+
 	public static final String MORE_THAN = ">";
 
 }
