@@ -11,69 +11,72 @@
 <h2><openmrs:message code="disa.pesquisa.resultados.laboratoriais11"/></h2>
 <br />
 
-<b class="boxHeader"><spring:message code="disa.pesquisa.resultados.laboratoriais11" /></b>
-
-<%@ include file="../common/searchForm.jsp" %>
+<div>
+	<b class="boxHeader"><spring:message code="disa.pesquisa.resultados.laboratoriais11" /></b>
+	<div class="box">
+		<%@ include file="../common/searchForm.jsp" %>
+	</div>
+</div>
 
 <c:if test="${not empty disaList}">
-	<b class="boxHeader"><spring:message code="disa.lista.resultados.laboratoriais333" /></b>
-	<fieldset>
-		<table  id="vlResultsTable" class="display" width="100%" cellpadding="2" cellspacing="0"
-	style="font-size: 13px;">
-			<thead>
-				<tr>
-					<th><spring:message code="disa.requesting.facility.name"/></th>
-					<th><spring:message code="disa.requesting.district.name"/></th>
-					<th><spring:message code="disa.sisma.code"/></th>
-					<th><spring:message code="disa.referring.request.id"/></th>
-					<th><spring:message code="disa.nid" /></th>
-					<th><spring:message code="general.name" /></th>
-					<th><spring:message code="disa.gender" /></th>
-					<th><spring:message code="disa.age" /></th>
-					<th><spring:message code="disa.request.id" /></th>
-					<th><spring:message code="disa.analysis.date.time" /></th>
-					<th><spring:message code="disa.authorised.date.time" /></th>
-					<th><spring:message code="disa.viralload.result.copy" /></th>
-					<th><spring:message code="disa.status" /></th>
-					<th><spring:message code="disa.created.at" /></th>
-					<th><spring:message code="disa.updated.at" /></th>
-					<th><spring:message code="disa.not.processing.cause" /></th>
-				</tr>
-			</thead>
-			<tbody>
-				<c:forEach items="${disaList}" var="vlData">
+	<div>
+		<div class="box">
+			<table  id="vlResultsTable" style="width:100%; font-size:12px;">
+				<thead>
 					<tr>
-						<td>${vlData.requestingFacilityName}</td>
-						<td>${vlData.requestingDistrictName}</td>
-						<td>${vlData.healthFacilityLabCode}</td>
-						<td>${vlData.referringRequestID}</td>
-						<td>${vlData.nid}</td>
-						<td>${vlData.firstName} ${vlData.lastName}</td>
-						<td>${vlData.gender}</td>
-						<td>${vlData.getAge()}</td>
-						<td>${vlData.requestId}</td>
-						<td>${vlData.processingDate}</td>
-						<td>${vlData.viralLoadResultDate}</td>
-						<td>${vlData.finalViralLoadResult}</td>
-						<td><openmrs:message code="disa.viral.load.status.${vlData.viralLoadStatus}"/></td>
-						<td>${vlData.createdAt}</td>
-						<td>${vlData.updatedAt}</td>
-						<td>
-							<c:if test="${not empty vlData.notProcessingCause}">
-								<openmrs:message code="disa.${vlData.notProcessingCause}"/>
-							</c:if>
-						</td>
+						<th><spring:message code="disa.requesting.facility.name"/></th>
+						<th><spring:message code="disa.requesting.district.name"/></th>
+						<th><spring:message code="disa.sisma.code"/></th>
+						<th><spring:message code="disa.referring.request.id"/></th>
+						<th><spring:message code="disa.nid" /></th>
+						<th><spring:message code="general.name" /></th>
+						<th><spring:message code="disa.gender" /></th>
+						<th><spring:message code="disa.age" /></th>
+						<th><spring:message code="disa.request.id" /></th>
+						<th><spring:message code="disa.analysis.date.time" /></th>
+						<th><spring:message code="disa.authorised.date.time" /></th>
+						<th><spring:message code="disa.viralload.result.copy" /></th>
+						<th><spring:message code="disa.status" /></th>
+						<th><spring:message code="disa.created.at" /></th>
+						<th><spring:message code="disa.updated.at" /></th>
+						<th><spring:message code="disa.not.processing.cause" /></th>
 					</tr>
-				</c:forEach>
-			</tbody>
-		</table>
-		<br/>
-		<div class="submit-btn center">
-			<input type="button"
-				value='<spring:message code="disa.btn.export"/>'
-				name="exportViralLoadResults" onclick="window.location.href = '${exportUri}'"/>
+				</thead>
+				<tbody>
+					<c:forEach items="${disaList}" var="vlData">
+						<tr>
+							<td>${vlData.requestingFacilityName}</td>
+							<td>${vlData.requestingDistrictName}</td>
+							<td>${vlData.healthFacilityLabCode}</td>
+							<td>${vlData.referringRequestID}</td>
+							<td>${vlData.nid}</td>
+							<td>${vlData.firstName} ${vlData.lastName}</td>
+							<td>${vlData.gender}</td>
+							<td>${vlData.getAge() == 0 ? "" : vlData.getAge()}</td>
+							<td>${vlData.requestId}</td>
+							<td>${vlData.processingDate.substring(0,10)}</td>
+							<td>${vlData.viralLoadResultDate.substring(0,10)}</td>
+							<td>${vlData.finalViralLoadResult}</td>
+							<td><openmrs:message code="disa.viral.load.status.${vlData.viralLoadStatus}"/></td>
+							<td>${vlData.createdAt.substring(0,10)}</td>
+							<td>${vlData.updatedAt.substring(0,10)}</td>
+							<td>
+								<c:if test="${not empty vlData.notProcessingCause}">
+									<openmrs:message code="disa.${vlData.notProcessingCause}"/>
+								</c:if>
+							</td>
+						</tr>
+					</c:forEach>
+				</tbody>
+			</table>
+			<br/>
+			<div class="submit-btn center">
+				<input type="button"
+					value='<spring:message code="disa.btn.export"/>'
+					name="exportViralLoadResults" onclick="window.location.href = '${exportUri}'"/>
+			</div>
 		</div>
-	</fieldset>
+	</div>
 </c:if>
 
 <c:if test="${not empty searchForm.startDate && not empty searchForm.endDate}">

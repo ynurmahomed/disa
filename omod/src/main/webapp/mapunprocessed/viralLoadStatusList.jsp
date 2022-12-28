@@ -3,7 +3,7 @@
 <%@ include file="/WEB-INF/template/include.jsp"%>
 <%@ include file="/WEB-INF/template/header.jsp"%>
 
-<openmrs:require anyPrivilege="true" otherwise="/login.htm" redirect="/module/disa/mapundprocessed/viralLoadStatusList.form"/>
+<openmrs:require anyPrivilege="true" otherwise="/login.htm" redirect="/module/disa/mapunprocessed/viralLoadStatusList.form"/>
 
 <openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/css/disa.css"/>
 <openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/calendar.js"/>
@@ -13,28 +13,41 @@
 <h2><openmrs:message code="disa.pesquisa.nids.resultados.nao.processados11"/></h2>
 <br />
 
-<b class="boxHeader"><spring:message code="disa.select.viral.load.status" /></b>
-<fieldset>
-	<form:form commandName="searchForm" method="post">
-		<table>
-    		<tr>
-	            <td><label for="startDate"><openmrs:message code="disa.start.date" />:</label></td>
-	            <td><form:input path="startDate" type="text" size="10" name="startDate" id="startDate" onclick="showCalendar(this);" autocomplete="off"/>
-					<form:errors path="startDate" cssClass="error"/>
-	            <br /></td>
-            </tr>
-            <tr>
-	            <td><label for="endDate"><openmrs:message code="disa.end.date"/>:</label></td>
-            	<td><form:input path="endDate" type="text" size="10" name="endDate" id="endDate" onclick="showCalendar(this);" autocomplete="off"/>
-					<form:errors path="endDate" cssClass="error"/>
-            	<br />
-            	</td>
-            </tr>
-		</table>
-        <div class="submit-btn">
-            <input id="subValue" type="submit" value='<openmrs:message code="general.next"/>'>
-	        </div>
-	</form:form>
-</fieldset>
+<div>
+	<b class="boxHeader"><spring:message code="disa.select.viral.load.status" /></b>
+	<div class="box">
+		<form:form commandName="searchForm" method="post">
+			<div class="searchFields">
+				<div>
+					<label for="startDate">
+						<openmrs:message code="disa.start.date" /><span class="required">*</span>:
+					</label>
+					<form:input path="startDate"  size="10" id="startDate" onclick="showCalendar(this);" autocomplete="off"/>
+					<spring:hasBindErrors name="searchForm">
+						<c:if test="${errors.hasFieldErrors('startDate')}">
+							<form:errors path="startDate" cssClass="error"/>
+						</c:if>
+					</spring:hasBindErrors>
+				</div>
+				<div>
+					<label for="endDate">
+						<openmrs:message code="disa.end.date" /><span class="required">*</span>:
+					</label>
+					<form:input path="endDate" size="10" id="endDate" onclick="showCalendar(this);" autocomplete="off"/>
+					<spring:hasBindErrors name="searchForm">
+						<c:if test="${errors.hasFieldErrors('endDate')}">
+							<form:errors path="endDate" cssClass="error"/>
+						</c:if>
+					</spring:hasBindErrors>
+				</div>
+				<div>
+					<button type="submit">
+						<openmrs:message code="general.next"/>
+					</button>
+				</div>
+			</div>
+		</form:form>
+	</div>
+</div>
 
 <%@ include file="/WEB-INF/template/footer.jsp"%>
