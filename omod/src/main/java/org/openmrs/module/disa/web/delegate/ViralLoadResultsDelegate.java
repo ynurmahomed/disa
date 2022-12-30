@@ -69,10 +69,10 @@ public class ViralLoadResultsDelegate {
 	}
 
 	public List<Disa> getViralLoadDataList(String requestId, String nid, String vlSisma,
-			String referringId, String vlState, Date startDate, Date endDate) throws Exception {
+			String referringId, String vlState, Date startDate, Date endDate, List<String> healthFacCodes) throws Exception {
 
 		String jsonViralLoadInfo = rest.getRequestByForm("/search-form", requestId, nid, vlSisma, referringId, vlState,
-				formatDate(startDate, 1), formatDate(endDate, 2));
+				formatDate(startDate, 1), formatDate(endDate, 2), healthFacCodes);
 		return new Gson().fromJson(jsonViralLoadInfo, new TypeToken<ArrayList<Disa>>() {
 		}.getType());
 	}
@@ -81,7 +81,7 @@ public class ViralLoadResultsDelegate {
 
 		return getViralLoadDataList(searchForm.getRequestId(), searchForm.getNid(), searchForm.getVlSisma(),
 				searchForm.getReferringId(), searchForm.getVlState(), searchForm.getStartDate(),
-				searchForm.getEndDate());
+				searchForm.getEndDate(), new ArrayList<String>(null)); 
 	}
 
 	public List<Patient> getPatients(Disa selectedPatient) {

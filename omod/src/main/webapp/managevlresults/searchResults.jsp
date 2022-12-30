@@ -143,7 +143,7 @@
 					        <td>${vlData.nid}</td>
 					    	<td>${vlData.firstName} ${vlData.lastName}</td>
 					        <td>${vlData.gender}</td>
-					        <td>${vlData.getAge()}</td>
+					        <td>${vlData.getAge() == 0 ? "" : vlData.getAge()}</td>
 					        <td>${vlData.requestId}</td>
 					        <td>${vlData.processingDate}</td>
 					        <td>${vlData.viralLoadResultDate}</td>

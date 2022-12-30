@@ -86,6 +86,7 @@ public class ViralLoadStagingServerController {
 		return "redirect:viralLoadStagingServerResult.form";
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/module/disa/viralLoadStagingServerResult", method = RequestMethod.GET)
 	public void showViralLoadResultList(HttpServletRequest request, HttpSession session, ModelMap model,
 			@RequestParam(required = false, value = "openmrs_msg") String openmrs_msg) throws Exception {
@@ -103,9 +104,11 @@ public class ViralLoadStagingServerController {
 		Date startDate = (Date) session.getAttribute("startDate");
 
 		Date endDate = (Date) session.getAttribute("endDate");
+		
+		List<String> healthFacCodes = (List<String>) session.getAttribute("hFCodes");
 
 		List<Disa> vlDataLst = delegate.getViralLoadDataList(requestId, nid, vlSisma, referringId, vlState, startDate,
-				endDate);
+				endDate, healthFacCodes);
 		session.setAttribute("vlDataLst", vlDataLst);
 		session.setAttribute("openmrs_msg", openmrs_msg);
 	}
@@ -114,7 +117,7 @@ public class ViralLoadStagingServerController {
 	 * Populates SISMA code dropdown options.
 	 */
 	@ModelAttribute
-	private void populateSismaCodes(ModelMap model) {
+	private void populateSismaCodes(HttpSession session, ModelMap model) {
 		String propertyValue = Context.getAdministrationService()
 				.getGlobalPropertyObject(Constants.DISA_SISMA_CODE).getPropertyValue();
 		List<String> sismaCodes = Arrays.asList(propertyValue.split(","));
@@ -123,6 +126,7 @@ public class ViralLoadStagingServerController {
 		sismaCodesTodos.add(Constants.TODOS);
 		sismaCodesTodos.addAll(sismaCodes);
 
+		session.setAttribute("hFCodes", sismaCodes);  
 		model.addAttribute("sismaCodes", sismaCodesTodos);
 	}
 }
