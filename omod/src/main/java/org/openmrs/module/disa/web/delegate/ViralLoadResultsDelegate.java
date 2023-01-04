@@ -68,20 +68,30 @@ public class ViralLoadResultsDelegate {
 
 	}
 
-	public List<Disa> getViralLoadDataList(String requestId, String nid, String vlSisma,
-			String referringId, String vlState, Date startDate, Date endDate) throws Exception {
+	public List<Disa> getViralLoadDataList(String requestId, String nid,
+			String referringId, String vlState, Date startDate, Date endDate, List<String> healthFacCodes)
+			throws Exception {
 
-		String jsonViralLoadInfo = rest.getRequestByForm("/search-form", requestId, nid, vlSisma, referringId, vlState,
-				formatDate(startDate, 1), formatDate(endDate, 2));
+		String jsonViralLoadInfo = rest.getRequestByForm("/search-form", requestId, nid, referringId, vlState,
+				formatDate(startDate, 1), formatDate(endDate, 2), healthFacCodes);
 		return new Gson().fromJson(jsonViralLoadInfo, new TypeToken<ArrayList<Disa>>() {
 		}.getType());
 	}
 
 	public List<Disa> getViralLoadDataList(SearchForm searchForm) throws Exception {
 
-		return getViralLoadDataList(searchForm.getRequestId(), searchForm.getNid(), searchForm.getVlSisma(),
+		ArrayList<String> hfCodes = new ArrayList<String>();
+		if (Constants.TODOS.equals(searchForm.getVlSisma())) {
+			String propertyValue = Context.getAdministrationService()
+					.getGlobalPropertyObject(Constants.DISA_SISMA_CODE).getPropertyValue();
+			hfCodes.addAll(Arrays.asList(propertyValue.split(",")));
+		} else {
+			hfCodes.add(searchForm.getVlSisma());
+		}
+
+		return getViralLoadDataList(searchForm.getRequestId(), searchForm.getNid(),
 				searchForm.getReferringId(), searchForm.getVlState(), searchForm.getStartDate(),
-				searchForm.getEndDate());
+				searchForm.getEndDate(), hfCodes);
 	}
 
 	public List<Patient> getPatients(Disa selectedPatient) {

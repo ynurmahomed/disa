@@ -1,6 +1,8 @@
 package org.openmrs.module.disa.extension.util;
 
 import java.text.Normalizer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
@@ -11,6 +13,9 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 
 /**
  * 
@@ -163,5 +168,13 @@ public class GenericUtil {
 		} catch (MessagingException messagingException) {
 			messagingException.printStackTrace();
 		}
+	}
+	
+	public static List<NameValuePair> buildParamList(List<String> hfCodes) {
+	    List<NameValuePair> hfs = new ArrayList<>();
+	    for (String string : hfCodes) {
+	        hfs.add(new BasicNameValuePair("healthFacilityLabCode", string));
+	    }
+	    return hfs;
 	}
 }

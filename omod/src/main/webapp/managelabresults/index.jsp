@@ -60,26 +60,26 @@
 				<tbody>
 					<c:forEach items="${disaList}" var="vlData">
 						<tr>
-								<td>${vlData.requestingFacilityName}</td>
-								<td>${vlData.requestingDistrictName}</td>
-								<td>${vlData.healthFacilityLabCode}</td>
-								<td>${vlData.referringRequestID}</td>
-								<td>${vlData.nid}</td>
-								<td>${vlData.firstName} ${vlData.lastName}</td>
-								<td>${vlData.gender}</td>
-								<td>${vlData.getAge() == 0 ? "" : vlData.getAge()}</td>
-								<td>${vlData.requestId}</td>
-								<td>${vlData.processingDate.substring(0,10)}</td>
-								<td>${vlData.viralLoadResultDate.substring(0,10)}</td>
-								<td>${vlData.finalViralLoadResult}</td>
-								<td><openmrs:message code="disa.viral.load.status.${vlData.viralLoadStatus}"/></td>
-								<td>${vlData.createdAt.substring(0,10)}</td>
-								<td>${vlData.updatedAt.substring(0,10)}</td>
-								<td>
+							<td>${vlData.requestingFacilityName}</td>
+							<td>${vlData.requestingDistrictName}</td>
+							<td>${vlData.healthFacilityLabCode}</td>
+							<td>${vlData.referringRequestID}</td>
+							<td>${vlData.nid}</td>
+							<td>${vlData.firstName} ${vlData.lastName}</td>
+							<td>${vlData.gender}</td>
+							<td>${vlData.getAge() == 0 ? "" : vlData.getAge()}</td>
+							<td>${vlData.requestId}</td>
+							<td>${vlData.processingDate.substring(0,10)}</td>
+							<td>${vlData.viralLoadResultDate.substring(0,10)}</td>
+							<td>${vlData.finalViralLoadResult}</td>
+							<td><openmrs:message code="disa.viral.load.status.${vlData.viralLoadStatus}"/></td>
+							<td>${vlData.createdAt.substring(0,10)}</td>
+							<td>${vlData.updatedAt.substring(0,10)}</td>
+							<td>
 								<c:if test="${not empty vlData.notProcessingCause}">
 									<openmrs:message code="disa.${vlData.notProcessingCause}"/>
 								</c:if>
-								</td>
+							</td>
 							<td>
 								<ul class="actions">
 									<c:if test="${vlData.viralLoadStatus == 'NOT_PROCESSED'}">
