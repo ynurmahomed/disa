@@ -234,7 +234,7 @@ public class ViralLoadFormSchedulerTaskTest extends BaseContextMockTest {
 				.thenReturn(orderId);
 
 		when(locationService.getDefaultLocation())
-			.thenReturn(location);
+				.thenReturn(location);
 	}
 
 	@Test
@@ -311,7 +311,8 @@ public class ViralLoadFormSchedulerTaskTest extends BaseContextMockTest {
 		task.execute();
 
 		verify(restUtil, times(1))
-				.getRequestPutNotProcessed(Constants.URL_PATH_NOT_PROCESSED, disa.getRequestId(), "result", location.getUuid());
+				.getRequestPutNotProcessed(Constants.URL_PATH_NOT_PROCESSED, disa.getRequestId(), "result",
+						location.getUuid());
 
 	}
 
@@ -336,7 +337,8 @@ public class ViralLoadFormSchedulerTaskTest extends BaseContextMockTest {
 		task.execute();
 
 		verify(restUtil, times(1))
-				.getRequestPutNotProcessed(Constants.URL_PATH_NOT_PROCESSED, disa.getRequestId(), "review", location.getUuid());
+				.getRequestPutNotProcessed(Constants.URL_PATH_NOT_PROCESSED, disa.getRequestId(), "review",
+						location.getUuid());
 
 	}
 
@@ -459,6 +461,33 @@ public class ViralLoadFormSchedulerTaskTest extends BaseContextMockTest {
 						hasProperty("concept", equalTo(viralLoadQualitative)),
 						hasProperty("valueCoded", equalTo(lessThan)),
 						hasProperty("comment", equalTo("400")))));
+	}
+
+	@Test
+	public void executeShouldNotSaveMoreThanValuesWithInvalidNumericValues() throws Exception {
+
+		disa.setFinalViralLoadResult("> 10.000.000,00");
+		when(restUtil.getRequestGet(anyListOf(String.class), eq(province)))
+				.thenReturn(new Gson().toJson(new Disa[] { disa }));
+
+		when(userService.getUserByUsername(anyString())).thenReturn(user);
+
+		when(providerService.getProvidersByPerson(person))
+				.thenReturn(Collections.singleton(provider));
+
+		when(disaService.existsByRequestId(disa.getRequestId()))
+				.thenReturn(false);
+
+		when(disaService.getPatientByNid(disa.getNid()))
+				.thenReturn(Collections.singletonList(1));
+
+		task.execute();
+
+		verify(encounterService, never()).saveEncounter(anyObject());
+
+		verify(restUtil, times(1))
+				.getRequestPutNotProcessed(Constants.URL_PATH_NOT_PROCESSED, disa.getRequestId(),
+						Constants.FLAGGED_FOR_REVIEW, location.getUuid());
 	}
 
 	@Test

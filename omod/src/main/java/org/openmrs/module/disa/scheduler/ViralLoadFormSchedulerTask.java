@@ -169,6 +169,8 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 
 		for (Disa disa : jsonViralLoad) {
 
+			logger.info("Processing RequestId {}", disa.getRequestId());
+
 			if (!disaService.existsByRequestId(disa.getRequestId())) {
 
 				Encounter encounter = new Encounter();
@@ -203,11 +205,19 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 						notProcessedFlaggedReview = disa.getRequestId();
 						updateViralLoadStatus(notProcessedFlaggedReview, Constants.FLAGGED_FOR_REVIEW);
 						continue;
-					} else {
-						processed = disa.getRequestId();
-						lstPatient = disaService.getPatientByPatientId(patientIds.get(0));
-						encounter.setPatient(lstPatient.get(0));
+					} else if (disa.getFinalViralLoadResult().contains(Constants.MORE_THAN)) {
+						String trim = disa.getFinalViralLoadResult().trim();
+						String maybeNumeric = trim.substring(trim.indexOf(Constants.MORE_THAN) + 1).trim();
+						if (!GenericUtil.isNumeric(maybeNumeric)) {
+							notProcessedFlaggedReview = disa.getRequestId();
+							updateViralLoadStatus(notProcessedFlaggedReview, Constants.FLAGGED_FOR_REVIEW);
+							continue;
+						}
 					}
+
+					processed = disa.getRequestId();
+					lstPatient = disaService.getPatientByPatientId(patientIds.get(0));
+					encounter.setPatient(lstPatient.get(0));
 				}
 
 				locationBySismaCode = getLocationBySismaCode(disa.getHealthFacilityLabCode());
