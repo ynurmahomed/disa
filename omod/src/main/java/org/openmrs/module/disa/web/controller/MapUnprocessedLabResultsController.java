@@ -31,7 +31,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
 @Controller
-public class ViralLoadResultsController {
+public class MapUnprocessedLabResultsController {
 
 	private ViralLoadResultsDelegate delegate;
 
@@ -51,14 +51,14 @@ public class ViralLoadResultsController {
 		this.messageSourceService = messageSourceService;
 	}
 
-	@RequestMapping(value = "/module/disa/viralLoadStatusList", method = RequestMethod.GET)
+	@RequestMapping(value = "/module/disa/mapunprocessed/viralLoadStatusList", method = RequestMethod.GET)
 	public void showViralLoadStatusList(ModelMap model) {
 		delegate = new ViralLoadResultsDelegate();
 		model.addAttribute("user", Context.getAuthenticatedUser());
 		model.addAttribute(new SearchForm());
 	}
 
-	@RequestMapping(value = "/module/disa/viralLoadStatusList", method = RequestMethod.POST)
+	@RequestMapping(value = "/module/disa/mapunprocessed/viralLoadStatusList", method = RequestMethod.POST)
 	public String showViralLoadList(
 			@Valid SearchForm searchForm,
 			BindingResult result,
@@ -67,7 +67,7 @@ public class ViralLoadResultsController {
 			HttpSession session) throws Exception {
 
 		if (result.hasErrors()) {
-			return "/module/disa/viralLoadStatusList";
+			return "/module/disa/mapunprocessed/viralLoadStatusList";
 		}
 
 		session.setAttribute("vlState", Constants.NOT_PROCESSED);
@@ -77,7 +77,7 @@ public class ViralLoadResultsController {
 		return "redirect:viralLoadResultsList.form";
 	}
 
-	@RequestMapping(value = "/module/disa/viralLoadResultsList", method = RequestMethod.GET)
+	@RequestMapping(value = "/module/disa/mapunprocessed/viralLoadResultsList", method = RequestMethod.GET)
 	public void showViralLoadResultList(HttpServletRequest request, HttpSession session, ModelMap model,
 			@RequestParam(required = false, value = "openmrs_msg") String openmrs_msg) throws Exception {
 
@@ -91,14 +91,14 @@ public class ViralLoadResultsController {
 	}
 
 	@SuppressWarnings("unchecked")
-	@RequestMapping(value = "/module/disa/viralLoadResultsList", method = RequestMethod.POST)
+	@RequestMapping(value = "/module/disa/mapunprocessed/viralLoadResultsList", method = RequestMethod.POST)
 	public void downloadExcelFile(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		List<Disa> vlDataLst = (List<Disa>) request.getSession().getAttribute("vlDataLst");
 		delegate.createExcelFile(vlDataLst, response, messageSourceService);
 	}
 
 	@SuppressWarnings({ "unchecked" })
-	@RequestMapping(value = "/module/disa/mapPatientIdentifierForm", method = RequestMethod.GET)
+	@RequestMapping(value = "/module/disa/mapunprocessed/mapPatientIdentifierForm", method = RequestMethod.GET)
 	public void patientIdentifierMapping(@ModelAttribute("patient") Patient patient, HttpSession session,
 			HttpServletRequest request,
 			@RequestParam(required = false, value = "errorPatientRequired") String errorPatientRequired,
@@ -132,12 +132,12 @@ public class ViralLoadResultsController {
 		session.setAttribute("errorSelectPatient", errorSelectPatient);
 	}
 
-	@RequestMapping(value = "/module/disa/mapPatientIdentifierForm", method = RequestMethod.POST)
+	@RequestMapping(value = "/module/disa/mapunprocessed/mapPatientIdentifierForm", method = RequestMethod.POST)
 	public ModelAndView mapPatientIdentifier(HttpServletRequest request, HttpSession session,
 			@RequestParam(required = false, value = "patientUuid") String patientUuid) throws Exception {
 
 		ModelAndView modelAndView = new ModelAndView(
-				new RedirectView(request.getContextPath() + "/module/disa/mapPatientIdentifierForm.form"));
+				new RedirectView(request.getContextPath() + "/module/disa/mapunprocessed/mapPatientIdentifierForm.form"));
 
 		if (patientUuid == null) {
 			modelAndView.addObject("errorSelectPatient", "disa.select.patient");
@@ -148,16 +148,16 @@ public class ViralLoadResultsController {
 		Disa selectedPatient = (Disa) session.getAttribute("selectedPatient");
 		delegate.doMapIdentifier(patientUuid, nidDisa, selectedPatient.getRequestId());
 
-		return new ModelAndView(new RedirectView(request.getContextPath() + "/module/disa/viralLoadResultsList.form"));
+		return new ModelAndView(new RedirectView(request.getContextPath() + "/module/disa/mapunprocessed/viralLoadResultsList.form"));
 	}
 
 	@SuppressWarnings({ "unchecked" })
-	@RequestMapping(value = "/module/disa/addPatient.form", method = RequestMethod.POST)
+	@RequestMapping(value = "/module/disa/mapunprocessed/addPatient.form", method = RequestMethod.POST)
 	public ModelAndView addPatient(@ModelAttribute("patient") Patient patient, BindingResult result,
 			HttpServletRequest request, HttpSession session) throws Exception {
 
 		ModelAndView model = new ModelAndView(
-				new RedirectView(request.getContextPath() + "/module/disa/mapPatientIdentifierForm.form"));
+				new RedirectView(request.getContextPath() + "/module/disa/mapunprocessed/mapPatientIdentifierForm.form"));
 		if (patient.getId() == null) {
 			model.addObject("errorPatientRequired", "disa.error.patient.required");
 			return model;

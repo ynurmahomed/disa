@@ -5,7 +5,7 @@
 
 <openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/css/disa.css"/>
 
-<%@ include file="template/localHeader.jsp"%>
+<%@ include file="../template/localHeader.jsp"%>
 
 <openmrs:htmlInclude
 	file="/scripts/jquery/dataTables/css/dataTables_jui.css" />

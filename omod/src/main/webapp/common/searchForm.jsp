@@ -1,23 +1,4 @@
-<%@ include file="/WEB-INF/template/include.jsp" %>
-<%@ include file="/WEB-INF/template/header.jsp" %>
-
-<openmrs:require privilege="Manage VL Results" otherwise="/login.htm" redirect="/module/disa/managevlresults/search.form"/>
-
-<openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/css/disa.css" />
 <openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/css/carbon-grid-11.17.0-min.css" />
-<openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/calendar.js" />
-
-<%@ include file="../template/localHeader.jsp" %>
-
-<h2>
-	<openmrs:message code="disa.list.viral.load.results.manage" />
-</h2>
-
-<br/>
-
-<b class="boxHeader">
-	<spring:message code="disa.pesquisa.resultados.laboratoriais11" />
-</b>
 
 <form:form commandName="searchForm" method="GET">
 	<fieldset>
@@ -28,7 +9,7 @@
 				</label>
 			</div>
 			<div class="cds-css-grid-column cds--col-span-2">
-				<form:input path="requestId" size="22" maxlength="16" id="requestId"/>
+				<form:input path="requestId" size="22" maxlength="26" id="requestId"/>
 			</div>
 			<div class="cds-css-grid-column">
 				<label for="nid">
@@ -36,7 +17,7 @@
 				</label>
 			</div>
 			<div class="cds-css-grid-column cds--col-span-2">
-				<form:input path="nid" size="22" maxlength="21" id="nid"/>
+				<form:input path="nid" size="22" maxlength="31" id="nid"/>
 			</div>
 			<div class="cds-css-grid-column">
 				<label for="selSisma">
@@ -110,9 +91,9 @@
 		</div>
 
 		<div class="submit-btn">
-			<input id="subValue" type="submit" value='<openmrs:message code="general.next"/>'/>
+			<input id="subValue" type="submit" value='<openmrs:message code="general.search"/>'/>
 		</div>
 	</fieldset>
 </form:form>
 
-<%@ include file="/WEB-INF/template/footer.jsp" %>
+<openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/calendar.js" />
