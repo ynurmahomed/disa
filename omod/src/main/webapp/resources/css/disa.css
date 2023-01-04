@@ -67,14 +67,40 @@
 	background-color: #FFB6C1;
 }
 
-#searchForm .cds--css-grid {
-	margin-left: 0;
-	padding-left: 5px;
-	margin-bottom: 3px;
+#searchForm .searchFields {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	padding: 5px;
+	justify-content: center;
+}
+
+#searchForm .searchFields > div {
+	display: flex;
+	flex-direction: column;
 }
 
 #searchForm .error {
 	font-size: small;
+}
+
+.searchFields .divider {
+	width: 1px;
+    background: gray;
+    margin: 5px 15px;
+}
+
+.searchFields button[type=submit] {
+	cursor: pointer;
+	color: #fff;
+    background: #1aac9b;
+    padding: 8px;
+    height: 36px;
+    font-weight: bold;
+    font-size: 9pt;
+    border-radius: 5px 5px;
+    border-width: 1px;
+	margin-left: 15px;
 }
 
 .reallocate-form .field {
@@ -100,4 +126,8 @@ span.success, div.success {
     padding: 1px 6px 1px 6px;
     margin: 4px 0;
     vertical-align: middle;
+}
+
+#openmrs_msg {
+	font-weight: bold;
 }

@@ -1,79 +1,45 @@
-<openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/css/carbon-grid-11.17.0-min.css" />
-
 <form:form commandName="searchForm" method="GET">
-	<fieldset>
-		<div class="cds--css-grid">
-			<div class="cds-css-grid-column">
-				<label for="requestId">
-					<openmrs:message code="disa.requestId" />:
-				</label>
-			</div>
-			<div class="cds-css-grid-column cds--col-span-2">
-				<form:input path="requestId" size="22" maxlength="26" id="requestId"/>
-			</div>
-			<div class="cds-css-grid-column">
-				<label for="nid">
-					<openmrs:message code="disa.nid" />:
-				</label>
-			</div>
-			<div class="cds-css-grid-column cds--col-span-2">
-				<form:input path="nid" size="22" maxlength="31" id="nid"/>
-			</div>
-			<div class="cds-css-grid-column">
-				<label for="selSisma">
-					<openmrs:message code="disa.sisma.code" />:
-				</label>
-			</div>
-			<div class="cds-css-grid-column">
-				<form:select path="vlSisma" id="selSisma" items="${sismaCodes}"/>
-			</div>
-			<div class="cds-css-grid-column">
-				<label for="startDate">
-					<openmrs:message code="disa.start.date" />:
-				</label>
-			</div>
-			<div class="cds-css-grid-column">
-				<form:input path="startDate"  size="10" id="startDate" onclick="showCalendar(this);" autocomplete="off"/>
-			</div>
+	<div class="searchFields">
+		<div>
+			<label for="startDate">
+				<openmrs:message code="disa.start.date" /><span class="required">*</span>:
+			</label>
+			<form:input path="startDate"  size="10" id="startDate" onclick="showCalendar(this);" autocomplete="off" autofocus="true"/>
 			<spring:hasBindErrors name="searchForm">
 				<c:if test="${errors.hasFieldErrors('startDate')}">
-					<div class="cds-css-grid-column cds--col-span-2">
-						<form:errors path="startDate" cssClass="error"/>
-					</div>
-				</c:if>
-			</spring:hasBindErrors>
-			<div class="cds-css-grid-column">
-				<label for="endDate">
-					<openmrs:message code="disa.end.date" />:
-				</label>
-			</div>
-			<div class="cds-css-grid-column">
-				<form:input path="endDate" size="10" id="endDate" onclick="showCalendar(this);" autocomplete="off"/>
-			</div>
-			<spring:hasBindErrors name="searchForm">
-				<c:if test="${errors.hasFieldErrors('endDate')}">
-					<div class="cds-css-grid-column cds--col-span-2">
-						<form:errors path="endDate" cssClass="error"/>
-					</div>
+					<form:errors path="startDate" cssClass="error"/>
 				</c:if>
 			</spring:hasBindErrors>
 		</div>
-		<div class="cds--css-grid">
-			<div class="cds-css-grid-column">
-				<label for="referringId">
-					<openmrs:message code="disa.referring.request.id" />:
-				</label>
-			</div>
-			<div class="cds-css-grid-column cds--col-span-2">
-				<form:input path="referringId" size="22" maxlength="16" id="referringId"/>
-			</div>
-			<div class="cds-css-grid-column">
-				<label for="vlState">
-					<openmrs:message code="disa.frm.status" />:
-				</label>
-			</div>
-			<div class="cds-css-grid-column cds--col-span-2">
-				<form:select path="vlState" id="selValue">
+		<div>
+			<label for="endDate">
+				<openmrs:message code="disa.end.date" /><span class="required">*</span>:
+			</label>
+			<form:input path="endDate" size="10" id="endDate" onclick="showCalendar(this);" autocomplete="off"/>
+			<spring:hasBindErrors name="searchForm">
+				<c:if test="${errors.hasFieldErrors('endDate')}">
+					<form:errors path="endDate" cssClass="error"/>
+				</c:if>
+			</spring:hasBindErrors>
+		</div>
+		<div class="divider"></div>
+		<div>
+			<label for="requestId">
+				<openmrs:message code="disa.requestId" />:
+			</label>
+			<form:input path="requestId" size="22" maxlength="26" id="requestId"/>
+		</div>
+		<div>
+			<label for="referringId">
+				<openmrs:message code="disa.referring.request.id" />:
+			</label>
+			<form:input path="referringId" size="22" maxlength="16" id="referringId"/>
+		</div>
+		<div>
+			<label for="vlState">
+				<openmrs:message code="disa.frm.status" />:
+			</label>
+			<form:select path="vlState" id="selValue">
 				<form:option value="ALL">
 					<openmrs:message code="disa.viral.load.status.ALL" />
 				</form:option>
@@ -87,13 +53,26 @@
 					<openmrs:message code="disa.viral.load.status.PENDING" />
 				</form:option>
 			</form:select>
-			</div>
 		</div>
-
-		<div class="submit-btn">
-			<input id="subValue" type="submit" value='<openmrs:message code="general.search"/>'/>
+		<div class="divider"></div>
+		<div>
+			<label for="nid">
+				<openmrs:message code="disa.nid" />:
+			</label>
+			<form:input path="nid" size="22" maxlength="31" id="nid"/>
 		</div>
-	</fieldset>
+		<div>
+			<label for="selSisma">
+				<openmrs:message code="disa.sisma.code" />:
+			</label>
+			<form:select path="vlSisma" id="selSisma" items="${sismaCodes}"/>
+		</div>
+		<div>
+			<button type="submit">
+				<openmrs:message code="general.search"/>
+			</button>
+		</div>
+	</div>
 </form:form>
 
 <openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/calendar.js" />

@@ -47,11 +47,16 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @RequestMapping(value = "/module/disa/managelabresults")
 public class ManageLabResultsController {
 
-    @Autowired
     private ManageVLResultsDelegate manageVLResultsDelegate;
 
-    @Autowired
     private MessageSourceService messageSourceService;
+
+    @Autowired
+    public ManageLabResultsController(ManageVLResultsDelegate manageVLResultsDelegate,
+            MessageSourceService messageSourceService) {
+        this.manageVLResultsDelegate = manageVLResultsDelegate;
+        this.messageSourceService = messageSourceService;
+    }
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -163,7 +168,7 @@ public class ManageLabResultsController {
         @SuppressWarnings("unchecked")
         Map<String, String> params = ((Map<String, String>) session.getAttribute("lastSearchParams"));
         redirectAttrs.addAllAttributes(params);
-        redirectAttrs.addFlashAttribute("flashMessage", "disa.viralload.reallocate.successful");
+        redirectAttrs.addFlashAttribute("flashMessage", getReallocatedMessage(requestId, update));
         return "redirect:/module/disa/managelabresults.form";
     }
 
@@ -186,5 +191,11 @@ public class ManageLabResultsController {
         sismaCodesTodos.addAll(sismaCodes);
 
         model.addAttribute("sismaCodes", sismaCodesTodos);
+    }
+
+    private String getReallocatedMessage(String requestId, Disa update) {
+        Object[] args = new Object[] { requestId, update.getRequestingFacilityName(),
+                update.getHealthFacilityLabCode() };
+        return messageSourceService.getMessage("disa.viralload.reallocate.successful", args, Context.getLocale());
     }
 }
