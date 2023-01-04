@@ -356,12 +356,13 @@ public class RestUtil {
 	 *
 	 * @param urlPathProcessed
 	 * @param requestId
+	 * @param healthFacCodes
 	 * @return
 	 * @throws Exception
 	 */
 	@SuppressWarnings("deprecation")
 	public String getRequestByForm(String urlPathProcessed, String requestId, String nid,
-			String vlSisma, String referringId, String vlState, String startDate, String endDate) throws Exception {
+			String referringId, String vlState, String startDate, String endDate, List<String> healthFacCodes) throws Exception {
 		String URL = URLBase + urlPathProcessed;
 		String response = "";
 		DefaultHttpClient httpclient = new DefaultHttpClient();
@@ -378,9 +379,7 @@ public class RestUtil {
 				uriBuilder.addParameter("nid", nid);
 			}
 
-			if (!vlSisma.isEmpty() && !vlSisma.equals(Constants.TODOS)) {
-				uriBuilder.addParameter("healthFacilityLabCode", vlSisma);
-			}
+			uriBuilder.addParameters(GenericUtil.buildParamList(healthFacCodes));
 
 			if (!referringId.isEmpty()) {
 				uriBuilder.addParameter("referringRequestID", referringId);
