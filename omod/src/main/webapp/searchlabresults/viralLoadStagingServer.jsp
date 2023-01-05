@@ -1,8 +1,6 @@
 <%@ include file="/WEB-INF/template/include.jsp"%>
 <%@ include file="/WEB-INF/template/header.jsp"%>
 
-<openmrs:require anyPrivilege="true" otherwise="/login.htm" redirect="/module/disa/searchlabresults/viralLoadStagingServer.form"/>
-
 <openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/css/disa.css"/>
 <openmrs:htmlInclude file="/scripts/jquery/dataTables/css/dataTables_jui.css" />
 
