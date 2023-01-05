@@ -24,14 +24,6 @@ public class DateUtil {
 		return Date.from(instant);
 	}
 
-	public static Date atMidnight(LocalDateTime localDateTime) {
-		Instant instant = localDateTime
-				.with(LocalTime.MIDNIGHT)
-				.atZone(ZoneId.systemDefault())
-				.toInstant();
-		return Date.from(instant);
-	}
-
 	public static Date toDate(LocalDateTime localDateTime) {
 		Instant instant = localDateTime
 				.atZone(ZoneId.systemDefault())
