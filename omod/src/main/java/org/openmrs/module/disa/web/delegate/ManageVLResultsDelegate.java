@@ -59,7 +59,7 @@ public class ManageVLResultsDelegate {
         }
     }
 
-    @Authorized({"Manage VL Results"})
+    @Authorized({"Gerir resultados no Disa Interoperabilidade"})
     public Disa getViralLoad(String requestId) throws DelegateException {
 		try {
 			log.info("Fetching Lab Result {}", requestId);
@@ -76,7 +76,7 @@ public class ManageVLResultsDelegate {
 		}
 	}
 
-    @Authorized({"Manage VL Results"})
+    @Authorized({"Gerir resultados no Disa Interoperabilidade"})
     public void deleteViralLoad(String requestId) throws DelegateException {
 		try {
 			log.info("Deleting Lab Result {}", requestId);
@@ -92,7 +92,7 @@ public class ManageVLResultsDelegate {
 		}
 	}
 
-    @Authorized({"Manage VL Results"})
+    @Authorized({"Gerir resultados no Disa Interoperabilidade"})
 	public Disa updateViralLoad(String requestId, Disa updates) throws DelegateException {
 		try {
 			log.info("Updating Lab Result {}", requestId);

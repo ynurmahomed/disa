@@ -3,8 +3,6 @@
 <%@ include file="/WEB-INF/template/include.jsp"%>
 <%@ include file="/WEB-INF/template/header.jsp"%>
 
-<openmrs:require anyPrivilege="true" otherwise="/login.htm" redirect="/module/disa/mapunprocessed/viralLoadStatusList.form"/>
-
 <openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/css/disa.css"/>
 <openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/calendar.js"/>
 
