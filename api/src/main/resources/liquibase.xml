@@ -39,4 +39,12 @@
         </insert>
     </changeSet>
 
+    <changeSet id="disa-2023-01-06-12:51" author="yassin">
+        <sql>
+            update global_property
+            set property_value=concat(property_value, ',', 'org.openmrs.module.disa:info')
+            where property='log.level';
+        </sql>
+    </changeSet>
+
 </databaseChangeLog>
