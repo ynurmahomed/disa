@@ -2,9 +2,12 @@ package org.openmrs.module.disa.extension.util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.TimeZone;
 
 /**
  *
@@ -13,55 +16,52 @@ import java.util.TimeZone;
  */
 public class DateUtil {
 
-	private static Date parsedDate;
+	public static Date parseAtMidnight(String date) {
+		Instant instant = LocalDateTime.parse(date)
+				.with(LocalTime.MIDNIGHT)
+				.atZone(ZoneId.systemDefault())
+				.toInstant();
+		return Date.from(instant);
+	}
 
-	public static Date deserialize(String date) {
-
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
-		format.setTimeZone(TimeZone.getTimeZone("GMT"));
-
-		try {
-			parsedDate = format.parse(date);
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		return parsedDate;
+	public static Date toDate(LocalDateTime localDateTime) {
+		Instant instant = localDateTime
+				.atZone(ZoneId.systemDefault())
+				.toInstant();
+		return Date.from(instant);
 	}
 
 	public static Date stringToDate(String date) throws ParseException {
-	    return new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").parse(date);
-	}
-
-	public static Date string_To_Date(String date) throws ParseException {
-	    return new SimpleDateFormat("dd/MM/yyyy").parse(date);
+		return new SimpleDateFormat("dd/MM/yyyy").parse(date);
 	}
 
 	public static Date dateWithLeadingZeros() {
 		Calendar now = Calendar.getInstance();
-        now.set(Calendar.HOUR_OF_DAY, 0);
-        now.set(Calendar.MINUTE, 0);
-        now.set(Calendar.SECOND, 0);
-        now.set(Calendar.MILLISECOND, 0);
+		now.set(Calendar.HOUR_OF_DAY, 0);
+		now.set(Calendar.MINUTE, 0);
+		now.set(Calendar.SECOND, 0);
+		now.set(Calendar.MILLISECOND, 0);
 
-        return now.getTime();
+		return now.getTime();
 	}
 
 	public static boolean isValidDate(String inDate) {
 
-		if(inDate==null) return false;
+		if (inDate == null)
+			return false;
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        dateFormat.setLenient(false);
-        try {
-            dateFormat.parse(inDate.trim());
-        } catch (ParseException pe) {
-            return false;
-        }
-        return true;
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		dateFormat.setLenient(false);
+		try {
+			dateFormat.parse(inDate.trim());
+		} catch (ParseException pe) {
+			return false;
+		}
+		return true;
 	}
 
 	public static Date getDateWithoutTime() throws ParseException {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-	    return sdf.parse(sdf.format(new Date()));
+		return sdf.parse(sdf.format(new Date()));
 	}
 }
