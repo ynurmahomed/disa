@@ -89,18 +89,20 @@
 											</a>
 										</li>
 									</c:if>
-									<c:if test="${vlData.viralLoadStatus == 'NOT_PROCESSED'}">
+									<c:if test="${vlData.viralLoadStatus != 'PROCESSED'}">
 										<li>
 											<a href="${pageContext.request.contextPath}/module/disa/managelabresults/${vlData.requestId}/reallocate.form">
 												<spring:message code="disa.viralload.reallocate" />
 											</a>
 										</li>
 									</c:if>
-									<li>
-										<a href="#" data-requestid="${vlData.requestId}" class="delete-vl">
-											<spring:message code="disa.viralload.delete" />
-										</a>
-									</li>
+									<c:if test="${vlData.viralLoadStatus != 'PROCESSED'}">
+										<li>
+											<a href="#" data-requestid="${vlData.requestId}" class="delete-vl">
+												<spring:message code="disa.viralload.delete" />
+											</a>
+										</li>
+									</c:if>
 								</ul>
 							</td>
 						</tr>
