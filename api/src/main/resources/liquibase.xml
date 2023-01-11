@@ -47,4 +47,11 @@
         </sql>
     </changeSet>
 
+    <changeSet id="disa-2023-01-09-17:04" author="yassin">
+        <insert tableName="role_role">
+            <column name="parent_role">Data Manager</column>
+            <column name="child_role">Gestor de Disa Interoperabilidade</column>
+        </insert>
+    </changeSet>
+
 </databaseChangeLog>
