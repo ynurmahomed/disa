@@ -15,6 +15,7 @@ package org.openmrs.module.disa.api.db.hibernate;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -22,6 +23,7 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.openmrs.LocationAttribute;
+import org.openmrs.Patient;
 import org.openmrs.module.disa.FsrLog;
 import org.openmrs.module.disa.api.db.DisaDAO;
 
@@ -64,12 +66,47 @@ public class HibernateDisaDAO implements DisaDAO {
 	@Override
 	public List<LocationAttribute> getAllLocationAttribute(String valueReference) {
 		final String hql = "SELECT  l FROM LocationAttribute l WHERE l.valueReference = :valueReference AND l.voided = 0";
-		final Query query = this.getCurrentSession().createQuery(hql).setParameter("valueReference", valueReference); 
+		final Query query = this.getCurrentSession().createQuery(hql).setParameter("valueReference", valueReference);
 		return query.list();
 	}
 	
 	@Override
 	public Serializable saveFsrLog(FsrLog fsrLog) {
 		return this.getCurrentSession().save(fsrLog); 
+	}
+
+	@SuppressWarnings("rawtypes")
+	@Override
+	public boolean existsByRequestId(String requestId) {
+		final String hql = "SELECT f FROM FsrLog f WHERE f.requestId = :requestId ";
+		final Query query = this.getCurrentSession().createQuery(hql).setParameter("requestId", requestId);
+		List list=query.list();
+		return list!=null && !list.isEmpty();
+	}
+
+	@Override
+	public List<Integer> getPatientByNid(String identifier) {
+		final String sql = "SELECT distinct pi.patient_id FROM patient_identifier pi "
+		+ "INNER JOIN person pe ON pe.person_id = pi.patient_id "
+		+ "INNER JOIN patient p ON p.patient_id = p.patient_id "
+		+ "WHERE identifier = '"+identifier+"'" 
+		+ "AND pi.voided = 0 " 
+		+ "AND pe.voided = 0 " 
+		+ "AND p.voided = 0"; 
+		final Query query = this.sessionFactory.getCurrentSession().createSQLQuery(sql);
+		List<Object[]> objs = query.list();
+		List<Integer> patientIds = new ArrayList<Integer>();
+		
+		for (Object aux : objs) {
+			patientIds.add((Integer) aux);
+		}
+		return patientIds;
+	}
+
+	@Override
+	public List<Patient> getPatientByPatientId(Integer patientId) {
+		final String hql = "SELECT p FROM Patient p WHERE p.patientId = :patientId";
+		final Query query = this.getCurrentSession().createQuery(hql).setParameter("patientId", patientId);
+		return query.list();
 	}
 }

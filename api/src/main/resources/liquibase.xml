@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
- 
+
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
@@ -8,5 +8,50 @@
         See http://www.liquibase.org/manual/home#available_database_refactorings
         for a list of supported elements and attributes
     -->
-    
+
+    <changeSet id="disa-2022-11-29-10:41" author="yassin">
+        <insert tableName="privilege">
+            <column name="privilege">Manage VL Results</column>
+            <column name="description">Able to create, read, update and destroy DISA viral load results.</column>
+            <column name="uuid">d78d2826-f81c-4e55-a36a-3bf53d17e841</column>
+        </insert>
+    </changeSet>
+
+    <changeSet id="disa-2023-01-05-10:43" author="yassin">
+        <update tableName="privilege">
+            <column name="privilege">Gerir resultados no Disa Interoperabilidade</column>
+            <column name="description">Capaz de ler, actualizar e remover resultados de laboratório no Disa Interoperabilidade.</column>
+            <where>uuid = 'd78d2826-f81c-4e55-a36a-3bf53d17e841'</where>
+        </update>
+    </changeSet>
+
+    <changeSet id="disa-2023-01-05-11:19" author="yassin">
+        <insert tableName="role">
+            <column name="role">Gestor de Disa Interoperabilidade</column>
+            <column name="uuid">58674fae-cdc3-4bab-b4e7-ec1a5954cfd2</column>
+        </insert>
+    </changeSet>
+
+    <changeSet id="disa-2023-01-05-11:23" author="yassin">
+        <insert tableName="role_privilege">
+            <column name="role">Gestor de Disa Interoperabilidade</column>
+            <column name="privilege">Gerir resultados no Disa Interoperabilidade</column>
+        </insert>
+    </changeSet>
+
+    <changeSet id="disa-2023-01-06-12:51" author="yassin">
+        <sql>
+            update global_property
+            set property_value=concat(property_value, ',', 'org.openmrs.module.disa:info')
+            where property='log.level';
+        </sql>
+    </changeSet>
+
+    <changeSet id="disa-2023-01-09-17:04" author="yassin">
+        <insert tableName="role_role">
+            <column name="parent_role">Data Manager</column>
+            <column name="child_role">Gestor de Disa Interoperabilidade</column>
+        </insert>
+    </changeSet>
+
 </databaseChangeLog>

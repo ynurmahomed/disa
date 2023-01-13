@@ -14,8 +14,6 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpParams;
 
 public class RestUtil {
 
@@ -25,7 +23,7 @@ public class RestUtil {
 
 	/**
 	 * HTTP POST
-	 * 
+	 *
 	 * @param URLPath
 	 * @param input
 	 * @return
@@ -46,7 +44,7 @@ public class RestUtil {
 			httpPost.setEntity(input);
 			// System.out.println("Executing request: " + httpGet.getRequestLine());
 			// System.out.println(response);
-//            response = httpclient.execute(httpGet,responseHandler);
+			// response = httpclient.execute(httpGet,responseHandler);
 			HttpResponse responseRequest = httpclient.execute(httpPost);
 
 			if (responseRequest.getStatusLine().getStatusCode() != 204
@@ -65,14 +63,15 @@ public class RestUtil {
 
 	/**
 	 * HTTP PUT
-	 * 
+	 *
 	 * @param urlPathProcessed
 	 * @param sismaCodes
 	 * @param input
 	 * @return
 	 * @throws Exception
 	 */
-	public Boolean getRequestPutProcessed(String urlPathProcessed, String processedNid) throws Exception {
+	@SuppressWarnings({ "deprecation", "unused" })
+	public Boolean getRequestPutProcessed(String urlPathProcessed, String processedNid, String defaultLocationUuid) throws Exception {
 		String URL = URLBase + urlPathProcessed;
 		Boolean response = false;
 		DefaultHttpClient httpclient = new DefaultHttpClient();
@@ -80,13 +79,15 @@ public class RestUtil {
 
 			URIBuilder uriBuilder = new URIBuilder(URL);
 			uriBuilder.addParameter("processedNids", processedNid);
+			uriBuilder.addParameter("defaultLocationUuid", defaultLocationUuid);
 
 			HttpPut httpPut = new HttpPut(uriBuilder.build());
 			UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(username, password);
-		    Header authorizationHeader = BasicScheme.authenticate(credentials, "UTF-8", false);
+			BasicScheme scheme = new BasicScheme();
+			Header authorizationHeader = scheme.authenticate(credentials, httpPut);
 			httpPut.setHeader(authorizationHeader);
 
-			httpclient.execute(httpPut);
+			HttpResponse responseRequest = httpclient.execute(httpPut);
 
 			/*
 			 * if (responseRequest.getStatusLine().getStatusCode() != 204 &&
@@ -105,16 +106,17 @@ public class RestUtil {
 
 	/**
 	 * HTTP PUT
-	 * 
+	 *
 	 * @param urlPathNotProcessed
-	 * @param sismaCodes
+	 * @param notProcessed
 	 * @param reasonForNotProcessing
 	 * @param input
 	 * @return
 	 * @throws Exception
 	 */
+	@SuppressWarnings({ "deprecation", "unused" })
 	public Boolean getRequestPutNotProcessed(String urlPathNotProcessed, String processedNid,
-			String reasonForNotProcessing) throws Exception {
+			String reasonForNotProcessing, String defaultLocationUuid) throws Exception {
 		String URL = URLBase + urlPathNotProcessed;
 		Boolean response = false;
 		DefaultHttpClient httpclient = new DefaultHttpClient();
@@ -123,13 +125,15 @@ public class RestUtil {
 			URIBuilder uriBuilder = new URIBuilder(URL);
 			uriBuilder.addParameter("notProcessedNids", processedNid);
 			uriBuilder.addParameter("reasonForNotProcessing", reasonForNotProcessing);
+			uriBuilder.addParameter("defaultLocationUuid", defaultLocationUuid);
 
 			HttpPut httpPut = new HttpPut(uriBuilder.build());
 			UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(username, password);
-			Header authorizationHeader = BasicScheme.authenticate(credentials, "UTF-8", false);
+			BasicScheme scheme = new BasicScheme();
+			Header authorizationHeader = scheme.authenticate(credentials, httpPut);
 			httpPut.setHeader(authorizationHeader);
 
-			httpclient.execute(httpPut);
+			HttpResponse responseRequest = httpclient.execute(httpPut);
 
 			/*
 			 * if (responseRequest.getStatusLine().getStatusCode() != 204 &&
@@ -148,13 +152,14 @@ public class RestUtil {
 
 	/**
 	 * HTTP PUT
-	 * 
+	 *
 	 * @param urlPathPending
 	 * @param nids
 	 * @param input
 	 * @return
 	 * @throws Exception
 	 */
+	@SuppressWarnings("deprecation")
 	public Boolean getRequestPutPending(String urlPathPending, List<String> nids) throws Exception {
 		String URL = URLBase + urlPathPending;
 		Boolean response = false;
@@ -168,7 +173,8 @@ public class RestUtil {
 
 			HttpPut httpPut = new HttpPut(uriBuilder.build());
 			UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(username, password);
-			Header authorizationHeader = BasicScheme.authenticate(credentials, "UTF-8", false);
+			BasicScheme scheme = new BasicScheme();
+			Header authorizationHeader = scheme.authenticate(credentials, httpPut);
 			httpPut.setHeader(authorizationHeader);
 
 			httpclient.execute(httpPut);
@@ -183,7 +189,50 @@ public class RestUtil {
 
 	/**
 	 * HTTP GET
-	 * 
+	 *
+	 * @param URLPath
+	 * @return
+	 * @throws Exception
+	 */
+	@SuppressWarnings("deprecation")
+	public String getRequestGet(List<String> sismaCodes, String requestingProvinceName) throws Exception {
+		String URL = URLBase;
+		String response = "";
+		DefaultHttpClient httpclient = new DefaultHttpClient();
+		try {
+
+			URIBuilder uriBuilder = new URIBuilder(URL);
+			for (String sismaCode : sismaCodes) {
+				uriBuilder.addParameter("locationCodes", sismaCode);
+				uriBuilder.addParameter("requestingProvinceName", requestingProvinceName);
+			}
+
+			HttpGet httpGet = new HttpGet(uriBuilder.build());
+
+			UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(username, password);
+			BasicScheme scheme = new BasicScheme();
+			Header authorizationHeader = scheme.authenticate(credentials, httpGet);
+			httpGet.setHeader(authorizationHeader);
+			ResponseHandler<String> responseHandler = new BasicResponseHandler();
+
+			/*
+			 * HttpParams params = new BasicHttpParams();
+			 * params.setParameter("sismaCodes", sismaCodes);
+			 * params.setParameter("requestingProvinceName", requestingProvinceName);
+			 * httpclient.setParams(params);
+			 */
+
+			response = httpclient.execute(httpGet, responseHandler);
+
+		} finally {
+			httpclient.getConnectionManager().shutdown();
+		}
+		return response;
+	}
+
+	/**
+	 * HTTP GET
+	 *
 	 * @param URLPath
 	 * @return
 	 * @throws Exception
@@ -208,9 +257,13 @@ public class RestUtil {
 			httpGet.setHeader(authorizationHeader);
 			ResponseHandler<String> responseHandler = new BasicResponseHandler();
 
-			HttpParams params = new BasicHttpParams();
-			params.setParameter("sismaCodes", sismaCodes);
-			httpclient.setParams(params);
+			/*
+			 * HttpParams params = new BasicHttpParams();
+			 * params.setParameter("sismaCodes", sismaCodes);
+			 * params.setParameter("requestingProvinceName", requestingProvinceName);
+			 * httpclient.setParams(params);
+			 */
+
 			response = httpclient.execute(httpGet, responseHandler);
 
 		} finally {
@@ -221,7 +274,7 @@ public class RestUtil {
 
 	/**
 	 * HTTP GET
-	 * 
+	 *
 	 * @param sismaCodes
 	 * @param sismaCodes
 	 * @param URLPath
@@ -259,7 +312,7 @@ public class RestUtil {
 
 	/**
 	 * HTTP GET
-	 * 
+	 *
 	 * @param sismaCodes
 	 * @param sismaCodes
 	 * @param URLPath
@@ -298,17 +351,18 @@ public class RestUtil {
 		}
 		return response;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param urlPathProcessed
 	 * @param requestId
+	 * @param healthFacCodes
 	 * @return
 	 * @throws Exception
 	 */
 	@SuppressWarnings("deprecation")
-	public String getRequestByForm(String urlPathProcessed, String requestId, String nid, 
-			String vlSisma, String referringId, String vlState, String startDate, String endDate) throws Exception {
+	public String getRequestByForm(String urlPathProcessed, String requestId, String nid,
+			String referringId, String vlState, String startDate, String endDate, List<String> healthFacCodes) throws Exception {
 		String URL = URLBase + urlPathProcessed;
 		String response = "";
 		DefaultHttpClient httpclient = new DefaultHttpClient();
@@ -316,31 +370,29 @@ public class RestUtil {
 		try {
 
 			URIBuilder uriBuilder = new URIBuilder(URL);
-			
-			if(!requestId.isEmpty()) {
+
+			if (!requestId.isEmpty()) {
 				uriBuilder.addParameter("requestId", requestId);
 			}
-			
-			if(!nid.isEmpty()) {
+
+			if (!nid.isEmpty()) {
 				uriBuilder.addParameter("nid", nid);
 			}
-			
-			if(!vlSisma.isEmpty()) {
-				uriBuilder.addParameter("healthFacilityLabCode", vlSisma);
-			}
-			
-			if(!referringId.isEmpty()) {
+
+			uriBuilder.addParameters(GenericUtil.buildParamList(healthFacCodes));
+
+			if (!referringId.isEmpty()) {
 				uriBuilder.addParameter("referringRequestID", referringId);
 			}
-			
-			if(!vlState.isEmpty()) {
+
+			if (!vlState.isEmpty() && !vlState.equals(Constants.ALL)) {
 				uriBuilder.addParameter("viralLoadStatus", vlState);
 			}
-			
+
 			if (!startDate.isEmpty()) {
 				uriBuilder.addParameter("startDate", startDate);
 			}
-			
+
 			if (!endDate.isEmpty()) {
 				uriBuilder.addParameter("endDate", endDate);
 			}

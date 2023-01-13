@@ -17,6 +17,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.openmrs.LocationAttribute;
+import org.openmrs.Patient;
 import org.openmrs.module.disa.FsrLog;
 import org.openmrs.module.disa.api.DisaService;
 
@@ -31,5 +32,11 @@ public interface DisaDAO {
 	
 	public List<LocationAttribute> getAllLocationAttribute(String valueReference);
 	
-	public Serializable saveFsrLog(FsrLog fsrLog);  
+	public Serializable saveFsrLog(FsrLog fsrLog);
+	
+	public boolean existsByRequestId(String requestId);
+	
+	public List<Integer> getPatientByNid(String identifier);
+
+	public List<Patient> getPatientByPatientId(Integer patientId);
 }

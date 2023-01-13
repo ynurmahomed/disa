@@ -13,14 +13,14 @@
  */
 package org.openmrs.module.disa.api.impl;
 
-import org.openmrs.LocationAttribute;
-import org.openmrs.api.impl.BaseOpenmrsService;
-
 import java.io.Serializable;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.LocationAttribute;
+import org.openmrs.Patient;
+import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.disa.FsrLog;
 import org.openmrs.module.disa.api.DisaService;
 import org.openmrs.module.disa.api.db.DisaDAO;
@@ -52,9 +52,24 @@ public class DisaServiceImpl extends BaseOpenmrsService implements DisaService {
 	public List<LocationAttribute> getAllLocationAttribute(String valueReference) {
 		return dao.getAllLocationAttribute(valueReference);
 	}
-
+	
 	@Override
 	public Serializable saveFsrLog(FsrLog fsrLog) {
 		return dao.saveFsrLog(fsrLog); 
+	}
+
+	@Override
+	public boolean existsByRequestId(String requestId) {
+		return dao.existsByRequestId(requestId);
+	}
+
+	@Override
+	public List<Integer> getPatientByNid(String identifier) {
+		return dao.getPatientByNid(identifier);
+	}
+
+	@Override
+	public List<Patient>  getPatientByPatientId(Integer patientId) {
+		return dao.getPatientByPatientId(patientId); 
 	}
 }

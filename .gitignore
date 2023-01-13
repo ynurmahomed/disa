@@ -29,8 +29,5 @@ disa-api-integ/.mvn/*
 .classpath
 .project
 .settings/
+api/target/
 
-/target/**
-
-api/target/**
-omod/target/**
