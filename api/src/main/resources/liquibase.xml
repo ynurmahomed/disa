@@ -54,4 +54,26 @@
         </insert>
     </changeSet>
 
+    <changeSet id="disa-2023-01-19-16:14" author="yassin">
+        <insert tableName="privilege">
+            <column name="privilege">Pesquisar resultados no Disa Interoperabilidade</column>
+            <column name="description">Capaz de pesquisar resultados de laboratório no Disa Interoperabilidade.</column>
+            <column name="uuid">a06f8b06-3c08-48df-a1ed-7d11358f3401</column>
+        </insert>
+    </changeSet>
+
+    <changeSet id="disa-2023-01-19-16:20" author="yassin">
+        <delete tableName="role_role">
+            <where>parent_role = 'Data Manager' and child_role = 'Gestor de Disa Interoperabilidade'</where>
+        </delete>
+        <insert tableName="role_privilege">
+            <column name="role">Gestor de Disa Interoperabilidade</column>
+            <column name="privilege">Pesquisar resultados no Disa Interoperabilidade</column>
+        </insert>
+        <insert tableName="role_privilege">
+            <column name="role">Tecnico de Laboratorio</column>
+            <column name="privilege">Pesquisar resultados no Disa Interoperabilidade</column>
+        </insert>
+    </changeSet>
+
 </databaseChangeLog>
