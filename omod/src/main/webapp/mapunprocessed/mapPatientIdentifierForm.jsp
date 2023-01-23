@@ -14,7 +14,7 @@
 
 <script type="text/javascript">
 	$j(document).ready(function() {
-		$j('#vlResultsTable1').dataTable({
+		$j('#patientListTable').dataTable({
 			"iDisplayLength" : 10
 		});
 	})

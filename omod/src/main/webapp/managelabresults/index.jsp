@@ -53,7 +53,7 @@
 						<th><spring:message code="disa.status" /></th>
 						<th><spring:message code="disa.created.at" /></th>
 						<th><spring:message code="disa.updated.at" /></th>
-						<th><spring:message code="disa.not.processing.cause" /></th>
+						<th><spring:message code="disa.notProcessingCause" /></th>
 						<th><spring:message code="disa.manage.options" /></th>
 					</tr>
 				</thead>
@@ -77,7 +77,7 @@
 							<td>${vlData.updatedAt.substring(0,10)}</td>
 							<td>
 								<c:if test="${not empty vlData.notProcessingCause}">
-									<openmrs:message code="disa.${vlData.notProcessingCause}"/>
+									<openmrs:message code="disa.notProcessingCause.${vlData.notProcessingCause}"/>
 								</c:if>
 							</td>
 							<td>
@@ -88,10 +88,17 @@
 												<spring:message code="disa.viralload.reschedule" />
 											</a>
 										</li>
+										<c:if test="${vlData.notProcessingCause == 'NID_NOT_FOUND'}">
+											<li>
+												<a href='mapunprocessed/${vlData.requestId}.form'>
+													<spring:message code="disa.map.nid" />
+												</a>
+											</li>
+					        			</c:if>
 									</c:if>
 									<c:if test="${vlData.viralLoadStatus != 'PROCESSED'}">
 										<li>
-											<a href="${pageContext.request.contextPath}/module/disa/managelabresults/${vlData.requestId}/reallocate.form">
+											<a href="managelabresults/${vlData.requestId}/reallocate.form">
 												<spring:message code="disa.viralload.reallocate" />
 											</a>
 										</li>
