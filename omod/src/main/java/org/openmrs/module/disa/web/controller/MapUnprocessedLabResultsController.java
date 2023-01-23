@@ -3,39 +3,47 @@ package org.openmrs.module.disa.web.controller;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
 
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.disa.Disa;
-import org.openmrs.module.disa.extension.util.Constants;
-import org.openmrs.module.disa.web.delegate.ViralLoadResultsDelegate;
-import org.openmrs.module.disa.web.model.SearchForm;
+import org.openmrs.module.disa.web.delegate.DelegateException;
+import org.openmrs.module.disa.web.delegate.ManageVLResultsDelegate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.validation.BindingResult;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.RedirectView;
+import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @Controller
+@RequestMapping(value = "/module/disa/mapunprocessed")
+@SessionAttributes({ "requestId", "patientList", "lastSearchParams" })
 public class MapUnprocessedLabResultsController {
 
-	private ViralLoadResultsDelegate delegate;
+	private ManageVLResultsDelegate manageVLResultsDelegate;
 
-	public MessageSourceService messageSourceService;
+	private MessageSourceService messageSourceService;
+
+	@Autowired
+	public MapUnprocessedLabResultsController(ManageVLResultsDelegate manageVLResultsDelegate,
+			MessageSourceService messageSourceService) {
+		this.manageVLResultsDelegate = manageVLResultsDelegate;
+		this.messageSourceService = messageSourceService;
+	}
 
 	@InitBinder
 	public void initBinder(WebDataBinder binder) {
@@ -46,128 +54,87 @@ public class MapUnprocessedLabResultsController {
 		binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, true));
 	}
 
-	@Autowired
-	public void setMessageSourceService(MessageSourceService messageSourceService) {
-		this.messageSourceService = messageSourceService;
-	}
-
-	@RequestMapping(value = "/module/disa/mapunprocessed/viralLoadStatusList", method = RequestMethod.GET)
-	public void showViralLoadStatusList(ModelMap model) {
-		delegate = new ViralLoadResultsDelegate();
-		model.addAttribute("user", Context.getAuthenticatedUser());
-		model.addAttribute(new SearchForm());
-	}
-
-	@RequestMapping(value = "/module/disa/mapunprocessed/viralLoadStatusList", method = RequestMethod.POST)
-	public String showViralLoadList(
-			@Valid SearchForm searchForm,
-			BindingResult result,
+	@RequestMapping(value = "/{requestId}", method = RequestMethod.GET)
+	public String patientIdentifierMapping(
+			@PathVariable String requestId,
 			ModelMap model,
-			HttpServletRequest request,
-			HttpSession session) throws Exception {
+			HttpServletRequest request)
+			throws DelegateException {
 
-		if (result.hasErrors()) {
-			return "/module/disa/mapunprocessed/viralLoadStatusList";
+		Disa disa = manageVLResultsDelegate.getViralLoad(requestId);
+
+		// If there isn't a requestId in the session or there is a different requestId,
+		// load a new patient list.
+		if (!model.containsAttribute("requestId")
+				|| (!model.get("requestId").equals(requestId))) {
+			model.addAttribute("requestId", requestId);
+			model.addAttribute("patientList", manageVLResultsDelegate.findPatientsByDisa(disa));
 		}
 
-		session.setAttribute("vlState", Constants.NOT_PROCESSED);
-		session.setAttribute("startDate", searchForm.getStartDate());
-		session.setAttribute("endDate", searchForm.getEndDate());
-
-		return "redirect:viralLoadResultsList.form";
-	}
-
-	@RequestMapping(value = "/module/disa/mapunprocessed/viralLoadResultsList", method = RequestMethod.GET)
-	public void showViralLoadResultList(HttpServletRequest request, HttpSession session, ModelMap model,
-			@RequestParam(required = false, value = "openmrs_msg") String openmrs_msg) throws Exception {
-
-		String vlState = (String) session.getAttribute("vlState");
-		Date startDate = (Date) session.getAttribute("startDate");
-		Date endDate = (Date) session.getAttribute("endDate");
-
-		List<Disa> vlDataLst = delegate.getViralLoadDataList(startDate, endDate, vlState);
-		session.setAttribute("vlDataLst", vlDataLst);
-		session.setAttribute("openmrs_msg", openmrs_msg);
-	}
-
-	@SuppressWarnings("unchecked")
-	@RequestMapping(value = "/module/disa/mapunprocessed/viralLoadResultsList", method = RequestMethod.POST)
-	public void downloadExcelFile(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		List<Disa> vlDataLst = (List<Disa>) request.getSession().getAttribute("vlDataLst");
-		delegate.createExcelFile(vlDataLst, response, messageSourceService);
-	}
-
-	@SuppressWarnings({ "unchecked" })
-	@RequestMapping(value = "/module/disa/mapunprocessed/mapPatientIdentifierForm", method = RequestMethod.GET)
-	public void patientIdentifierMapping(@ModelAttribute("patient") Patient patient, HttpSession session,
-			HttpServletRequest request,
-			@RequestParam(required = false, value = "errorPatientRequired") String errorPatientRequired,
-			@RequestParam(required = false, value = "errorSelectPatient") String errorSelectPatient) {
-
-		String nid = (String) request.getParameter("nid");
-		List<Patient> matchingPatients = null;
-
-		if (nid == null) {
-			nid = (String) session.getAttribute("nid");
-			matchingPatients = (List<Patient>) session.getAttribute("patients");
+		// Build uri back to search results with used parameters.
+		ServletUriComponentsBuilder builder = ServletUriComponentsBuilder.fromServletMapping(request);
+		if (model.containsAttribute("lastSearchParams")) {
+			@SuppressWarnings("unchecked")
+			MultiValueMap<String, String> params = (MultiValueMap<String, String>) model.get("lastSearchParams");
+			builder.queryParams(params);
 		}
+		String searchUri = builder
+				.pathSegment("module", "disa", "managelabresults.form")
+				.build()
+				.toUriString();
 
-		List<Disa> vlDataLst = (List<Disa>) session.getAttribute("vlDataLst");
-		Disa selectedPatient = null;
-		for (Disa disa : vlDataLst) {
-			if (disa.getNid().equals(nid)) {
-				selectedPatient = disa;
-				break;
-			}
-		}
+		model.addAttribute("lastSearchUri", searchUri);
+		model.addAttribute(disa);
 
-		if (matchingPatients == null) {
-			matchingPatients = delegate.getPatients(selectedPatient);
-		}
-
-		session.setAttribute("selectedPatient", selectedPatient);
-		session.setAttribute("patients", matchingPatients);
-		session.setAttribute("nid", nid);
-		session.setAttribute("errorPatientRequired", errorPatientRequired);
-		session.setAttribute("errorSelectPatient", errorSelectPatient);
+		return "/module/disa/mapunprocessed/mapPatientIdentifierForm";
 	}
 
-	@RequestMapping(value = "/module/disa/mapunprocessed/mapPatientIdentifierForm", method = RequestMethod.POST)
-	public ModelAndView mapPatientIdentifier(HttpServletRequest request, HttpSession session,
-			@RequestParam(required = false, value = "patientUuid") String patientUuid) throws Exception {
+	@RequestMapping(value = "/{requestId}", method = RequestMethod.POST)
+	public String mapPatientIdentifier(
+			@PathVariable String requestId,
+			@RequestParam(required = false) String patientUuid,
+			ModelMap model,
+			RedirectAttributes redirectAttrs) throws DelegateException {
 
-		ModelAndView modelAndView = new ModelAndView(
-				new RedirectView(request.getContextPath() + "/module/disa/mapunprocessed/mapPatientIdentifierForm.form"));
+		Disa disa = manageVLResultsDelegate.getViralLoad(requestId);
 
 		if (patientUuid == null) {
-			modelAndView.addObject("errorSelectPatient", "disa.select.patient");
-			return modelAndView;
+			model.addAttribute(disa);
+			model.addAttribute("errorSelectPatient", "disa.select.patient");
+			return "/module/disa/mapunprocessed/mapPatientIdentifierForm";
+		} else {
+
+			manageVLResultsDelegate.doMapIdentifier(patientUuid, disa);
+			String mapSuccessfulMsg = messageSourceService.getMessage("disa.viralload.map.successful", null,
+					Context.getLocale());
+
+			if (model.containsAttribute("lastSearchParams")) {
+				@SuppressWarnings("unchecked")
+				Map<String, String> lastSearchParams = (Map<String, String>) model.get("lastSearchParams");
+				redirectAttrs.addAllAttributes(lastSearchParams);
+			}
+
+			redirectAttrs.addFlashAttribute("flashMessage", mapSuccessfulMsg);
 		}
 
-		String nidDisa = (String) session.getAttribute("nid");
-		Disa selectedPatient = (Disa) session.getAttribute("selectedPatient");
-		delegate.doMapIdentifier(patientUuid, nidDisa, selectedPatient.getRequestId());
-
-		return new ModelAndView(new RedirectView(request.getContextPath() + "/module/disa/mapunprocessed/viralLoadResultsList.form"));
+		return "redirect:/module/disa/managelabresults.form";
 	}
 
-	@SuppressWarnings({ "unchecked" })
-	@RequestMapping(value = "/module/disa/mapunprocessed/addPatient.form", method = RequestMethod.POST)
-	public ModelAndView addPatient(@ModelAttribute("patient") Patient patient, BindingResult result,
-			HttpServletRequest request, HttpSession session) throws Exception {
+	@RequestMapping(value = "/{requestId}/addPatient", method = RequestMethod.POST)
+	public String addPatient(
+			@PathVariable String requestId,
+			@ModelAttribute("patient") Patient patient,
+			@ModelAttribute("patientList") List<Patient> patients,
+			ModelMap model,
+			RedirectAttributes redirectAttrs) {
 
-		ModelAndView model = new ModelAndView(
-				new RedirectView(request.getContextPath() + "/module/disa/mapunprocessed/mapPatientIdentifierForm.form"));
 		if (patient.getId() == null) {
-			model.addObject("errorPatientRequired", "disa.error.patient.required");
-			return model;
+			redirectAttrs.addFlashAttribute("errorPatientRequired", "disa.error.patient.required");
+		} else {
+			manageVLResultsDelegate.addPatientToList(patients, patient);
+			model.addAttribute("patientList", patients);
 		}
 
-		List<Patient> patients = (List<Patient>) session.getAttribute("patients");
-		delegate.addPatientToList(patients, patient);
-
-		session.setAttribute("patients", patients);
-
-		return model;
+		return "redirect:/module/disa/mapunprocessed/" + requestId + ".form";
 	}
 }

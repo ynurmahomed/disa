@@ -35,7 +35,7 @@
 <c:if test="${not empty disaList}">
 	<div>
 		<div class="box">
-			<table  id="vlResultsTable" style="width:100%; font-size:12px;">
+			<table  id="vlResultsTable" class="vlResultsTable" style="width:100%; font-size:12px;">
 				<thead>
 					<tr>
 						<th><spring:message code="disa.requesting.facility.name"/></th>

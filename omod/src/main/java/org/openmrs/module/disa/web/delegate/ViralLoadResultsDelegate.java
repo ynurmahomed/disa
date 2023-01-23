@@ -94,47 +94,6 @@ public class ViralLoadResultsDelegate {
 				searchForm.getEndDate(), hfCodes);
 	}
 
-	public List<Patient> getPatients(Disa selectedPatient) {
-		return Context.getPatientService()
-				.getPatients(selectedPatient.getFirstName() + " " + selectedPatient.getLastName(), null, null,
-						Boolean.FALSE);
-	}
-
-	public void addPatientToList(List<Patient> patients, Patient patient) {
-
-		Patient patientToAdd = Context.getPatientService().getPatient(patient.getId());
-		if (!patients.contains(patientToAdd)) {
-			// TODO This is a workaround to LazyInitialization error when getting
-			// identifiers from patient on jsp
-			Set<PatientIdentifier> identifiers = new TreeSet<PatientIdentifier>();
-			identifiers.add(patientToAdd.getPatientIdentifier());
-			patientToAdd.setIdentifiers(identifiers);
-			patients.add(patientToAdd);
-		}
-	}
-
-	public void doMapIdentifier(String patientUuid, String nidDisa, String requestId) throws Exception {
-		Patient patient = Context.getPatientService().getPatientByUuid(patientUuid);
-		PatientIdentifier patientIdentifier = new PatientIdentifier();
-		PatientIdentifierType identifierType = Context.getPatientService()
-				.getPatientIdentifierTypeByUuid(Constants.DISA_NID);
-		List<PatientIdentifierType> patientIdentifierTypes = new ArrayList<PatientIdentifierType>();
-		patientIdentifierTypes.add(identifierType);
-
-		List<PatientIdentifier> patIdentidier = Context.getPatientService().getPatientIdentifiers(nidDisa,
-				patientIdentifierTypes, null, null, null);
-		if (patIdentidier.isEmpty()) {
-
-			rest.getRequestPutPending("/pending", new ArrayList<String>(Arrays.asList(requestId)));
-
-			patientIdentifier.setPatient(patient);
-			patientIdentifier.setIdentifier(nidDisa);
-			patientIdentifier.setIdentifierType(identifierType);
-			patientIdentifier.setLocation(Context.getLocationService().getDefaultLocation());
-			Context.getPatientService().savePatientIdentifier(patientIdentifier);
-		}
-	}
-
 	public void createExcelFile(List<Disa> listDisa, HttpServletResponse response,
 			MessageSourceService messageSourceService) throws Exception {
 		Locale locale = Context.getLocale();
