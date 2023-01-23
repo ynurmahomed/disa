@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -15,19 +14,16 @@ import javax.validation.Valid;
 import org.openmrs.api.context.Context;
 import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.disa.Disa;
-import org.openmrs.module.disa.OrgUnit;
 import org.openmrs.module.disa.extension.util.Constants;
 import org.openmrs.module.disa.web.delegate.DelegateException;
 import org.openmrs.module.disa.web.delegate.ManageVLResultsDelegate;
 import org.openmrs.module.disa.web.delegate.ViralLoadResultsDelegate;
-import org.openmrs.module.disa.web.model.ReallocateForm;
 import org.openmrs.module.disa.web.model.SearchForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.validation.BindingResult;
@@ -40,11 +36,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @Controller
-@RequestMapping(value = "/module/disa/managelabresults")
+@RequestMapping("/module/disa/managelabresults")
 public class ManageLabResultsController {
 
     private ManageVLResultsDelegate manageVLResultsDelegate;
@@ -122,62 +117,6 @@ public class ManageLabResultsController {
         this.manageVLResultsDelegate.updateViralLoad(requestId, disa);
     }
 
-    @RequestMapping(value = "/{requestId}/reallocate", method = RequestMethod.GET)
-    public String reallocateForm(
-            @PathVariable String requestId,
-            ModelMap model,
-            SearchForm searchForm,
-            HttpSession session) throws DelegateException {
-
-        Disa vl = this.manageVLResultsDelegate.getViralLoad(requestId);
-        OrgUnit orgUnit = this.manageVLResultsDelegate.getOrgUnit(vl.getHealthFacilityLabCode());
-
-        model.addAttribute(new ReallocateForm());
-        model.addAttribute(orgUnit);
-
-        return "/module/disa/managelabresults/reallocate";
-    }
-
-    @RequestMapping(value = "/{requestId}/reallocate", method = RequestMethod.POST)
-    public String reallocate(@PathVariable String requestId,
-            @Valid @ModelAttribute ReallocateForm reallocateForm,
-            BindingResult result,
-            ModelMap model,
-            HttpSession session,
-            RedirectAttributes redirectAttrs) throws DelegateException {
-
-        if (result.hasErrors()) {
-            Disa vl = this.manageVLResultsDelegate.getViralLoad(requestId);
-            OrgUnit orgUnit = this.manageVLResultsDelegate.getOrgUnit(vl.getHealthFacilityLabCode());
-            model.addAttribute(reallocateForm);
-            model.addAttribute(orgUnit);
-            return "/module/disa/managelabresults/reallocate";
-        }
-
-        OrgUnit orgUnit = this.manageVLResultsDelegate.getOrgUnit(reallocateForm.getHealthFacilityLabCode());
-
-        Disa update = new Disa();
-        update.setHealthFacilityLabCode(orgUnit.getCode());
-        update.setRequestingFacilityName(orgUnit.getFacility());
-        update.setRequestingDistrictName(orgUnit.getDistrict());
-        update.setRequestingProvinceName(orgUnit.getProvince());
-        update.setViralLoadStatus("PENDING");
-
-        this.manageVLResultsDelegate.updateViralLoad(requestId, update);
-
-        @SuppressWarnings("unchecked")
-        Map<String, String> params = ((Map<String, String>) session.getAttribute("lastSearchParams"));
-        redirectAttrs.addAllAttributes(params);
-        redirectAttrs.addFlashAttribute("flashMessage", getReallocatedMessage(requestId, update));
-        return "redirect:/module/disa/managelabresults.form";
-    }
-
-    @RequestMapping(value = "/orgunits/search", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.OK)
-    public List<OrgUnit> searchOrgUnits(@RequestParam String term, Model model) throws DelegateException {
-        return this.manageVLResultsDelegate.searchOrgUnits(term);
-    }
-
     /**
      * Populates SISMA code dropdown options.
      */
@@ -193,9 +132,11 @@ public class ManageLabResultsController {
         model.addAttribute("sismaCodes", sismaCodesTodos);
     }
 
-    private String getReallocatedMessage(String requestId, Disa update) {
-        Object[] args = new Object[] { requestId, update.getRequestingFacilityName(),
-                update.getHealthFacilityLabCode() };
-        return messageSourceService.getMessage("disa.viralload.reallocate.successful", args, Context.getLocale());
+    @ModelAttribute("pageTitle")
+    private void setPageTitle(ModelMap model) {
+        String openMrs = messageSourceService.getMessage("openmrs.title", null, Context.getLocale());
+        String pageTitle = messageSourceService.getMessage("disa.list.viral.load.results.manage", null,
+                Context.getLocale());
+        model.addAttribute("pageTitle", openMrs + " - " + pageTitle);
     }
 }

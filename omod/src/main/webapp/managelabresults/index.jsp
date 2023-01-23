@@ -7,8 +7,6 @@
 <openmrs:htmlInclude
 	file="/scripts/jquery/dataTables/css/dataTables_jui.css" />
 
-<%@ include file="../template/localHeader.jsp" %>
-
 <h2>
 	<openmrs:message code="disa.list.viral.load.results.manage" />
 </h2>
@@ -90,7 +88,7 @@
 										</li>
 										<c:if test="${vlData.notProcessingCause == 'NID_NOT_FOUND'}">
 											<li>
-												<a href='mapunprocessed/${vlData.requestId}.form'>
+												<a href='managelabresults/${vlData.requestId}/map.form'>
 													<spring:message code="disa.map.nid" />
 												</a>
 											</li>

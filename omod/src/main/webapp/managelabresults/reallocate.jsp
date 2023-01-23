@@ -6,45 +6,7 @@
 
 <openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/css/disa.css"/>
 <openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/css/selectize.legacy.css" />
-<openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/css/carbon-grid-11.17.0-min.css" />
-<openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/js/selectize.min.js" />
 
-<%@ include file="../template/localHeader.jsp"%>
-
-<script type="text/javascript">
-    $j(document).ready(() => {
-
-        $j(".facility-search").selectize({
-            placeholder: '<spring:message code="disa.viralload.reallocate.select.placeholder" htmlEscape="false"/>',
-            plugins: ["clear_button"],
-            load: async (term, callback) => {
-                let results = [];
-
-                if (!term.length) return callback(results);
-
-                try {
-                    document.body.style.cursor = 'wait';
-                    const url = `/openmrs/module/disa/managelabresults/orgunits/search.form?term=\${term}`;
-                    const fetchResponse = await fetch(url);
-                    if (fetchResponse.status !== 200) {
-                        throw new Error(`Search was not successful.`);
-                    }
-                    const data = await fetchResponse.json();
-                    results = data.map((r) => ({
-                        text: `\${r.province} > \${r.district} > \${r.facility}`,
-                        value: r.code
-                    }));
-                } catch (error) {
-                    console.log(error);
-                } finally {
-                    document.body.style.cursor = 'default';
-                    callback(results);
-                }
-            }
-
-        });
-    })
-</script>
 
 <h2><openmrs:message code="disa.list.viral.load.results.manage"/></h2>
 <br />
@@ -78,5 +40,41 @@
     </fieldset>
 </form:form>
 
+<openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/js/selectize.min.js" />
+
+<script type="text/javascript">
+    $j(document).ready(() => {
+
+        $j(".facility-search").selectize({
+            placeholder: '<spring:message code="disa.viralload.reallocate.select.placeholder" htmlEscape="false"/>',
+            plugins: ["clear_button"],
+            load: async (term, callback) => {
+                let results = [];
+
+                if (!term.length) return callback(results);
+
+                try {
+                    document.body.style.cursor = 'wait';
+                    const url = `/openmrs/module/disa/orgunits/search.form?term=\${term}`;
+                    const fetchResponse = await fetch(url);
+                    if (fetchResponse.status !== 200) {
+                        throw new Error(`Search was not successful.`);
+                    }
+                    const data = await fetchResponse.json();
+                    results = data.map((r) => ({
+                        text: `\${r.province} > \${r.district} > \${r.facility}`,
+                        value: r.code
+                    }));
+                } catch (error) {
+                    console.log(error);
+                } finally {
+                    document.body.style.cursor = 'default';
+                    callback(results);
+                }
+            }
+
+        });
+    })
+</script>
 
 <%@ include file="/WEB-INF/template/footer.jsp"%>

@@ -30,7 +30,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @Controller
-@RequestMapping(value = "/module/disa/mapunprocessed")
+@RequestMapping("/module/disa/managelabresults/{requestId}/map")
 @SessionAttributes({ "requestId", "patientList", "lastSearchParams" })
 public class MapUnprocessedLabResultsController {
 
@@ -54,7 +54,7 @@ public class MapUnprocessedLabResultsController {
 		binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, true));
 	}
 
-	@RequestMapping(value = "/{requestId}", method = RequestMethod.GET)
+	@RequestMapping(value = "", method = RequestMethod.GET)
 	public String patientIdentifierMapping(
 			@PathVariable String requestId,
 			ModelMap model,
@@ -86,10 +86,10 @@ public class MapUnprocessedLabResultsController {
 		model.addAttribute("lastSearchUri", searchUri);
 		model.addAttribute(disa);
 
-		return "/module/disa/mapunprocessed/mapPatientIdentifierForm";
+		return "/module/disa/managelabresults/map";
 	}
 
-	@RequestMapping(value = "/{requestId}", method = RequestMethod.POST)
+	@RequestMapping(value = "", method = RequestMethod.POST)
 	public String mapPatientIdentifier(
 			@PathVariable String requestId,
 			@RequestParam(required = false) String patientUuid,
@@ -101,7 +101,7 @@ public class MapUnprocessedLabResultsController {
 		if (patientUuid == null) {
 			model.addAttribute(disa);
 			model.addAttribute("errorSelectPatient", "disa.select.patient");
-			return "/module/disa/mapunprocessed/mapPatientIdentifierForm";
+			return "/module/disa/managelabresults/map";
 		} else {
 
 			manageVLResultsDelegate.doMapIdentifier(patientUuid, disa);
@@ -120,7 +120,7 @@ public class MapUnprocessedLabResultsController {
 		return "redirect:/module/disa/managelabresults.form";
 	}
 
-	@RequestMapping(value = "/{requestId}/addPatient", method = RequestMethod.POST)
+	@RequestMapping(value = "/addPatient", method = RequestMethod.POST)
 	public String addPatient(
 			@PathVariable String requestId,
 			@ModelAttribute("patient") Patient patient,
@@ -135,6 +135,13 @@ public class MapUnprocessedLabResultsController {
 			model.addAttribute("patientList", patients);
 		}
 
-		return "redirect:/module/disa/mapunprocessed/" + requestId + ".form";
+		return "redirect:/module/disa/" + requestId + "/map.form";
+	}
+
+	@ModelAttribute("pageTitle")
+	private void setPageTitle(ModelMap model) {
+		String openMrs = messageSourceService.getMessage("openmrs.title", null, Context.getLocale());
+		String pageTitle = messageSourceService.getMessage("disa.map.identifiers", null, Context.getLocale());
+		model.addAttribute("pageTitle", openMrs + " - " + pageTitle);
 	}
 }

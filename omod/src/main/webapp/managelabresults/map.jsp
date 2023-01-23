@@ -5,20 +5,8 @@
 
 <openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/css/disa.css"/>
 
-<%@ include file="../template/localHeader.jsp"%>
-
 <openmrs:htmlInclude
 	file="/scripts/jquery/dataTables/css/dataTables_jui.css" />
-<openmrs:htmlInclude
-	file="/scripts/jquery/dataTables/js/jquery.dataTables.min.js" />
-
-<script type="text/javascript">
-	$j(document).ready(function() {
-		$j('#patientListTable').dataTable({
-			"iDisplayLength" : 10
-		});
-	})
-</script>
 
 <h2>
 	<openmrs:message code="disa.map.identifiers"/>
@@ -53,7 +41,7 @@
 		<spring:message code="disa.openmrs.list.patients" />
 	</b>
 	<div class="box">
-		<form method="post" action="${requestId}/addPatient.form">
+		<form method="post" action="map/addPatient.form">
 			<spring:message code="general.search" />:
 			<openmrs_tag:patientField formFieldName="patientId"
 				searchLabelCode="Patient.find" linkUrl="" callback="" allowSearch="true" />
@@ -114,5 +102,16 @@
 	</form>
 	</div>
 </div>
+
+<openmrs:htmlInclude
+	file="/scripts/jquery/dataTables/js/jquery.dataTables.min.js" />
+
+<script type="text/javascript">
+	$j(document).ready(function() {
+		$j('#patientListTable').dataTable({
+			"iDisplayLength" : 10
+		});
+	})
+</script>
 
 <%@ include file="/WEB-INF/template/footer.jsp"%>
