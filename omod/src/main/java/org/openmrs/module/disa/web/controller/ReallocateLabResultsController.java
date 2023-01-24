@@ -9,6 +9,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.disa.Disa;
 import org.openmrs.module.disa.OrgUnit;
+import org.openmrs.module.disa.api.OrgUnitService;
 import org.openmrs.module.disa.web.delegate.DelegateException;
 import org.openmrs.module.disa.web.delegate.ManageVLResultsDelegate;
 import org.openmrs.module.disa.web.model.ReallocateForm;
@@ -27,13 +28,19 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping("/module/disa/managelabresults/{requestId}/reallocate")
 public class ReallocateLabResultsController {
 
+    private OrgUnitService orgUnitService;
+
     private ManageVLResultsDelegate manageVLResultsDelegate;
 
     private MessageSourceService messageSourceService;
 
     @Autowired
-    public ReallocateLabResultsController(ManageVLResultsDelegate manageVLResultsDelegate,
+    public ReallocateLabResultsController(
+            OrgUnitService orgUnitService,
+            ManageVLResultsDelegate manageVLResultsDelegate,
             MessageSourceService messageSourceService) {
+
+        this.orgUnitService = orgUnitService;
         this.manageVLResultsDelegate = manageVLResultsDelegate;
         this.messageSourceService = messageSourceService;
     }
@@ -46,7 +53,7 @@ public class ReallocateLabResultsController {
             HttpSession session) throws DelegateException {
 
         Disa vl = this.manageVLResultsDelegate.getViralLoad(requestId);
-        OrgUnit orgUnit = this.manageVLResultsDelegate.getOrgUnit(vl.getHealthFacilityLabCode());
+        OrgUnit orgUnit = orgUnitService.getOrgUnitByCode(vl.getHealthFacilityLabCode());
 
         model.addAttribute(new ReallocateForm());
         model.addAttribute(orgUnit);
@@ -64,13 +71,13 @@ public class ReallocateLabResultsController {
 
         if (result.hasErrors()) {
             Disa vl = this.manageVLResultsDelegate.getViralLoad(requestId);
-            OrgUnit orgUnit = this.manageVLResultsDelegate.getOrgUnit(vl.getHealthFacilityLabCode());
+            OrgUnit orgUnit = orgUnitService.getOrgUnitByCode(vl.getHealthFacilityLabCode());
             model.addAttribute(reallocateForm);
             model.addAttribute(orgUnit);
             return "/module/disa/managelabresults/reallocate";
         }
 
-        OrgUnit orgUnit = this.manageVLResultsDelegate.getOrgUnit(reallocateForm.getHealthFacilityLabCode());
+        OrgUnit orgUnit = orgUnitService.getOrgUnitByCode(reallocateForm.getHealthFacilityLabCode());
 
         Disa update = new Disa();
         update.setHealthFacilityLabCode(orgUnit.getCode());
@@ -95,9 +102,10 @@ public class ReallocateLabResultsController {
     }
 
     @ModelAttribute("pageTitle")
-	private void setPageTitle(ModelMap model) {
-		String openMrs = messageSourceService.getMessage("openmrs.title", null, Context.getLocale());
-		String pageTitle = messageSourceService.getMessage("disa.viralload.reallocate.title", null, Context.getLocale());
-		model.addAttribute("pageTitle", openMrs + " - " + pageTitle);
-	}
+    private void setPageTitle(ModelMap model) {
+        String openMrs = messageSourceService.getMessage("openmrs.title", null, Context.getLocale());
+        String pageTitle = messageSourceService.getMessage("disa.viralload.reallocate.title", null,
+                Context.getLocale());
+        model.addAttribute("pageTitle", openMrs + " - " + pageTitle);
+    }
 }

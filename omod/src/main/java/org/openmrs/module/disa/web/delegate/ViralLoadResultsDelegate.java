@@ -30,7 +30,7 @@ import org.openmrs.PatientIdentifierType;
 import org.openmrs.api.context.Context;
 import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.disa.Disa;
-import org.openmrs.module.disa.extension.util.Constants;
+import org.openmrs.module.disa.api.util.Constants;
 import org.openmrs.module.disa.extension.util.RestUtil;
 import org.openmrs.module.disa.web.model.SearchForm;
 import org.slf4j.Logger;

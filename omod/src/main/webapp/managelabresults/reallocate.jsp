@@ -58,7 +58,7 @@
                     const url = `/openmrs/module/disa/orgunits/search.form?term=\${term}`;
                     const fetchResponse = await fetch(url);
                     if (fetchResponse.status !== 200) {
-                        throw new Error(`Search was not successful.`);
+                        throw new Error(`Org unit search was not successful.`);
                     }
                     const data = await fetchResponse.json();
                     results = data.map((r) => ({
@@ -67,6 +67,7 @@
                     }));
                 } catch (error) {
                     console.log(error);
+                    // TODO should alert the user?
                 } finally {
                     document.body.style.cursor = 'default';
                     callback(results);

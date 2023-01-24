@@ -30,7 +30,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.disa.Disa;
 import org.openmrs.module.disa.FsrLog;
 import org.openmrs.module.disa.api.DisaService;
-import org.openmrs.module.disa.extension.util.Constants;
+import org.openmrs.module.disa.api.util.Constants;
 import org.openmrs.module.disa.extension.util.DateUtil;
 import org.openmrs.module.disa.extension.util.GenericUtil;
 import org.openmrs.module.disa.extension.util.RestUtil;

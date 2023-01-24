@@ -160,7 +160,7 @@
 			}
 		} catch (error) {
 			console.error(error);
-			alert("<spring:message code='disa.viralload.delete.error'/>");
+			alert("<spring:message code='disa.unexpected.error'/>");
 		} finally {
 			document.body.style.cursor = 'default';
 		}
@@ -184,7 +184,7 @@
 					}
 				} catch (error) {
 					console.error(error);
-					alert("<spring:message code='disa.viralload.delete.error'/>");
+					alert("<spring:message code='disa.unexpected.error'/>");
 				} finally {
 					document.body.style.cursor = 'default';
 				}

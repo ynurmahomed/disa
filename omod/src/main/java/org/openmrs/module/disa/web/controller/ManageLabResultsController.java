@@ -14,7 +14,7 @@ import javax.validation.Valid;
 import org.openmrs.api.context.Context;
 import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.disa.Disa;
-import org.openmrs.module.disa.extension.util.Constants;
+import org.openmrs.module.disa.api.util.Constants;
 import org.openmrs.module.disa.web.delegate.DelegateException;
 import org.openmrs.module.disa.web.delegate.ManageVLResultsDelegate;
 import org.openmrs.module.disa.web.delegate.ViralLoadResultsDelegate;

@@ -3,32 +3,47 @@ package org.openmrs.module.disa.web.controller;
 import java.util.List;
 
 import org.openmrs.module.disa.OrgUnit;
-import org.openmrs.module.disa.web.delegate.DelegateException;
-import org.openmrs.module.disa.web.delegate.ManageVLResultsDelegate;
+import org.openmrs.module.disa.api.DisaModuleAPIException;
+import org.openmrs.module.disa.api.OrgUnitService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+// TODO Should be an OpenMRS rest web service
+@RestController
 @RequestMapping("/module/disa/orgunits")
 public class OrgUnitsController {
 
-    private ManageVLResultsDelegate manageVLResultsDelegate;
+    private static final Logger log = LoggerFactory.getLogger(OrgUnitsController.class);
+
+    private OrgUnitService orgUnitService;
 
     @Autowired
-    public OrgUnitsController(ManageVLResultsDelegate manageVLResultsDelegate) {
-        this.manageVLResultsDelegate = manageVLResultsDelegate;
+    public OrgUnitsController(OrgUnitService orgUnitService) {
+        this.orgUnitService = orgUnitService;
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.OK)
-    public List<OrgUnit> searchOrgUnits(@RequestParam String term, Model model) throws DelegateException {
-        return this.manageVLResultsDelegate.searchOrgUnits(term);
+    public List<OrgUnit> searchOrgUnits(@RequestParam String term) {
+        return orgUnitService.searchOrgUnits(term);
+    }
+
+    /*
+     * Whenever an DisaModuleAPIException is thrown return an
+     * HttpStatus.INTERNAL_SERVER_ERROR.
+     * This facilitates error handling on the client side.
+     */
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(DisaModuleAPIException.class)
+    public void handlAPIException(DisaModuleAPIException e) {
+        log.error("", e);
     }
 }
