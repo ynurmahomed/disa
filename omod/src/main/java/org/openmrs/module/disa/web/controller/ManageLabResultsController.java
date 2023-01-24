@@ -1,9 +1,7 @@
 package org.openmrs.module.disa.web.controller;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,15 +18,12 @@ import org.openmrs.module.disa.web.delegate.ManageVLResultsDelegate;
 import org.openmrs.module.disa.web.delegate.ViralLoadResultsDelegate;
 import org.openmrs.module.disa.web.model.SearchForm;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -51,15 +46,6 @@ public class ManageLabResultsController {
             MessageSourceService messageSourceService) {
         this.manageVLResultsDelegate = manageVLResultsDelegate;
         this.messageSourceService = messageSourceService;
-    }
-
-    @InitBinder
-    public void initBinder(WebDataBinder binder) {
-        SimpleDateFormat dateFormat = Context.getDateFormat();
-        // true passed to CustomDateEditor constructor means convert empty String to
-        // null
-        // TODO configure this editor globally
-        binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, true));
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)

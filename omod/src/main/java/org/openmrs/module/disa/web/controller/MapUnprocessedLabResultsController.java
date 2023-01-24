@@ -1,7 +1,5 @@
 package org.openmrs.module.disa.web.controller;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -14,12 +12,9 @@ import org.openmrs.module.disa.Disa;
 import org.openmrs.module.disa.web.delegate.DelegateException;
 import org.openmrs.module.disa.web.delegate.ManageVLResultsDelegate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,15 +38,6 @@ public class MapUnprocessedLabResultsController {
 			MessageSourceService messageSourceService) {
 		this.manageVLResultsDelegate = manageVLResultsDelegate;
 		this.messageSourceService = messageSourceService;
-	}
-
-	@InitBinder
-	public void initBinder(WebDataBinder binder) {
-
-		SimpleDateFormat dateFormat = Context.getDateFormat();
-		// Allow converting empty String to null when binding Dates.
-		// Without this validation will throw a typeMismatch error.
-		binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, true));
 	}
 
 	@RequestMapping(value = "", method = RequestMethod.GET)
