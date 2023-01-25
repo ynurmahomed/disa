@@ -23,14 +23,14 @@ import org.springframework.web.bind.annotation.RestController;
 // TODO Should be an OpenMRS rest web service
 @RestController
 @RequestMapping("/module/disa/orgunits")
-public class OrgUnitsController {
+public class OrgUnitController {
 
-    private static final Logger log = LoggerFactory.getLogger(OrgUnitsController.class);
+    private static final Logger log = LoggerFactory.getLogger(OrgUnitController.class);
 
     private OrgUnitService orgUnitService;
 
     @Autowired
-    public OrgUnitsController(OrgUnitService orgUnitService) {
+    public OrgUnitController(OrgUnitService orgUnitService) {
         this.orgUnitService = orgUnitService;
     }
 

@@ -12,11 +12,13 @@ import javax.validation.Valid;
 import org.openmrs.api.context.Context;
 import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.disa.Disa;
+import org.openmrs.module.disa.api.DisaModuleAPIException;
+import org.openmrs.module.disa.api.LabResultService;
 import org.openmrs.module.disa.api.util.Constants;
-import org.openmrs.module.disa.web.delegate.DelegateException;
-import org.openmrs.module.disa.web.delegate.ManageVLResultsDelegate;
 import org.openmrs.module.disa.web.delegate.ViralLoadResultsDelegate;
 import org.openmrs.module.disa.web.model.SearchForm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -24,6 +26,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,14 +40,17 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @RequestMapping("/module/disa/managelabresults")
 public class ManageLabResultsController {
 
-    private ManageVLResultsDelegate manageVLResultsDelegate;
+    private static final Logger log = LoggerFactory.getLogger(ManageLabResultsController.class);
+
+    private LabResultService labResultService;
 
     private MessageSourceService messageSourceService;
 
     @Autowired
-    public ManageLabResultsController(ManageVLResultsDelegate manageVLResultsDelegate,
+    public ManageLabResultsController(
+            LabResultService labResultService,
             MessageSourceService messageSourceService) {
-        this.manageVLResultsDelegate = manageVLResultsDelegate;
+        this.labResultService = labResultService;
         this.messageSourceService = messageSourceService;
     }
 
@@ -93,14 +99,15 @@ public class ManageLabResultsController {
 
     @RequestMapping(value = "/{requestId}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable String requestId) throws DelegateException {
-        this.manageVLResultsDelegate.deleteViralLoad(requestId);
+    public void delete(@PathVariable String requestId) {
+        labResultService.deleteByRequestId(requestId);
     }
 
     @RequestMapping(value = "/{requestId}", method = RequestMethod.PATCH, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public void update(@PathVariable String requestId, @RequestBody Disa disa) throws DelegateException {
-        this.manageVLResultsDelegate.updateViralLoad(requestId, disa);
+    public void update(@PathVariable String requestId, @RequestBody Disa disa) {
+        disa.setRequestId(requestId);
+        labResultService.updateLabResult(disa);
     }
 
     /**
@@ -124,5 +131,11 @@ public class ManageLabResultsController {
         String pageTitle = messageSourceService.getMessage("disa.list.viral.load.results.manage", null,
                 Context.getLocale());
         model.addAttribute("pageTitle", openMrs + " - " + pageTitle);
+    }
+
+    @ExceptionHandler(DisaModuleAPIException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public void handleDisaModuleAPIException(DisaModuleAPIException e) {
+        log.error("", e);
     }
 }

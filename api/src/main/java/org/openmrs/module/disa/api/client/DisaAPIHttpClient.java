@@ -17,10 +17,9 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.openmrs.api.AdministrationService;
+import org.openmrs.module.disa.Disa;
 import org.openmrs.module.disa.OrgUnit;
 import org.openmrs.module.disa.api.util.Constants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -33,8 +32,6 @@ import com.google.gson.reflect.TypeToken;
  */
 @Component
 public class DisaAPIHttpClient {
-
-    private static final Logger log = LoggerFactory.getLogger(DisaAPIHttpClient.class);
 
     private AdministrationService administrationService;
 
@@ -60,10 +57,8 @@ public class DisaAPIHttpClient {
     }
 
     public List<OrgUnit> searchOrgUnits(String term) throws URISyntaxException, IOException {
-        URI url;
-
-        url = new URIBuilder(URLBase)
-                .setPath("/services/orgunits/search")
+        URI url = new URIBuilder(URLBase)
+                .setPathSegments("services", "orgunits", "search")
                 .addParameter("term", term)
                 .build();
 
@@ -84,9 +79,7 @@ public class DisaAPIHttpClient {
     }
 
     public OrgUnit getOrgUnitByCode(String code) throws URISyntaxException, IOException {
-        URI url;
-
-        url = new URIBuilder(URLBase)
+        URI url = new URIBuilder(URLBase)
                 .setPathSegments("services", "orgunits", code)
                 .build();
 
@@ -104,10 +97,8 @@ public class DisaAPIHttpClient {
 
     }
 
-    public String getViralLoad(String requestId) throws URISyntaxException, IOException {
-        URI url;
-
-        url = new URIBuilder(URLBase)
+    public Disa getResultByRequestId(String requestId) throws URISyntaxException, IOException {
+        URI url = new URIBuilder(URLBase)
                 .setPathSegments("services", "viralloads", requestId)
                 .build();
 
@@ -118,15 +109,15 @@ public class DisaAPIHttpClient {
 
         ResponseHandler<String> responseHandler = new BasicResponseHandler();
 
-        return executor.execute(request)
+        String jsonResponse = executor.execute(request)
                 .handleResponse(responseHandler);
+
+        return gson.fromJson(jsonResponse, Disa.class);
     }
 
-    public void deleteViralLoad(String requestId) throws IOException, URISyntaxException {
-        URI url;
-
-        url = new URIBuilder(URLBase)
-                .setPath(String.format("/services/viralloads/%s", requestId))
+    public void deleteResultByRequestId(String requestId) throws IOException, URISyntaxException {
+        URI url = new URIBuilder(URLBase)
+                .setPathSegments("services", "viralloads", requestId)
                 .build();
 
         Executor executor = Executor.newInstance()
@@ -145,18 +136,16 @@ public class DisaAPIHttpClient {
 
     }
 
-    public String updateViralLoad(String requestId, String payload) throws IOException, URISyntaxException {
-        URI url;
-
-        url = new URIBuilder(URLBase)
-                .setPath(String.format("/services/viralloads/%s", requestId))
+    public String updateResult(Disa labResult) throws IOException, URISyntaxException {
+        URI url = new URIBuilder(URLBase)
+                .setPathSegments("services", "viralloads", labResult.getRequestId())
                 .build();
 
         Executor executor = Executor.newInstance()
                 .auth(username, password);
 
         Request request = Request.Patch(url)
-                .bodyString(payload, ContentType.APPLICATION_JSON);
+                .bodyString(gson.toJson(labResult), ContentType.APPLICATION_JSON);
 
         ResponseHandler<String> responseHandler = new BasicResponseHandler();
 

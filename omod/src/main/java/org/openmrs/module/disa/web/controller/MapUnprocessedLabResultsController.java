@@ -9,6 +9,7 @@ import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.disa.Disa;
+import org.openmrs.module.disa.api.LabResultService;
 import org.openmrs.module.disa.web.delegate.DelegateException;
 import org.openmrs.module.disa.web.delegate.ManageVLResultsDelegate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,13 +30,18 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @SessionAttributes({ "requestId", "patientList", "lastSearchParams" })
 public class MapUnprocessedLabResultsController {
 
+	private LabResultService labResultService;
+
 	private ManageVLResultsDelegate manageVLResultsDelegate;
 
 	private MessageSourceService messageSourceService;
 
 	@Autowired
-	public MapUnprocessedLabResultsController(ManageVLResultsDelegate manageVLResultsDelegate,
+	public MapUnprocessedLabResultsController(
+			LabResultService labResultService,
+			ManageVLResultsDelegate manageVLResultsDelegate,
 			MessageSourceService messageSourceService) {
+		this.labResultService = labResultService;
 		this.manageVLResultsDelegate = manageVLResultsDelegate;
 		this.messageSourceService = messageSourceService;
 	}
@@ -47,7 +53,7 @@ public class MapUnprocessedLabResultsController {
 			HttpServletRequest request)
 			throws DelegateException {
 
-		Disa disa = manageVLResultsDelegate.getViralLoad(requestId);
+		Disa disa = labResultService.getByRequestId(requestId);
 
 		// If there isn't a requestId in the session or there is a different requestId,
 		// load a new patient list.
@@ -82,7 +88,7 @@ public class MapUnprocessedLabResultsController {
 			ModelMap model,
 			RedirectAttributes redirectAttrs) throws DelegateException {
 
-		Disa disa = manageVLResultsDelegate.getViralLoad(requestId);
+		Disa disa = labResultService.getByRequestId(requestId);
 
 		if (patientUuid == null) {
 			model.addAttribute(disa);
@@ -121,7 +127,7 @@ public class MapUnprocessedLabResultsController {
 			model.addAttribute("patientList", patients);
 		}
 
-		return "redirect:/module/disa/" + requestId + "/map.form";
+		return "redirect:/module/disa/managelabresults/" + requestId + "/map.form";
 	}
 
 	@ModelAttribute("pageTitle")

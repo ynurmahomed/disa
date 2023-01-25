@@ -9,9 +9,8 @@ import org.openmrs.api.context.Context;
 import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.disa.Disa;
 import org.openmrs.module.disa.OrgUnit;
+import org.openmrs.module.disa.api.LabResultService;
 import org.openmrs.module.disa.api.OrgUnitService;
-import org.openmrs.module.disa.web.delegate.DelegateException;
-import org.openmrs.module.disa.web.delegate.ManageVLResultsDelegate;
 import org.openmrs.module.disa.web.model.ReallocateForm;
 import org.openmrs.module.disa.web.model.SearchForm;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,18 +29,18 @@ public class ReallocateLabResultsController {
 
     private OrgUnitService orgUnitService;
 
-    private ManageVLResultsDelegate manageVLResultsDelegate;
+    private LabResultService labResultService;
 
     private MessageSourceService messageSourceService;
 
     @Autowired
     public ReallocateLabResultsController(
             OrgUnitService orgUnitService,
-            ManageVLResultsDelegate manageVLResultsDelegate,
+            LabResultService labResultService,
             MessageSourceService messageSourceService) {
 
         this.orgUnitService = orgUnitService;
-        this.manageVLResultsDelegate = manageVLResultsDelegate;
+        this.labResultService = labResultService;
         this.messageSourceService = messageSourceService;
     }
 
@@ -50,9 +49,9 @@ public class ReallocateLabResultsController {
             @PathVariable String requestId,
             ModelMap model,
             SearchForm searchForm,
-            HttpSession session) throws DelegateException {
+            HttpSession session) {
 
-        Disa vl = this.manageVLResultsDelegate.getViralLoad(requestId);
+        Disa vl = labResultService.getByRequestId(requestId);
         OrgUnit orgUnit = orgUnitService.getOrgUnitByCode(vl.getHealthFacilityLabCode());
 
         model.addAttribute(new ReallocateForm());
@@ -67,10 +66,10 @@ public class ReallocateLabResultsController {
             BindingResult result,
             ModelMap model,
             HttpSession session,
-            RedirectAttributes redirectAttrs) throws DelegateException {
+            RedirectAttributes redirectAttrs) {
 
         if (result.hasErrors()) {
-            Disa vl = this.manageVLResultsDelegate.getViralLoad(requestId);
+            Disa vl = labResultService.getByRequestId(requestId);
             OrgUnit orgUnit = orgUnitService.getOrgUnitByCode(vl.getHealthFacilityLabCode());
             model.addAttribute(reallocateForm);
             model.addAttribute(orgUnit);
@@ -80,13 +79,14 @@ public class ReallocateLabResultsController {
         OrgUnit orgUnit = orgUnitService.getOrgUnitByCode(reallocateForm.getHealthFacilityLabCode());
 
         Disa update = new Disa();
+        update.setRequestId(requestId);
         update.setHealthFacilityLabCode(orgUnit.getCode());
         update.setRequestingFacilityName(orgUnit.getFacility());
         update.setRequestingDistrictName(orgUnit.getDistrict());
         update.setRequestingProvinceName(orgUnit.getProvince());
         update.setViralLoadStatus("PENDING");
 
-        this.manageVLResultsDelegate.updateViralLoad(requestId, update);
+        labResultService.updateLabResult(update);
 
         @SuppressWarnings("unchecked")
         Map<String, String> params = ((Map<String, String>) session.getAttribute("lastSearchParams"));
