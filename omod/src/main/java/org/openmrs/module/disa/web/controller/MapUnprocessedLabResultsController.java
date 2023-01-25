@@ -2,17 +2,21 @@ package org.openmrs.module.disa.web.controller;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.openmrs.Patient;
+import org.openmrs.PatientIdentifier;
+import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.disa.Disa;
+import org.openmrs.module.disa.api.DisaService;
 import org.openmrs.module.disa.api.LabResultService;
-import org.openmrs.module.disa.web.delegate.DelegateException;
-import org.openmrs.module.disa.web.delegate.ManageVLResultsDelegate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.MultiValueMap;
@@ -32,26 +36,29 @@ public class MapUnprocessedLabResultsController {
 
 	private LabResultService labResultService;
 
-	private ManageVLResultsDelegate manageVLResultsDelegate;
+	private PatientService patientService;
 
 	private MessageSourceService messageSourceService;
+
+	private DisaService disaService;
 
 	@Autowired
 	public MapUnprocessedLabResultsController(
 			LabResultService labResultService,
-			ManageVLResultsDelegate manageVLResultsDelegate,
-			MessageSourceService messageSourceService) {
+			@Qualifier("patientService") PatientService patientService,
+			MessageSourceService messageSourceService,
+			DisaService disaService) {
 		this.labResultService = labResultService;
-		this.manageVLResultsDelegate = manageVLResultsDelegate;
+		this.patientService = patientService;
 		this.messageSourceService = messageSourceService;
+		this.disaService = disaService;
 	}
 
 	@RequestMapping(value = "", method = RequestMethod.GET)
 	public String patientIdentifierMapping(
 			@PathVariable String requestId,
 			ModelMap model,
-			HttpServletRequest request)
-			throws DelegateException {
+			HttpServletRequest request) {
 
 		Disa disa = labResultService.getByRequestId(requestId);
 
@@ -60,7 +67,7 @@ public class MapUnprocessedLabResultsController {
 		if (!model.containsAttribute("requestId")
 				|| (!model.get("requestId").equals(requestId))) {
 			model.addAttribute("requestId", requestId);
-			model.addAttribute("patientList", manageVLResultsDelegate.findPatientsByDisa(disa));
+			model.addAttribute("patientList", disaService.getPatientsByDisa(disa));
 		}
 
 		// Build uri back to search results with used parameters.
@@ -86,7 +93,7 @@ public class MapUnprocessedLabResultsController {
 			@PathVariable String requestId,
 			@RequestParam(required = false) String patientUuid,
 			ModelMap model,
-			RedirectAttributes redirectAttrs) throws DelegateException {
+			RedirectAttributes redirectAttrs) {
 
 		Disa disa = labResultService.getByRequestId(requestId);
 
@@ -96,7 +103,7 @@ public class MapUnprocessedLabResultsController {
 			return "/module/disa/managelabresults/map";
 		} else {
 
-			manageVLResultsDelegate.doMapIdentifier(patientUuid, disa);
+			disaService.mapIdentifier(patientUuid, disa);
 			String mapSuccessfulMsg = messageSourceService.getMessage("disa.viralload.map.successful", null,
 					Context.getLocale());
 
@@ -123,7 +130,15 @@ public class MapUnprocessedLabResultsController {
 		if (patient.getId() == null) {
 			redirectAttrs.addFlashAttribute("errorPatientRequired", "disa.error.patient.required");
 		} else {
-			manageVLResultsDelegate.addPatientToList(patients, patient);
+			Patient patientToAdd = patientService.getPatient(patient.getId());
+			if (!patients.contains(patientToAdd)) {
+				// TODO This is a workaround to LazyInitialization error when getting
+				// identifiers from patient on jsp
+				Set<PatientIdentifier> identifiers = new TreeSet<>();
+				identifiers.add(patientToAdd.getPatientIdentifier());
+				patientToAdd.setIdentifiers(identifiers);
+				patients.add(patientToAdd);
+			}
 			model.addAttribute("patientList", patients);
 		}
 

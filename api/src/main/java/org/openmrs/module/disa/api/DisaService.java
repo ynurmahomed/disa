@@ -19,6 +19,7 @@ import java.util.List;
 import org.openmrs.LocationAttribute;
 import org.openmrs.Patient;
 import org.openmrs.api.OpenmrsService;
+import org.openmrs.module.disa.Disa;
 import org.openmrs.module.disa.FsrLog;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,25 +30,28 @@ import org.springframework.transaction.annotation.Transactional;
  * <code>
  * Context.getService(DisaService.class).someMethod();
  * </code>
- * 
+ *
  * @see org.openmrs.api.context.Context
  */
 @Transactional
 public interface DisaService extends OpenmrsService {
-     
+
 	/*
 	 * Add service methods here
-	 * 
+	 *
 	 */
-	
+
 	public List<LocationAttribute> getAllLocationAttribute(String valueReference);
-	
+
 	public Serializable saveFsrLog(FsrLog fsrLog);
-	
+
 	public boolean existsByRequestId(String requestId);
-	
+
 	public List<Integer> getPatientByNid(String identifier);
 
 	public List<Patient> getPatientByPatientId(Integer patientId);
-	
+
+	void mapIdentifier(String patientUuid, Disa disa);
+
+	List<Patient> getPatientsByDisa(Disa disa);
 }
