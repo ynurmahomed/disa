@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/template/include.jsp" %>
 <%@ include file="/WEB-INF/template/header.jsp" %>
 
-<openmrs:require privilege="Gerir resultados no Disa Interoperabilidade" otherwise="/login.htm" redirect="/module/disa/managelabresults.form"/>
+<openmrs:require privilege="Pesquisar resultados no Disa Interoperabilidade" otherwise="/login.htm" redirect="/module/disa/managelabresults.form"/>
 
 <openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/css/disa.css" />
 <openmrs:htmlInclude
