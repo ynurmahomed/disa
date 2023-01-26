@@ -11,15 +11,13 @@ import org.openmrs.module.disa.api.client.DisaAPIHttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.google.gson.Gson;
-
 @Service
 public class OrgUnitServiceImpl implements OrgUnitService {
 
 	private DisaAPIHttpClient client;
 
 	@Autowired
-	public OrgUnitServiceImpl(DisaAPIHttpClient client, Gson gson) {
+	public OrgUnitServiceImpl(DisaAPIHttpClient client) {
 		this.client = client;
 	}
 

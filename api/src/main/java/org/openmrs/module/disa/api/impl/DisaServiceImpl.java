@@ -44,29 +44,20 @@ public class DisaServiceImpl extends BaseOpenmrsService implements DisaService {
 	protected final Log log = LogFactory.getLog(this.getClass());
 
 	private LabResultService labResultService;
-
 	private PatientService patientService;
-
 	private LocationService locationService;
-
 	private DisaDAO dao;
 
 	@Autowired
 	public DisaServiceImpl(
+			DisaDAO dao,
 			LabResultService labResultService,
 			@Qualifier("patientService") PatientService patientService,
 			@Qualifier("locationService") LocationService locationService) {
+		this.dao = dao;
 		this.labResultService = labResultService;
 		this.patientService = patientService;
 		this.locationService = locationService;
-	}
-
-	public void setDao(DisaDAO dao) {
-		this.dao = dao;
-	}
-
-	public DisaDAO getDao() {
-		return dao;
 	}
 
 	@Override

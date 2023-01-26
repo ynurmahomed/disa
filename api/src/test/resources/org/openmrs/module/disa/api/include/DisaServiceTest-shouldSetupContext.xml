@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+    <global_property
+        property="disa.api.url"
+        property_value="http://disa-api-integ:8080/services/viralloads/requestProvince"
+        uuid="6819f620-a706-4f97-86f4-2c12167398c9" />
+    <global_property
+        property="disa.api.userame"
+        property_value=""
+        uuid="8b75d1fd-92f7-4ad7-ab00-abdcbe94bf5e" />
+    <global_property
+        property="disa.api.password"
+        property_value=""
+        uuid="f24ad302-ee5b-40f5-8233-9771a6e7817e" />
+</dataset>

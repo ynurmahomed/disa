@@ -5,8 +5,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpResponseException;
@@ -33,147 +31,134 @@ import com.google.gson.reflect.TypeToken;
 @Component
 public class DisaAPIHttpClient {
 
-    private AdministrationService administrationService;
+	private AdministrationService administrationService;
+	private Gson gson;
+	private boolean isSetUp;
+	private String username;
+	private String password;
+	private String URLBase;
 
-    private Gson gson;
+	@Autowired
+	public DisaAPIHttpClient(
+			@Qualifier("adminService") AdministrationService administrationService,
+			Gson gson) {
+		this.administrationService = administrationService;
+		this.gson = gson;
+	}
 
-    private String username;
-    private String password;
-    private String URLBase;
+	public List<OrgUnit> searchOrgUnits(String term) throws URISyntaxException, IOException {
+		setUp();
 
-    @Autowired
-    public DisaAPIHttpClient(
-            @Qualifier("adminService") AdministrationService administrationService,
-            Gson gson) {
-        this.administrationService = administrationService;
-        this.gson = gson;
-    }
+		URI url = new URIBuilder(URLBase)
+				.setPathSegments("services", "orgunits", "search")
+				.addParameter("term", term)
+				.build();
 
-    @PostConstruct
-    public void postConstruct() {
-        setURLBase(administrationService.getGlobalPropertyObject(Constants.DISA_URL).getPropertyValue());
-        setUsername(administrationService.getGlobalPropertyObject(Constants.DISA_USERNAME).getPropertyValue());
-        setPassword(administrationService.getGlobalPropertyObject(Constants.DISA_PASSWORD).getPropertyValue());
-    }
+		Executor executor = Executor.newInstance()
+				.auth(username, password);
 
-    public List<OrgUnit> searchOrgUnits(String term) throws URISyntaxException, IOException {
-        URI url = new URIBuilder(URLBase)
-                .setPathSegments("services", "orgunits", "search")
-                .addParameter("term", term)
-                .build();
+		Request request = Request.Get(url);
 
-        Executor executor = Executor.newInstance()
-                .auth(username, password);
+		ResponseHandler<String> responseHandler = new BasicResponseHandler();
 
-        Request request = Request.Get(url);
+		String jsonResponse = executor.execute(request)
+				.handleResponse(responseHandler);
 
-        ResponseHandler<String> responseHandler = new BasicResponseHandler();
+		TypeToken<List<OrgUnit>> listType = new TypeToken<List<OrgUnit>>() {
+		};
+		return gson.fromJson(jsonResponse, listType.getType());
 
-        String jsonResponse = executor.execute(request)
-                .handleResponse(responseHandler);
+	}
 
-        TypeToken<List<OrgUnit>> listType = new TypeToken<List<OrgUnit>>() {
-        };
-        return gson.fromJson(jsonResponse, listType.getType());
+	public OrgUnit getOrgUnitByCode(String code) throws URISyntaxException, IOException {
+		setUp();
 
-    }
+		URI url = new URIBuilder(URLBase)
+				.setPathSegments("services", "orgunits", code)
+				.build();
 
-    public OrgUnit getOrgUnitByCode(String code) throws URISyntaxException, IOException {
-        URI url = new URIBuilder(URLBase)
-                .setPathSegments("services", "orgunits", code)
-                .build();
+		Executor executor = Executor.newInstance()
+				.auth(username, password);
 
-        Executor executor = Executor.newInstance()
-                .auth(username, password);
+		Request request = Request.Get(url);
 
-        Request request = Request.Get(url);
+		ResponseHandler<String> responseHandler = new BasicResponseHandler();
 
-        ResponseHandler<String> responseHandler = new BasicResponseHandler();
+		String jsonResponse = executor.execute(request)
+				.handleResponse(responseHandler);
 
-        String jsonResponse = executor.execute(request)
-                .handleResponse(responseHandler);
+		return gson.fromJson(jsonResponse, OrgUnit.class);
 
-        return gson.fromJson(jsonResponse, OrgUnit.class);
+	}
 
-    }
+	public Disa getResultByRequestId(String requestId) throws URISyntaxException, IOException {
+		setUp();
 
-    public Disa getResultByRequestId(String requestId) throws URISyntaxException, IOException {
-        URI url = new URIBuilder(URLBase)
-                .setPathSegments("services", "viralloads", requestId)
-                .build();
+		URI url = new URIBuilder(URLBase)
+				.setPathSegments("services", "viralloads", requestId)
+				.build();
 
-        Executor executor = Executor.newInstance()
-                .auth(username, password);
+		Executor executor = Executor.newInstance()
+				.auth(username, password);
 
-        Request request = Request.Get(url);
+		Request request = Request.Get(url);
 
-        ResponseHandler<String> responseHandler = new BasicResponseHandler();
+		ResponseHandler<String> responseHandler = new BasicResponseHandler();
 
-        String jsonResponse = executor.execute(request)
-                .handleResponse(responseHandler);
+		String jsonResponse = executor.execute(request)
+				.handleResponse(responseHandler);
 
-        return gson.fromJson(jsonResponse, Disa.class);
-    }
+		return gson.fromJson(jsonResponse, Disa.class);
+	}
 
-    public void deleteResultByRequestId(String requestId) throws IOException, URISyntaxException {
-        URI url = new URIBuilder(URLBase)
-                .setPathSegments("services", "viralloads", requestId)
-                .build();
+	public void deleteResultByRequestId(String requestId) throws IOException, URISyntaxException {
+		setUp();
 
-        Executor executor = Executor.newInstance()
-                .auth(username, password);
+		URI url = new URIBuilder(URLBase)
+				.setPathSegments("services", "viralloads", requestId)
+				.build();
 
-        HttpResponse response = executor.execute(Request.Delete(url))
-                .returnResponse();
+		Executor executor = Executor.newInstance()
+				.auth(username, password);
 
-        StatusLine status = response.getStatusLine();
+		HttpResponse response = executor.execute(Request.Delete(url))
+				.returnResponse();
 
-        if (status.getStatusCode() != 200) {
-            throw new HttpResponseException(
-                    status.getStatusCode(),
-                    status.getReasonPhrase());
-        }
+		StatusLine status = response.getStatusLine();
 
-    }
+		if (status.getStatusCode() != 200) {
+			throw new HttpResponseException(
+					status.getStatusCode(),
+					status.getReasonPhrase());
+		}
 
-    public String updateResult(Disa labResult) throws IOException, URISyntaxException {
-        URI url = new URIBuilder(URLBase)
-                .setPathSegments("services", "viralloads", labResult.getRequestId())
-                .build();
+	}
 
-        Executor executor = Executor.newInstance()
-                .auth(username, password);
+	public String updateResult(Disa labResult) throws IOException, URISyntaxException {
+		setUp();
 
-        Request request = Request.Patch(url)
-                .bodyString(gson.toJson(labResult), ContentType.APPLICATION_JSON);
+		URI url = new URIBuilder(URLBase)
+				.setPathSegments("services", "viralloads", labResult.getRequestId())
+				.build();
 
-        ResponseHandler<String> responseHandler = new BasicResponseHandler();
+		Executor executor = Executor.newInstance()
+				.auth(username, password);
 
-        return executor.execute(request)
-                .handleResponse(responseHandler);
-    }
+		Request request = Request.Patch(url)
+				.bodyString(gson.toJson(labResult), ContentType.APPLICATION_JSON);
 
-    public String getUsername() {
-        return username;
-    }
+		ResponseHandler<String> responseHandler = new BasicResponseHandler();
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
+		return executor.execute(request)
+				.handleResponse(responseHandler);
+	}
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getURLBase() {
-        return URLBase;
-    }
-
-    public void setURLBase(String uRLBase) {
-        URLBase = uRLBase;
-    }
+	private void setUp() {
+		if (!isSetUp) {
+			URLBase = administrationService.getGlobalPropertyObject(Constants.DISA_URL).getPropertyValue();
+			username = administrationService.getGlobalPropertyObject(Constants.DISA_USERNAME).getPropertyValue();
+			password = administrationService.getGlobalPropertyObject(Constants.DISA_PASSWORD).getPropertyValue();
+			isSetUp = true;
+		}
+	}
 }

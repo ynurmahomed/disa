@@ -17,14 +17,4 @@ public class DisaModuleAPIConfig {
         // TODO add support for java.time.LocalDateTime objects
         return new GsonBuilder().create();
     }
-
-    @Bean
-    @Primary
-    public ProxyFactoryBean proxyFactoryBean(LabResultService labResultService) {
-        ProxyFactoryBean disaModuleProxyFactoryBean = new ProxyFactoryBean();
-        disaModuleProxyFactoryBean.setTarget(labResultService);
-        // Interceptor from OpenMRS core applicationContext-service.xml
-        disaModuleProxyFactoryBean.setInterceptorNames("authorizationInterceptor");
-        return disaModuleProxyFactoryBean;
-    }
 }
