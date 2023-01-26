@@ -76,17 +76,9 @@ public class ReallocateLabResultsController {
             return "/module/disa/managelabresults/reallocate";
         }
 
-        OrgUnit orgUnit = orgUnitService.getOrgUnitByCode(reallocateForm.getHealthFacilityLabCode());
-
-        Disa update = new Disa();
-        update.setRequestId(requestId);
-        update.setHealthFacilityLabCode(orgUnit.getCode());
-        update.setRequestingFacilityName(orgUnit.getFacility());
-        update.setRequestingDistrictName(orgUnit.getDistrict());
-        update.setRequestingProvinceName(orgUnit.getProvince());
-        update.setViralLoadStatus("PENDING");
-
-        labResultService.updateLabResult(update);
+        Disa labResult = new Disa(requestId);
+        OrgUnit destination = new OrgUnit(reallocateForm.getHealthFacilityLabCode());
+        Disa update = labResultService.reallocateLabResult(labResult, destination);
 
         @SuppressWarnings("unchecked")
         Map<String, String> params = ((Map<String, String>) session.getAttribute("lastSearchParams"));

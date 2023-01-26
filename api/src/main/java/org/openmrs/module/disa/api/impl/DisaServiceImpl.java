@@ -110,7 +110,7 @@ public class DisaServiceImpl extends BaseOpenmrsService implements DisaService {
 			Disa updateDisa = new Disa();
 			updateDisa.setRequestId(disa.getRequestId());
 			updateDisa.setViralLoadStatus("PENDING");
-			labResultService.updateLabResult(updateDisa);
+			labResultService.rescheduleLabResult(updateDisa);
 
 			patientIdentifier.setPatient(patient);
 			patientIdentifier.setIdentifier(disa.getNid());

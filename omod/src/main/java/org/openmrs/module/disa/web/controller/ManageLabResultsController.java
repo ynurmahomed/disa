@@ -103,11 +103,10 @@ public class ManageLabResultsController {
         labResultService.deleteByRequestId(requestId);
     }
 
-    @RequestMapping(value = "/{requestId}", method = RequestMethod.PATCH, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/{requestId}/reschedule", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public void update(@PathVariable String requestId, @RequestBody Disa disa) {
-        disa.setRequestId(requestId);
-        labResultService.updateLabResult(disa);
+    public void reschedule(@PathVariable String requestId) {
+        labResultService.rescheduleLabResult(new Disa(requestId));
     }
 
     /**

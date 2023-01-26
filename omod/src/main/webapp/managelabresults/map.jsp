@@ -3,6 +3,8 @@
 <%@ include file="/WEB-INF/template/include.jsp"%>
 <%@ include file="/WEB-INF/template/header.jsp"%>
 
+<openmrs:require privilege="Mapear pacientes no Disa Interoperabilidade" otherwise="/login.htm" redirect="/module/disa/managelabresults.form"/>
+
 <openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/css/disa.css"/>
 
 <openmrs:htmlInclude

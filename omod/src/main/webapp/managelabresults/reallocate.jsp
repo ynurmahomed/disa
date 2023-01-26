@@ -2,7 +2,7 @@
 <%@ include file="/WEB-INF/template/include.jsp"%>
 <%@ include file="/WEB-INF/template/header.jsp"%>
 
-<openmrs:require privilege="Gerir resultados no Disa Interoperabilidade" otherwise="/login.htm" redirect="/module/disa/managelabresults/${requestId}/reallocate.form"/>
+<openmrs:require privilege="Realocar resultados no Disa Interoperabilidade" otherwise="/login.htm" redirect="/module/disa/managelabresults/${requestId}/reallocate.form"/>
 
 <openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/css/disa.css"/>
 <openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/css/selectize.legacy.css" />
