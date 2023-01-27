@@ -14,7 +14,7 @@
 package org.openmrs.module.disa.api.impl;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -95,26 +95,22 @@ public class DisaServiceImpl extends BaseOpenmrsService implements DisaService {
 		}
 
 		Patient patient = patientService.getPatientByUuid(patientUuid);
-		PatientIdentifier patientIdentifier = new PatientIdentifier();
-		PatientIdentifierType identifierType = patientService
+		PatientIdentifierType disaNIDIdentifier = patientService
 				.getPatientIdentifierTypeByUuid(Constants.DISA_NID);
-		List<PatientIdentifierType> patientIdentifierTypes = new ArrayList<>();
-		patientIdentifierTypes.add(identifierType);
+		List<PatientIdentifier> identifiers = patientService.getPatientIdentifiers(disa.getNid(),
+				Arrays.asList(disaNIDIdentifier), null, null, null);
 
-		List<PatientIdentifier> patIdentidier = patientService.getPatientIdentifiers(disa.getNid(),
-				patientIdentifierTypes, null, null, null);
-
-		if (patIdentidier.isEmpty()) {
+		if (identifiers.isEmpty()) {
 
 			// TODO handle network error!!!
-			Disa updateDisa = new Disa();
-			updateDisa.setRequestId(disa.getRequestId());
+			Disa updateDisa = new Disa(disa.getRequestId());
 			updateDisa.setViralLoadStatus("PENDING");
 			labResultService.rescheduleLabResult(updateDisa);
 
+			PatientIdentifier patientIdentifier = new PatientIdentifier();
 			patientIdentifier.setPatient(patient);
 			patientIdentifier.setIdentifier(disa.getNid());
-			patientIdentifier.setIdentifierType(identifierType);
+			patientIdentifier.setIdentifierType(disaNIDIdentifier);
 			patientIdentifier.setLocation(locationService.getDefaultLocation());
 			patientService.savePatientIdentifier(patientIdentifier);
 		}
