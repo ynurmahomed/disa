@@ -2,13 +2,8 @@
 <%@ include file="/WEB-INF/template/include.jsp" %>
 <%@ include file="/WEB-INF/template/header.jsp" %>
 
-<<<<<<< HEAD
-		<openmrs:require privilege="Pesquisar resultados no Disa Interoperabilidade" otherwise="/login.htm"
-			redirect="/module/disa/managelabresults.form" />
-=======
 <openmrs:require privilege="Pesquisar resultados no Disa Interoperabilidade" otherwise="/login.htm"
 	redirect="/module/disa/managelabresults.form" />
->>>>>>> 922453d (Show/hide manage actions with tootltips)
 
 <openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/css/disa.css" />
 <openmrs:htmlInclude file="/scripts/jquery/dataTables/css/dataTables_jui.css" />
