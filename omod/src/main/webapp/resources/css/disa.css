@@ -27,13 +27,27 @@
 }
 
 .vlResultsTable .actions {
-	list-style: none;
+	cursor: pointer;
 }
 
-.vlResultsTable .actions li {
-	display: inline-block;
+.vlResultsTable .actions-tooltip {
+	display: none;
+	background-color: #ddd;
+}
+
+.vlResultsTable .actions-tooltip[data-show] {
+	display: block;
+}
+
+.vlResultsTable .actions-tooltip ul {
+	padding: 0;
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+.vlResultsTable .actions-tooltip li {
+	list-style: none;
 	padding: 0.5rem 0.5rem;
-	text-align: center;
 }
 
 .submit-btn {

@@ -42,7 +42,7 @@
 	</div>
 </div>
 
-<openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/js/selectize.min.js" />
+<openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/js/selectize/0.15.2/selectize.min.js" />
 
 <script type="text/javascript">
 
