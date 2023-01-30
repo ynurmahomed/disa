@@ -117,51 +117,55 @@
 								</c:if>
 							</td>
 							<td class="actions" style="text-align: center;">
-								<openmrs:message
-										code="disa.manage.actions" />
-								<div class="actions-tooltip" role="tooltip">
-									<div class="arrow" data-popper-arrow></div>
-									<ul>
-										<c:if test="${vlData.viralLoadStatus == 'NOT_PROCESSED'}">
-											<openmrs:hasPrivilege privilege="Reagendar resultados no Disa Interoperabilidade">
-												<li>
-													<a href="#" data-requestid="${vlData.requestId}"
-														class="reschedule-vl">
-														<spring:message code="disa.viralload.reschedule" />
-													</a>
-												</li>
-											</openmrs:hasPrivilege>
-											<c:if test="${vlData.notProcessingCause == 'NID_NOT_FOUND'}">
-												<openmrs:hasPrivilege privilege="Mapear pacientes no Disa Interoperabilidade">
+								<c:if test="${vlData.viralLoadStatus != 'PROCESSED'}">
+
+									<openmrs:message
+											code="disa.manage.actions" />
+
+									<div class="actions-tooltip" role="tooltip">
+										<div class="arrow" data-popper-arrow></div>
+										<ul>
+											<c:if test="${vlData.viralLoadStatus == 'NOT_PROCESSED'}">
+												<openmrs:hasPrivilege privilege="Reagendar resultados no Disa Interoperabilidade">
 													<li>
-														<a href='managelabresults/${vlData.requestId}/map.form'>
-															<spring:message code="disa.map.nid" />
+														<a href="#" data-requestid="${vlData.requestId}"
+															class="reschedule-vl">
+															<spring:message code="disa.viralload.reschedule" />
+														</a>
+													</li>
+												</openmrs:hasPrivilege>
+												<c:if test="${vlData.notProcessingCause == 'NID_NOT_FOUND'}">
+													<openmrs:hasPrivilege privilege="Mapear pacientes no Disa Interoperabilidade">
+														<li>
+															<a href='managelabresults/${vlData.requestId}/map.form'>
+																<spring:message code="disa.map.nid" />
+															</a>
+														</li>
+													</openmrs:hasPrivilege>
+												</c:if>
+											</c:if>
+											<c:if test="${vlData.viralLoadStatus != 'PROCESSED'}">
+												<openmrs:hasPrivilege privilege="Realocar resultados no Disa Interoperabilidade">
+													<li>
+														<a href="managelabresults/${vlData.requestId}/reallocate.form">
+															<spring:message code="disa.viralload.reallocate" />
 														</a>
 													</li>
 												</openmrs:hasPrivilege>
 											</c:if>
-										</c:if>
-										<c:if test="${vlData.viralLoadStatus != 'PROCESSED'}">
-											<openmrs:hasPrivilege privilege="Realocar resultados no Disa Interoperabilidade">
-												<li>
-													<a href="managelabresults/${vlData.requestId}/reallocate.form">
-														<spring:message code="disa.viralload.reallocate" />
-													</a>
-												</li>
-											</openmrs:hasPrivilege>
-										</c:if>
-										<c:if test="${vlData.viralLoadStatus != 'PROCESSED'}">
-											<openmrs:hasPrivilege privilege="Remover resultados no Disa Interoperabilidade">
-												<li>
-													<a href="#" data-requestid="${vlData.requestId}"
-														class="delete-vl">
-														<spring:message code="disa.viralload.delete" />
-													</a>
-												</li>
-											</openmrs:hasPrivilege>
-										</c:if>
-									</ul>
-								</div>
+											<c:if test="${vlData.viralLoadStatus != 'PROCESSED'}">
+												<openmrs:hasPrivilege privilege="Remover resultados no Disa Interoperabilidade">
+													<li>
+														<a href="#" data-requestid="${vlData.requestId}"
+															class="delete-vl">
+															<spring:message code="disa.viralload.delete" />
+														</a>
+													</li>
+												</openmrs:hasPrivilege>
+											</c:if>
+										</ul>
+									</div>
+								</c:if>
 							</td>
 						</tr>
 					</c:forEach>
@@ -248,57 +252,82 @@
 	$j(document).ready(function () {
 		// Add tooltips
 		for (const toggle of document.querySelectorAll(".actions")) {
-			const tooltip = toggle.querySelector(".actions-tooltip");
-			const popperInstance = Popper.createPopper(toggle, tooltip);
+			const actions = toggle.querySelector(".actions-tooltip");
 
-			// Show/hide based on hover
-			function show() {
-				// Make the tooltip visible
-				tooltip.setAttribute('data-show', '');
+			// Only show tooltip if actions available
+			if (actions) {
 
-				// Enable the event listeners
-				popperInstance.setOptions((options) => ({
-					...options,
-					modifiers: [
-						...options.modifiers,
-						{ name: 'eventListeners', enabled: true },
-					],
-				}));
+				// Makes the popper the same width as the reference.
+				const sameWidth = {
+					name: "sameWidth",
+					enabled: true,
+					phase: "beforeWrite",
+					requires: ["computeStyles"],
+					fn: ({ state }) => {
+						state.styles.popper.width = `\${state.rects.reference.width}px`;
+					},
+					effect: ({ state }) => {
+						state.elements.popper.style.width = `\${state.elements.reference.offsetWidth}px`;
+					}
+				};
 
-				// Update its position
-				popperInstance.update();
+
+				const popperInstance = Popper.createPopper(toggle, actions, {
+					modifiers: [sameWidth]
+				});
+
+				// Show/hide based on hover
+				function show() {
+					// Make the tooltip visible
+					actions.setAttribute('data-show', '');
+
+					// Enable the event listeners
+					popperInstance.setOptions((options) => ({
+						...options,
+						modifiers: [
+							...options.modifiers,
+							{ name: 'eventListeners', enabled: true },
+						],
+					}));
+
+					// Update its position
+					popperInstance.update();
+				}
+
+				function hide () {
+					// Hide the tooltip
+					actions.removeAttribute('data-show');
+
+					// Disable the event listeners
+					popperInstance.setOptions((options) => ({
+						...options,
+						modifiers: [
+							...options.modifiers,
+							{ name: 'eventListeners', enabled: false },
+						],
+					}));
+				}
+
+				const showEvents = ['mouseenter', 'focus'];
+				const hideEvents = ['mouseleave', 'blur'];
+
+				showEvents.forEach((event) => {
+					toggle.addEventListener(event, show);
+				});
+
+				hideEvents.forEach((event) => {
+					toggle.addEventListener(event, hide);
+				});
 			}
 
-			function hide () {
-				// Hide the tooltip
-				tooltip.removeAttribute('data-show');
-
-				// Disable the event listeners
-				popperInstance.setOptions((options) => ({
-					...options,
-					modifiers: [
-						...options.modifiers,
-						{ name: 'eventListeners', enabled: false },
-					],
-				}));
-			}
-
-			const showEvents = ['mouseenter', 'focus'];
-			const hideEvents = ['mouseleave', 'blur'];
-
-			showEvents.forEach((event) => {
-				toggle.addEventListener(event, show);
-			});
-
-			hideEvents.forEach((event) => {
-				toggle.addEventListener(event, hide);
-			});
 		}
 
+		// Add handlers for delete link
 		for (const a of document.querySelectorAll(".delete-vl")) {
 			a.addEventListener('click', handleDelete);
 		}
 
+		// Add handlers for reschedule link
 		for (const a of document.querySelectorAll(".reschedule-vl")) {
 			a.addEventListener('click', handleReschedule);
 		}
