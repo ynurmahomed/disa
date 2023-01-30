@@ -6,6 +6,13 @@ public class OrgUnit {
     private String district;
     private String facility;
 
+    public OrgUnit() {
+    }
+
+    public OrgUnit(String code) {
+        this.code = code;
+    }
+
     public String getCode() {
         return code;
     }

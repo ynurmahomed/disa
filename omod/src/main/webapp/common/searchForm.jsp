@@ -54,6 +54,31 @@
 				</form:option>
 			</form:select>
 		</div>
+		<div>
+			<label for="notProcessingCause">
+				<openmrs:message code="disa.notProcessingCause" />:
+			</label>
+			<form:select path="notProcessingCause">
+				<form:option value="ALL">
+					<openmrs:message code="disa.notProcessingCause.ALL" />
+				</form:option>
+				<form:option value="NID_NOT_FOUND">
+					<openmrs:message code="disa.notProcessingCause.NID_NOT_FOUND" />
+				</form:option>
+				<form:option value="NO_RESULT">
+					<openmrs:message code="disa.notProcessingCause.NO_RESULT" />
+				</form:option>
+				<form:option value="FLAGGED_FOR_REVIEW">
+					<openmrs:message code="disa.notProcessingCause.FLAGGED_FOR_REVIEW" />
+				</form:option>
+				<form:option value="DUPLICATE_NID">
+					<openmrs:message code="disa.notProcessingCause.DUPLICATE_NID" />
+				</form:option>
+				<form:option value="DUPLICATED_REQUEST_ID">
+					<openmrs:message code="disa.notProcessingCause.DUPLICATED_REQUEST_ID" />
+				</form:option>
+			</form:select>
+		</div>
 		<div class="divider"></div>
 		<div>
 			<label for="nid">

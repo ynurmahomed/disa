@@ -91,9 +91,17 @@ public class Disa {
 	private String dataDeInicioDoTARV;
 
 	private String finalViralLoadResult;
-	
+
 	private String synchronizedBy;
-	
+
+	public Disa() {
+	}
+
+	public Disa(String requestId) {
+		this.requestId = requestId;
+	}
+
+
 	public String getSynchronizedBy() {
 		return synchronizedBy;
 	}

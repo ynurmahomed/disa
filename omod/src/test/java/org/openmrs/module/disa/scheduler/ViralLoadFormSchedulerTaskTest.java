@@ -57,7 +57,7 @@ import org.openmrs.api.UserService;
 import org.openmrs.api.db.ContextDAO;
 import org.openmrs.module.disa.Disa;
 import org.openmrs.module.disa.api.DisaService;
-import org.openmrs.module.disa.extension.util.Constants;
+import org.openmrs.module.disa.api.util.Constants;
 import org.openmrs.module.disa.extension.util.RestUtil;
 import org.openmrs.test.BaseContextMockTest;
 

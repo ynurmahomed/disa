@@ -1,30 +1,24 @@
-#vlResultsTable,
-#vlResultsTable1 {
+.vlResultsTable {
 	font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
 	border-collapse: collapse;
 	width: 100%;
 }
 
-#vlResultsTable td,
-#vlResultsTable th,
-#vlResultsTable1 td,
-#vlResultsTable1 th {
+.vlResultsTable td,
+.vlResultsTable th {
 	border: 1px solid #ddd;
 	padding: 8px;
 }
 
-#vlResultsTable tr:nth-child(even),
-#vlResultsTable1 tr:nth-child(even) {
+.vlResultsTable tr:nth-child(even) {
 	background-color: #f2f2f2;
 }
 
-#vlResultsTable tr:hover,
-#vlResultsTable1 tr:hover {
+.vlResultsTable tr:hover {
 	background-color: #ddd;
 }
 
-#vlResultsTable th,
-#vlResultsTable1 th {
+.vlResultsTable th {
 	padding-top: 12px;
 	padding-bottom: 12px;
 	text-align: left;
@@ -32,14 +26,28 @@
 	color: white;
 }
 
-#vlResultsTable .actions {
-	list-style: none;
+.vlResultsTable .actions {
+	cursor: pointer;
 }
 
-#vlResultsTable .actions li {
-	display: inline-block;
+.vlResultsTable .actions-tooltip {
+	display: none;
+	background-color: #ddd;
+}
+
+.vlResultsTable .actions-tooltip[data-show] {
+	display: block;
+}
+
+.vlResultsTable .actions-tooltip ul {
+	padding: 0;
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+.vlResultsTable .actions-tooltip li {
+	list-style: none;
 	padding: 0.5rem 0.5rem;
-	text-align: center;
 }
 
 .submit-btn {
@@ -75,7 +83,7 @@
 	justify-content: center;
 }
 
-#searchForm .searchFields > div {
+#searchForm .searchFields>div {
 	display: flex;
 	flex-direction: column;
 }
@@ -86,20 +94,20 @@
 
 .searchFields .divider {
 	width: 1px;
-    background: gray;
-    margin: 5px 15px;
+	background: gray;
+	margin: 5px 15px;
 }
 
 .searchFields button[type=submit] {
 	cursor: pointer;
 	color: #fff;
-    background: #1aac9b;
-    padding: 8px;
-    height: 36px;
-    font-weight: bold;
-    font-size: 9pt;
-    border-radius: 5px 5px;
-    border-width: 1px;
+	background: #1aac9b;
+	padding: 8px;
+	height: 36px;
+	font-weight: bold;
+	font-size: 9pt;
+	border-radius: 5px 5px;
+	border-width: 1px;
 	margin-left: 15px;
 }
 
@@ -107,25 +115,26 @@
 	display: flex;
 }
 
-.reallocate-form .field > .label {
+.reallocate-form .field>.label {
 	margin: 0 10px;
 	display: flex;
 	align-items: center;
 }
 
-.reallocate-form .field > .input {
+.reallocate-form .field>.input {
 	width: 405px;
 }
 
 .success {
-    background-color: #93fbef;
+	background-color: #93fbef;
 }
 
-span.success, div.success {
-    border: 1px dashed #0e5c52;
-    padding: 1px 6px 1px 6px;
-    margin: 4px 0;
-    vertical-align: middle;
+span.success,
+div.success {
+	border: 1px dashed #0e5c52;
+	padding: 1px 6px 1px 6px;
+	margin: 4px 0;
+	vertical-align: middle;
 }
 
 #openmrs_msg {

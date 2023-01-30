@@ -20,6 +20,8 @@ public class SearchForm {
 
     private String vlState;
 
+    private String notProcessingCause;
+
     @NotNull
     private Date startDate;
 
@@ -82,4 +84,11 @@ public class SearchForm {
         this.endDate = endDate;
     }
 
+    public String getNotProcessingCause() {
+        return notProcessingCause;
+    }
+
+    public void setNotProcessingCause(String notProcessingCause) {
+        this.notProcessingCause = notProcessingCause;
+    }
 }
