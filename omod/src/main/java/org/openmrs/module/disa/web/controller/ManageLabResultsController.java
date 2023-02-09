@@ -94,7 +94,8 @@ public class ManageLabResultsController {
                     searchForm.getNotProcessingCause(),
                     searchForm.getNid(),
                     labResultService.getHealthFacilityLabCodes(searchForm.getVlSisma()),
-                    searchForm.getPageNumber());
+                    searchForm.getPageNumber(),
+                    searchForm.getPageSize());
 
             model.addAttribute("disaPage", results);
             session.setAttribute("lastSearchParams", params);
@@ -124,7 +125,8 @@ public class ManageLabResultsController {
                 searchForm.getNotProcessingCause(),
                 searchForm.getNid(),
                 labResultService.getHealthFacilityLabCodes(searchForm.getVlSisma()),
-                searchForm.getPageNumber());
+                searchForm.getPageNumber(),
+                searchForm.getPageSize());
     }
 
     @RequestMapping(value = "/export", method = RequestMethod.GET)

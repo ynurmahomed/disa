@@ -193,6 +193,9 @@
 
 	let table;
 
+	/**
+	 * Return the current OpenMRS user from session.
+	 */
 	async function getCurrentUser() {
 		try {
 			const response = await fetch("/openmrs/ws/rest/v1/session");
@@ -263,6 +266,9 @@
 		}
 	}
 
+	/**
+	 * Create tooltips for table actions.
+	 */
 	function createTooltips() {
 		for (const toggle of document.querySelectorAll(".actions")) {
 			const actions = toggle.querySelector(".actions-tooltip");
@@ -375,6 +381,7 @@
 				{
 					targets: -1,
 					data: null,
+					orderable: false,
 					render: ( data, type, row, meta ) => {
 
 						// If processed render nothing
@@ -501,12 +508,13 @@
 				},
 				url: "managelabresults.form",
 				data: (data) => {
+					const pageSize = data.length;
 					let pageNumber = 1;
-					if (data.start > 0 && data.length !== -1) {
-						pageNumber = (data.start / data.length) + 1;
+					if (data.start > 0 && pageSize !== -1) {
+						pageNumber = (data.start / pageSize) + 1;
 					}
 					const formData = Object.fromEntries(new FormData(searchForm));
-					return {pageNumber, ...formData};
+					return {pageNumber, pageSize, ...formData};
 				},
 				dataFilter: (data) => {
 					const json = JSON.parse(data);

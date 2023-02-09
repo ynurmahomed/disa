@@ -30,6 +30,8 @@ public class SearchForm {
 
     private int pageNumber;
 
+    private int pageSize;
+
     public String getRequestId() {
         return this.requestId;
     }
@@ -102,10 +104,18 @@ public class SearchForm {
         this.pageNumber = pageNumber;
     }
 
+    public int getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(int pageSize) {
+        this.pageSize = pageSize;
+    }
+
     @Override
     public String toString() {
         return "SearchForm [requestId=" + requestId + ", nid=" + nid + ", vlSisma=" + vlSisma + ", referringId="
                 + referringId + ", vlState=" + vlState + ", notProcessingCause=" + notProcessingCause + ", startDate="
-                + startDate + ", endDate=" + endDate + ", pageNumber=" + pageNumber + "]";
+                + startDate + ", endDate=" + endDate + ", pageNumber=" + pageNumber + ", pageSize=" + pageSize + "]";
     }
 }

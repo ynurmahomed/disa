@@ -61,7 +61,8 @@ public class DisaAPIHttpClient {
 			String notProcessingCause,
 			String nid,
 			List<String> healthFacilityLabCodes,
-			int pageNumber) throws URISyntaxException, ClientProtocolException, IOException {
+			int pageNumber,
+			int pageSize) throws URISyntaxException, IOException {
 
 		setUp();
 
@@ -74,7 +75,8 @@ public class DisaAPIHttpClient {
 				.addParameter("viralLoadStatus", viralLoadStatus)
 				.addParameter("notProcessingCause", notProcessingCause)
 				.addParameter("nid", nid)
-				.addParameter("pageNumber", String.valueOf(pageNumber));
+				.addParameter("pageNumber", String.valueOf(pageNumber))
+				.addParameter("pageSize", String.valueOf(pageSize));
 
 		for (String code : healthFacilityLabCodes) {
 			builder.addParameter("healthFacilityLabCode", code);

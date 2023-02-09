@@ -48,7 +48,7 @@ public class LabResultServiceImpl implements LabResultService {
             String requestId, String referringRequestID,
             String viralLoadStatus, String notProcessingCause,
             String nid, List<String> healthFacilityLabCodes,
-            int pageNumber) {
+            int pageNumber, int pageSize) {
 
         try {
 
@@ -67,7 +67,7 @@ public class LabResultServiceImpl implements LabResultService {
             return client.searchLabResults(startDate.atStartOfDay(), endDate.atTime(23, 0), requestId,
                     referringRequestID, viralLoadStatus,
                     notProcessingCause, nid, healthFacilityLabCodes,
-                    pageNumber);
+                    pageNumber, pageSize);
 
         } catch (IOException | URISyntaxException e) {
             throw new DisaModuleAPIException("disa.result.search.error", (Object[]) null, e);
