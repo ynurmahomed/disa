@@ -1,6 +1,6 @@
 package org.openmrs.module.disa.web.model;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -23,10 +23,12 @@ public class SearchForm {
     private String notProcessingCause;
 
     @NotNull
-    private Date startDate;
+    private LocalDate startDate;
 
     @NotNull
-    private Date endDate;
+    private LocalDate endDate;
+
+    private int pageNumber;
 
     public String getRequestId() {
         return this.requestId;
@@ -68,19 +70,19 @@ public class SearchForm {
         this.vlState = vlState;
     }
 
-    public Date getStartDate() {
+    public LocalDate getStartDate() {
         return this.startDate;
     }
 
-    public void setStartDate(Date startDate) {
+    public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
     }
 
-    public Date getEndDate() {
+    public LocalDate getEndDate() {
         return this.endDate;
     }
 
-    public void setEndDate(Date endDate) {
+    public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
     }
 
@@ -90,5 +92,20 @@ public class SearchForm {
 
     public void setNotProcessingCause(String notProcessingCause) {
         this.notProcessingCause = notProcessingCause;
+    }
+
+    public int getPageNumber() {
+        return pageNumber;
+    }
+
+    public void setPageNumber(int pageNumber) {
+        this.pageNumber = pageNumber;
+    }
+
+    @Override
+    public String toString() {
+        return "SearchForm [requestId=" + requestId + ", nid=" + nid + ", vlSisma=" + vlSisma + ", referringId="
+                + referringId + ", vlState=" + vlState + ", notProcessingCause=" + notProcessingCause + ", startDate="
+                + startDate + ", endDate=" + endDate + ", pageNumber=" + pageNumber + "]";
     }
 }

@@ -6,7 +6,7 @@
 	redirect="/module/disa/managelabresults.form" />
 
 <openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/css/disa.css" />
-<openmrs:htmlInclude file="/scripts/jquery/dataTables/css/dataTables_jui.css" />
+<openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/css/datatables.net/1.13.2/jquery.dataTables.min.css" />
 
 <h2>
 	<openmrs:message code="disa.list.viral.load.results.manage" />
@@ -31,7 +31,7 @@
 	</c:if>
 </div>
 
-<c:if test="${not empty disaList}">
+<c:if test="${not empty disaPage.resultList}">
 	<div>
 		<div class="box">
 			<table id="vlResultsTable" class="vlResultsTable" style="width:100%; font-size:12px;">
@@ -91,7 +91,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					<c:forEach items="${disaList}" var="vlData">
+					<c:forEach items="${disaPage.resultList}" var="vlData">
 						<tr>
 							<td>${vlData.requestingFacilityName}</td>
 							<td>${vlData.requestingDistrictName}</td>
@@ -144,25 +144,21 @@
 													</openmrs:hasPrivilege>
 												</c:if>
 											</c:if>
-											<c:if test="${vlData.viralLoadStatus != 'PROCESSED'}">
-												<openmrs:hasPrivilege privilege="Realocar resultados no Disa Interoperabilidade">
-													<li>
-														<a href="managelabresults/${vlData.requestId}/reallocate.form">
-															<spring:message code="disa.viralload.reallocate" />
-														</a>
-													</li>
-												</openmrs:hasPrivilege>
-											</c:if>
-											<c:if test="${vlData.viralLoadStatus != 'PROCESSED'}">
-												<openmrs:hasPrivilege privilege="Remover resultados no Disa Interoperabilidade">
-													<li>
-														<a href="#" data-requestid="${vlData.requestId}"
-															class="delete-vl">
-															<spring:message code="disa.viralload.delete" />
-														</a>
-													</li>
-												</openmrs:hasPrivilege>
-											</c:if>
+											<openmrs:hasPrivilege privilege="Realocar resultados no Disa Interoperabilidade">
+												<li>
+													<a href="managelabresults/${vlData.requestId}/reallocate.form">
+														<spring:message code="disa.viralload.reallocate" />
+													</a>
+												</li>
+											</openmrs:hasPrivilege>
+											<openmrs:hasPrivilege privilege="Remover resultados no Disa Interoperabilidade">
+												<li>
+													<a href="#" data-requestid="${vlData.requestId}"
+														class="delete-vl">
+														<spring:message code="disa.viralload.delete" />
+													</a>
+												</li>
+											</openmrs:hasPrivilege>
 										</ul>
 									</div>
 								</c:if>
@@ -181,7 +177,7 @@
 </c:if>
 
 <c:if test="${not empty searchForm.startDate && not empty searchForm.endDate}">
-	<c:if test="${empty disaList}">
+	<c:if test="${empty disaPage.resultList}">
 		<div id="openmrs_msg">
 			<b>
 				<spring:message code="disa.no.viral.load.form" />
@@ -190,10 +186,29 @@
 	</c:if>
 </c:if>
 
-<openmrs:htmlInclude file="/scripts/jquery/dataTables/js/jquery.dataTables.min.js" />
 <openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/js/popperjs__core/2.11.6/popper.min.js" />
+<openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/js/datatables.net/1.13.2/jquery.dataTables.min.js" />
 
 <script type="text/javascript">
+
+	let table;
+
+	async function getCurrentUser() {
+		try {
+			const response = await fetch("/openmrs/ws/rest/v1/session");
+			if (response.status === 200) {
+				const json = await response.json();
+				return json.user;
+			}
+		} catch (e) {
+			console.error(e);
+		}
+	}
+
+	function hasPrivilege(user, privilege) {
+		return user.privileges.find((p) => p.name === privilege);
+	}
+
 	async function handleReschedule(event) {
 
 		event.preventDefault();
@@ -210,8 +225,8 @@
 			const response = await fetch(`managelabresults/\${requestId}/reschedule.form`, options);
 
 			if (response.status === 200) {
-				sessionStorage.setItem("flashMessage", "<spring:message code='disa.viralload.reschedule.successful'/>");
-				location.reload();
+				addFlashMessage("<spring:message code='disa.viralload.reschedule.successful'/>");
+				table.api().draw(false);
 			} else {
 				throw new Error(`Reschedule was not successful.`)
 			}
@@ -234,8 +249,8 @@
 				document.body.style.cursor = 'wait';
 				const response = await fetch(`managelabresults/\${requestId}.form`, { method: "DELETE" });
 				if (response.status === 204) {
-					sessionStorage.setItem("flashMessage", "<spring:message code='disa.viralload.delete.successful'/>");
-					location.reload();
+					addFlashMessage("<spring:message code='disa.viralload.delete.successful'/>");
+					table.api().draw(false);
 				} else {
 					throw new Error(`Delete was not successful.`);
 				}
@@ -248,9 +263,7 @@
 		}
 	}
 
-
-	$j(document).ready(function () {
-		// Add tooltips
+	function createTooltips() {
 		for (const toggle of document.querySelectorAll(".actions")) {
 			const actions = toggle.querySelector(".actions-tooltip");
 
@@ -321,31 +334,207 @@
 			}
 
 		}
+	}
 
-		// Add handlers for delete link
-		for (const a of document.querySelectorAll(".delete-vl")) {
-			a.addEventListener('click', handleDelete);
+	/**
+	 * Add a message to be temporarily displayed.
+	 */
+	function addFlashMessage(message) {
+		const alertBox = document.getElementById("alert-box");
+		// Clear previous message
+		if(alertBox.lastChild) {
+			alertBox.lastChild.remove();
+		}
+		sessionStorage.setItem("flashMessage", message);
+	}
+
+	/**
+	 * Display a temporary success message if present in sessionStorage.
+	 */
+	function showFlashMessage() {
+			const alertBox = document.getElementById("alert-box");
+			const message = sessionStorage.getItem("flashMessage");
+			if (message) {
+				const openMRSMsg = document.createElement("div");
+				openMRSMsg.innerText = message;
+				openMRSMsg.id = "openmrs_msg";
+				alertBox.appendChild(openMRSMsg);
+				sessionStorage.removeItem("flashMessage");
+			}
 		}
 
-		// Add handlers for reschedule link
-		for (const a of document.querySelectorAll(".reschedule-vl")) {
-			a.addEventListener('click', handleReschedule);
-		}
+	window.addEventListener('DOMContentLoaded', async function () {
 
-		$j('#vlResultsTable').dataTable({
-			"iDisplayLength": 10,
+		const user = await getCurrentUser();
+
+		// Setup results table
+		table = $j('#vlResultsTable').dataTable({
+			displayStart: (+"${disaPage.pageNumber}" - 1) * +"${disaPage.pageSize}",
+			serverSide: true,
+			columnDefs: [
+				{
+					targets: -1,
+					data: null,
+					render: ( data, type, row, meta ) => {
+
+						// If processed render nothing
+						if (row.viralLoadStatus === "PROCESSED") {
+							return null;
+						}
+
+						const span = document.createElement("span");
+
+						// Base tooltip element
+						const tooltip = document.createElement("div");
+						tooltip.className = "actions-tooltip";
+
+						// Arrow
+						const arrow = document.createElement("div");
+						arrow.className = "arrow";
+
+						// Actions list
+						const ul = document.createElement("ul");
+
+						if (row.viralLoadStatus === "NOT_PROCESSED") {
+
+							// Reschedule
+							if (hasPrivilege(user, "Reagendar resultados no Disa Interoperabilidade")) {
+								const reschedule = document.createElement("li");
+								const rescheduleLink = document.createElement("a");
+								rescheduleLink.href="#";
+								rescheduleLink.className = "reschedule-vl";
+								rescheduleLink.dataset.requestid = row.requestId;
+								rescheduleLink.appendChild(document.createTextNode("<spring:message code='disa.viralload.reschedule' />"));
+								reschedule.appendChild(rescheduleLink);
+								ul.appendChild(reschedule);
+							}
+
+							// Map NID
+							if (row.notProcessingCause == 'NID_NOT_FOUND') {
+								if (hasPrivilege(user, "Mapear pacientes no Disa Interoperabilidade")) {
+									const map = document.createElement("li");
+									const mapLink = document.createElement("a");
+									mapLink.href=`managelabresults/\${row.requestId}/map.form`;
+									mapLink.appendChild(document.createTextNode("<spring:message code='disa.map.nid' />"));
+									map.appendChild(mapLink);
+									ul.appendChild(map);
+								}
+							}
+						}
+
+						// Reallocate
+						if (hasPrivilege(user, "Realocar resultados no Disa Interoperabilidade")) {
+							const reallocate = document.createElement("li");
+							const reallocateLink = document.createElement("a");
+							reallocateLink.href=`managelabresults/\${row.requestId}/reallocate.form`;
+							reallocateLink.appendChild(document.createTextNode("<spring:message code='disa.viralload.reallocate' />"));
+							reallocate.appendChild(reallocateLink);
+							ul.appendChild(reallocate);
+						}
+
+						// Void
+						if (hasPrivilege(user, "Remover resultados no Disa Interoperabilidade")) {
+							const delete_ = document.createElement("li");
+							const deleteLink = document.createElement("a");
+							deleteLink.href="#";
+							deleteLink.className = "delete-vl";
+							deleteLink.dataset.requestid = row.requestId;
+							deleteLink.appendChild(document.createTextNode("<spring:message code='disa.viralload.delete' />"));
+							delete_.appendChild(deleteLink)
+							ul.appendChild(delete_);
+						}
+
+						// If no actions available don't display tooltip
+						if (!ul.children.length) {
+							return null;
+						}
+
+						span.appendChild(document.createTextNode("Actions ▼"));
+						span.appendChild(tooltip);
+						tooltip.appendChild(arrow);
+						tooltip.appendChild(ul);
+
+						return span.outerHTML;
+					},
+				},
+        	],
+			columns: [
+				{ data: "requestingFacilityName" },
+				{ data: "requestingDistrictName" },
+				{ data: "healthFacilityLabCode" },
+				{ data: "referringRequestID" },
+				{ data: "nid" },
+				{
+					data: "firstName",
+				  	render: (data, type, row, meta) => `\${data} \${row.lastName}`
+				},
+				{ data: "gender" },
+				{ data: "age" },
+				{ data: "requestId" },
+				{
+					data: "processingDate",
+					render: (data, type, row, meta) => data.substring(0, 10)
+				},
+				{
+					data: "viralLoadResultDate",
+					render: (data, type, row, meta) => data.substring(0, 10)
+				},
+				{ data: "finalViralLoadResult" },
+				{ data: "viralLoadStatus" },
+				{
+					data: "createdAt",
+					render: (data, type, row, meta) => data.substring(0, 10)
+				},
+				{
+					data: "updatedAt",
+					render: (data, type, row, meta) => data ? data.substring(0, 10) : null
+				},
+				{ data: "notProcessingCause" },
+				{
+					data: null,
+					className: "actions"
+				},
+			],
+			ajax: {
+				headers: {
+					Accept: "application/json"
+				},
+				url: "managelabresults.form",
+				data: (data) => {
+					let pageNumber = 1;
+					if (data.start > 0 && data.length !== -1) {
+						pageNumber = (data.start / data.length) + 1;
+					}
+					const formData = Object.fromEntries(new FormData(searchForm));
+					return {pageNumber, ...formData};
+				},
+				dataFilter: (data) => {
+					const json = JSON.parse(data);
+					json.recordsTotal = json.totalResults;
+					json.recordsFiltered = json.totalResults;
+					json.data = json.resultList;
+					return JSON.stringify(json);
+				}
+
+			}
 		});
 
-		// Display a temporary success message if present on sessionStorage
-		const alertBox = document.getElementById("alert-box");
-		const message = sessionStorage.getItem("flashMessage");
-		if (message) {
-			const openMRSMsg = document.createElement("div");
-			openMRSMsg.innerText = message;
-			openMRSMsg.id = "openmrs_msg";
-			alertBox.appendChild(openMRSMsg);
-			sessionStorage.removeItem("flashMessage");
-		}
+		table.on("draw.dt", () => {
+			createTooltips();
+			// Add handlers for delete link
+			for (const a of document.querySelectorAll(".delete-vl")) {
+				a.addEventListener('click', handleDelete);
+			}
+
+			// Add handlers for reschedule link
+			for (const a of document.querySelectorAll(".reschedule-vl")) {
+				a.addEventListener('click', handleReschedule);
+			}
+
+			showFlashMessage();
+		});
+
+		showFlashMessage();
 	});
 </script>
 

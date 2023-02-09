@@ -3,10 +3,13 @@ package org.openmrs.module.disa.api.client;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.fluent.Executor;
@@ -17,6 +20,7 @@ import org.apache.http.impl.client.BasicResponseHandler;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.module.disa.Disa;
 import org.openmrs.module.disa.OrgUnit;
+import org.openmrs.module.disa.api.Page;
 import org.openmrs.module.disa.api.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -31,6 +35,8 @@ import com.google.gson.reflect.TypeToken;
 @Component
 public class DisaAPIHttpClient {
 
+	private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
 	private AdministrationService administrationService;
 	private Gson gson;
 	private boolean isSetUp;
@@ -44,6 +50,51 @@ public class DisaAPIHttpClient {
 			Gson gson) {
 		this.administrationService = administrationService;
 		this.gson = gson;
+	}
+
+	public Page<Disa> searchLabResults(
+			LocalDateTime startDate,
+			LocalDateTime endDate,
+			String requestId,
+			String referringRequestID,
+			String viralLoadStatus,
+			String notProcessingCause,
+			String nid,
+			List<String> healthFacilityLabCodes,
+			int pageNumber) throws URISyntaxException, ClientProtocolException, IOException {
+
+		setUp();
+
+		URIBuilder builder = new URIBuilder(URLBase)
+				.setPathSegments("services", "viralloads", "search-form")
+				.addParameter("startDate", startDate.format(DATE_TIME_FORMATTER))
+				.addParameter("endDate", endDate.format(DATE_TIME_FORMATTER))
+				.addParameter("requestId", requestId)
+				.addParameter("referringRequestID", referringRequestID)
+				.addParameter("viralLoadStatus", viralLoadStatus)
+				.addParameter("notProcessingCause", notProcessingCause)
+				.addParameter("nid", nid)
+				.addParameter("pageNumber", String.valueOf(pageNumber));
+
+		for (String code : healthFacilityLabCodes) {
+			builder.addParameter("healthFacilityLabCode", code);
+		}
+
+		URI url = builder.build();
+
+		Executor executor = Executor.newInstance()
+				.auth(username, password);
+
+		Request request = Request.Get(url);
+
+		ResponseHandler<String> responseHandler = new BasicResponseHandler();
+
+		String jsonResponse = executor.execute(request)
+				.handleResponse(responseHandler);
+
+		TypeToken<Page<Disa>> pageType = new TypeToken<Page<Disa>>() {};
+
+		return gson.fromJson(jsonResponse, pageType.getType());
 	}
 
 	public List<OrgUnit> searchOrgUnits(String term) throws URISyntaxException, IOException {
