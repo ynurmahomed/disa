@@ -19,7 +19,9 @@ public interface LabResultService {
             String nid,
             List<String> healthFacilityLabCodes,
             int pageNumber,
-            int pageSize);
+            int pageSize,
+            String orderBy,
+            String direction);
 
     @Authorized({ "Pesquisar resultados no Disa Interoperabilidade" })
     Disa getByRequestId(String requestId);

@@ -374,9 +374,14 @@
 		const user = await getCurrentUser();
 
 		// Setup results table
-		table = $j('#vlResultsTable').dataTable({
+		table = new DataTable('#vlResultsTable', {
 			displayStart: (+"${disaPage.pageNumber}" - 1) * +"${disaPage.pageSize}",
 			serverSide: true,
+			deferLoading: "${disaPage.totalResults}",
+			order: [
+				// Created at column
+				[13, 'desc']
+			],
 			columnDefs: [
 				{
 					targets: -1,
@@ -473,7 +478,13 @@
 				{ data: "nid" },
 				{
 					data: "firstName",
-				  	render: (data, type, row, meta) => `\${data} \${row.lastName}`
+					render: (data, type, row, meta) => {
+						if (row.lastName) {
+							return `\${data} \${row.lastName}`;
+						} else {
+							return `\${data}`;
+						}
+					}
 				},
 				{ data: "gender" },
 				{ data: "age" },
@@ -514,7 +525,9 @@
 						pageNumber = (data.start / pageSize) + 1;
 					}
 					const formData = Object.fromEntries(new FormData(searchForm));
-					return {pageNumber, pageSize, ...formData};
+					const orderBy = data.columns[data.order[0].column].data;
+					const dir = data.order[0].dir;
+					return {pageNumber, pageSize, ...formData, orderBy, dir};
 				},
 				dataFilter: (data) => {
 					const json = JSON.parse(data);

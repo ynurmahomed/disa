@@ -32,6 +32,10 @@ public class SearchForm {
 
     private int pageSize;
 
+    private String orderBy;
+
+    private String dir;
+
     public String getRequestId() {
         return this.requestId;
     }
@@ -112,10 +116,27 @@ public class SearchForm {
         this.pageSize = pageSize;
     }
 
+    public String getOrderBy() {
+        return orderBy;
+    }
+
+    public void setOrderBy(String orderBy) {
+        this.orderBy = orderBy;
+    }
+
+    public String getDir() {
+        return dir;
+    }
+
+    public void setDir(String dir) {
+        this.dir = dir;
+    }
+
     @Override
     public String toString() {
         return "SearchForm [requestId=" + requestId + ", nid=" + nid + ", vlSisma=" + vlSisma + ", referringId="
                 + referringId + ", vlState=" + vlState + ", notProcessingCause=" + notProcessingCause + ", startDate="
-                + startDate + ", endDate=" + endDate + ", pageNumber=" + pageNumber + ", pageSize=" + pageSize + "]";
+                + startDate + ", endDate=" + endDate + ", pageNumber=" + pageNumber + ", pageSize=" + pageSize
+                + ", orderBy=" + orderBy + ", dir=" + dir + "]";
     }
 }

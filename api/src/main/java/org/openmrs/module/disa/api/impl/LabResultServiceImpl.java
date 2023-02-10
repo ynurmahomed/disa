@@ -3,9 +3,6 @@ package org.openmrs.module.disa.api.impl;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -48,7 +45,8 @@ public class LabResultServiceImpl implements LabResultService {
             String requestId, String referringRequestID,
             String viralLoadStatus, String notProcessingCause,
             String nid, List<String> healthFacilityLabCodes,
-            int pageNumber, int pageSize) {
+            int pageNumber, int pageSize,
+            String orderBy, String direction) {
 
         try {
 
@@ -67,7 +65,7 @@ public class LabResultServiceImpl implements LabResultService {
             return client.searchLabResults(startDate.atStartOfDay(), endDate.atTime(23, 0), requestId,
                     referringRequestID, viralLoadStatus,
                     notProcessingCause, nid, healthFacilityLabCodes,
-                    pageNumber, pageSize);
+                    pageNumber, pageSize, orderBy, direction);
 
         } catch (IOException | URISyntaxException e) {
             throw new DisaModuleAPIException("disa.result.search.error", (Object[]) null, e);
