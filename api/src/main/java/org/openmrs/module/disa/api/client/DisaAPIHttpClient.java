@@ -70,8 +70,6 @@ public class DisaAPIHttpClient {
 
 		URIBuilder builder = new URIBuilder(URLBase)
 				.setPathSegments("services", "viralloads", "search-form")
-				.addParameter("startDate", startDate.format(DATE_TIME_FORMATTER))
-				.addParameter("endDate", endDate.format(DATE_TIME_FORMATTER))
 				.addParameter("requestId", requestId)
 				.addParameter("referringRequestID", referringRequestID)
 				.addParameter("viralLoadStatus", viralLoadStatus)
@@ -81,6 +79,14 @@ public class DisaAPIHttpClient {
 				.addParameter("pageSize", String.valueOf(pageSize))
 				.addParameter("orderBy", orderBy)
 				.addParameter("direction", direction);
+
+		if (startDate != null) {
+			builder.addParameter("startDate", startDate.format(DATE_TIME_FORMATTER));
+		}
+
+		if (endDate != null) {
+			builder.addParameter("endDate", endDate.format(DATE_TIME_FORMATTER));
+		}
 
 		for (String code : healthFacilityLabCodes) {
 			builder.addParameter("healthFacilityLabCode", code);
@@ -98,7 +104,8 @@ public class DisaAPIHttpClient {
 		String jsonResponse = executor.execute(request)
 				.handleResponse(responseHandler);
 
-		TypeToken<Page<Disa>> pageType = new TypeToken<Page<Disa>>() {};
+		TypeToken<Page<Disa>> pageType = new TypeToken<Page<Disa>>() {
+		};
 
 		return gson.fromJson(jsonResponse, pageType.getType());
 	}

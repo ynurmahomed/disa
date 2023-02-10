@@ -22,10 +22,8 @@ public class SearchForm {
 
     private String notProcessingCause;
 
-    @NotNull
     private LocalDate startDate;
 
-    @NotNull
     private LocalDate endDate;
 
     private int pageNumber;

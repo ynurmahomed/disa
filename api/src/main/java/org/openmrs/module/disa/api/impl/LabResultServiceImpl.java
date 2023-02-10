@@ -3,6 +3,7 @@ package org.openmrs.module.disa.api.impl;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -62,7 +63,16 @@ public class LabResultServiceImpl implements LabResultService {
                 notProcessingCause = "";
             }
 
-            return client.searchLabResults(startDate.atStartOfDay(), endDate.atTime(23, 0), requestId,
+            LocalDateTime start = null;
+            LocalDateTime end = null;
+            if (startDate != null) {
+                start = startDate.atStartOfDay();
+            }
+            if (endDate != null) {
+                end = endDate.atTime(23, 0);
+            }
+
+            return client.searchLabResults(start, end, requestId,
                     referringRequestID, viralLoadStatus,
                     notProcessingCause, nid, healthFacilityLabCodes,
                     pageNumber, pageSize, orderBy, direction);

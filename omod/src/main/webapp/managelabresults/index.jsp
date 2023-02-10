@@ -176,14 +176,12 @@
 	</div>
 </c:if>
 
-<c:if test="${not empty searchForm.startDate && not empty searchForm.endDate}">
-	<c:if test="${empty disaPage.resultList}">
-		<div id="openmrs_msg">
-			<b>
-				<spring:message code="disa.no.viral.load.form" />
-			</b>
-		</div>
-	</c:if>
+<c:if test="${empty disaPage.resultList}">
+	<div id="openmrs_msg">
+		<b>
+			<spring:message code="disa.no.viral.load.form" />
+		</b>
+	</div>
 </c:if>
 
 <openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/js/popperjs__core/2.11.6/popper.min.js" />

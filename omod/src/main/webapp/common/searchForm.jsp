@@ -2,7 +2,7 @@
 	<div class="searchFields">
 		<div>
 			<label for="startDate">
-				<openmrs:message code="disa.start.date" /><span class="required">*</span>:
+				<openmrs:message code="disa.start.date" />:
 			</label>
 			<form:input path="startDate"  size="10" id="startDate" onclick="showCalendar(this);" autocomplete="off" autofocus="true"/>
 			<spring:hasBindErrors name="searchForm">
@@ -13,7 +13,7 @@
 		</div>
 		<div>
 			<label for="endDate">
-				<openmrs:message code="disa.end.date" /><span class="required">*</span>:
+				<openmrs:message code="disa.end.date" />:
 			</label>
 			<form:input path="endDate" size="10" id="endDate" onclick="showCalendar(this);" autocomplete="off"/>
 			<spring:hasBindErrors name="searchForm">

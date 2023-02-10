@@ -73,9 +73,7 @@ public class ManageLabResultsController {
 
         populateSismaCodes(model);
 
-        if (params.isEmpty()) {
-            model.addAttribute(new SearchForm());
-        } else if (result.hasErrors()) {
+        if (result.hasErrors()) {
             model.addAttribute(searchForm);
         } else {
             String exportUri = ServletUriComponentsBuilder.fromServletMapping(request)
