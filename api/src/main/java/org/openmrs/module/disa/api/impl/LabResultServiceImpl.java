@@ -55,11 +55,11 @@ public class LabResultServiceImpl implements LabResultService {
                 throw new DisaModuleAPIException("disa.health.facility.required", (Object[]) null);
             }
 
-            if (viralLoadStatus.equals(Constants.ALL)) {
+            if (Constants.ALL.equals(viralLoadStatus)) {
                 viralLoadStatus = "";
             }
 
-            if (notProcessingCause.equals(Constants.ALL)) {
+            if (Constants.ALL.equals(notProcessingCause)) {
                 notProcessingCause = "";
             }
 
@@ -131,7 +131,7 @@ public class LabResultServiceImpl implements LabResultService {
     public List<String> getHealthFacilityLabCodes(String code) {
         List<String> hfCodes = new ArrayList<>();
 
-        if (Constants.TODOS.equals(code)) {
+        if (Constants.ALL.equals(code)) {
             GlobalProperty gp = administrationService.getGlobalPropertyObject(Constants.DISA_SISMA_CODE);
             if (gp == null || StringUtils.isEmpty(gp.getPropertyValue())) {
                 throw new DisaModuleAPIException("disa.config.sisma.codes.error",

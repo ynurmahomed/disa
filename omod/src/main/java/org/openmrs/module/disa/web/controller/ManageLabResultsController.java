@@ -166,7 +166,7 @@ public class ManageLabResultsController {
         List<String> sismaCodes = Arrays.asList(propertyValue.split(","));
         List<String> sismaCodesTodos = new ArrayList<String>();
 
-        sismaCodesTodos.add(Constants.TODOS);
+        sismaCodesTodos.add(Constants.ALL);
         sismaCodesTodos.addAll(sismaCodes);
 
         model.addAttribute("sismaCodes", sismaCodesTodos);

@@ -7,6 +7,7 @@
 
 <openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/css/disa.css" />
 <openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/css/datatables.net/1.13.2/jquery.dataTables.min.css" />
+<openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/css/buttons/2.3.4/buttons.dataTables.min.css" />
 
 <h2>
 	<openmrs:message code="disa.list.viral.load.results.manage" />
@@ -185,7 +186,11 @@
 </c:if>
 
 <openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/js/popperjs__core/2.11.6/popper.min.js" />
+<openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/js/JSZip/2.5.0/jszip.min.js" />
 <openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/js/datatables.net/1.13.2/jquery.dataTables.min.js" />
+<openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/js/buttons/2.3.4/dataTables.buttons.min.js" />
+<openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/js/buttons/2.3.4/buttons.colVis.min.js" />
+<openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/js/buttons/2.3.4/buttons.html5.min.js" />
 
 <script type="text/javascript">
 
@@ -373,6 +378,18 @@
 
 		// Setup results table
 		table = new DataTable('#vlResultsTable', {
+			dom: 'lBfrtip',
+			buttons: [
+				{
+					extend: 'excel',
+					text: "<spring:message code='disa.btn.export' />",
+					title: null,
+				},
+				{
+					extend:'colvis',
+					text: "<spring:message code='disa.btn.columns' />",
+				},
+			],
 			displayStart: (+"${disaPage.pageNumber}" - 1) * +"${disaPage.pageSize}",
 			serverSide: true,
 			deferLoading: "${disaPage.totalResults}",
@@ -381,6 +398,12 @@
 				[13, 'desc']
 			],
 			columnDefs: [
+				// Hide id de referenciamento and updated at by default.
+				{
+					"visible": false,
+					"targets": [3,14]
+				},
+				// Manage column
 				{
 					targets: -1,
 					data: null,

@@ -2,8 +2,9 @@ package org.openmrs.module.disa.web.model;
 
 import java.time.LocalDate;
 
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import org.openmrs.module.disa.api.util.Constants;
 
 public class SearchForm {
 
@@ -33,6 +34,12 @@ public class SearchForm {
     private String orderBy;
 
     private String dir;
+
+    public SearchForm() {
+        this.vlState = Constants.ALL;
+        this.notProcessingCause = Constants.ALL;
+        this.vlSisma = Constants.ALL;
+    }
 
     public String getRequestId() {
         return this.requestId;
