@@ -106,13 +106,7 @@ public class ManageLabResultsController {
 
     @ResponseBody
     @RequestMapping(value = "", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Page<Disa> searchJson(@Valid SearchForm searchForm, BindingResult result) {
-
-        log.debug("{}", searchForm);
-
-        if (result.hasErrors()) {
-            log.debug("{}", result.getAllErrors());
-        }
+    public Page<Disa> searchJson(@Valid SearchForm searchForm) {
 
         // TODO: When an APIAuthenticationException is thrown the server
         // responds with 200 OK. It should be a 401 UNAUTHORIZED.

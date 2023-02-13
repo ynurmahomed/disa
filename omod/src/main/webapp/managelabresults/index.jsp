@@ -212,6 +212,10 @@
 	}
 
 	function hasPrivilege(user, privilege) {
+		const systemDeveloper = user.roles.find(r => r.name === "System Developer");
+		if(systemDeveloper) {
+			return true;
+		}
 		return user.privileges.find((p) => p.name === privilege);
 	}
 
@@ -400,8 +404,8 @@
 			columnDefs: [
 				// Hide id de referenciamento and updated at by default.
 				{
-					"visible": false,
-					"targets": [3,14]
+					targets: [3,14],
+					visible: false
 				},
 				// Manage column
 				{
