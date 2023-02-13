@@ -106,17 +106,10 @@
 							<td>${vlData.processingDate.substring(0,10)}</td>
 							<td>${vlData.viralLoadResultDate.substring(0,10)}</td>
 							<td>${vlData.finalViralLoadResult}</td>
-							<td>
-								<openmrs:message code="disa.viral.load.status.${vlData.viralLoadStatus}" />
-							</td>
+							<td>${vlData.viralLoadStatus}</td>
 							<td>${vlData.createdAt.substring(0,10)}</td>
 							<td>${vlData.updatedAt.substring(0,10)}</td>
-							<td>
-								<c:if test="${not empty vlData.notProcessingCause}">
-									<openmrs:message
-										code="disa.notProcessingCause.${vlData.notProcessingCause}" />
-								</c:if>
-							</td>
+							<td>${vlData.notProcessingCause}</td>
 							<td class="actions" style="text-align: center;">
 								<c:if test="${vlData.viralLoadStatus != 'PROCESSED'}">
 
@@ -168,11 +161,6 @@
 					</c:forEach>
 				</tbody>
 			</table>
-			<br />
-			<div class="submit-btn center">
-				<input type="button" value='<spring:message code="disa.btn.export"/>'
-					name="exportViralLoadResults" onclick="window.location.href = '${exportUri}'" />
-			</div>
 		</div>
 	</div>
 </c:if>
@@ -195,6 +183,21 @@
 <script type="text/javascript">
 
 	let table;
+
+	// Translations
+	var viralLoadStatus = {
+		'PROCESSED': "<openmrs:message code='disa.viral.load.status.PROCESSED' />",
+		'NOT_PROCESSED': "<openmrs:message code='disa.viral.load.status.NOT_PROCESSED' />",
+		'PENDING': "<openmrs:message code='disa.viral.load.status.PENDING' />",
+	};
+
+	var notProcessingCause = {
+		'NID_NOT_FOUND': "<openmrs:message code='disa.notProcessingCause.NID_NOT_FOUND' />",
+		'NO_RESULT': "<openmrs:message code='disa.notProcessingCause.NO_RESULT'/>",
+		'DUPLICATE_NID': "<openmrs:message code='disa.notProcessingCause.DUPLICATE_NID'/>",
+		'FLAGGED_FOR_REVIEW': "<openmrs:message code='disa.notProcessingCause.FLAGGED_FOR_REVIEW'/>",
+		'DUPLICATED_REQUEST_ID': "<openmrs:message code='disa.notProcessingCause.DUPLICATED_REQUEST_ID'/>",
+	};
 
 	/**
 	 * Return the current OpenMRS user from session.
@@ -365,16 +368,34 @@
 	 * Display a temporary success message if present in sessionStorage.
 	 */
 	function showFlashMessage() {
-			const alertBox = document.getElementById("alert-box");
-			const message = sessionStorage.getItem("flashMessage");
-			if (message) {
-				const openMRSMsg = document.createElement("div");
-				openMRSMsg.innerText = message;
-				openMRSMsg.id = "openmrs_msg";
-				alertBox.appendChild(openMRSMsg);
-				sessionStorage.removeItem("flashMessage");
-			}
+		const alertBox = document.getElementById("alert-box");
+		const message = sessionStorage.getItem("flashMessage");
+		if (message) {
+			const openMRSMsg = document.createElement("div");
+			openMRSMsg.innerText = message;
+			openMRSMsg.id = "openmrs_msg";
+			alertBox.appendChild(openMRSMsg);
+			sessionStorage.removeItem("flashMessage");
 		}
+	}
+
+	/**
+	 * Should execute everytime the table is drawn.
+	 */
+	function postDraw() {
+		createTooltips();
+		// Add handlers for delete link
+		for (const a of document.querySelectorAll(".delete-vl")) {
+			a.addEventListener('click', handleDelete);
+		}
+
+		// Add handlers for reschedule link
+		for (const a of document.querySelectorAll(".reschedule-vl")) {
+			a.addEventListener('click', handleReschedule);
+		}
+
+		showFlashMessage();
+	}
 
 	window.addEventListener('DOMContentLoaded', async function () {
 
@@ -382,12 +403,14 @@
 
 		// Setup results table
 		table = new DataTable('#vlResultsTable', {
-			dom: 'lBfrtip',
+			dom: 'lBrftip',
+			scrollX: true,
 			buttons: [
 				{
 					extend: 'excel',
 					text: "<spring:message code='disa.btn.export' />",
 					title: null,
+					filename: 'Viral Load Data Details',
 				},
 				{
 					extend:'colvis',
@@ -407,10 +430,62 @@
 					targets: [3,14],
 					visible: false
 				},
+        	],
+			columns: [
+				{ data: "requestingFacilityName" },
+				{ data: "requestingDistrictName" },
+				{ data: "healthFacilityLabCode" },
+				{ data: "referringRequestID" },
+				{ data: "nid" },
+				{
+					data: "firstName",
+					render: (data, type, row, meta) => {
+						if (row.lastName) {
+							return `\${data} \${row.lastName}`;
+						} else {
+							return `\${data}`;
+						}
+					}
+				},
+				{ data: "gender" },
+				{ data: "age" },
+				{ data: "requestId" },
+				{
+					data: "processingDate",
+					render: (data, type, row, meta) => data.substring(0, 10)
+				},
+				{
+					data: "viralLoadResultDate",
+					render: (data, type, row, meta) => data.substring(0, 10)
+				},
+				{ data: "finalViralLoadResult" },
+				{
+					data: "viralLoadStatus",
+					orderable: false,
+					render: (data, type, row, meta) => viralLoadStatus[data]
+				},
+				{
+					data: "createdAt",
+					render: (data, type, row, meta) => data.substring(0, 10)
+				},
+				{
+					data: "updatedAt",
+					render: (data, type, row, meta) => data ? data.substring(0, 10) : null
+				},
+				{
+					data: "notProcessingCause",
+					orderable: false,
+					render: (data, type, row, meta) => {
+						if (data) {
+							return notProcessingCause[data];
+						}
+						return null;
+					}
+				},
 				// Manage column
 				{
-					targets: -1,
 					data: null,
+					className: "actions",
 					orderable: false,
 					render: ( data, type, row, meta ) => {
 
@@ -492,50 +567,7 @@
 						tooltip.appendChild(ul);
 
 						return span.outerHTML;
-					},
-				},
-        	],
-			columns: [
-				{ data: "requestingFacilityName" },
-				{ data: "requestingDistrictName" },
-				{ data: "healthFacilityLabCode" },
-				{ data: "referringRequestID" },
-				{ data: "nid" },
-				{
-					data: "firstName",
-					render: (data, type, row, meta) => {
-						if (row.lastName) {
-							return `\${data} \${row.lastName}`;
-						} else {
-							return `\${data}`;
-						}
 					}
-				},
-				{ data: "gender" },
-				{ data: "age" },
-				{ data: "requestId" },
-				{
-					data: "processingDate",
-					render: (data, type, row, meta) => data.substring(0, 10)
-				},
-				{
-					data: "viralLoadResultDate",
-					render: (data, type, row, meta) => data.substring(0, 10)
-				},
-				{ data: "finalViralLoadResult" },
-				{ data: "viralLoadStatus" },
-				{
-					data: "createdAt",
-					render: (data, type, row, meta) => data.substring(0, 10)
-				},
-				{
-					data: "updatedAt",
-					render: (data, type, row, meta) => data ? data.substring(0, 10) : null
-				},
-				{ data: "notProcessingCause" },
-				{
-					data: null,
-					className: "actions"
 				},
 			],
 			ajax: {
@@ -552,7 +584,8 @@
 					const formData = Object.fromEntries(new FormData(searchForm));
 					const orderBy = data.columns[data.order[0].column].data;
 					const dir = data.order[0].dir;
-					return {pageNumber, pageSize, ...formData, orderBy, dir};
+					const search = data.search.value;
+					return {pageNumber, pageSize, ...formData, search, orderBy, dir};
 				},
 				dataFilter: (data) => {
 					const json = JSON.parse(data);
@@ -565,22 +598,10 @@
 			}
 		});
 
-		table.on("draw.dt", () => {
-			createTooltips();
-			// Add handlers for delete link
-			for (const a of document.querySelectorAll(".delete-vl")) {
-				a.addEventListener('click', handleDelete);
-			}
+		table.on("draw", postDraw);
+		// Inial draw is not triggered when using deferLoading, so we call postDraw manually.
+		postDraw();
 
-			// Add handlers for reschedule link
-			for (const a of document.querySelectorAll(".reschedule-vl")) {
-				a.addEventListener('click', handleReschedule);
-			}
-
-			showFlashMessage();
-		});
-
-		showFlashMessage();
 	});
 </script>
 

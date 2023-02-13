@@ -46,6 +46,7 @@ public class LabResultServiceImpl implements LabResultService {
             String requestId, String referringRequestID,
             String viralLoadStatus, String notProcessingCause,
             String nid, List<String> healthFacilityLabCodes,
+            String search,
             int pageNumber, int pageSize,
             String orderBy, String direction) {
 
@@ -75,6 +76,7 @@ public class LabResultServiceImpl implements LabResultService {
             return client.searchLabResults(start, end, requestId,
                     referringRequestID, viralLoadStatus,
                     notProcessingCause, nid, healthFacilityLabCodes,
+                    search,
                     pageNumber, pageSize, orderBy, direction);
 
         } catch (IOException | URISyntaxException e) {

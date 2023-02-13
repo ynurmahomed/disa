@@ -61,6 +61,7 @@ public class DisaAPIHttpClient {
 			String notProcessingCause,
 			String nid,
 			List<String> healthFacilityLabCodes,
+			String search,
 			int pageNumber,
 			int pageSize,
 			String orderBy,
@@ -78,7 +79,8 @@ public class DisaAPIHttpClient {
 				.addParameter("pageNumber", String.valueOf(pageNumber))
 				.addParameter("pageSize", String.valueOf(pageSize))
 				.addParameter("orderBy", orderBy)
-				.addParameter("direction", direction);
+				.addParameter("direction", direction)
+				.addParameter("search", search);
 
 		if (startDate != null) {
 			builder.addParameter("startDate", startDate.format(DATE_TIME_FORMATTER));

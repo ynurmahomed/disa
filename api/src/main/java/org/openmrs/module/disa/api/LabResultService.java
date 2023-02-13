@@ -18,6 +18,7 @@ public interface LabResultService {
             String notProcessingCause,
             String nid,
             List<String> healthFacilityLabCodes,
+            String search,
             int pageNumber,
             int pageSize,
             String orderBy,

@@ -35,6 +35,8 @@ public class SearchForm {
 
     private String dir;
 
+    private String search;
+
     public SearchForm() {
         this.vlState = Constants.ALL;
         this.notProcessingCause = Constants.ALL;
@@ -137,11 +139,19 @@ public class SearchForm {
         this.dir = dir;
     }
 
+    public String getSearch() {
+        return search;
+    }
+
+    public void setSearch(String search) {
+        this.search = search;
+    }
+
     @Override
     public String toString() {
         return "SearchForm [requestId=" + requestId + ", nid=" + nid + ", vlSisma=" + vlSisma + ", referringId="
                 + referringId + ", vlState=" + vlState + ", notProcessingCause=" + notProcessingCause + ", startDate="
                 + startDate + ", endDate=" + endDate + ", pageNumber=" + pageNumber + ", pageSize=" + pageSize
-                + ", orderBy=" + orderBy + ", dir=" + dir + "]";
+                + ", orderBy=" + orderBy + ", dir=" + dir + ", search=" + search + "]";
     }
 }
