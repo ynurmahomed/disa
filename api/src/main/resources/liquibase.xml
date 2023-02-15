@@ -116,12 +116,12 @@
             <column name="privilege">Remover resultados no Disa Interoperabilidade</column>
         </insert>
         <insert tableName="role_privilege">
-            <column name="role">Gestor de Disa Interoperabilidade</column>
-            <column name="privilege">Mapear pacientes no Disa Interoperabilidade</column>
-        </insert>
-        <insert tableName="role_privilege">
             <column name="role">Tecnico de Laboratorio</column>
             <column name="privilege">Mapear pacientes no Disa Interoperabilidade</column>
+        </insert>
+        <insert tableName="role_role">
+            <column name="parent_role">Tecnico de Laboratorio</column>
+            <column name="child_role">Gestor de Disa Interoperabilidade</column>
         </insert>
     </changeSet>
 
