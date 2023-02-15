@@ -85,6 +85,49 @@ public class LabResultServiceImpl implements LabResultService {
     }
 
     @Override
+    public List<Disa> getAll(
+            LocalDate startDate, LocalDate endDate,
+            String requestId, String referringRequestID,
+            String viralLoadStatus, String notProcessingCause,
+            String nid, List<String> healthFacilityLabCodes,
+            String search,
+            String orderBy, String direction) {
+
+        try {
+
+            if (healthFacilityLabCodes.isEmpty()) {
+                throw new DisaModuleAPIException("disa.health.facility.required", (Object[]) null);
+            }
+
+            if (Constants.ALL.equals(viralLoadStatus)) {
+                viralLoadStatus = "";
+            }
+
+            if (Constants.ALL.equals(notProcessingCause)) {
+                notProcessingCause = "";
+            }
+
+            LocalDateTime start = null;
+            LocalDateTime end = null;
+            if (startDate != null) {
+                start = startDate.atStartOfDay();
+            }
+            if (endDate != null) {
+                end = endDate.atTime(23, 0);
+            }
+
+            return client.getAllLabResults(start, end, requestId,
+                    referringRequestID, viralLoadStatus,
+                    notProcessingCause, nid, healthFacilityLabCodes,
+                    search,
+                    orderBy, direction);
+
+        } catch (IOException | URISyntaxException e) {
+            throw new DisaModuleAPIException("disa.result.export.error", (Object[]) null, e);
+        }
+    }
+
+    @Override
     public Disa getByRequestId(String requestId) {
         try {
             return client.getResultByRequestId(requestId);

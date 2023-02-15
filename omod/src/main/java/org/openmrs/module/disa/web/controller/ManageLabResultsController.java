@@ -9,8 +9,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
-import org.apache.commons.lang.NotImplementedException;
-import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.messagesource.MessageSourceService;
@@ -19,6 +17,7 @@ import org.openmrs.module.disa.api.DisaModuleAPIException;
 import org.openmrs.module.disa.api.LabResultService;
 import org.openmrs.module.disa.api.Page;
 import org.openmrs.module.disa.api.util.Constants;
+import org.openmrs.module.disa.web.delegate.ViralLoadResultsDelegate;
 import org.openmrs.module.disa.web.model.SearchForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,7 +68,7 @@ public class ManageLabResultsController {
             BindingResult result,
             ModelMap model,
             HttpSession session,
-            HttpServletRequest request) throws Exception {
+            HttpServletRequest request) {
 
         populateSismaCodes(model);
 
@@ -83,20 +82,7 @@ public class ManageLabResultsController {
                     .toUriString();
             model.addAttribute("exportUri", exportUri);
 
-            Page<Disa> results = labResultService.search(
-                    searchForm.getStartDate(),
-                    searchForm.getEndDate(),
-                    searchForm.getRequestId(),
-                    searchForm.getReferringId(),
-                    searchForm.getVlState(),
-                    searchForm.getNotProcessingCause(),
-                    searchForm.getNid(),
-                    labResultService.getHealthFacilityLabCodes(searchForm.getVlSisma()),
-                    searchForm.getSearch(),
-                    searchForm.getPageNumber(),
-                    searchForm.getPageSize(),
-                    searchForm.getOrderBy(),
-                    searchForm.getDir());
+            Page<Disa> results = searchLabResults(searchForm);
 
             model.addAttribute("disaPage", results);
             session.setAttribute("lastSearchParams", params);
@@ -108,37 +94,17 @@ public class ManageLabResultsController {
     @ResponseBody
     @RequestMapping(value = "", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public Page<Disa> searchJson(@Valid SearchForm searchForm) {
-
-        // TODO: When an APIAuthenticationException is thrown the server
-        // responds with 200 OK. It should be a 401 UNAUTHORIZED.
-        // if (true) {
-        //     throw new APIAuthenticationException("Teste");
-        // }
-
-        return labResultService.search(
-                searchForm.getStartDate(),
-                searchForm.getEndDate(),
-                searchForm.getRequestId(),
-                searchForm.getReferringId(),
-                searchForm.getVlState(),
-                searchForm.getNotProcessingCause(),
-                searchForm.getNid(),
-                labResultService.getHealthFacilityLabCodes(searchForm.getVlSisma()),
-                searchForm.getSearch(),
-                searchForm.getPageNumber(),
-                searchForm.getPageSize(),
-                searchForm.getOrderBy(),
-                searchForm.getDir());
+        return searchLabResults(searchForm);
     }
 
     @RequestMapping(value = "/export", method = RequestMethod.GET)
     public void export(
-            @RequestParam MultiValueMap<String, String> params,
             @Valid SearchForm searchForm,
-            BindingResult result,
             ModelMap model,
-            HttpServletResponse response) {
-        throw new NotImplementedException();
+            HttpServletResponse response) throws Exception {
+
+        ViralLoadResultsDelegate delegate = new ViralLoadResultsDelegate();
+        delegate.createExcelFileStaging(getAllLabResults(searchForm), response, messageSourceService);
     }
 
     @RequestMapping(value = "/{requestId}", method = RequestMethod.DELETE)
@@ -151,6 +117,20 @@ public class ManageLabResultsController {
     @ResponseStatus(HttpStatus.OK)
     public void reschedule(@PathVariable String requestId) {
         labResultService.rescheduleLabResult(new Disa(requestId));
+    }
+
+    @ExceptionHandler(DisaModuleAPIException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public void handleDisaModuleAPIException(DisaModuleAPIException e) {
+        log.error("", e);
+    }
+
+    @ModelAttribute("pageTitle")
+    private void setPageTitle(ModelMap model) {
+        String openMrs = messageSourceService.getMessage("openmrs.title", null, Context.getLocale());
+        String pageTitle = messageSourceService.getMessage("disa.list.viral.load.results.manage", null,
+                Context.getLocale());
+        model.addAttribute("pageTitle", openMrs + " - " + pageTitle);
     }
 
     /**
@@ -168,17 +148,35 @@ public class ManageLabResultsController {
         model.addAttribute("sismaCodes", sismaCodesTodos);
     }
 
-    @ModelAttribute("pageTitle")
-    private void setPageTitle(ModelMap model) {
-        String openMrs = messageSourceService.getMessage("openmrs.title", null, Context.getLocale());
-        String pageTitle = messageSourceService.getMessage("disa.list.viral.load.results.manage", null,
-                Context.getLocale());
-        model.addAttribute("pageTitle", openMrs + " - " + pageTitle);
+    private Page<Disa> searchLabResults(SearchForm searchForm) {
+        return labResultService.search(
+                searchForm.getStartDate(),
+                searchForm.getEndDate(),
+                searchForm.getRequestId(),
+                searchForm.getReferringId(),
+                searchForm.getVlState(),
+                searchForm.getNotProcessingCause(),
+                searchForm.getNid(),
+                labResultService.getHealthFacilityLabCodes(searchForm.getVlSisma()),
+                searchForm.getSearch(),
+                searchForm.getPageNumber(),
+                searchForm.getPageSize(),
+                searchForm.getOrderBy(),
+                searchForm.getDir());
     }
 
-    @ExceptionHandler(DisaModuleAPIException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public void handleDisaModuleAPIException(DisaModuleAPIException e) {
-        log.error("", e);
+    private List<Disa> getAllLabResults(SearchForm searchForm) {
+        return labResultService.getAll(
+                searchForm.getStartDate(),
+                searchForm.getEndDate(),
+                searchForm.getRequestId(),
+                searchForm.getReferringId(),
+                searchForm.getVlState(),
+                searchForm.getNotProcessingCause(),
+                searchForm.getNid(),
+                labResultService.getHealthFacilityLabCodes(searchForm.getVlSisma()),
+                searchForm.getSearch(),
+                searchForm.getOrderBy(),
+                searchForm.getDir());
     }
 }

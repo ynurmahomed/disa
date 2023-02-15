@@ -70,7 +70,7 @@ public class DisaAPIHttpClient {
 		setUp();
 
 		URIBuilder builder = new URIBuilder(URLBase)
-				.setPathSegments("services", "viralloads", "search-form")
+				.setPathSegments("services", "viralloads", "requestProvince", "search-form")
 				.addParameter("requestId", requestId)
 				.addParameter("referringRequestID", referringRequestID)
 				.addParameter("viralLoadStatus", viralLoadStatus)
@@ -107,6 +107,62 @@ public class DisaAPIHttpClient {
 				.handleResponse(responseHandler);
 
 		TypeToken<Page<Disa>> pageType = new TypeToken<Page<Disa>>() {
+		};
+
+		return gson.fromJson(jsonResponse, pageType.getType());
+	}
+
+	public List<Disa> getAllLabResults(
+			LocalDateTime startDate,
+			LocalDateTime endDate,
+			String requestId,
+			String referringRequestID,
+			String viralLoadStatus,
+			String notProcessingCause,
+			String nid,
+			List<String> healthFacilityLabCodes,
+			String search,
+			String orderBy,
+			String direction) throws URISyntaxException, IOException {
+
+		setUp();
+
+		URIBuilder builder = new URIBuilder(URLBase)
+				.setPathSegments("services", "viralloads", "requestProvince", "export")
+				.addParameter("requestId", requestId)
+				.addParameter("referringRequestID", referringRequestID)
+				.addParameter("viralLoadStatus", viralLoadStatus)
+				.addParameter("notProcessingCause", notProcessingCause)
+				.addParameter("nid", nid)
+				.addParameter("orderBy", orderBy)
+				.addParameter("direction", direction)
+				.addParameter("search", search);
+
+		if (startDate != null) {
+			builder.addParameter("startDate", startDate.format(DATE_TIME_FORMATTER));
+		}
+
+		if (endDate != null) {
+			builder.addParameter("endDate", endDate.format(DATE_TIME_FORMATTER));
+		}
+
+		for (String code : healthFacilityLabCodes) {
+			builder.addParameter("healthFacilityLabCode", code);
+		}
+
+		URI url = builder.build();
+
+		Executor executor = Executor.newInstance()
+				.auth(username, password);
+
+		Request request = Request.Get(url);
+
+		ResponseHandler<String> responseHandler = new BasicResponseHandler();
+
+		String jsonResponse = executor.execute(request)
+				.handleResponse(responseHandler);
+
+		TypeToken<List<Disa>> pageType = new TypeToken<List<Disa>>() {
 		};
 
 		return gson.fromJson(jsonResponse, pageType.getType());
@@ -161,7 +217,7 @@ public class DisaAPIHttpClient {
 		setUp();
 
 		URI url = new URIBuilder(URLBase)
-				.setPathSegments("services", "viralloads", requestId)
+				.setPathSegments("services", "viralloads", "requestProvince", requestId)
 				.build();
 
 		Executor executor = Executor.newInstance()
@@ -181,7 +237,7 @@ public class DisaAPIHttpClient {
 		setUp();
 
 		URI url = new URIBuilder(URLBase)
-				.setPathSegments("services", "viralloads", requestId)
+				.setPathSegments("services", "viralloads", "requestProvince", requestId)
 				.build();
 
 		Executor executor = Executor.newInstance()
@@ -204,7 +260,7 @@ public class DisaAPIHttpClient {
 		setUp();
 
 		URI url = new URIBuilder(URLBase)
-				.setPathSegments("services", "viralloads", labResult.getRequestId())
+				.setPathSegments("services", "viralloads", "requestProvince", labResult.getRequestId())
 				.build();
 
 		Executor executor = Executor.newInstance()

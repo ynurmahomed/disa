@@ -161,6 +161,11 @@
 					</c:forEach>
 				</tbody>
 			</table>
+			<br />
+			<div class="submit-btn center">
+				<input type="button" value='<spring:message code="disa.btn.export"/>'
+					name="exportViralLoadResults" onclick="window.location.href = '${exportUri}'" />
+			</div>
 		</div>
 	</div>
 </c:if>
@@ -406,12 +411,6 @@
 			dom: 'lBrftip',
 			scrollX: true,
 			buttons: [
-				{
-					extend: 'excel',
-					text: "<spring:message code='disa.btn.export' />",
-					title: null,
-					filename: 'Viral Load Data Details',
-				},
 				{
 					extend:'colvis',
 					text: "<spring:message code='disa.btn.columns' />",

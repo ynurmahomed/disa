@@ -25,6 +25,20 @@ public interface LabResultService {
             String direction);
 
     @Authorized({ "Pesquisar resultados no Disa Interoperabilidade" })
+    List<Disa> getAll(
+            LocalDate startDate,
+            LocalDate endDate,
+            String requestId,
+            String referringRequestID,
+            String viralLoadStatus,
+            String notProcessingCause,
+            String nid,
+            List<String> healthFacilityLabCodes,
+            String search,
+            String orderBy,
+            String direction);
+
+    @Authorized({ "Pesquisar resultados no Disa Interoperabilidade" })
     Disa getByRequestId(String requestId);
 
     @Authorized({ "Remover resultados no Disa Interoperabilidade" })
