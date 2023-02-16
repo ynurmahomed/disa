@@ -217,7 +217,7 @@ public class DisaAPIHttpClient {
 		setUp();
 
 		URI url = new URIBuilder(URLBase)
-				.setPathSegments("services", "viralloads", "requestProvince", requestId)
+				.setPathSegments("services", "viralloads", requestId)
 				.build();
 
 		Executor executor = Executor.newInstance()
@@ -237,7 +237,7 @@ public class DisaAPIHttpClient {
 		setUp();
 
 		URI url = new URIBuilder(URLBase)
-				.setPathSegments("services", "viralloads", "requestProvince", requestId)
+				.setPathSegments("services", "viralloads", requestId)
 				.build();
 
 		Executor executor = Executor.newInstance()
@@ -260,7 +260,7 @@ public class DisaAPIHttpClient {
 		setUp();
 
 		URI url = new URIBuilder(URLBase)
-				.setPathSegments("services", "viralloads", "requestProvince", labResult.getRequestId())
+				.setPathSegments("services", "viralloads", labResult.getRequestId())
 				.build();
 
 		Executor executor = Executor.newInstance()
