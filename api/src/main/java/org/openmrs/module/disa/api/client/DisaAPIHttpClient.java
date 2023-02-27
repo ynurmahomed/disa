@@ -171,7 +171,7 @@ public class DisaAPIHttpClient {
 		setUp();
 
 		URI url = new URIBuilder(URLBase)
-				.setPathSegments("services", "orgunits", "search")
+				.setPathSegments("services", "v2", "orgunits", "search")
 				.addParameter("term", term)
 				.build();
 
@@ -195,7 +195,7 @@ public class DisaAPIHttpClient {
 		setUp();
 
 		URI url = new URIBuilder(URLBase)
-				.setPathSegments("services", "orgunits", code)
+				.setPathSegments("services", "v2", "orgunits", code)
 				.build();
 
 		Executor executor = Executor.newInstance()
