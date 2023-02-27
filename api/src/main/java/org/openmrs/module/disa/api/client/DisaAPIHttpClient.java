@@ -9,7 +9,6 @@ import java.util.List;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.fluent.Executor;
@@ -70,7 +69,7 @@ public class DisaAPIHttpClient {
 		setUp();
 
 		URIBuilder builder = new URIBuilder(URLBase)
-				.setPathSegments("services", "viralloads", "requestProvince", "search-form")
+				.setPathSegments("services", "v2", "viralloads", "search-form")
 				.addParameter("requestId", requestId)
 				.addParameter("referringRequestID", referringRequestID)
 				.addParameter("viralLoadStatus", viralLoadStatus)
@@ -128,7 +127,7 @@ public class DisaAPIHttpClient {
 		setUp();
 
 		URIBuilder builder = new URIBuilder(URLBase)
-				.setPathSegments("services", "viralloads", "requestProvince", "export")
+				.setPathSegments("services", "v2", "viralloads", "export")
 				.addParameter("requestId", requestId)
 				.addParameter("referringRequestID", referringRequestID)
 				.addParameter("viralLoadStatus", viralLoadStatus)
@@ -217,7 +216,7 @@ public class DisaAPIHttpClient {
 		setUp();
 
 		URI url = new URIBuilder(URLBase)
-				.setPathSegments("services", "viralloads", requestId)
+				.setPathSegments("services", "v2", "viralloads", requestId)
 				.build();
 
 		Executor executor = Executor.newInstance()
@@ -237,7 +236,7 @@ public class DisaAPIHttpClient {
 		setUp();
 
 		URI url = new URIBuilder(URLBase)
-				.setPathSegments("services", "viralloads", requestId)
+				.setPathSegments("services", "v2", "viralloads", requestId)
 				.build();
 
 		Executor executor = Executor.newInstance()
@@ -260,7 +259,7 @@ public class DisaAPIHttpClient {
 		setUp();
 
 		URI url = new URIBuilder(URLBase)
-				.setPathSegments("services", "viralloads", labResult.getRequestId())
+				.setPathSegments("services", "v2", "viralloads", labResult.getRequestId())
 				.build();
 
 		Executor executor = Executor.newInstance()
