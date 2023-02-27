@@ -16,9 +16,10 @@ import javax.mail.internet.MimeMessage;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
+import org.openmrs.module.disa.api.util.Constants;
 
 /**
- * 
+ *
  * @author machabane
  *
  */
@@ -30,7 +31,7 @@ public class GenericUtil {
 	static Pattern pattern = Pattern.compile("-?\\d+(\\.\\d+)?");
 
 	public static String removeAccents (String specialCharacter) {
-		
+
 		try {
 			bs = specialCharacter.getBytes("ISO-8859-15");
 			noSpecialCharacter = Normalizer.normalize(new String(bs, "UTF-8"), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]","");
@@ -39,18 +40,18 @@ public class GenericUtil {
 		}
 		return noSpecialCharacter;
 	}
-	
+
 	public static boolean isNumeric(String strNum) {
 	    if (strNum == null) { return false; }
 	    return pattern.matcher(strNum).matches();
 	}
-	
+
 	public static String unaccent(String src) {
 		return Normalizer
 				.normalize(src, Normalizer.Form.NFD)
 				.replaceAll("[^\\p{ASCII}]", "");
 	}
-	
+
 	public static String wardSelection (String we) {
 		switch (we) {
 	      case "CI":	wardConcept=Constants.CONSULTA_INTEGRADA;
@@ -77,7 +78,7 @@ public class GenericUtil {
 		}
 		return wardConcept;
 	}
-	
+
 	public static void SendMail(String to, final String from, String subject, String actualMessage, String host, final String fromPassword, String port) {
 
         // Get system properties
@@ -126,14 +127,14 @@ public class GenericUtil {
             mex.printStackTrace();
         }
 	}
-	
+
 	public static void sendMail(String recipients[], String subject, String message, final String from, String host, String port, final String fromPassword)
 		{
-		
+
 		try {
 			boolean debug = false;
 			Properties props = new Properties();
-	
+
 			props.put("mail.smtp.host", host);
 			props.put("mail.smtp.auth", "true");
 			props.put("mail.debug", "true");
@@ -141,7 +142,7 @@ public class GenericUtil {
 			props.put("mail.smtp.socketFactory.port", port);
 			props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
 			props.put("mail.smtp.socketFactory.fallback", "false");
-		
+
 			Session session = Session.getInstance(props, new javax.mail.Authenticator() {
 
 				protected PasswordAuthentication getPasswordAuthentication() {
@@ -169,7 +170,7 @@ public class GenericUtil {
 			messagingException.printStackTrace();
 		}
 	}
-	
+
 	public static List<NameValuePair> buildParamList(List<String> hfCodes) {
 	    List<NameValuePair> hfs = new ArrayList<>();
 	    for (String string : hfCodes) {

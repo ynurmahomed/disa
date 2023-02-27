@@ -1,4 +1,4 @@
-package org.openmrs.module.disa.extension.util;
+package org.openmrs.module.disa.api.util;
 
 /**
  *

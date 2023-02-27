@@ -95,6 +95,13 @@ public class Disa {
 
 	private Integer ageInYears;
 
+	public Disa() {
+	}
+
+	public Disa(String requestId) {
+		this.requestId = requestId;
+	}
+
 	public String getSynchronizedBy() {
 		return synchronizedBy;
 	}

@@ -2,7 +2,7 @@
 	<div class="searchFields">
 		<div>
 			<label for="startDate">
-				<openmrs:message code="disa.start.date" /><span class="required">*</span>:
+				<openmrs:message code="disa.start.date" />:
 			</label>
 			<form:input path="startDate"  size="10" id="startDate" onclick="showCalendar(this);" autocomplete="off" autofocus="true"/>
 			<spring:hasBindErrors name="searchForm">
@@ -13,7 +13,7 @@
 		</div>
 		<div>
 			<label for="endDate">
-				<openmrs:message code="disa.end.date" /><span class="required">*</span>:
+				<openmrs:message code="disa.end.date" />:
 			</label>
 			<form:input path="endDate" size="10" id="endDate" onclick="showCalendar(this);" autocomplete="off"/>
 			<spring:hasBindErrors name="searchForm">
@@ -51,6 +51,31 @@
 				</form:option>
 				<form:option value="PENDING">
 					<openmrs:message code="disa.viral.load.status.PENDING" />
+				</form:option>
+			</form:select>
+		</div>
+		<div>
+			<label for="notProcessingCause">
+				<openmrs:message code="disa.notProcessingCause" />:
+			</label>
+			<form:select path="notProcessingCause">
+				<form:option value="ALL">
+					<openmrs:message code="disa.notProcessingCause.ALL" />
+				</form:option>
+				<form:option value="NID_NOT_FOUND">
+					<openmrs:message code="disa.notProcessingCause.NID_NOT_FOUND" />
+				</form:option>
+				<form:option value="NO_RESULT">
+					<openmrs:message code="disa.notProcessingCause.NO_RESULT" />
+				</form:option>
+				<form:option value="FLAGGED_FOR_REVIEW">
+					<openmrs:message code="disa.notProcessingCause.FLAGGED_FOR_REVIEW" />
+				</form:option>
+				<form:option value="DUPLICATE_NID">
+					<openmrs:message code="disa.notProcessingCause.DUPLICATE_NID" />
+				</form:option>
+				<form:option value="DUPLICATED_REQUEST_ID">
+					<openmrs:message code="disa.notProcessingCause.DUPLICATED_REQUEST_ID" />
 				</form:option>
 			</form:select>
 		</div>

@@ -67,6 +67,7 @@ public class DisaServiceTest extends BaseModuleContextSensitiveTest {
 
 	@Test
 	public void shouldSetupContext() {
+		executeDataSet("org/openmrs/module/disa/api/include/DisaServiceTest-shouldSetupContext.xml");
 		assertNotNull(Context.getService(DisaService.class));
 	}
 

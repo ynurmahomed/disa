@@ -14,48 +14,60 @@
 package org.openmrs.module.disa.api.impl;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.LocationAttribute;
 import org.openmrs.Patient;
+import org.openmrs.PatientIdentifier;
+import org.openmrs.PatientIdentifierType;
+import org.openmrs.api.LocationService;
+import org.openmrs.api.PatientService;
 import org.openmrs.api.impl.BaseOpenmrsService;
+import org.openmrs.module.disa.Disa;
 import org.openmrs.module.disa.FsrLog;
+import org.openmrs.module.disa.api.DisaModuleAPIException;
 import org.openmrs.module.disa.api.DisaService;
+import org.openmrs.module.disa.api.LabResultService;
 import org.openmrs.module.disa.api.db.DisaDAO;
+import org.openmrs.module.disa.api.util.Constants;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
  * It is a default implementation of {@link DisaService}.
  */
 public class DisaServiceImpl extends BaseOpenmrsService implements DisaService {
-	
+
 	protected final Log log = LogFactory.getLog(this.getClass());
-	
+
+	private LabResultService labResultService;
+	private PatientService patientService;
+	private LocationService locationService;
 	private DisaDAO dao;
-	
-	/**
-     * @param dao the dao to set
-     */
-    public void setDao(DisaDAO dao) {
-	    this.dao = dao;
-    }
-    
-    /**
-     * @return the dao
-     */
-    public DisaDAO getDao() {
-	    return dao;
-    }
+
+	@Autowired
+	public DisaServiceImpl(
+			DisaDAO dao,
+			LabResultService labResultService,
+			@Qualifier("patientService") PatientService patientService,
+			@Qualifier("locationService") LocationService locationService) {
+		this.dao = dao;
+		this.labResultService = labResultService;
+		this.patientService = patientService;
+		this.locationService = locationService;
+	}
 
 	@Override
 	public List<LocationAttribute> getAllLocationAttribute(String valueReference) {
 		return dao.getAllLocationAttribute(valueReference);
 	}
-	
+
 	@Override
 	public Serializable saveFsrLog(FsrLog fsrLog) {
-		return dao.saveFsrLog(fsrLog); 
+		return dao.saveFsrLog(fsrLog);
 	}
 
 	@Override
@@ -69,7 +81,44 @@ public class DisaServiceImpl extends BaseOpenmrsService implements DisaService {
 	}
 
 	@Override
-	public List<Patient>  getPatientByPatientId(Integer patientId) {
-		return dao.getPatientByPatientId(patientId); 
+	public List<Patient> getPatientByPatientId(Integer patientId) {
+		return dao.getPatientByPatientId(patientId);
+	}
+
+	@Override
+	public void mapIdentifier(String patientUuid, Disa disa) {
+
+		if (!disa.getViralLoadStatus().equals("NOT_PROCESSED")
+				|| !disa.getNotProcessingCause().equals("NID_NOT_FOUND")) {
+			throw new DisaModuleAPIException("The result to map is " + disa.getViralLoadStatus()
+					+ ". It should be NOT_PROCESSED with cause NID_NOT_FOUND.");
+		}
+
+		Patient patient = patientService.getPatientByUuid(patientUuid);
+		PatientIdentifierType disaNIDIdentifier = patientService
+				.getPatientIdentifierTypeByUuid(Constants.DISA_NID);
+		List<PatientIdentifier> identifiers = patientService.getPatientIdentifiers(disa.getNid(),
+				Arrays.asList(disaNIDIdentifier), null, null, null);
+
+		if (identifiers.isEmpty()) {
+
+			// TODO handle network error!!!
+			Disa updateDisa = new Disa(disa.getRequestId());
+			updateDisa.setViralLoadStatus("PENDING");
+			labResultService.rescheduleLabResult(updateDisa);
+
+			PatientIdentifier patientIdentifier = new PatientIdentifier();
+			patientIdentifier.setPatient(patient);
+			patientIdentifier.setIdentifier(disa.getNid());
+			patientIdentifier.setIdentifierType(disaNIDIdentifier);
+			patientIdentifier.setLocation(locationService.getDefaultLocation());
+			patientService.savePatientIdentifier(patientIdentifier);
+		}
+	}
+
+	public List<Patient> getPatientsByDisa(Disa disa) {
+		return patientService
+				.getPatients(disa.getFirstName() + " " + disa.getLastName(), null, null,
+						Boolean.FALSE);
 	}
 }

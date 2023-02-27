@@ -1,9 +1,7 @@
 package org.openmrs.module.disa.web.delegate;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
-import java.net.URISyntaxException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -11,12 +9,9 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
-import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.http.client.HttpResponseException;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -24,13 +19,10 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.openmrs.Patient;
-import org.openmrs.PatientIdentifier;
-import org.openmrs.PatientIdentifierType;
 import org.openmrs.api.context.Context;
 import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.disa.Disa;
-import org.openmrs.module.disa.extension.util.Constants;
+import org.openmrs.module.disa.api.util.Constants;
 import org.openmrs.module.disa.extension.util.RestUtil;
 import org.openmrs.module.disa.web.model.SearchForm;
 import org.slf4j.Logger;
@@ -69,70 +61,13 @@ public class ViralLoadResultsDelegate {
 	}
 
 	public List<Disa> getViralLoadDataList(String requestId, String nid,
-			String referringId, String vlState, Date startDate, Date endDate, List<String> healthFacCodes)
+			String referringId, String vlState, String notProcessingCause, Date startDate, Date endDate, List<String> healthFacCodes)
 			throws Exception {
 
-		String jsonViralLoadInfo = rest.getRequestByForm("/search-form", requestId, nid, referringId, vlState,
+		String jsonViralLoadInfo = rest.getRequestByForm("/search-form", requestId, nid, referringId, vlState, notProcessingCause,
 				formatDate(startDate, 1), formatDate(endDate, 2), healthFacCodes);
 		return new Gson().fromJson(jsonViralLoadInfo, new TypeToken<ArrayList<Disa>>() {
 		}.getType());
-	}
-
-	public List<Disa> getViralLoadDataList(SearchForm searchForm) throws Exception {
-
-		ArrayList<String> hfCodes = new ArrayList<String>();
-		if (Constants.TODOS.equals(searchForm.getVlSisma())) {
-			String propertyValue = Context.getAdministrationService()
-					.getGlobalPropertyObject(Constants.DISA_SISMA_CODE).getPropertyValue();
-			hfCodes.addAll(Arrays.asList(propertyValue.split(",")));
-		} else {
-			hfCodes.add(searchForm.getVlSisma());
-		}
-
-		return getViralLoadDataList(searchForm.getRequestId(), searchForm.getNid(),
-				searchForm.getReferringId(), searchForm.getVlState(), searchForm.getStartDate(),
-				searchForm.getEndDate(), hfCodes);
-	}
-
-	public List<Patient> getPatients(Disa selectedPatient) {
-		return Context.getPatientService()
-				.getPatients(selectedPatient.getFirstName() + " " + selectedPatient.getLastName(), null, null,
-						Boolean.FALSE);
-	}
-
-	public void addPatientToList(List<Patient> patients, Patient patient) {
-
-		Patient patientToAdd = Context.getPatientService().getPatient(patient.getId());
-		if (!patients.contains(patientToAdd)) {
-			// TODO This is a workaround to LazyInitialization error when getting
-			// identifiers from patient on jsp
-			Set<PatientIdentifier> identifiers = new TreeSet<PatientIdentifier>();
-			identifiers.add(patientToAdd.getPatientIdentifier());
-			patientToAdd.setIdentifiers(identifiers);
-			patients.add(patientToAdd);
-		}
-	}
-
-	public void doMapIdentifier(String patientUuid, String nidDisa, String requestId) throws Exception {
-		Patient patient = Context.getPatientService().getPatientByUuid(patientUuid);
-		PatientIdentifier patientIdentifier = new PatientIdentifier();
-		PatientIdentifierType identifierType = Context.getPatientService()
-				.getPatientIdentifierTypeByUuid(Constants.DISA_NID);
-		List<PatientIdentifierType> patientIdentifierTypes = new ArrayList<PatientIdentifierType>();
-		patientIdentifierTypes.add(identifierType);
-
-		List<PatientIdentifier> patIdentidier = Context.getPatientService().getPatientIdentifiers(nidDisa,
-				patientIdentifierTypes, null, null, null);
-		if (patIdentidier.isEmpty()) {
-
-			rest.getRequestPutPending("/pending", new ArrayList<String>(Arrays.asList(requestId)));
-
-			patientIdentifier.setPatient(patient);
-			patientIdentifier.setIdentifier(nidDisa);
-			patientIdentifier.setIdentifierType(identifierType);
-			patientIdentifier.setLocation(Context.getLocationService().getDefaultLocation());
-			Context.getPatientService().savePatientIdentifier(patientIdentifier);
-		}
 	}
 
 	public void createExcelFile(List<Disa> listDisa, HttpServletResponse response,
