@@ -3,6 +3,8 @@ package org.openmrs.module.disa.api.client;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.apache.http.HttpResponse;
@@ -17,6 +19,7 @@ import org.apache.http.impl.client.BasicResponseHandler;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.module.disa.Disa;
 import org.openmrs.module.disa.OrgUnit;
+import org.openmrs.module.disa.api.Page;
 import org.openmrs.module.disa.api.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -30,6 +33,8 @@ import com.google.gson.reflect.TypeToken;
  */
 @Component
 public class DisaAPIHttpClient {
+
+	private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
 	private AdministrationService administrationService;
 	private Gson gson;
@@ -46,11 +51,127 @@ public class DisaAPIHttpClient {
 		this.gson = gson;
 	}
 
+	public Page<Disa> searchLabResults(
+			LocalDateTime startDate,
+			LocalDateTime endDate,
+			String requestId,
+			String referringRequestID,
+			String viralLoadStatus,
+			String notProcessingCause,
+			String nid,
+			List<String> healthFacilityLabCodes,
+			String search,
+			int pageNumber,
+			int pageSize,
+			String orderBy,
+			String direction) throws URISyntaxException, IOException {
+
+		setUp();
+
+		URIBuilder builder = new URIBuilder(URLBase)
+				.setPathSegments("services", "v2", "viralloads", "search-form")
+				.addParameter("requestId", requestId)
+				.addParameter("referringRequestID", referringRequestID)
+				.addParameter("viralLoadStatus", viralLoadStatus)
+				.addParameter("notProcessingCause", notProcessingCause)
+				.addParameter("nid", nid)
+				.addParameter("pageNumber", String.valueOf(pageNumber))
+				.addParameter("pageSize", String.valueOf(pageSize))
+				.addParameter("orderBy", orderBy)
+				.addParameter("direction", direction)
+				.addParameter("search", search);
+
+		if (startDate != null) {
+			builder.addParameter("startDate", startDate.format(DATE_TIME_FORMATTER));
+		}
+
+		if (endDate != null) {
+			builder.addParameter("endDate", endDate.format(DATE_TIME_FORMATTER));
+		}
+
+		for (String code : healthFacilityLabCodes) {
+			builder.addParameter("healthFacilityLabCode", code);
+		}
+
+		URI url = builder.build();
+
+		Executor executor = Executor.newInstance()
+				.auth(username, password);
+
+		Request request = Request.Get(url);
+
+		ResponseHandler<String> responseHandler = new BasicResponseHandler();
+
+		String jsonResponse = executor.execute(request)
+				.handleResponse(responseHandler);
+
+		TypeToken<Page<Disa>> pageType = new TypeToken<Page<Disa>>() {
+		};
+
+		return gson.fromJson(jsonResponse, pageType.getType());
+	}
+
+	public List<Disa> getAllLabResults(
+			LocalDateTime startDate,
+			LocalDateTime endDate,
+			String requestId,
+			String referringRequestID,
+			String viralLoadStatus,
+			String notProcessingCause,
+			String nid,
+			List<String> healthFacilityLabCodes,
+			String search,
+			String orderBy,
+			String direction) throws URISyntaxException, IOException {
+
+		setUp();
+
+		URIBuilder builder = new URIBuilder(URLBase)
+				.setPathSegments("services", "v2", "viralloads", "export")
+				.addParameter("requestId", requestId)
+				.addParameter("referringRequestID", referringRequestID)
+				.addParameter("viralLoadStatus", viralLoadStatus)
+				.addParameter("notProcessingCause", notProcessingCause)
+				.addParameter("nid", nid)
+				.addParameter("orderBy", orderBy)
+				.addParameter("direction", direction)
+				.addParameter("search", search);
+
+		if (startDate != null) {
+			builder.addParameter("startDate", startDate.format(DATE_TIME_FORMATTER));
+		}
+
+		if (endDate != null) {
+			builder.addParameter("endDate", endDate.format(DATE_TIME_FORMATTER));
+		}
+
+		for (String code : healthFacilityLabCodes) {
+			builder.addParameter("healthFacilityLabCode", code);
+		}
+
+		URI url = builder.build();
+
+		Executor executor = Executor.newInstance()
+				.auth(username, password);
+
+		Request request = Request.Get(url);
+
+		ResponseHandler<String> responseHandler = new BasicResponseHandler();
+
+		String jsonResponse = executor.execute(request)
+				.handleResponse(responseHandler);
+
+		TypeToken<List<Disa>> pageType = new TypeToken<List<Disa>>() {
+		};
+
+		return gson.fromJson(jsonResponse, pageType.getType());
+	}
+
 	public List<OrgUnit> searchOrgUnits(String term) throws URISyntaxException, IOException {
 		setUp();
 
 		URI url = new URIBuilder(URLBase)
-				.setPathSegments("services", "orgunits", "search")
+				.setPathSegments("services", "v2", "orgunits", "search")
 				.addParameter("term", term)
 				.build();
 
@@ -74,7 +195,7 @@ public class DisaAPIHttpClient {
 		setUp();
 
 		URI url = new URIBuilder(URLBase)
-				.setPathSegments("services", "orgunits", code)
+				.setPathSegments("services", "v2", "orgunits", code)
 				.build();
 
 		Executor executor = Executor.newInstance()
@@ -95,7 +216,7 @@ public class DisaAPIHttpClient {
 		setUp();
 
 		URI url = new URIBuilder(URLBase)
-				.setPathSegments("services", "viralloads", requestId)
+				.setPathSegments("services", "v2", "viralloads", requestId)
 				.build();
 
 		Executor executor = Executor.newInstance()
@@ -115,7 +236,7 @@ public class DisaAPIHttpClient {
 		setUp();
 
 		URI url = new URIBuilder(URLBase)
-				.setPathSegments("services", "viralloads", requestId)
+				.setPathSegments("services", "v2", "viralloads", requestId)
 				.build();
 
 		Executor executor = Executor.newInstance()
@@ -138,7 +259,7 @@ public class DisaAPIHttpClient {
 		setUp();
 
 		URI url = new URIBuilder(URLBase)
-				.setPathSegments("services", "viralloads", labResult.getRequestId())
+				.setPathSegments("services", "v2", "viralloads", labResult.getRequestId())
 				.build();
 
 		Executor executor = Executor.newInstance()

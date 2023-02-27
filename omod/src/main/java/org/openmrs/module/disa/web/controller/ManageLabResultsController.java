@@ -9,17 +9,20 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
+import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.disa.Disa;
 import org.openmrs.module.disa.api.DisaModuleAPIException;
 import org.openmrs.module.disa.api.LabResultService;
+import org.openmrs.module.disa.api.Page;
 import org.openmrs.module.disa.api.util.Constants;
 import org.openmrs.module.disa.web.delegate.ViralLoadResultsDelegate;
 import org.openmrs.module.disa.web.model.SearchForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -29,10 +32,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -46,12 +49,16 @@ public class ManageLabResultsController {
 
     private MessageSourceService messageSourceService;
 
+    private AdministrationService administrationService;
+
     @Autowired
     public ManageLabResultsController(
             LabResultService labResultService,
-            MessageSourceService messageSourceService) {
+            MessageSourceService messageSourceService,
+            @Qualifier("adminService") AdministrationService administrationService) {
         this.labResultService = labResultService;
         this.messageSourceService = messageSourceService;
+        this.administrationService = administrationService;
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
@@ -61,13 +68,11 @@ public class ManageLabResultsController {
             BindingResult result,
             ModelMap model,
             HttpSession session,
-            HttpServletRequest request) throws Exception {
+            HttpServletRequest request) {
 
         populateSismaCodes(model);
 
-        if (params.isEmpty()) {
-            model.addAttribute(new SearchForm());
-        } else if (result.hasErrors()) {
+        if (result.hasErrors()) {
             model.addAttribute(searchForm);
         } else {
             String exportUri = ServletUriComponentsBuilder.fromServletMapping(request)
@@ -77,24 +82,29 @@ public class ManageLabResultsController {
                     .toUriString();
             model.addAttribute("exportUri", exportUri);
 
-            ViralLoadResultsDelegate delegate = new ViralLoadResultsDelegate();
-            model.addAttribute(delegate.getViralLoadDataList(searchForm));
+            Page<Disa> results = searchLabResults(searchForm);
+
+            model.addAttribute("disaPage", results);
             session.setAttribute("lastSearchParams", params);
         }
 
         return "/module/disa/managelabresults/index";
     }
 
+    @ResponseBody
+    @RequestMapping(value = "", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Page<Disa> searchJson(@Valid SearchForm searchForm) {
+        return searchLabResults(searchForm);
+    }
+
     @RequestMapping(value = "/export", method = RequestMethod.GET)
     public void export(
-            @RequestParam MultiValueMap<String, String> params,
             @Valid SearchForm searchForm,
-            BindingResult result,
             ModelMap model,
             HttpServletResponse response) throws Exception {
 
         ViralLoadResultsDelegate delegate = new ViralLoadResultsDelegate();
-        delegate.createExcelFileStaging(delegate.getViralLoadDataList(searchForm), response, messageSourceService);
+        delegate.createExcelFileStaging(getAllLabResults(searchForm), response, messageSourceService);
     }
 
     @RequestMapping(value = "/{requestId}", method = RequestMethod.DELETE)
@@ -109,19 +119,10 @@ public class ManageLabResultsController {
         labResultService.rescheduleLabResult(new Disa(requestId));
     }
 
-    /**
-     * Populates SISMA code dropdown options.
-     */
-    private void populateSismaCodes(ModelMap model) {
-        String propertyValue = Context.getAdministrationService()
-                .getGlobalPropertyObject(Constants.DISA_SISMA_CODE).getPropertyValue();
-        List<String> sismaCodes = Arrays.asList(propertyValue.split(","));
-        List<String> sismaCodesTodos = new ArrayList<String>();
-
-        sismaCodesTodos.add(Constants.TODOS);
-        sismaCodesTodos.addAll(sismaCodes);
-
-        model.addAttribute("sismaCodes", sismaCodesTodos);
+    @ExceptionHandler(DisaModuleAPIException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public void handleDisaModuleAPIException(DisaModuleAPIException e) {
+        log.error("", e);
     }
 
     @ModelAttribute("pageTitle")
@@ -132,9 +133,50 @@ public class ManageLabResultsController {
         model.addAttribute("pageTitle", openMrs + " - " + pageTitle);
     }
 
-    @ExceptionHandler(DisaModuleAPIException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public void handleDisaModuleAPIException(DisaModuleAPIException e) {
-        log.error("", e);
+    /**
+     * Populates SISMA code dropdown options.
+     */
+    private void populateSismaCodes(ModelMap model) {
+        String propertyValue = administrationService.getGlobalPropertyObject(Constants.DISA_SISMA_CODE)
+                .getPropertyValue();
+        List<String> sismaCodes = Arrays.asList(propertyValue.split(","));
+        List<String> sismaCodesTodos = new ArrayList<String>();
+
+        sismaCodesTodos.add(Constants.ALL);
+        sismaCodesTodos.addAll(sismaCodes);
+
+        model.addAttribute("sismaCodes", sismaCodesTodos);
+    }
+
+    private Page<Disa> searchLabResults(SearchForm searchForm) {
+        return labResultService.search(
+                searchForm.getStartDate(),
+                searchForm.getEndDate(),
+                searchForm.getRequestId(),
+                searchForm.getReferringId(),
+                searchForm.getVlState(),
+                searchForm.getNotProcessingCause(),
+                searchForm.getNid(),
+                labResultService.getHealthFacilityLabCodes(searchForm.getVlSisma()),
+                searchForm.getSearch(),
+                searchForm.getPageNumber(),
+                searchForm.getPageSize(),
+                searchForm.getOrderBy(),
+                searchForm.getDir());
+    }
+
+    private List<Disa> getAllLabResults(SearchForm searchForm) {
+        return labResultService.getAll(
+                searchForm.getStartDate(),
+                searchForm.getEndDate(),
+                searchForm.getRequestId(),
+                searchForm.getReferringId(),
+                searchForm.getVlState(),
+                searchForm.getNotProcessingCause(),
+                searchForm.getNid(),
+                labResultService.getHealthFacilityLabCodes(searchForm.getVlSisma()),
+                searchForm.getSearch(),
+                searchForm.getOrderBy(),
+                searchForm.getDir());
     }
 }

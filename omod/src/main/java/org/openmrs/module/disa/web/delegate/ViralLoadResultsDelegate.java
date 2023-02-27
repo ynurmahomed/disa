@@ -70,22 +70,6 @@ public class ViralLoadResultsDelegate {
 		}.getType());
 	}
 
-	public List<Disa> getViralLoadDataList(SearchForm searchForm) throws Exception {
-
-		ArrayList<String> hfCodes = new ArrayList<String>();
-		if (Constants.TODOS.equals(searchForm.getVlSisma())) {
-			String propertyValue = Context.getAdministrationService()
-					.getGlobalPropertyObject(Constants.DISA_SISMA_CODE).getPropertyValue();
-			hfCodes.addAll(Arrays.asList(propertyValue.split(",")));
-		} else {
-			hfCodes.add(searchForm.getVlSisma());
-		}
-
-		return getViralLoadDataList(searchForm.getRequestId(), searchForm.getNid(),
-				searchForm.getReferringId(), searchForm.getVlState(), searchForm.getNotProcessingCause(), searchForm.getStartDate(),
-				searchForm.getEndDate(), hfCodes);
-	}
-
 	public void createExcelFile(List<Disa> listDisa, HttpServletResponse response,
 			MessageSourceService messageSourceService) throws Exception {
 		Locale locale = Context.getLocale();
