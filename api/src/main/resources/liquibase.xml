@@ -54,4 +54,75 @@
         </insert>
     </changeSet>
 
+    <changeSet id="disa-2023-01-19-16:14" author="yassin">
+        <insert tableName="privilege">
+            <column name="privilege">Pesquisar resultados no Disa Interoperabilidade</column>
+            <column name="description">Capaz de pesquisar resultados de laboratório no Disa Interoperabilidade.</column>
+            <column name="uuid">a06f8b06-3c08-48df-a1ed-7d11358f3401</column>
+        </insert>
+    </changeSet>
+
+    <changeSet id="disa-2023-01-19-16:20" author="yassin">
+        <delete tableName="role_role">
+            <where>parent_role = 'Data Manager' and child_role = 'Gestor de Disa Interoperabilidade'</where>
+        </delete>
+        <insert tableName="role_privilege">
+            <column name="role">Gestor de Disa Interoperabilidade</column>
+            <column name="privilege">Pesquisar resultados no Disa Interoperabilidade</column>
+        </insert>
+        <insert tableName="role_privilege">
+            <column name="role">Tecnico de Laboratorio</column>
+            <column name="privilege">Pesquisar resultados no Disa Interoperabilidade</column>
+        </insert>
+    </changeSet>
+
+    <changeSet id="disa-2023-01-26-15:07" author="yassin">
+        <insert tableName="privilege">
+            <column name="privilege">Realocar resultados no Disa Interoperabilidade</column>
+            <column name="description">Capaz de realocar resultados de laboratório no servidor de integração para outra unidade sanitária.</column>
+            <column name="uuid">4b0d0d8a-606e-484e-be60-cb79e0057067</column>
+        </insert>
+        <insert tableName="privilege">
+            <column name="privilege">Reagendar resultados no Disa Interoperabilidade</column>
+            <column name="description">Capaz de reagendar resultados de laboratório no servidor de integração para serem processados em outra altura.</column>
+            <column name="uuid">13ac99ff-b8b5-4830-97c0-8b467be920c7</column>
+        </insert>
+        <insert tableName="privilege">
+            <column name="privilege">Remover resultados no Disa Interoperabilidade</column>
+            <column name="description">Capaz de remover resultados de laboratório no servidor de integração.</column>
+            <column name="uuid">cfa41ad9-4b8c-430f-8eaa-c2297afb1d76</column>
+        </insert>
+        <insert tableName="privilege">
+            <column name="privilege">Mapear pacientes no Disa Interoperabilidade</column>
+            <column name="description">Capaz de mapear pacientes cujo resultado de laboratório contenha NID incorrecto no servidor de integração.</column>
+            <column name="uuid">27f2b9b7-d302-40a6-b41c-cb36355539a6</column>
+        </insert>
+        <delete tableName="role_privilege">
+            <where>role = 'Gestor de Disa Interoperabilidade' and privilege = 'Gerir resultados no Disa Interoperabilidade'</where>
+        </delete>
+        <delete tableName="privilege">
+            <where>privilege = 'Gerir resultados no Disa Interoperabilidade'</where>
+        </delete>
+        <insert tableName="role_privilege">
+            <column name="role">Gestor de Disa Interoperabilidade</column>
+            <column name="privilege">Realocar resultados no Disa Interoperabilidade</column>
+        </insert>
+        <insert tableName="role_privilege">
+            <column name="role">Gestor de Disa Interoperabilidade</column>
+            <column name="privilege">Reagendar resultados no Disa Interoperabilidade</column>
+        </insert>
+        <insert tableName="role_privilege">
+            <column name="role">Gestor de Disa Interoperabilidade</column>
+            <column name="privilege">Remover resultados no Disa Interoperabilidade</column>
+        </insert>
+        <insert tableName="role_privilege">
+            <column name="role">Tecnico de Laboratorio</column>
+            <column name="privilege">Mapear pacientes no Disa Interoperabilidade</column>
+        </insert>
+        <insert tableName="role_role">
+            <column name="parent_role">Tecnico de Laboratorio</column>
+            <column name="child_role">Gestor de Disa Interoperabilidade</column>
+        </insert>
+    </changeSet>
+
 </databaseChangeLog>

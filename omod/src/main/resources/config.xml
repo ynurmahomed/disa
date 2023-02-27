@@ -15,25 +15,25 @@
 	<require_version>${openMRSVersion}</require_version>
 	<!-- / Module Properties -->
 
-	
+
 	<!-- Module Activator -->
 	<activator>${project.parent.groupId}.${project.parent.artifactId}.DisaModuleActivator</activator>
-	
+
 	<aware_of_modules>
 		<aware_of_module>org.openmrs.module.legacyui</aware_of_module>
 	</aware_of_modules>
-	
-	<!-- Adds link to admin page -->
+
+	<!-- Adds link to gutter -->
 	<extension>
-		<point>org.openmrs.admin.list</point>
-		<class>${project.parent.groupId}.${project.parent.artifactId}.extension.html.AdminList</class>
+		<point>org.openmrs.gutter.tools</point>
+    	<class>org.openmrs.module.disa.extension.html.GutterListExt</class>
 	</extension>
-	
+
 	<!-- Maps hibernate file's, if present -->
 	<mappingFiles>
-				
+
 		Disa.hbm.xml
-				
+
 	</mappingFiles>
 
 	<!-- Internationalization -->
@@ -57,4 +57,3 @@
 	<!-- /Internationalization -->
 
 </module>
-
