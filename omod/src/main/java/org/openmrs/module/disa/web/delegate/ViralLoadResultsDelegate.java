@@ -24,7 +24,6 @@ import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.disa.Disa;
 import org.openmrs.module.disa.api.util.Constants;
 import org.openmrs.module.disa.extension.util.RestUtil;
-import org.openmrs.module.disa.web.model.SearchForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -192,7 +191,7 @@ public class ViralLoadResultsDelegate {
 			if (notProcessingCause == null) {
 				cell.setCellValue(notProcessingCause);
 			} else {
-				cell.setCellValue(messageSourceService.getMessage("disa." + notProcessingCause, null, locale));
+				cell.setCellValue(messageSourceService.getMessage("disa.notProcessingCause." + notProcessingCause, null, locale));
 			}
 		}
 	}
@@ -224,7 +223,7 @@ public class ViralLoadResultsDelegate {
 
 		cell = row.createCell(8);
 		cell.setCellType(Cell.CELL_TYPE_NUMERIC);
-		cell.setCellValue(disa.getAge());
+		cell.setCellValue("" + disa.getAge());
 
 		cell = row.createCell(9);
 		cell.setCellValue(disa.getRequestId());
@@ -306,7 +305,7 @@ public class ViralLoadResultsDelegate {
 
 		Cell causaNaoProcessamento = row.createCell(9);
 		causaNaoProcessamento.setCellStyle(cellStyle);
-		causaNaoProcessamento.setCellValue(messageSourceService.getMessage("disa.not.processing.cause", null, locale));
+		causaNaoProcessamento.setCellValue(messageSourceService.getMessage("disa.notProcessingCause", null, locale));
 	}
 
 	private void createHeaderRowStaging(Sheet sheet, Locale locale, MessageSourceService messageSourceService) {
@@ -395,7 +394,7 @@ public class ViralLoadResultsDelegate {
 		Cell cellViralLoadProcessing = row.createCell(18);
 		cellViralLoadProcessing.setCellStyle(cellStyle);
 		cellViralLoadProcessing
-				.setCellValue(messageSourceService.getMessage("disa.not.processing.cause", null, locale));
+				.setCellValue(messageSourceService.getMessage("disa.notProcessingCause", null, locale));
 	}
 
 	private String formatDate(Date date, int i) {

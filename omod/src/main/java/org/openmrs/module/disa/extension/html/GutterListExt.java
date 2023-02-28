@@ -4,7 +4,7 @@ import org.openmrs.module.web.extension.LinkExt;
 
 public class GutterListExt extends LinkExt {
 
-    String url = "/module/disa/managelabresults.form";
+    String url = "/module/disa/managelabresults.form?vlState=NOT_PROCESSED";
     String label = "Disa Interoperabilidade";
 
     public String getLabel() {

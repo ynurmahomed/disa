@@ -140,3 +140,16 @@ div.success {
 #openmrs_msg {
 	font-weight: bold;
 }
+
+.float-right {
+	float: right;
+}
+
+.clear {
+	clear: both;
+}
+
+/* Add in-height so that popover does not get clipped */
+.dataTables_scrollBody {
+	min-height: 220px;
+}
