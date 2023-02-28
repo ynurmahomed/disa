@@ -560,7 +560,7 @@
 							return null;
 						}
 
-						span.appendChild(document.createTextNode("Actions ▼"));
+						span.appendChild(document.createTextNode("<spring:message htmlEscape='false' code='disa.manage.actions' />"));
 						span.appendChild(tooltip);
 						tooltip.appendChild(arrow);
 						tooltip.appendChild(ul);
