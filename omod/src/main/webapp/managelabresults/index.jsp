@@ -101,7 +101,7 @@
 							<td>${vlData.nid}</td>
 							<td>${vlData.firstName} ${vlData.lastName}</td>
 							<td>${vlData.gender}</td>
-							<td>${vlData.getAge() == 0 ? "" : vlData.getAge()}</td>
+							<td>${vlData.ageInYears}</td>
 							<td>${vlData.requestId}</td>
 							<td>${vlData.processingDate.substring(0,10)}</td>
 							<td>${vlData.viralLoadResultDate.substring(0,10)}</td>
@@ -244,7 +244,7 @@
 
 			if (response.status === 200) {
 				addFlashMessage("<spring:message code='disa.viralload.reschedule.successful'/>");
-				table.api().draw(false);
+				table.draw(false);
 			} else {
 				throw new Error(`Reschedule was not successful.`)
 			}
@@ -268,7 +268,7 @@
 				const response = await fetch(`managelabresults/\${requestId}.form`, { method: "DELETE" });
 				if (response.status === 204) {
 					addFlashMessage("<spring:message code='disa.viralload.delete.successful'/>");
-					table.api().draw(false);
+					table.draw(false);
 				} else {
 					throw new Error(`Delete was not successful.`);
 				}
@@ -307,7 +307,7 @@
 
 
 				const popperInstance = Popper.createPopper(toggle, actions, {
-					modifiers: [sameWidth]
+					modifiers: [sameWidth, Popper.preventOverflow]
 				});
 
 				// Show/hide based on hover
@@ -408,13 +408,19 @@
 
 		// Setup results table
 		table = new DataTable('#vlResultsTable', {
-			dom: 'lBrftip',
+			language: {
+				url: "${pageContext.request.contextPath}/moduleResources/disa/js/datatables.net/1.13.2/i18n/${locale}.json"
+			},
+			dom: '<"float-right"B>rtip<"clear">l',
+			pagingType: 'full_numbers',
+			processing: true,
 			scrollX: true,
 			buttons: [
 				{
-					extend:'colvis',
-					text: "<spring:message code='disa.btn.columns' />",
-				},
+					extend: 'colvis',
+					columns: [0,1,2,3,5,6,7,9,10,11,13,14,15]
+				}
+
 			],
 			displayStart: (+"${disaPage.pageNumber}" - 1) * +"${disaPage.pageSize}",
 			serverSide: true,
@@ -447,7 +453,7 @@
 					}
 				},
 				{ data: "gender" },
-				{ data: "age" },
+				{ data: "ageInYears" },
 				{ data: "requestId" },
 				{
 					data: "processingDate",
@@ -560,7 +566,7 @@
 							return null;
 						}
 
-						span.appendChild(document.createTextNode("Actions ▼"));
+						span.appendChild(document.createTextNode("<spring:message htmlEscape='false' code='disa.manage.actions' />"));
 						span.appendChild(tooltip);
 						tooltip.appendChild(arrow);
 						tooltip.appendChild(ul);

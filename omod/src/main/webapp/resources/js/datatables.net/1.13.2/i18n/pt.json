@@ -1,0 +1,16 @@
+{
+    "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
+    "infoEmpty": "Mostrando 0 num total de 0 entradas",
+    "lengthMenu": "Mostrar _MENU_ entradas",
+    "paginate": {
+        "first": "Primeiro",
+        "previous": "Anterior",
+        "next": "Seguinte",
+        "last": "Último"
+    },
+    "buttons": {
+        "colvis": "Visibilidade de colunas"
+    },
+    "thousands": " ",
+    "decimal": ","
+}

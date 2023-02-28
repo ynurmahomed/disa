@@ -445,4 +445,8 @@ public class Disa {
 	public void setAgeInYears(Integer ageInYears) {
 		this.ageInYears = ageInYears;
 	}
+
+	public Integer getAgeInYears() {
+		return ageInYears;
+	}
 }

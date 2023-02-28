@@ -46,9 +46,21 @@
 
 <script type="text/javascript">
 
-    const errorMsgBox = document.getElementById("error_msg");
-
     $j(document).ready(() => {
+
+        const errorMsgBox = document.getElementById("error_msg");
+        const reallocateForm = document.getElementById("reallocateForm");
+
+        // Ask for confirmation before submit
+        reallocateForm.addEventListener("submit", (event) => {
+            const requestId = "${requestId}";
+            const options = event.currentTarget.querySelector("#healthFacilityLabCode").options;
+            const orgUnit = options[options.selectedIndex].label;
+            if (orgUnit.length
+                    && !confirm(`<spring:message code='disa.viralload.reallocate.confirmation.javascript'/>`)) {
+                event.preventDefault();
+            }
+        });
 
         $j(".facility-search").selectize({
             placeholder: '<spring:message code="disa.viralload.reallocate.select.placeholder" htmlEscape="false"/>',
