@@ -90,7 +90,12 @@
 			<label for="selSisma">
 				<openmrs:message code="disa.sisma.code" />:
 			</label>
-			<form:select path="vlSisma" id="selSisma" items="${sismaCodes}"/>
+			<form:select path="vlSisma" id="selSisma">
+				<form:option value="ALL">
+					<openmrs:message code='disa.sisma.code.ALL' />
+				</form:option>
+				<form:options items="${sismaCodes}"/>
+			</form:select>
 		</div>
 		<div>
 			<button type="submit">

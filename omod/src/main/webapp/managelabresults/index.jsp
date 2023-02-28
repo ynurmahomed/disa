@@ -244,7 +244,7 @@
 
 			if (response.status === 200) {
 				addFlashMessage("<spring:message code='disa.viralload.reschedule.successful'/>");
-				table.api().draw(false);
+				table.draw(false);
 			} else {
 				throw new Error(`Reschedule was not successful.`)
 			}
@@ -268,7 +268,7 @@
 				const response = await fetch(`managelabresults/\${requestId}.form`, { method: "DELETE" });
 				if (response.status === 204) {
 					addFlashMessage("<spring:message code='disa.viralload.delete.successful'/>");
-					table.api().draw(false);
+					table.draw(false);
 				} else {
 					throw new Error(`Delete was not successful.`);
 				}
@@ -307,7 +307,7 @@
 
 
 				const popperInstance = Popper.createPopper(toggle, actions, {
-					modifiers: [sameWidth]
+					modifiers: [sameWidth, Popper.preventOverflow]
 				});
 
 				// Show/hide based on hover
@@ -408,13 +408,19 @@
 
 		// Setup results table
 		table = new DataTable('#vlResultsTable', {
-			dom: 'lBrftip',
+			language: {
+				url: "${pageContext.request.contextPath}/moduleResources/disa/js/datatables.net/1.13.2/i18n/${locale}.json"
+			},
+			dom: '<"float-right"B>rtip<"clear">l',
+			pagingType: 'full_numbers',
+			processing: true,
 			scrollX: true,
 			buttons: [
 				{
-					extend:'colvis',
-					text: "<spring:message code='disa.btn.columns' />",
-				},
+					extend: 'colvis',
+					columns: [0,1,2,3,5,6,7,9,10,11,13,14,15]
+				}
+
 			],
 			displayStart: (+"${disaPage.pageNumber}" - 1) * +"${disaPage.pageSize}",
 			serverSide: true,
