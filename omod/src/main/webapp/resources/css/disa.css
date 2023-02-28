@@ -151,5 +151,5 @@ div.success {
 
 /* Add in-height so that popover does not get clipped */
 .dataTables_scrollBody {
-	min-height: 220px;
+	min-height: 500px;
 }
