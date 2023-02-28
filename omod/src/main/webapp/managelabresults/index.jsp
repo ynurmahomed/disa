@@ -101,7 +101,7 @@
 							<td>${vlData.nid}</td>
 							<td>${vlData.firstName} ${vlData.lastName}</td>
 							<td>${vlData.gender}</td>
-							<td>${vlData.getAge() == 0 ? "" : vlData.getAge()}</td>
+							<td>${vlData.ageInYears}</td>
 							<td>${vlData.requestId}</td>
 							<td>${vlData.processingDate.substring(0,10)}</td>
 							<td>${vlData.viralLoadResultDate.substring(0,10)}</td>
@@ -453,7 +453,7 @@
 					}
 				},
 				{ data: "gender" },
-				{ data: "age" },
+				{ data: "ageInYears" },
 				{ data: "requestId" },
 				{
 					data: "processingDate",
