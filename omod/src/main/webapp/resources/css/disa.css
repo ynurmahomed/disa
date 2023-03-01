@@ -151,5 +151,10 @@ div.success {
 
 /* Add in-height so that popover does not get clipped */
 .dataTables_scrollBody {
-	min-height: 220px;
+	min-height: 500px;
+}
+
+/* Datatables processing indicator */
+div.dataTables_processing>div:last-child>div {
+	background-color: #00b69b;
 }
