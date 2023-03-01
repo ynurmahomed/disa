@@ -153,3 +153,8 @@ div.success {
 .dataTables_scrollBody {
 	min-height: 500px;
 }
+
+/* Datatables processing indicator */
+div.dataTables_processing>div:last-child>div {
+	background-color: #00b69b;
+}
