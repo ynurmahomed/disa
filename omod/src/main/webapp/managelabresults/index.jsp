@@ -363,8 +363,8 @@
 	function addFlashMessage(message) {
 		const alertBox = document.getElementById("alert-box");
 		// Clear previous message
-		if(alertBox.lastChild) {
-			alertBox.lastChild.remove();
+		if(alertBox.lastElementChild) {
+			alertBox.lastElementChild.remove();
 		}
 		sessionStorage.setItem("flashMessage", message);
 	}
