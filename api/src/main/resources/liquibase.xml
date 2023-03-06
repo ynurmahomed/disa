@@ -124,5 +124,4 @@
             <column name="child_role">Gestor de Disa Interoperabilidade</column>
         </insert>
     </changeSet>
-
 </databaseChangeLog>
