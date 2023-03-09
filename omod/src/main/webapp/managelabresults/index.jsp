@@ -411,7 +411,7 @@
 			language: {
 				url: "${pageContext.request.contextPath}/moduleResources/disa/js/datatables.net/1.13.2/i18n/${locale}.json"
 			},
-			dom: '<"float-right"B>rtip<"clear">l',
+			dom: '<"float-right"B>trip<"clear">l',
 			pagingType: 'full_numbers',
 			processing: true,
 			scrollX: true,
