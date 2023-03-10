@@ -363,8 +363,8 @@
 	function addFlashMessage(message) {
 		const alertBox = document.getElementById("alert-box");
 		// Clear previous message
-		if(alertBox.lastChild) {
-			alertBox.lastChild.remove();
+		if(alertBox.lastElementChild) {
+			alertBox.lastElementChild.remove();
 		}
 		sessionStorage.setItem("flashMessage", message);
 	}
@@ -411,7 +411,7 @@
 			language: {
 				url: "${pageContext.request.contextPath}/moduleResources/disa/js/datatables.net/1.13.2/i18n/${locale}.json"
 			},
-			dom: '<"float-right"B>rtip<"clear">l',
+			dom: '<"float-right"B>trip<"clear">l',
 			pagingType: 'full_numbers',
 			processing: true,
 			scrollX: true,
