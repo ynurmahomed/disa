@@ -158,3 +158,12 @@ div.success {
 div.dataTables_processing>div:last-child>div {
 	background-color: #00b69b;
 }
+
+/* Datatables column visibility buttons */
+button.dt-button.buttons-columnVisibility:before {
+	content: "+ ";
+}
+
+button.dt-button.buttons-columnVisibility.active:before {
+	content: "- ";
+}

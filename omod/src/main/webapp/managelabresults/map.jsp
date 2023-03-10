@@ -7,8 +7,7 @@
 
 <openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/css/disa.css"/>
 
-<openmrs:htmlInclude
-	file="/scripts/jquery/dataTables/css/dataTables_jui.css" />
+<openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/css/datatables.net/1.13.2/jquery.dataTables.min.css" />
 
 <h2>
 	<openmrs:message code="disa.map.identifiers"/>
@@ -104,15 +103,17 @@
 	</div>
 </div>
 
-<openmrs:htmlInclude
-	file="/scripts/jquery/dataTables/js/jquery.dataTables.min.js" />
+<openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/js/datatables.net/1.13.2/jquery.dataTables.min.js" />
 
 <script type="text/javascript">
-	$j(document).ready(function() {
-		$j('#patientListTable').dataTable({
-			"iDisplayLength" : 10
+	window.addEventListener('DOMContentLoaded', () => {
+		new DataTable('#patientListTable', {
+			dom: 'rftip<"clear">l',
+			language: {
+				url: "${pageContext.request.contextPath}/moduleResources/disa/js/datatables.net/1.13.2/i18n/${locale}.json"
+			},
 		});
-	})
+	});
 </script>
 
 <%@ include file="/WEB-INF/template/footer.jsp"%>
