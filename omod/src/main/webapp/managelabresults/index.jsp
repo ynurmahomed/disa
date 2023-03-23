@@ -579,7 +579,7 @@
 				headers: {
 					Accept: "application/json"
 				},
-				url: "managelabresults.form",
+				url: "managelabresults/json.form",
 				data: (data) => {
 					const pageSize = data.length;
 					let pageNumber = 1;
