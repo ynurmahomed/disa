@@ -1,5 +1,7 @@
 package org.openmrs.module.disa.web.controller;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -92,7 +94,7 @@ public class ManageLabResultsController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/json", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public Page<Disa> searchJson(@Valid SearchForm searchForm) {
         return searchLabResults(searchForm);
     }
@@ -148,9 +150,17 @@ public class ManageLabResultsController {
     }
 
     private Page<Disa> searchLabResults(SearchForm searchForm) {
+        LocalDate startDate = null;
+        if (searchForm.getStartDate() != null) {
+            startDate = searchForm.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        }
+        LocalDate endDate = null;
+        if (searchForm.getEndDate() != null) {
+            endDate = searchForm.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        }
         return labResultService.search(
-                searchForm.getStartDate(),
-                searchForm.getEndDate(),
+                startDate,
+                endDate,
                 searchForm.getRequestId(),
                 searchForm.getReferringId(),
                 searchForm.getVlState(),
@@ -166,8 +176,8 @@ public class ManageLabResultsController {
 
     private List<Disa> getAllLabResults(SearchForm searchForm) {
         return labResultService.getAll(
-                searchForm.getStartDate(),
-                searchForm.getEndDate(),
+                searchForm.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
+                searchForm.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
                 searchForm.getRequestId(),
                 searchForm.getReferringId(),
                 searchForm.getVlState(),

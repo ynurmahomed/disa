@@ -1,6 +1,6 @@
 package org.openmrs.module.disa.web.model;
 
-import java.time.LocalDate;
+import java.util.Date;
 
 import javax.validation.constraints.Size;
 
@@ -23,9 +23,9 @@ public class SearchForm {
 
     private String notProcessingCause;
 
-    private LocalDate startDate;
+    private Date startDate;
 
-    private LocalDate endDate;
+    private Date endDate;
 
     private int pageNumber;
 
@@ -83,19 +83,19 @@ public class SearchForm {
         this.vlState = vlState;
     }
 
-    public LocalDate getStartDate() {
+    public Date getStartDate() {
         return this.startDate;
     }
 
-    public void setStartDate(LocalDate startDate) {
+    public void setStartDate(Date startDate) {
         this.startDate = startDate;
     }
 
-    public LocalDate getEndDate() {
+    public Date getEndDate() {
         return this.endDate;
     }
 
-    public void setEndDate(LocalDate endDate) {
+    public void setEndDate(Date endDate) {
         this.endDate = endDate;
     }
 
