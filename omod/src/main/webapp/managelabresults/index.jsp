@@ -28,6 +28,7 @@
 	<c:if test="${not empty flashMessage}">
 		<div id="openmrs_msg">
 			<b>${flashMessage}</b>
+			<% request.getSession().removeAttribute("flashMessage"); %>
 		</div>
 	</c:if>
 </div>
