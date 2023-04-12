@@ -55,7 +55,6 @@ public class DisaAPIHttpClient {
 			LocalDateTime startDate,
 			LocalDateTime endDate,
 			String requestId,
-			String referringRequestID,
 			String viralLoadStatus,
 			String notProcessingCause,
 			String nid,
@@ -71,7 +70,6 @@ public class DisaAPIHttpClient {
 		URIBuilder builder = new URIBuilder(URLBase)
 				.setPathSegments("services", "v2", "viralloads", "search-form")
 				.addParameter("requestId", requestId)
-				.addParameter("referringRequestID", referringRequestID)
 				.addParameter("viralLoadStatus", viralLoadStatus)
 				.addParameter("notProcessingCause", notProcessingCause)
 				.addParameter("nid", nid)
@@ -115,7 +113,6 @@ public class DisaAPIHttpClient {
 			LocalDateTime startDate,
 			LocalDateTime endDate,
 			String requestId,
-			String referringRequestID,
 			String viralLoadStatus,
 			String notProcessingCause,
 			String nid,
@@ -129,7 +126,6 @@ public class DisaAPIHttpClient {
 		URIBuilder builder = new URIBuilder(URLBase)
 				.setPathSegments("services", "v2", "viralloads", "export")
 				.addParameter("requestId", requestId)
-				.addParameter("referringRequestID", referringRequestID)
 				.addParameter("viralLoadStatus", viralLoadStatus)
 				.addParameter("notProcessingCause", notProcessingCause)
 				.addParameter("nid", nid)

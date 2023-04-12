@@ -49,9 +49,6 @@
 							<spring:message code="disa.sisma.code" />
 						</th>
 						<th>
-							<spring:message code="disa.referring.request.id" />
-						</th>
-						<th>
 							<spring:message code="disa.nid" />
 						</th>
 						<th>
@@ -98,7 +95,6 @@
 							<td>${vlData.requestingFacilityName}</td>
 							<td>${vlData.requestingDistrictName}</td>
 							<td>${vlData.healthFacilityLabCode}</td>
-							<td>${vlData.referringRequestID}</td>
 							<td>${vlData.nid}</td>
 							<td>${vlData.firstName} ${vlData.lastName}</td>
 							<td>${vlData.gender}</td>
@@ -419,7 +415,7 @@
 			buttons: [
 				{
 					extend: 'colvis',
-					columns: [0,1,2,3,5,6,7,9,10,11,13,14,15]
+					columns: [0,1,2,4,5,6,8,9,10,12,13,14]
 				}
 
 			],
@@ -431,9 +427,9 @@
 				[13, 'desc']
 			],
 			columnDefs: [
-				// Hide id de referenciamento and updated at by default.
+				// Hide updated at by default.
 				{
-					targets: [3,14],
+					targets: [14],
 					visible: false
 				},
         	],
@@ -441,7 +437,6 @@
 				{ data: "requestingFacilityName" },
 				{ data: "requestingDistrictName" },
 				{ data: "healthFacilityLabCode" },
-				{ data: "referringRequestID" },
 				{ data: "nid" },
 				{
 					data: "firstName",

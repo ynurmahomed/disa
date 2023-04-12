@@ -363,7 +363,7 @@ public class RestUtil {
 	 */
 	@SuppressWarnings("deprecation")
 	public String getRequestByForm(String urlPathProcessed, String requestId, String nid,
-			String referringId, String vlState, String notProcessingCause, String startDate, String endDate, List<String> healthFacCodes) throws Exception {
+			String vlState, String notProcessingCause, String startDate, String endDate, List<String> healthFacCodes) throws Exception {
 		String URL = URLBase + urlPathProcessed;
 		String response = "";
 		DefaultHttpClient httpclient = new DefaultHttpClient();
@@ -381,10 +381,6 @@ public class RestUtil {
 			}
 
 			uriBuilder.addParameters(GenericUtil.buildParamList(healthFacCodes));
-
-			if (!referringId.isEmpty()) {
-				uriBuilder.addParameter("referringRequestID", referringId);
-			}
 
 			if (!vlState.isEmpty() && !vlState.equals(Constants.ALL)) {
 				uriBuilder.addParameter("viralLoadStatus", vlState);
