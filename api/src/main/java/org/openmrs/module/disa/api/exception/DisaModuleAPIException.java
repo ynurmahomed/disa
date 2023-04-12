@@ -1,4 +1,4 @@
-package org.openmrs.module.disa.api;
+package org.openmrs.module.disa.api.exception;
 
 import org.openmrs.api.APIException;
 

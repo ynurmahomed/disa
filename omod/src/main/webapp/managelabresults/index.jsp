@@ -20,18 +20,11 @@
 		<spring:message code="disa.pesquisa.resultados.laboratoriais11" />
 	</b>
 	<div class="box">
-		<%@ include file="../common/searchForm.jsp" %>
+		<%@ include file="../common/searchForm.jspf" %>
 	</div>
 </div>
 
-<div id="alert-box">
-	<c:if test="${not empty flashMessage}">
-		<div id="openmrs_msg">
-			<b>${flashMessage}</b>
-			<% request.getSession().removeAttribute("flashMessage"); %>
-		</div>
-	</c:if>
-</div>
+<%@ include file="../common/alertBox.jspf" %>
 
 <c:if test="${not empty disaPage.resultList}">
 	<div>
@@ -355,33 +348,6 @@
 				});
 			}
 
-		}
-	}
-
-	/**
-	 * Add a message to be temporarily displayed.
-	 */
-	function addFlashMessage(message) {
-		const alertBox = document.getElementById("alert-box");
-		// Clear previous message
-		if(alertBox.lastElementChild) {
-			alertBox.lastElementChild.remove();
-		}
-		sessionStorage.setItem("flashMessage", message);
-	}
-
-	/**
-	 * Display a temporary success message if present in sessionStorage.
-	 */
-	function showFlashMessage() {
-		const alertBox = document.getElementById("alert-box");
-		const message = sessionStorage.getItem("flashMessage");
-		if (message) {
-			const openMRSMsg = document.createElement("div");
-			openMRSMsg.innerText = message;
-			openMRSMsg.id = "openmrs_msg";
-			alertBox.appendChild(openMRSMsg);
-			sessionStorage.removeItem("flashMessage");
 		}
 	}
 
