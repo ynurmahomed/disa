@@ -55,5 +55,5 @@ public interface DisaService extends OpenmrsService {
 	@Authorized("Mapear pacientes no Disa Interoperabilidade")
 	void mapIdentifier(String patientUuid, Disa disa);
 
-	List<Patient> getPatientsByDisa(Disa disa);
+	List<Patient> getPatientsToMapSuggestion(Disa disa);
 }

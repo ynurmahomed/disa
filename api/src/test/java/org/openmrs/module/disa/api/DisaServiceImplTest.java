@@ -1,7 +1,9 @@
 package org.openmrs.module.disa.api;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyList;
+import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -10,6 +12,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -56,7 +59,7 @@ public class DisaServiceImplTest extends BaseContextMockTest {
         PatientIdentifierType identifierType = new PatientIdentifierType();
         identifierType.setUuid(Constants.DISA_NID);
         when(patientService.getPatientIdentifierTypeByUuid(Constants.DISA_NID)).thenReturn(identifierType);
-        when(patientService.getPatientIdentifiers(eq(disa.getNid()), anyList(), any(), any(), any()))
+        when(patientService.getPatientIdentifiers(eq(disa.getNid()), anyListOf(PatientIdentifierType.class), any(), any(), any()))
                 .thenReturn(new ArrayList<>());
 
         disaServiceImpl.mapIdentifier(patientUuid, disa);
@@ -79,7 +82,7 @@ public class DisaServiceImplTest extends BaseContextMockTest {
         PatientIdentifierType identifierType = new PatientIdentifierType();
         identifierType.setUuid(Constants.DISA_NID);
         when(patientService.getPatientIdentifierTypeByUuid(Constants.DISA_NID)).thenReturn(identifierType);
-        when(patientService.getPatientIdentifiers(eq(disa.getNid()), anyList(), any(), any(), any()))
+        when(patientService.getPatientIdentifiers(eq(disa.getNid()), anyListOf(PatientIdentifierType.class), any(), any(), any()))
                 .thenReturn(new ArrayList<>());
 
         disaServiceImpl.mapIdentifier(patientUuid, disa);
@@ -88,11 +91,11 @@ public class DisaServiceImplTest extends BaseContextMockTest {
         verify(labResultService, times(0)).rescheduleLabResult(any(Disa.class));
     }
 
-    @Test
-    public void mapIdentifierShouldNotSavePatientIdentifierWhenItAlreadyExists() {
+    @Test(expected = DisaModuleAPIException.class)
+    public void mapIdentifierShouldThrowExceptionWhenResultIsPending() {
         String patientUuid = "patientUuid";
         Disa disa = new Disa();
-        disa.setViralLoadStatus("NOT_PROCESSED");
+        disa.setViralLoadStatus("PENDING");
         disa.setNotProcessingCause("NID_NOT_FOUND");
         disa.setNid("12345");
         disa.setRequestId("requestId");
@@ -102,15 +105,32 @@ public class DisaServiceImplTest extends BaseContextMockTest {
         PatientIdentifierType identifierType = new PatientIdentifierType();
         identifierType.setUuid(Constants.DISA_NID);
         when(patientService.getPatientIdentifierTypeByUuid(Constants.DISA_NID)).thenReturn(identifierType);
-
-        PatientIdentifier disaNidIdentifier = new PatientIdentifier("12345", identifierType, null);
-        when(patientService.getPatientIdentifiers(eq(disa.getNid()), anyList(), any(), any(), any()))
-                .thenReturn(Arrays.asList(disaNidIdentifier));
+        when(patientService.getPatientIdentifiers(eq(disa.getNid()), anyListOf(PatientIdentifierType.class), any(), any(), any()))
+                .thenReturn(new ArrayList<>());
 
         disaServiceImpl.mapIdentifier(patientUuid, disa);
 
         verify(patientService, never()).savePatientIdentifier(any(PatientIdentifier.class));
         verify(labResultService, never()).rescheduleLabResult(any(Disa.class));
+    }
+
+    @Test
+    public void getPatientsToMapSuggestionShouldReturnPatientsWithIdentifiers() {
+        Disa disa = new Disa();
+        disa.setFirstName("John");
+        disa.setLastName("Doe");
+        Patient patient = new Patient();
+
+        when(patientService.getPatients(
+                any(String.class),
+                any(String.class),
+                anyListOf(PatientIdentifierType.class),
+                any(Boolean.class)))
+                .thenReturn(Arrays.asList(patient));
+
+        List<Patient> suggestion = disaServiceImpl.getPatientsToMapSuggestion(disa);
+
+        assertThat(suggestion, hasSize(0));
     }
 
 }

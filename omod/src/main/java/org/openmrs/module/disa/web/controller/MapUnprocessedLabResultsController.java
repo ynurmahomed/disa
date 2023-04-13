@@ -67,7 +67,7 @@ public class MapUnprocessedLabResultsController {
 		if (!model.containsAttribute("requestId")
 				|| (!model.get("requestId").equals(requestId))) {
 			model.addAttribute("requestId", requestId);
-			model.addAttribute("patientList", disaService.getPatientsByDisa(disa));
+			model.addAttribute("patientList", disaService.getPatientsToMapSuggestion(disa));
 		}
 
 		// Build uri back to search results with used parameters.
