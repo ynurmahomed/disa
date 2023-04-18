@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @Controller
@@ -67,7 +66,7 @@ public class MapUnprocessedLabResultsController {
 		if (!model.containsAttribute("requestId")
 				|| (!model.get("requestId").equals(requestId))) {
 			model.addAttribute("requestId", requestId);
-			model.addAttribute("patientList", disaService.getPatientsByDisa(disa));
+			model.addAttribute("patientList", disaService.getPatientsToMapSuggestion(disa));
 		}
 
 		// Build uri back to search results with used parameters.

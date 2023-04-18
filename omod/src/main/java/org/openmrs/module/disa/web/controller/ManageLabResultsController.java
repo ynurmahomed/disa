@@ -15,9 +15,9 @@ import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.disa.Disa;
-import org.openmrs.module.disa.api.DisaModuleAPIException;
 import org.openmrs.module.disa.api.LabResultService;
 import org.openmrs.module.disa.api.Page;
+import org.openmrs.module.disa.api.exception.DisaModuleAPIException;
 import org.openmrs.module.disa.api.util.Constants;
 import org.openmrs.module.disa.web.delegate.ViralLoadResultsDelegate;
 import org.openmrs.module.disa.web.model.SearchForm;
@@ -31,7 +31,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,10 +38,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @Controller
 @RequestMapping("/module/disa/managelabresults")
+@SessionAttributes({ "flashMessage" })
 public class ManageLabResultsController {
 
     private static final Logger log = LoggerFactory.getLogger(ManageLabResultsController.class);
@@ -84,10 +85,14 @@ public class ManageLabResultsController {
                     .toUriString();
             model.addAttribute("exportUri", exportUri);
 
-            Page<Disa> results = searchLabResults(searchForm);
-
-            model.addAttribute("disaPage", results);
-            session.setAttribute("lastSearchParams", params);
+            try {
+                model.addAttribute("disaPage", searchLabResults(searchForm));
+                session.setAttribute("lastSearchParams", params);
+            } catch (DisaModuleAPIException e) {
+                log.error("", e);
+                model.addAttribute("flashMessage", e.getLocalizedMessage());
+                return "/module/disa/managelabresults/error";
+            }
         }
 
         return "/module/disa/managelabresults/index";
@@ -119,12 +124,6 @@ public class ManageLabResultsController {
     @ResponseStatus(HttpStatus.OK)
     public void reschedule(@PathVariable String requestId) {
         labResultService.rescheduleLabResult(new Disa(requestId));
-    }
-
-    @ExceptionHandler(DisaModuleAPIException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public void handleDisaModuleAPIException(DisaModuleAPIException e) {
-        log.error("", e);
     }
 
     @ModelAttribute("pageTitle")
@@ -161,10 +160,10 @@ public class ManageLabResultsController {
         return labResultService.search(
                 startDate,
                 endDate,
-                searchForm.getRequestId(),
+                searchForm.getRequestId().trim(),
                 searchForm.getVlState(),
                 searchForm.getNotProcessingCause(),
-                searchForm.getNid(),
+                searchForm.getNid().trim(),
                 labResultService.getHealthFacilityLabCodes(searchForm.getVlSisma()),
                 searchForm.getSearch(),
                 searchForm.getPageNumber(),

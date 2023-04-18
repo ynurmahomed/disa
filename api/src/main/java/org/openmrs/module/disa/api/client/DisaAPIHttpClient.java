@@ -5,6 +5,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.http.HttpResponse;
@@ -268,6 +269,46 @@ public class DisaAPIHttpClient {
 
 		return executor.execute(request)
 				.handleResponse(responseHandler);
+	}
+
+	/**
+	 * This method is used to find a HF code that is not authorised for the user
+	 *
+	 * @param healthFacilityLabCodes
+	 * @return The first code that is not authorised. If all codes are authorised,
+	 *         or if there is an error returns null.
+	 * @throws URISyntaxException
+	 */
+	public String findUnauthorisedSismaCode(List<String> healthFacilityLabCodes) {
+		setUp();
+
+		String code = null;
+
+		Executor executor = Executor.newInstance()
+				.auth(username, password);
+
+		try {
+			Iterator<String> iterator = healthFacilityLabCodes.iterator();
+			while (iterator.hasNext()) {
+				code = iterator.next();
+				URIBuilder builder = new URIBuilder(URLBase)
+						.setPathSegments("services", "v2", "viralloads", "search-form")
+						.addParameter("healthFacilityLabCode", code);
+				Request request = Request.Head(builder.build());
+				executor.execute(request);
+			}
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+			return null;
+		} catch (HttpResponseException e) {
+			if (e.getStatusCode() == 403) {
+				return code;
+			}
+		} catch (IOException e) {
+			return null;
+		}
+
+		return code;
 	}
 
 	private void setUp() {
