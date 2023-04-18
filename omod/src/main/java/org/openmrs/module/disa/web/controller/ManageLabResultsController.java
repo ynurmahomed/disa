@@ -160,11 +160,11 @@ public class ManageLabResultsController {
         return labResultService.search(
                 startDate,
                 endDate,
-                searchForm.getRequestId(),
+                searchForm.getRequestId().trim(),
                 searchForm.getReferringId(),
                 searchForm.getVlState(),
                 searchForm.getNotProcessingCause(),
-                searchForm.getNid(),
+                searchForm.getNid().trim(),
                 labResultService.getHealthFacilityLabCodes(searchForm.getVlSisma()),
                 searchForm.getSearch(),
                 searchForm.getPageNumber(),
