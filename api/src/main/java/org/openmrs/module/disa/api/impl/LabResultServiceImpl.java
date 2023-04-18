@@ -46,7 +46,7 @@ public class LabResultServiceImpl implements LabResultService {
     @Override
     public Page<Disa> search(
             LocalDate startDate, LocalDate endDate,
-            String requestId, String referringRequestID,
+            String requestId,
             String viralLoadStatus, String notProcessingCause,
             String nid, List<String> healthFacilityLabCodes,
             String search,
@@ -77,7 +77,7 @@ public class LabResultServiceImpl implements LabResultService {
             }
 
             return client.searchLabResults(start, end, requestId,
-                    referringRequestID, viralLoadStatus,
+                    viralLoadStatus,
                     notProcessingCause, nid, healthFacilityLabCodes,
                     search,
                     pageNumber, pageSize, orderBy, direction);
@@ -92,7 +92,7 @@ public class LabResultServiceImpl implements LabResultService {
     @Override
     public List<Disa> getAll(
             LocalDate startDate, LocalDate endDate,
-            String requestId, String referringRequestID,
+            String requestId,
             String viralLoadStatus, String notProcessingCause,
             String nid, List<String> healthFacilityLabCodes,
             String search,
@@ -122,7 +122,7 @@ public class LabResultServiceImpl implements LabResultService {
             }
 
             return client.getAllLabResults(start, end, requestId,
-                    referringRequestID, viralLoadStatus,
+                    viralLoadStatus,
                     notProcessingCause, nid, healthFacilityLabCodes,
                     search,
                     orderBy, direction);
@@ -215,6 +215,10 @@ public class LabResultServiceImpl implements LabResultService {
                 message = "disa.result.unauthorized";
             }
             return new DisaModuleAPIException(message, new String[] { sismaCode }, e);
+        }
+
+        if (e.getStatusCode() == HttpStatus.UNAUTHORIZED.value()) {
+            return new DisaModuleAPIException("disa.api.authentication.error", new String[] {}, e);
         }
 
         if (e.getStatusCode() == HttpStatus.NOT_FOUND.value()) {

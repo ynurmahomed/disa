@@ -30,12 +30,6 @@
 			<form:input path="requestId" size="22" maxlength="26" id="requestId"/>
 		</div>
 		<div>
-			<label for="referringId">
-				<openmrs:message code="disa.referring.request.id" />:
-			</label>
-			<form:input path="referringId" size="22" maxlength="16" id="referringId"/>
-		</div>
-		<div>
 			<label for="vlState">
 				<openmrs:message code="disa.frm.status" />:
 			</label>

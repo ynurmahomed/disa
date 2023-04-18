@@ -16,9 +16,6 @@ public class SearchForm {
 
     private String vlSisma;
 
-    @Size(max = 16)
-    private String referringId;
-
     private String vlState;
 
     private String notProcessingCause;
@@ -65,14 +62,6 @@ public class SearchForm {
 
     public void setVlSisma(String vlSisma) {
         this.vlSisma = vlSisma;
-    }
-
-    public String getReferringId() {
-        return this.referringId;
-    }
-
-    public void setReferringId(String referringId) {
-        this.referringId = referringId;
     }
 
     public String getVlState() {
@@ -149,8 +138,8 @@ public class SearchForm {
 
     @Override
     public String toString() {
-        return "SearchForm [requestId=" + requestId + ", nid=" + nid + ", vlSisma=" + vlSisma + ", referringId="
-                + referringId + ", vlState=" + vlState + ", notProcessingCause=" + notProcessingCause + ", startDate="
+        return "SearchForm [requestId=" + requestId + ", nid=" + nid + ", vlSisma=" + vlSisma
+                + ", vlState=" + vlState + ", notProcessingCause=" + notProcessingCause + ", startDate="
                 + startDate + ", endDate=" + endDate + ", pageNumber=" + pageNumber + ", pageSize=" + pageSize
                 + ", orderBy=" + orderBy + ", dir=" + dir + ", search=" + search + "]";
     }

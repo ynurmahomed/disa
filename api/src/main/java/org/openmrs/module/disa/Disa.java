@@ -25,8 +25,6 @@ public class Disa {
 
 	private String nid;
 
-	private String referringRequestID;
-
 	private String firstName;
 
 	private String lastName;
@@ -412,14 +410,6 @@ public class Disa {
 
 	public void setRequestingDistrictName(String requestingDistrictName) {
 		this.requestingDistrictName = requestingDistrictName;
-	}
-
-	public String getReferringRequestID() {
-		return referringRequestID;
-	}
-
-	public void setReferringRequestID(String referringRequestID) {
-		this.referringRequestID = referringRequestID;
 	}
 
 	public String getLocation() {

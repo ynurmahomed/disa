@@ -111,7 +111,6 @@ public class LabResultServiceImplTest extends BaseContextMockTest {
             anyString(),
             anyString(),
             anyString(),
-            anyString(),
             anyListOf(String.class),
             anyString(),
             anyInt(),
@@ -128,7 +127,6 @@ public class LabResultServiceImplTest extends BaseContextMockTest {
         labResultService.search(
             LocalDate.now(),
             LocalDate.now(),
-            "",
             "",
             "",
             "",
