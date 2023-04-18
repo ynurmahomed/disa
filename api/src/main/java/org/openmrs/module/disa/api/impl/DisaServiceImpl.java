@@ -122,7 +122,7 @@ public class DisaServiceImpl extends BaseOpenmrsService implements DisaService {
 		List<Patient> patients = patientService.getPatients(name, null, null, false);
 		// return only patients with identifiers
 		return patients.stream()
-				.filter(p -> !p.getIdentifiers().isEmpty())
+				.filter(p -> !p.getActiveIdentifiers().isEmpty())
 				.collect(Collectors.toList());
 	}
 }
