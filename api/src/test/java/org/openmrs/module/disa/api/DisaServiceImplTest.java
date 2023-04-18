@@ -21,6 +21,7 @@ import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.module.disa.Disa;
 import org.openmrs.module.disa.api.db.DisaDAO;
+import org.openmrs.module.disa.api.exception.DisaModuleAPIException;
 import org.openmrs.module.disa.api.impl.DisaServiceImpl;
 import org.openmrs.module.disa.api.util.Constants;
 import org.openmrs.test.BaseContextMockTest;
