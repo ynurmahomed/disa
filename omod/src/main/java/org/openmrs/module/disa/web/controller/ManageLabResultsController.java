@@ -1,5 +1,7 @@
 package org.openmrs.module.disa.web.controller;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -13,9 +15,9 @@ import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.disa.Disa;
-import org.openmrs.module.disa.api.DisaModuleAPIException;
 import org.openmrs.module.disa.api.LabResultService;
 import org.openmrs.module.disa.api.Page;
+import org.openmrs.module.disa.api.exception.DisaModuleAPIException;
 import org.openmrs.module.disa.api.util.Constants;
 import org.openmrs.module.disa.web.delegate.ViralLoadResultsDelegate;
 import org.openmrs.module.disa.web.model.SearchForm;
@@ -29,7 +31,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,10 +38,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @Controller
 @RequestMapping("/module/disa/managelabresults")
+@SessionAttributes({ "flashMessage" })
 public class ManageLabResultsController {
 
     private static final Logger log = LoggerFactory.getLogger(ManageLabResultsController.class);
@@ -82,17 +85,21 @@ public class ManageLabResultsController {
                     .toUriString();
             model.addAttribute("exportUri", exportUri);
 
-            Page<Disa> results = searchLabResults(searchForm);
-
-            model.addAttribute("disaPage", results);
-            session.setAttribute("lastSearchParams", params);
+            try {
+                model.addAttribute("disaPage", searchLabResults(searchForm));
+                session.setAttribute("lastSearchParams", params);
+            } catch (DisaModuleAPIException e) {
+                log.error("", e);
+                model.addAttribute("flashMessage", e.getLocalizedMessage());
+                return "/module/disa/managelabresults/error";
+            }
         }
 
         return "/module/disa/managelabresults/index";
     }
 
     @ResponseBody
-    @RequestMapping(value = "", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/json", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public Page<Disa> searchJson(@Valid SearchForm searchForm) {
         return searchLabResults(searchForm);
     }
@@ -119,12 +126,6 @@ public class ManageLabResultsController {
         labResultService.rescheduleLabResult(new Disa(requestId));
     }
 
-    @ExceptionHandler(DisaModuleAPIException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public void handleDisaModuleAPIException(DisaModuleAPIException e) {
-        log.error("", e);
-    }
-
     @ModelAttribute("pageTitle")
     private void setPageTitle(ModelMap model) {
         String openMrs = messageSourceService.getMessage("openmrs.title", null, Context.getLocale());
@@ -148,14 +149,21 @@ public class ManageLabResultsController {
     }
 
     private Page<Disa> searchLabResults(SearchForm searchForm) {
+        LocalDate startDate = null;
+        if (searchForm.getStartDate() != null) {
+            startDate = searchForm.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        }
+        LocalDate endDate = null;
+        if (searchForm.getEndDate() != null) {
+            endDate = searchForm.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        }
         return labResultService.search(
-                searchForm.getStartDate(),
-                searchForm.getEndDate(),
-                searchForm.getRequestId(),
-                searchForm.getReferringId(),
+                startDate,
+                endDate,
+                searchForm.getRequestId() != null ? searchForm.getRequestId().trim() : "",
                 searchForm.getVlState(),
                 searchForm.getNotProcessingCause(),
-                searchForm.getNid(),
+                searchForm.getNid() != null ? searchForm.getNid().trim() : "",
                 labResultService.getHealthFacilityLabCodes(searchForm.getVlSisma()),
                 searchForm.getSearch(),
                 searchForm.getPageNumber(),
@@ -165,11 +173,18 @@ public class ManageLabResultsController {
     }
 
     private List<Disa> getAllLabResults(SearchForm searchForm) {
+        LocalDate startDate = null;
+        if (searchForm.getStartDate() != null) {
+            startDate = searchForm.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        }
+        LocalDate endDate = null;
+        if (searchForm.getEndDate() != null) {
+            endDate = searchForm.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        }
         return labResultService.getAll(
-                searchForm.getStartDate(),
-                searchForm.getEndDate(),
+                startDate,
+                endDate,
                 searchForm.getRequestId(),
-                searchForm.getReferringId(),
                 searchForm.getVlState(),
                 searchForm.getNotProcessingCause(),
                 searchForm.getNid(),

@@ -1,6 +1,6 @@
 package org.openmrs.module.disa.web.model;
 
-import java.time.LocalDate;
+import java.util.Date;
 
 import javax.validation.constraints.Size;
 
@@ -16,16 +16,13 @@ public class SearchForm {
 
     private String vlSisma;
 
-    @Size(max = 16)
-    private String referringId;
-
     private String vlState;
 
     private String notProcessingCause;
 
-    private LocalDate startDate;
+    private Date startDate;
 
-    private LocalDate endDate;
+    private Date endDate;
 
     private int pageNumber;
 
@@ -67,14 +64,6 @@ public class SearchForm {
         this.vlSisma = vlSisma;
     }
 
-    public String getReferringId() {
-        return this.referringId;
-    }
-
-    public void setReferringId(String referringId) {
-        this.referringId = referringId;
-    }
-
     public String getVlState() {
         return this.vlState;
     }
@@ -83,19 +72,19 @@ public class SearchForm {
         this.vlState = vlState;
     }
 
-    public LocalDate getStartDate() {
+    public Date getStartDate() {
         return this.startDate;
     }
 
-    public void setStartDate(LocalDate startDate) {
+    public void setStartDate(Date startDate) {
         this.startDate = startDate;
     }
 
-    public LocalDate getEndDate() {
+    public Date getEndDate() {
         return this.endDate;
     }
 
-    public void setEndDate(LocalDate endDate) {
+    public void setEndDate(Date endDate) {
         this.endDate = endDate;
     }
 
@@ -149,8 +138,8 @@ public class SearchForm {
 
     @Override
     public String toString() {
-        return "SearchForm [requestId=" + requestId + ", nid=" + nid + ", vlSisma=" + vlSisma + ", referringId="
-                + referringId + ", vlState=" + vlState + ", notProcessingCause=" + notProcessingCause + ", startDate="
+        return "SearchForm [requestId=" + requestId + ", nid=" + nid + ", vlSisma=" + vlSisma
+                + ", vlState=" + vlState + ", notProcessingCause=" + notProcessingCause + ", startDate="
                 + startDate + ", endDate=" + endDate + ", pageNumber=" + pageNumber + ", pageSize=" + pageSize
                 + ", orderBy=" + orderBy + ", dir=" + dir + ", search=" + search + "]";
     }

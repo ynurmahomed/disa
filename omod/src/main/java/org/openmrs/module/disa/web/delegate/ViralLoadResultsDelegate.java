@@ -60,10 +60,10 @@ public class ViralLoadResultsDelegate {
 	}
 
 	public List<Disa> getViralLoadDataList(String requestId, String nid,
-			String referringId, String vlState, String notProcessingCause, Date startDate, Date endDate, List<String> healthFacCodes)
+			String vlState, String notProcessingCause, Date startDate, Date endDate, List<String> healthFacCodes)
 			throws Exception {
 
-		String jsonViralLoadInfo = rest.getRequestByForm("/search-form", requestId, nid, referringId, vlState, notProcessingCause,
+		String jsonViralLoadInfo = rest.getRequestByForm("/search-form", requestId, nid, vlState, notProcessingCause,
 				formatDate(startDate, 1), formatDate(endDate, 2), healthFacCodes);
 		return new Gson().fromJson(jsonViralLoadInfo, new TypeToken<ArrayList<Disa>>() {
 		}.getType());
@@ -210,49 +210,46 @@ public class ViralLoadResultsDelegate {
 		cell.setCellValue(disa.getHealthFacilityLabCode());
 
 		cell = row.createCell(4);
-		cell.setCellValue(disa.getReferringRequestID());
-
-		cell = row.createCell(5);
 		cell.setCellValue(disa.getNid());
 
-		cell = row.createCell(6);
+		cell = row.createCell(5);
 		cell.setCellValue(disa.getFirstName() + " " + disa.getLastName());
 
-		cell = row.createCell(7);
+		cell = row.createCell(6);
 		cell.setCellValue(disa.getGender());
 
-		cell = row.createCell(8);
+		cell = row.createCell(7);
 		cell.setCellType(Cell.CELL_TYPE_NUMERIC);
 		cell.setCellValue("" + disa.getAge());
 
-		cell = row.createCell(9);
+		cell = row.createCell(8);
 		cell.setCellValue(disa.getRequestId());
 
-		cell = row.createCell(10);
+		cell = row.createCell(9);
 		cell.setCellValue(disa.getProcessingDate());
 
-		cell = row.createCell(11);
+		cell = row.createCell(10);
 		cell.setCellValue(disa.getViralLoadResultDate());
 
-		cell = row.createCell(12);
+		cell = row.createCell(11);
 		cell.setCellValue(disa.getViralLoadResultCopies());
 
-		cell = row.createCell(13);
+		cell = row.createCell(12);
 		cell.setCellValue(disa.getViralLoadResultLog());
 
-		cell = row.createCell(14);
+		cell = row.createCell(13);
 		cell.setCellValue(disa.getHivViralLoadResult());
 
-		cell = row.createCell(15);
+		cell = row.createCell(14);
 		cell.setCellValue(disa.getViralLoadStatus());
 
-		cell = row.createCell(16);
+		cell = row.createCell(15);
 		cell.setCellValue(disa.getCreatedAt());
 
-		cell = row.createCell(17);
+		cell = row.createCell(16);
 		cell.setCellValue(disa.getUpdatedAt());
 
-		cell = row.createCell(18);
+		cell = row.createCell(17);
 		cell.setCellValue(disa.getNotProcessingCause());
 	}
 
@@ -335,63 +332,59 @@ public class ViralLoadResultsDelegate {
 		cellIdade.setCellStyle(cellStyle);
 		cellIdade.setCellValue(messageSourceService.getMessage("disa.sisma.code", null, locale));
 
-		Cell cellIDRequisacao = row.createCell(4);
-		cellIDRequisacao.setCellStyle(cellStyle);
-		cellIDRequisacao.setCellValue(messageSourceService.getMessage("disa.referring.request.id", null, locale));
-
-		Cell cellCargaViralCopies = row.createCell(5);
+		Cell cellCargaViralCopies = row.createCell(4);
 		cellCargaViralCopies.setCellStyle(cellStyle);
 		cellCargaViralCopies.setCellValue(messageSourceService.getMessage("disa.nid", null, locale));
 
-		Cell cellCargaViralLog = row.createCell(6);
+		Cell cellCargaViralLog = row.createCell(5);
 		cellCargaViralLog.setCellStyle(cellStyle);
 		cellCargaViralLog.setCellValue(messageSourceService.getMessage("general.name", null, locale));
 
-		Cell cellCargaViralCoded = row.createCell(7);
+		Cell cellCargaViralCoded = row.createCell(6);
 		cellCargaViralCoded.setCellStyle(cellStyle);
 		cellCargaViralCoded.setCellValue(messageSourceService.getMessage("disa.gender", null, locale));
 
-		Cell cellCargaViralStatus = row.createCell(8);
+		Cell cellCargaViralStatus = row.createCell(7);
 		cellCargaViralStatus.setCellStyle(cellStyle);
 		cellCargaViralStatus.setCellValue(messageSourceService.getMessage("disa.age", null, locale));
 
-		Cell cellRequestId = row.createCell(9);
+		Cell cellRequestId = row.createCell(8);
 		cellRequestId.setCellStyle(cellStyle);
 		cellRequestId.setCellValue(messageSourceService.getMessage("disa.request.id", null, locale));
 
-		Cell cellAnalysisDateTime = row.createCell(10);
+		Cell cellAnalysisDateTime = row.createCell(9);
 		cellAnalysisDateTime.setCellStyle(cellStyle);
 		cellAnalysisDateTime.setCellValue(messageSourceService.getMessage("disa.analysis.date.time", null, locale));
 
-		Cell cellAuthorisedDateTime = row.createCell(11);
+		Cell cellAuthorisedDateTime = row.createCell(10);
 		cellAuthorisedDateTime.setCellStyle(cellStyle);
 		cellAuthorisedDateTime.setCellValue(messageSourceService.getMessage("disa.authorised.date.time", null, locale));
 
-		Cell cellViralLoadCopy = row.createCell(12);
+		Cell cellViralLoadCopy = row.createCell(11);
 		cellViralLoadCopy.setCellStyle(cellStyle);
 		cellViralLoadCopy.setCellValue(messageSourceService.getMessage("disa.viralload.result.copy", null, locale));
 
-		Cell cellViralLoadLog = row.createCell(13);
+		Cell cellViralLoadLog = row.createCell(12);
 		cellViralLoadLog.setCellStyle(cellStyle);
 		cellViralLoadLog.setCellValue(messageSourceService.getMessage("disa.viralload.result.log", null, locale));
 
-		Cell cellViralLoadCoded = row.createCell(14);
+		Cell cellViralLoadCoded = row.createCell(13);
 		cellViralLoadCoded.setCellStyle(cellStyle);
 		cellViralLoadCoded.setCellValue(messageSourceService.getMessage("disa.viralload.result.coded", null, locale));
 
-		Cell cellViralLoadStatus = row.createCell(15);
+		Cell cellViralLoadStatus = row.createCell(14);
 		cellViralLoadStatus.setCellStyle(cellStyle);
 		cellViralLoadStatus.setCellValue(messageSourceService.getMessage("disa.status", null, locale));
 
-		Cell cellViralLoadCreatedAt = row.createCell(16);
+		Cell cellViralLoadCreatedAt = row.createCell(15);
 		cellViralLoadCreatedAt.setCellStyle(cellStyle);
 		cellViralLoadCreatedAt.setCellValue(messageSourceService.getMessage("disa.created.at", null, locale));
 
-		Cell cellViralLoadCreated = row.createCell(17);
+		Cell cellViralLoadCreated = row.createCell(16);
 		cellViralLoadCreated.setCellStyle(cellStyle);
 		cellViralLoadCreated.setCellValue(messageSourceService.getMessage("disa.updated.at", null, locale));
 
-		Cell cellViralLoadProcessing = row.createCell(18);
+		Cell cellViralLoadProcessing = row.createCell(17);
 		cellViralLoadProcessing.setCellStyle(cellStyle);
 		cellViralLoadProcessing
 				.setCellValue(messageSourceService.getMessage("disa.notProcessingCause", null, locale));

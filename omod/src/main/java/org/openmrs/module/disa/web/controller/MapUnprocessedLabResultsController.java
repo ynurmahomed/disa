@@ -26,12 +26,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @Controller
 @RequestMapping("/module/disa/managelabresults/{requestId}/map")
-@SessionAttributes({ "requestId", "patientList", "lastSearchParams" })
+@SessionAttributes({ "requestId", "patientList", "lastSearchParams", "flashMessage", "errorSelectPatient" })
 public class MapUnprocessedLabResultsController {
 
 	private LabResultService labResultService;
@@ -67,7 +66,7 @@ public class MapUnprocessedLabResultsController {
 		if (!model.containsAttribute("requestId")
 				|| (!model.get("requestId").equals(requestId))) {
 			model.addAttribute("requestId", requestId);
-			model.addAttribute("patientList", disaService.getPatientsByDisa(disa));
+			model.addAttribute("patientList", disaService.getPatientsToMapSuggestion(disa));
 		}
 
 		// Build uri back to search results with used parameters.
@@ -92,8 +91,7 @@ public class MapUnprocessedLabResultsController {
 	public String mapPatientIdentifier(
 			@PathVariable String requestId,
 			@RequestParam(required = false) String patientUuid,
-			ModelMap model,
-			RedirectAttributes redirectAttrs) {
+			ModelMap model) {
 
 		Disa disa = labResultService.getByRequestId(requestId);
 
@@ -110,10 +108,13 @@ public class MapUnprocessedLabResultsController {
 			if (model.containsAttribute("lastSearchParams")) {
 				@SuppressWarnings("unchecked")
 				Map<String, String> lastSearchParams = (Map<String, String>) model.get("lastSearchParams");
-				redirectAttrs.addAllAttributes(lastSearchParams);
+				model.addAllAttributes(lastSearchParams);
 			}
 
-			redirectAttrs.addFlashAttribute("flashMessage", mapSuccessfulMsg);
+			// Remove requestId after successfully mapping, so that id does not filter
+			// in managelabresults.
+			model.remove("requestId");
+			model.addAttribute("flashMessage", mapSuccessfulMsg);
 		}
 
 		return "redirect:/module/disa/managelabresults.form";
@@ -124,11 +125,10 @@ public class MapUnprocessedLabResultsController {
 			@PathVariable String requestId,
 			@ModelAttribute("patient") Patient patient,
 			@ModelAttribute("patientList") List<Patient> patients,
-			ModelMap model,
-			RedirectAttributes redirectAttrs) {
+			ModelMap model) {
 
 		if (patient.getId() == null) {
-			redirectAttrs.addFlashAttribute("errorPatientRequired", "disa.error.patient.required");
+			model.addAttribute("errorPatientRequired", "disa.error.patient.required");
 		} else {
 			Patient patientToAdd = patientService.getPatient(patient.getId());
 			if (!patients.contains(patientToAdd)) {

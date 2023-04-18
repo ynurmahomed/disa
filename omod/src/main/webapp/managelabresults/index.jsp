@@ -20,17 +20,11 @@
 		<spring:message code="disa.pesquisa.resultados.laboratoriais11" />
 	</b>
 	<div class="box">
-		<%@ include file="../common/searchForm.jsp" %>
+		<%@ include file="../common/searchForm.jspf" %>
 	</div>
 </div>
 
-<div id="alert-box">
-	<c:if test="${not empty flashMessage}">
-		<div id="openmrs_msg">
-			<b>${flashMessage}</b>
-		</div>
-	</c:if>
-</div>
+<%@ include file="../common/alertBox.jspf" %>
 
 <c:if test="${not empty disaPage.resultList}">
 	<div>
@@ -46,9 +40,6 @@
 						</th>
 						<th>
 							<spring:message code="disa.sisma.code" />
-						</th>
-						<th>
-							<spring:message code="disa.referring.request.id" />
 						</th>
 						<th>
 							<spring:message code="disa.nid" />
@@ -97,7 +88,6 @@
 							<td>${vlData.requestingFacilityName}</td>
 							<td>${vlData.requestingDistrictName}</td>
 							<td>${vlData.healthFacilityLabCode}</td>
-							<td>${vlData.referringRequestID}</td>
 							<td>${vlData.nid}</td>
 							<td>${vlData.firstName} ${vlData.lastName}</td>
 							<td>${vlData.gender}</td>
@@ -358,33 +348,6 @@
 	}
 
 	/**
-	 * Add a message to be temporarily displayed.
-	 */
-	function addFlashMessage(message) {
-		const alertBox = document.getElementById("alert-box");
-		// Clear previous message
-		if(alertBox.lastElementChild) {
-			alertBox.lastElementChild.remove();
-		}
-		sessionStorage.setItem("flashMessage", message);
-	}
-
-	/**
-	 * Display a temporary success message if present in sessionStorage.
-	 */
-	function showFlashMessage() {
-		const alertBox = document.getElementById("alert-box");
-		const message = sessionStorage.getItem("flashMessage");
-		if (message) {
-			const openMRSMsg = document.createElement("div");
-			openMRSMsg.innerText = message;
-			openMRSMsg.id = "openmrs_msg";
-			alertBox.appendChild(openMRSMsg);
-			sessionStorage.removeItem("flashMessage");
-		}
-	}
-
-	/**
 	 * Should execute everytime the table is drawn.
 	 */
 	function postDraw() {
@@ -418,7 +381,7 @@
 			buttons: [
 				{
 					extend: 'colvis',
-					columns: [0,1,2,3,5,6,7,9,10,11,13,14,15]
+					columns: [0,1,2,4,5,6,8,9,10,12,13,14]
 				}
 
 			],
@@ -430,9 +393,9 @@
 				[13, 'desc']
 			],
 			columnDefs: [
-				// Hide id de referenciamento and updated at by default.
+				// Hide updated at by default.
 				{
-					targets: [3,14],
+					targets: [14],
 					visible: false
 				},
         	],
@@ -440,7 +403,6 @@
 				{ data: "requestingFacilityName" },
 				{ data: "requestingDistrictName" },
 				{ data: "healthFacilityLabCode" },
-				{ data: "referringRequestID" },
 				{ data: "nid" },
 				{
 					data: "firstName",
@@ -579,7 +541,7 @@
 				headers: {
 					Accept: "application/json"
 				},
-				url: "managelabresults.form",
+				url: "managelabresults/json.form",
 				data: (data) => {
 					const pageSize = data.length;
 					let pageNumber = 1;

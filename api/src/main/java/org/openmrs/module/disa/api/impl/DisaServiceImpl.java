@@ -16,6 +16,7 @@ package org.openmrs.module.disa.api.impl;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -28,10 +29,10 @@ import org.openmrs.api.PatientService;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.disa.Disa;
 import org.openmrs.module.disa.FsrLog;
-import org.openmrs.module.disa.api.DisaModuleAPIException;
 import org.openmrs.module.disa.api.DisaService;
 import org.openmrs.module.disa.api.LabResultService;
 import org.openmrs.module.disa.api.db.DisaDAO;
+import org.openmrs.module.disa.api.exception.DisaModuleAPIException;
 import org.openmrs.module.disa.api.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -116,9 +117,12 @@ public class DisaServiceImpl extends BaseOpenmrsService implements DisaService {
 		}
 	}
 
-	public List<Patient> getPatientsByDisa(Disa disa) {
-		return patientService
-				.getPatients(disa.getFirstName() + " " + disa.getLastName(), null, null,
-						Boolean.FALSE);
+	public List<Patient> getPatientsToMapSuggestion(Disa disa) {
+		String name = disa.getFirstName() + " " + disa.getLastName();
+		List<Patient> patients = patientService.getPatients(name, null, null, false);
+		// return only patients with identifiers
+		return patients.stream()
+				.filter(p -> !p.getIdentifiers().isEmpty())
+				.collect(Collectors.toList());
 	}
 }

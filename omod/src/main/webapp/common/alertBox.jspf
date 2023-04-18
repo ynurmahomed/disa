@@ -1,0 +1,10 @@
+<div id="alert-box">
+	<c:if test="${not empty flashMessage}">
+		<div id="openmrs_msg">
+			<b>${flashMessage}</b>
+			<% request.getSession().removeAttribute("flashMessage"); %>
+		</div>
+	</c:if>
+</div>
+
+<openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/js/alertBox.js" />

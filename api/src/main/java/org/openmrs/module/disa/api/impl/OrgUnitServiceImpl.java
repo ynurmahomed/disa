@@ -5,9 +5,9 @@ import java.net.URISyntaxException;
 import java.util.List;
 
 import org.openmrs.module.disa.OrgUnit;
-import org.openmrs.module.disa.api.DisaModuleAPIException;
 import org.openmrs.module.disa.api.OrgUnitService;
 import org.openmrs.module.disa.api.client.DisaAPIHttpClient;
+import org.openmrs.module.disa.api.exception.DisaModuleAPIException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

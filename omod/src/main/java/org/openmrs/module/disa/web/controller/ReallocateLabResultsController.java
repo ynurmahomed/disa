@@ -21,10 +21,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.bind.annotation.SessionAttributes;
 
 @Controller
 @RequestMapping("/module/disa/managelabresults/{requestId}/reallocate")
+@SessionAttributes({"flashMessage"})
 public class ReallocateLabResultsController {
 
     private OrgUnitService orgUnitService;
@@ -65,8 +66,7 @@ public class ReallocateLabResultsController {
             @Valid @ModelAttribute ReallocateForm reallocateForm,
             BindingResult result,
             ModelMap model,
-            HttpSession session,
-            RedirectAttributes redirectAttrs) {
+            HttpSession session) {
 
         if (result.hasErrors()) {
             Disa vl = labResultService.getByRequestId(requestId);
@@ -82,8 +82,8 @@ public class ReallocateLabResultsController {
 
         @SuppressWarnings("unchecked")
         Map<String, String> params = ((Map<String, String>) session.getAttribute("lastSearchParams"));
-        redirectAttrs.addAllAttributes(params);
-        redirectAttrs.addFlashAttribute("flashMessage", getReallocatedMessage(requestId, update));
+        model.addAllAttributes(params);
+        model.addAttribute("flashMessage", getReallocatedMessage(requestId, update));
         return "redirect:/module/disa/managelabresults.form";
     }
 

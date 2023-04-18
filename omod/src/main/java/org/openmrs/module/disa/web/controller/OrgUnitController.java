@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.openmrs.module.disa.OrgUnit;
-import org.openmrs.module.disa.api.DisaModuleAPIException;
 import org.openmrs.module.disa.api.OrgUnitService;
+import org.openmrs.module.disa.api.exception.DisaModuleAPIException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,8 +34,8 @@ public class OrgUnitController {
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<OrgUnit> searchOrgUnits(@RequestParam String term) {
-        return orgUnitService.searchOrgUnits(term);
+    public ResponseEntity<List<OrgUnit>> searchOrgUnits(@RequestParam String term) {
+        return ResponseEntity.ok().body(orgUnitService.searchOrgUnits(term));
     }
 
     /*
