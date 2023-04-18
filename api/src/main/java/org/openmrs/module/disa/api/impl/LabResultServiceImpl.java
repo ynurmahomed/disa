@@ -217,6 +217,10 @@ public class LabResultServiceImpl implements LabResultService {
             return new DisaModuleAPIException(message, new String[] { sismaCode }, e);
         }
 
+        if (e.getStatusCode() == HttpStatus.UNAUTHORIZED.value()) {
+            return new DisaModuleAPIException("disa.api.authentication.error", new String[] {}, e);
+        }
+
         if (e.getStatusCode() == HttpStatus.NOT_FOUND.value()) {
             return new DisaModuleAPIException("disa.result.not.found", (Object[]) null, e);
         }
