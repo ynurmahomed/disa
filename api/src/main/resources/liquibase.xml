@@ -124,4 +124,17 @@
             <column name="child_role">Gestor de Disa Interoperabilidade</column>
         </insert>
     </changeSet>
+
+    <changeSet id="disa-2023-04-12-14:32" author="yassin">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM role_privilege WHERE role='Tecnico de Laboratorio' AND privilege='Reagendar resultados no Disa Interoperabilidade';
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="role_privilege">
+            <column name="role">Tecnico de Laboratorio</column>
+            <column name="privilege">Reagendar resultados no Disa Interoperabilidade</column>
+        </insert>
+    </changeSet>
+
 </databaseChangeLog>
