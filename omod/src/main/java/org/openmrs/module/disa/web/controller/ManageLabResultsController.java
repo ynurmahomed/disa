@@ -173,9 +173,17 @@ public class ManageLabResultsController {
     }
 
     private List<Disa> getAllLabResults(SearchForm searchForm) {
+        LocalDate startDate = null;
+        if (searchForm.getStartDate() != null) {
+            startDate = searchForm.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        }
+        LocalDate endDate = null;
+        if (searchForm.getEndDate() != null) {
+            endDate = searchForm.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        }
         return labResultService.getAll(
-                searchForm.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
-                searchForm.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
+                startDate,
+                endDate,
                 searchForm.getRequestId(),
                 searchForm.getVlState(),
                 searchForm.getNotProcessingCause(),
