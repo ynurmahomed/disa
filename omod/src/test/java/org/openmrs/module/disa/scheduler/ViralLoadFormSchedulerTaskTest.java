@@ -55,11 +55,14 @@ import org.openmrs.api.PersonService;
 import org.openmrs.api.ProviderService;
 import org.openmrs.api.UserService;
 import org.openmrs.api.db.ContextDAO;
-import org.openmrs.module.disa.Disa;
+import org.openmrs.module.disa.HIVVLLabResult;
+import org.openmrs.module.disa.LabResult;
+import org.openmrs.module.disa.TypeOfResult;
 import org.openmrs.module.disa.api.DisaService;
 import org.openmrs.module.disa.api.util.Constants;
 import org.openmrs.module.disa.extension.util.RestUtil;
 import org.openmrs.test.BaseContextMockTest;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.gson.Gson;
 
@@ -105,7 +108,7 @@ public class ViralLoadFormSchedulerTaskTest extends BaseContextMockTest {
 	@InjectMocks
 	private ViralLoadFormSchedulerTask task;
 
-	private Disa disa;
+	private HIVVLLabResult disa;
 	private Person person;
 	private User user;
 	private Provider provider;
@@ -125,7 +128,7 @@ public class ViralLoadFormSchedulerTaskTest extends BaseContextMockTest {
 
 	@Before
 	public void setUp() throws Exception {
-		disa = new Disa();
+		disa = new HIVVLLabResult();
 		disa.setRequestId("MZDISAPQM0000000");
 		disa.setNid("000000000/0000/00000");
 		disa.setFinalViralLoadResult("INDETECTAVEL");
@@ -186,7 +189,7 @@ public class ViralLoadFormSchedulerTaskTest extends BaseContextMockTest {
 				.thenReturn(encounterRole);
 
 		when(restUtil.getRequestGet(anyListOf(String.class), eq(province)))
-				.thenReturn(new Gson().toJson(new Disa[] { disa }));
+				.thenReturn(Arrays.asList(disa));
 
 		viralLoadCopies = new Concept(856);
 		viralLoadCopies.setUuid(Constants.VIRAL_LOAD_COPIES);
@@ -295,7 +298,7 @@ public class ViralLoadFormSchedulerTaskTest extends BaseContextMockTest {
 
 		disa.setFinalViralLoadResult("");
 		when(restUtil.getRequestGet(anyListOf(String.class), eq(province)))
-				.thenReturn(new Gson().toJson(new Disa[] { disa }));
+				.thenReturn(Arrays.asList(disa));
 
 		when(userService.getUserByUsername(anyString())).thenReturn(user);
 
@@ -321,7 +324,7 @@ public class ViralLoadFormSchedulerTaskTest extends BaseContextMockTest {
 
 		disa.setFinalViralLoadResult("ABCDEFGH");
 		when(restUtil.getRequestGet(anyListOf(String.class), eq(province)))
-				.thenReturn(new Gson().toJson(new Disa[] { disa }));
+				.thenReturn(Arrays.asList(disa));
 
 		when(userService.getUserByUsername(anyString())).thenReturn(user);
 
@@ -384,7 +387,7 @@ public class ViralLoadFormSchedulerTaskTest extends BaseContextMockTest {
 
 		disa.setFinalViralLoadResult(" 123456     ");
 		when(restUtil.getRequestGet(anyListOf(String.class), eq(province)))
-				.thenReturn(new Gson().toJson(new Disa[] { disa }));
+				.thenReturn(Arrays.asList(disa));
 
 		when(userService.getUserByUsername(anyString())).thenReturn(user);
 
@@ -425,7 +428,7 @@ public class ViralLoadFormSchedulerTaskTest extends BaseContextMockTest {
 
 		disa.setFinalViralLoadResult("< 400 copias / ml");
 		when(restUtil.getRequestGet(anyListOf(String.class), eq(province)))
-				.thenReturn(new Gson().toJson(new Disa[] { disa }));
+				.thenReturn(Arrays.asList(disa));
 
 		when(userService.getUserByUsername(anyString())).thenReturn(user);
 
@@ -468,7 +471,7 @@ public class ViralLoadFormSchedulerTaskTest extends BaseContextMockTest {
 
 		disa.setFinalViralLoadResult("> 10.000.000,00");
 		when(restUtil.getRequestGet(anyListOf(String.class), eq(province)))
-				.thenReturn(new Gson().toJson(new Disa[] { disa }));
+				.thenReturn(Arrays.asList(disa));
 
 		when(userService.getUserByUsername(anyString())).thenReturn(user);
 
@@ -495,7 +498,7 @@ public class ViralLoadFormSchedulerTaskTest extends BaseContextMockTest {
 
 		disa.setFinalViralLoadResult("> 10000000");
 		when(restUtil.getRequestGet(anyListOf(String.class), eq(province)))
-				.thenReturn(new Gson().toJson(new Disa[] { disa }));
+				.thenReturn(Arrays.asList(disa));
 
 		when(userService.getUserByUsername(anyString())).thenReturn(user);
 
@@ -537,7 +540,7 @@ public class ViralLoadFormSchedulerTaskTest extends BaseContextMockTest {
 
 		disa.setFinalViralLoadResult(" 123456     ");
 		when(restUtil.getRequestGet(anyListOf(String.class), eq(province)))
-				.thenReturn(new Gson().toJson(new Disa[] { disa }));
+				.thenReturn(Arrays.asList(disa));
 
 		when(userService.getUserByUsername(anyString())).thenReturn(user);
 

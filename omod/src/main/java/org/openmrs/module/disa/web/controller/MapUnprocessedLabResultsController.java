@@ -12,7 +12,7 @@ import org.openmrs.PatientIdentifier;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.messagesource.MessageSourceService;
-import org.openmrs.module.disa.Disa;
+import org.openmrs.module.disa.LabResult;
 import org.openmrs.module.disa.api.DisaService;
 import org.openmrs.module.disa.api.LabResultService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,14 +59,14 @@ public class MapUnprocessedLabResultsController {
 			ModelMap model,
 			HttpServletRequest request) {
 
-		Disa disa = labResultService.getByRequestId(requestId);
+		LabResult labResult = labResultService.getByRequestId(requestId);
 
 		// If there isn't a requestId in the session or there is a different requestId,
 		// load a new patient list.
 		if (!model.containsAttribute("requestId")
 				|| (!model.get("requestId").equals(requestId))) {
 			model.addAttribute("requestId", requestId);
-			model.addAttribute("patientList", disaService.getPatientsToMapSuggestion(disa));
+			model.addAttribute("patientList", disaService.getPatientsToMapSuggestion(labResult));
 		}
 
 		// Build uri back to search results with used parameters.
@@ -82,7 +82,7 @@ public class MapUnprocessedLabResultsController {
 				.toUriString();
 
 		model.addAttribute("lastSearchUri", searchUri);
-		model.addAttribute(disa);
+		model.addAttribute("labResult", labResult);
 
 		return "/module/disa/managelabresults/map";
 	}
@@ -93,7 +93,7 @@ public class MapUnprocessedLabResultsController {
 			@RequestParam(required = false) String patientUuid,
 			ModelMap model) {
 
-		Disa disa = labResultService.getByRequestId(requestId);
+		LabResult disa = labResultService.getByRequestId(requestId);
 
 		if (patientUuid == null) {
 			model.addAttribute(disa);

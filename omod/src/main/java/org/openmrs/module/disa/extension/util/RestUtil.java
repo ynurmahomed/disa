@@ -1,5 +1,6 @@
 package org.openmrs.module.disa.extension.util;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.http.Header;
@@ -14,13 +15,18 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.openmrs.module.disa.LabResult;
 import org.openmrs.module.disa.api.util.Constants;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 public class RestUtil {
 
 	private String username;
 	private String password;
 	private String URLBase;
+	private Gson gson;
 
 	/**
 	 * HTTP POST
@@ -196,7 +202,7 @@ public class RestUtil {
 	 * @throws Exception
 	 */
 	@SuppressWarnings("deprecation")
-	public String getRequestGet(List<String> sismaCodes, String requestingProvinceName) throws Exception {
+	public List<LabResult> getRequestGet(List<String> sismaCodes, String requestingProvinceName) throws Exception {
 		String URL = URLBase;
 		String response = "";
 		DefaultHttpClient httpclient = new DefaultHttpClient();
@@ -228,7 +234,7 @@ public class RestUtil {
 		} finally {
 			httpclient.getConnectionManager().shutdown();
 		}
-		return response;
+		return gson.fromJson(response, new TypeToken<ArrayList<LabResult>>() {}.getType());
 	}
 
 	/**
@@ -283,7 +289,7 @@ public class RestUtil {
 	 * @throws Exception
 	 */
 	@SuppressWarnings("deprecation")
-	public String getRequestGetFsrByStatus(String urlPathProcessed, List<String> sismaCodes, String viralLoadStatus)
+	public String getRequestGetFsrByStatus(String urlPathProcessed, List<String> sismaCodes, String labResultStatus)
 			throws Exception {
 		String URL = URLBase + urlPathProcessed;
 		String response = "";
@@ -293,7 +299,7 @@ public class RestUtil {
 
 			URIBuilder uriBuilder = new URIBuilder(URL);
 			uriBuilder.addParameter("locationCodes", sismaCodes.get(0));
-			uriBuilder.addParameter("viralLoadStatus", viralLoadStatus);
+			uriBuilder.addParameter("labResultStatus", labResultStatus);
 
 			HttpGet httpGet = new HttpGet(uriBuilder.build());
 
@@ -322,7 +328,7 @@ public class RestUtil {
 	 */
 	@SuppressWarnings("deprecation")
 	public String getRequestGetFsrByStatusAndDates(String urlPathProcessed, List<String> sismaCodes,
-			String viralLoadStatus, String startDate, String endDate) throws Exception {
+			String labResultStatus, String startDate, String endDate) throws Exception {
 		String URL = URLBase + urlPathProcessed;
 		String response = "";
 		DefaultHttpClient httpclient = new DefaultHttpClient();
@@ -333,7 +339,7 @@ public class RestUtil {
 			for (String sismaCode : sismaCodes) {
 				uriBuilder.addParameter("locationCodes", sismaCode);
 			}
-			uriBuilder.addParameter("viralLoadStatus", viralLoadStatus);
+			uriBuilder.addParameter("labResultStatus", labResultStatus);
 			uriBuilder.addParameter("startDate", startDate);
 			uriBuilder.addParameter("endDate", endDate);
 
@@ -383,7 +389,7 @@ public class RestUtil {
 			uriBuilder.addParameters(GenericUtil.buildParamList(healthFacCodes));
 
 			if (!vlState.isEmpty() && !vlState.equals(Constants.ALL)) {
-				uriBuilder.addParameter("viralLoadStatus", vlState);
+				uriBuilder.addParameter("labResultStatus", vlState);
 			}
 
 			if (!notProcessingCause.isEmpty() && !notProcessingCause.equals(Constants.ALL)) {
@@ -424,5 +430,9 @@ public class RestUtil {
 
 	public void setURLBase(String uRLBase) {
 		URLBase = uRLBase;
+	}
+
+	public void setGson(Gson gson) {
+		this.gson = gson;
 	}
 }

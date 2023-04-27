@@ -20,7 +20,7 @@ import org.openmrs.LocationAttribute;
 import org.openmrs.Patient;
 import org.openmrs.annotation.Authorized;
 import org.openmrs.api.OpenmrsService;
-import org.openmrs.module.disa.Disa;
+import org.openmrs.module.disa.LabResult;
 import org.openmrs.module.disa.FsrLog;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,7 +53,7 @@ public interface DisaService extends OpenmrsService {
 	public List<Patient> getPatientByPatientId(Integer patientId);
 
 	@Authorized("Mapear pacientes no Disa Interoperabilidade")
-	void mapIdentifier(String patientUuid, Disa disa);
+	void mapIdentifier(String patientUuid, LabResult disa);
 
-	List<Patient> getPatientsToMapSuggestion(Disa disa);
+	List<Patient> getPatientsToMapSuggestion(LabResult disa);
 }

@@ -21,7 +21,8 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.openmrs.api.context.Context;
 import org.openmrs.messagesource.MessageSourceService;
-import org.openmrs.module.disa.Disa;
+import org.openmrs.module.disa.HIVVLLabResult;
+import org.openmrs.module.disa.LabResult;
 import org.openmrs.module.disa.api.util.Constants;
 import org.openmrs.module.disa.extension.util.RestUtil;
 import org.slf4j.Logger;
@@ -47,66 +48,29 @@ public class ViralLoadResultsDelegate {
 				Context.getAdministrationService().getGlobalPropertyObject(Constants.DISA_PASSWORD).getPropertyValue());
 	}
 
-	public List<Disa> getViralLoadDataList(Date startDate, Date endDate, String vlState) throws Exception {
+	public List<LabResult> getViralLoadDataList(Date startDate, Date endDate, String vlState) throws Exception {
 
 		List<String> sismaCodes = Arrays.asList(Context.getAdministrationService()
 				.getGlobalPropertyObject(Constants.DISA_SISMA_CODE).getPropertyValue().split(","));
 
 		String jsonViralLoadInfo = rest.getRequestGetFsrByStatusAndDates("/viral-status-dates", sismaCodes, vlState,
 				formatDate(startDate, 1), formatDate(endDate, 2));
-		return new Gson().fromJson(jsonViralLoadInfo, new TypeToken<ArrayList<Disa>>() {
+		return new Gson().fromJson(jsonViralLoadInfo, new TypeToken<ArrayList<LabResult>>() {
 		}.getType());
 
 	}
 
-	public List<Disa> getViralLoadDataList(String requestId, String nid,
+	public List<LabResult> getViralLoadDataList(String requestId, String nid,
 			String vlState, String notProcessingCause, Date startDate, Date endDate, List<String> healthFacCodes)
 			throws Exception {
 
 		String jsonViralLoadInfo = rest.getRequestByForm("/search-form", requestId, nid, vlState, notProcessingCause,
 				formatDate(startDate, 1), formatDate(endDate, 2), healthFacCodes);
-		return new Gson().fromJson(jsonViralLoadInfo, new TypeToken<ArrayList<Disa>>() {
+		return new Gson().fromJson(jsonViralLoadInfo, new TypeToken<ArrayList<LabResult>>() {
 		}.getType());
 	}
 
-	public void createExcelFile(List<Disa> listDisa, HttpServletResponse response,
-			MessageSourceService messageSourceService) throws Exception {
-		Locale locale = Context.getLocale();
-		try (ByteArrayOutputStream outByteStream = new ByteArrayOutputStream()) {
-			HSSFWorkbook workbook = new HSSFWorkbook();
-			HSSFSheet sheet = workbook.createSheet("ViralLoadData");
-			sheet.setColumnWidth(0, 8000);
-			sheet.setColumnWidth(1, 8000);
-			sheet.setColumnWidth(2, 8000);
-			sheet.setColumnWidth(3, 8000);
-			sheet.setColumnWidth(4, 8000);
-			sheet.setColumnWidth(5, 8000);
-			sheet.setColumnWidth(6, 8000);
-			sheet.setColumnWidth(7, 8000);
-			sheet.setColumnWidth(8, 8000);
-			createHeaderRow(sheet, locale, messageSourceService);
-
-			int rowCount = 0;
-
-			for (Disa disa : listDisa) {
-				Row row = sheet.createRow(++rowCount);
-				writeDisaList(disa, row, locale, messageSourceService);
-			}
-
-			workbook.write(outByteStream);
-			byte[] outArray = outByteStream.toByteArray();
-			response.setContentType("application/ms-excel");
-			response.setContentLength(outArray.length);
-			response.setHeader("Expires:", "0");
-			response.setHeader("Content-Disposition", "attachment; filename=Viral Load Data Details.xls");
-			OutputStream outStream = response.getOutputStream();
-			outStream.write(outArray);
-			outStream.flush();
-			workbook.close();
-		}
-	}
-
-	public void createExcelFileStaging(List<Disa> listDisa, HttpServletResponse response,
+	public void createExcelFileStaging(List<LabResult> listDisa, HttpServletResponse response,
 			MessageSourceService messageSourceService) throws Exception {
 		Locale locale = Context.getLocale();
 		try (ByteArrayOutputStream outByteStream = new ByteArrayOutputStream()) {
@@ -136,7 +100,7 @@ public class ViralLoadResultsDelegate {
 
 			int rowCount = 0;
 
-			for (Disa disa : listDisa) {
+			for (LabResult disa : listDisa) {
 				Row row = sheet.createRow(++rowCount);
 				writeDisaListStaging(disa, row, locale, messageSourceService);
 			}
@@ -155,48 +119,7 @@ public class ViralLoadResultsDelegate {
 		}
 	}
 
-	private void writeDisaList(Disa disa, Row row, Locale locale, MessageSourceService messageSourceService) {
-		Cell cell = row.createCell(0);
-		cell.setCellValue(disa.getNid());
-
-		cell = row.createCell(1);
-		cell.setCellValue(disa.getFirstName() + " " + disa.getLastName());
-
-		cell = row.createCell(2);
-		cell.setCellValue(disa.getGender());
-
-		cell = row.createCell(3);
-		cell.setCellType(Cell.CELL_TYPE_NUMERIC);
-		cell.setCellValue(disa.getAge());
-
-		cell = row.createCell(4);
-		cell.setCellValue(disa.getRequestId());
-
-		cell = row.createCell(5);
-		cell.setCellValue(disa.getViralLoadResultCopies());
-
-		cell = row.createCell(6);
-		cell.setCellValue(disa.getViralLoadResultLog());
-
-		cell = row.createCell(7);
-		cell.setCellValue(disa.getHivViralLoadResult());
-
-		cell = row.createCell(8);
-		cell.setCellValue(
-				messageSourceService.getMessage("disa.viral.load.status." + disa.getViralLoadStatus(), null, locale));
-
-		if (disa.getViralLoadStatus().equals("NOT_PROCESSED")) {
-			cell = row.createCell(9);
-			String notProcessingCause = disa.getNotProcessingCause();
-			if (notProcessingCause == null) {
-				cell.setCellValue(notProcessingCause);
-			} else {
-				cell.setCellValue(messageSourceService.getMessage("disa.notProcessingCause." + notProcessingCause, null, locale));
-			}
-		}
-	}
-
-	private void writeDisaListStaging(Disa disa, Row row, Locale locale, MessageSourceService messageSourceService) {
+	private void writeDisaListStaging(LabResult disa, Row row, Locale locale, MessageSourceService messageSourceService) {
 		Cell cell = row.createCell(0);
 		cell.setCellValue(disa.getLocation());
 
@@ -229,19 +152,21 @@ public class ViralLoadResultsDelegate {
 		cell.setCellValue(disa.getProcessingDate());
 
 		cell = row.createCell(10);
-		cell.setCellValue(disa.getViralLoadResultDate());
+		cell.setCellValue(disa.getLabResultDate());
+
+		HIVVLLabResult vl = (HIVVLLabResult) disa;
 
 		cell = row.createCell(11);
-		cell.setCellValue(disa.getViralLoadResultCopies());
+		cell.setCellValue(vl.getViralLoadResultCopies());
 
 		cell = row.createCell(12);
-		cell.setCellValue(disa.getViralLoadResultLog());
+		cell.setCellValue(vl.getViralLoadResultLog());
 
 		cell = row.createCell(13);
-		cell.setCellValue(disa.getHivViralLoadResult());
+		cell.setCellValue(vl.getHivViralLoadResult());
 
 		cell = row.createCell(14);
-		cell.setCellValue(disa.getViralLoadStatus());
+		cell.setCellValue(disa.getLabResultStatus());
 
 		cell = row.createCell(15);
 		cell.setCellValue(disa.getCreatedAt());
@@ -372,9 +297,9 @@ public class ViralLoadResultsDelegate {
 		cellViralLoadCoded.setCellStyle(cellStyle);
 		cellViralLoadCoded.setCellValue(messageSourceService.getMessage("disa.viralload.result.coded", null, locale));
 
-		Cell cellViralLoadStatus = row.createCell(14);
-		cellViralLoadStatus.setCellStyle(cellStyle);
-		cellViralLoadStatus.setCellValue(messageSourceService.getMessage("disa.status", null, locale));
+		Cell cellLabResultStatus = row.createCell(14);
+		cellLabResultStatus.setCellStyle(cellStyle);
+		cellLabResultStatus.setCellValue(messageSourceService.getMessage("disa.status", null, locale));
 
 		Cell cellViralLoadCreatedAt = row.createCell(15);
 		cellViralLoadCreatedAt.setCellStyle(cellStyle);

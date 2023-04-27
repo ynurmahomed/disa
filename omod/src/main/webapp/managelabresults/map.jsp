@@ -28,10 +28,10 @@
 				<th><spring:message code="disa.age" /></th>
 			</tr>
 			<tr>
-				<td>${disa.nid}</td>
-				<td>${disa.firstName} ${disa.lastName}</td>
-				<td>${disa.gender}</td>
-				<td>${disa.getAge()}</td>
+				<td>${labResult.nid}</td>
+				<td>${labResult.firstName} ${labResult.lastName}</td>
+				<td>${labResult.gender}</td>
+				<td>${labResult.getAge()}</td>
 			</tr>
 		</table>
 	</div>

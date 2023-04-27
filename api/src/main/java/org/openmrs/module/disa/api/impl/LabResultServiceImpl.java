@@ -12,7 +12,8 @@ import java.util.List;
 import org.apache.http.client.HttpResponseException;
 import org.openmrs.GlobalProperty;
 import org.openmrs.api.AdministrationService;
-import org.openmrs.module.disa.Disa;
+import org.openmrs.module.disa.HIVVLLabResult;
+import org.openmrs.module.disa.LabResult;
 import org.openmrs.module.disa.OrgUnit;
 import org.openmrs.module.disa.api.LabResultService;
 import org.openmrs.module.disa.api.OrgUnitService;
@@ -44,10 +45,10 @@ public class LabResultServiceImpl implements LabResultService {
     }
 
     @Override
-    public Page<Disa> search(
+    public Page<LabResult> search(
             LocalDate startDate, LocalDate endDate,
             String requestId,
-            String viralLoadStatus, String notProcessingCause,
+            String labResultStatus, String notProcessingCause,
             String nid, List<String> healthFacilityLabCodes,
             String search,
             int pageNumber, int pageSize,
@@ -59,8 +60,8 @@ public class LabResultServiceImpl implements LabResultService {
                 throw new DisaModuleAPIException("disa.health.facility.required", (Object[]) null);
             }
 
-            if (Constants.ALL.equals(viralLoadStatus)) {
-                viralLoadStatus = "";
+            if (Constants.ALL.equals(labResultStatus)) {
+                labResultStatus = "";
             }
 
             if (Constants.ALL.equals(notProcessingCause)) {
@@ -77,7 +78,7 @@ public class LabResultServiceImpl implements LabResultService {
             }
 
             return client.searchLabResults(start, end, requestId,
-                    viralLoadStatus,
+                    labResultStatus,
                     notProcessingCause, nid, healthFacilityLabCodes,
                     search,
                     pageNumber, pageSize, orderBy, direction);
@@ -90,10 +91,10 @@ public class LabResultServiceImpl implements LabResultService {
     }
 
     @Override
-    public List<Disa> getAll(
+    public List<LabResult> getAll(
             LocalDate startDate, LocalDate endDate,
             String requestId,
-            String viralLoadStatus, String notProcessingCause,
+            String labResultStatus, String notProcessingCause,
             String nid, List<String> healthFacilityLabCodes,
             String search,
             String orderBy, String direction) {
@@ -104,8 +105,8 @@ public class LabResultServiceImpl implements LabResultService {
                 throw new DisaModuleAPIException("disa.health.facility.required", (Object[]) null);
             }
 
-            if (Constants.ALL.equals(viralLoadStatus)) {
-                viralLoadStatus = "";
+            if (Constants.ALL.equals(labResultStatus)) {
+                labResultStatus = "";
             }
 
             if (Constants.ALL.equals(notProcessingCause)) {
@@ -122,7 +123,7 @@ public class LabResultServiceImpl implements LabResultService {
             }
 
             return client.getAllLabResults(start, end, requestId,
-                    viralLoadStatus,
+                    labResultStatus,
                     notProcessingCause, nid, healthFacilityLabCodes,
                     search,
                     orderBy, direction);
@@ -134,7 +135,7 @@ public class LabResultServiceImpl implements LabResultService {
     }
 
     @Override
-    public Disa getByRequestId(String requestId) {
+    public LabResult getByRequestId(String requestId) {
         try {
             return client.getResultByRequestId(requestId);
         } catch (HttpResponseException e) {
@@ -157,20 +158,22 @@ public class LabResultServiceImpl implements LabResultService {
     }
 
     @Override
-    public Disa reallocateLabResult(Disa labResult, OrgUnit destination) {
+    public LabResult reallocateLabResult(String requestId, OrgUnit destination) {
         OrgUnit orgUnit = orgUnitService.getOrgUnitByCode(destination.getCode());
+        LabResult labResult = getByRequestId(requestId);
         labResult.setHealthFacilityLabCode(orgUnit.getCode());
         labResult.setRequestingFacilityName(orgUnit.getFacility());
         labResult.setRequestingDistrictName(orgUnit.getDistrict());
         labResult.setRequestingProvinceName(orgUnit.getProvince());
-        labResult.setViralLoadStatus("PENDING");
+        labResult.setLabResultStatus("PENDING");
         updateLabResult(labResult);
         return labResult;
     }
 
     @Override
-    public void rescheduleLabResult(Disa labResult) {
-        labResult.setViralLoadStatus("PENDING");
+    public void rescheduleLabResult(String requestId) {
+        LabResult labResult = getByRequestId(requestId);
+        labResult.setLabResultStatus("PENDING");
         updateLabResult(labResult);
     }
 
@@ -232,7 +235,7 @@ public class LabResultServiceImpl implements LabResultService {
         return client.findUnauthorisedSismaCode(healthFacilityLabCodes);
     }
 
-    private void updateLabResult(Disa labResult) {
+    private void updateLabResult(LabResult labResult) {
         try {
             client.updateResult(labResult);
         } catch (HttpResponseException e) {

@@ -22,7 +22,8 @@ import org.openmrs.PatientIdentifier;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
-import org.openmrs.module.disa.Disa;
+import org.openmrs.module.disa.HIVVLLabResult;
+import org.openmrs.module.disa.LabResult;
 import org.openmrs.module.disa.api.db.DisaDAO;
 import org.openmrs.module.disa.api.exception.DisaModuleAPIException;
 import org.openmrs.module.disa.api.impl.DisaServiceImpl;
@@ -49,8 +50,8 @@ public class DisaServiceImplTest extends BaseContextMockTest {
     @Test
     public void mapIdentifierShouldSavePatientIdentifier() {
         String patientUuid = "patientUuid";
-        Disa disa = new Disa();
-        disa.setViralLoadStatus("NOT_PROCESSED");
+        LabResult disa = new HIVVLLabResult();
+        disa.setLabResultStatus("NOT_PROCESSED");
         disa.setNotProcessingCause("NID_NOT_FOUND");
         disa.setNid("12345");
         disa.setRequestId("requestId");
@@ -66,14 +67,14 @@ public class DisaServiceImplTest extends BaseContextMockTest {
         disaServiceImpl.mapIdentifier(patientUuid, disa);
 
         verify(patientService, times(1)).savePatientIdentifier(any(PatientIdentifier.class));
-        verify(labResultService, times(1)).rescheduleLabResult(any(Disa.class));
+        verify(labResultService, times(1)).rescheduleLabResult(disa.getRequestId());
     }
 
     @Test(expected = DisaModuleAPIException.class)
     public void mapIdentifierShouldThrowExceptionWhenResultIsProcessed() {
         String patientUuid = "patientUuid";
-        Disa disa = new Disa();
-        disa.setViralLoadStatus("PROCESSED");
+        LabResult disa = new HIVVLLabResult();
+        disa.setLabResultStatus("PROCESSED");
         disa.setNotProcessingCause("NID_NOT_FOUND");
         disa.setNid("12345");
         disa.setRequestId("requestId");
@@ -89,14 +90,14 @@ public class DisaServiceImplTest extends BaseContextMockTest {
         disaServiceImpl.mapIdentifier(patientUuid, disa);
 
         verify(patientService, times(0)).savePatientIdentifier(any(PatientIdentifier.class));
-        verify(labResultService, times(0)).rescheduleLabResult(any(Disa.class));
+        verify(labResultService, times(0)).rescheduleLabResult(disa.getRequestId());
     }
 
     @Test(expected = DisaModuleAPIException.class)
     public void mapIdentifierShouldThrowExceptionWhenResultIsPending() {
         String patientUuid = "patientUuid";
-        Disa disa = new Disa();
-        disa.setViralLoadStatus("PENDING");
+        LabResult disa = new HIVVLLabResult();
+        disa.setLabResultStatus("PENDING");
         disa.setNotProcessingCause("NID_NOT_FOUND");
         disa.setNid("12345");
         disa.setRequestId("requestId");
@@ -112,12 +113,12 @@ public class DisaServiceImplTest extends BaseContextMockTest {
         disaServiceImpl.mapIdentifier(patientUuid, disa);
 
         verify(patientService, never()).savePatientIdentifier(any(PatientIdentifier.class));
-        verify(labResultService, never()).rescheduleLabResult(any(Disa.class));
+        verify(labResultService, never()).rescheduleLabResult(disa.getRequestId());
     }
 
     @Test
     public void getPatientsToMapSuggestionShouldReturnPatientsWithIdentifiers() {
-        Disa disa = new Disa();
+        LabResult disa = new HIVVLLabResult();
         disa.setFirstName("John");
         disa.setLastName("Doe");
         Patient patient = new Patient();
