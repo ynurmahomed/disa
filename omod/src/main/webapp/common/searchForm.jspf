@@ -73,6 +73,14 @@
 				</form:option>
 			</form:select>
 		</div>
+		<div>
+			<label for="typeOfResult">
+				<openmrs:message code="disa.lab.result.type" />:
+			</label>
+			<form:select path="typeOfResult">
+				<form:options items="${types}"/>
+			</form:select>
+		</div>
 		<div class="divider"></div>
 		<div>
 			<label for="nid">

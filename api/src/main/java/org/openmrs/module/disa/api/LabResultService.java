@@ -6,6 +6,7 @@ import java.util.List;
 import org.openmrs.annotation.Authorized;
 import org.openmrs.module.disa.LabResult;
 import org.openmrs.module.disa.OrgUnit;
+import org.openmrs.module.disa.TypeOfResult;
 
 public interface LabResultService {
     @Authorized({ "Pesquisar resultados no Disa Interoperabilidade" })
@@ -15,6 +16,7 @@ public interface LabResultService {
             String requestId,
             String labResultStatus,
             String notProcessingCause,
+            TypeOfResult typeOfResult,
             String nid,
             List<String> healthFacilityLabCodes,
             String search,

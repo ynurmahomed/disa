@@ -15,6 +15,7 @@ import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.disa.LabResult;
+import org.openmrs.module.disa.TypeOfResult;
 import org.openmrs.module.disa.api.LabResultService;
 import org.openmrs.module.disa.api.Page;
 import org.openmrs.module.disa.api.exception.DisaModuleAPIException;
@@ -134,6 +135,11 @@ public class ManageLabResultsController {
         model.addAttribute("pageTitle", openMrs + " - " + pageTitle);
     }
 
+    @ModelAttribute
+    public TypeOfResult[] types() {
+        return TypeOfResult.values();
+    }
+
     /**
      * Populates SISMA code dropdown options.
      */
@@ -163,6 +169,7 @@ public class ManageLabResultsController {
                 searchForm.getRequestId() != null ? searchForm.getRequestId().trim() : "",
                 searchForm.getVlState(),
                 searchForm.getNotProcessingCause(),
+                searchForm.getTypeOfResult(),
                 searchForm.getNid() != null ? searchForm.getNid().trim() : "",
                 labResultService.getHealthFacilityLabCodes(searchForm.getVlSisma()),
                 searchForm.getSearch(),
