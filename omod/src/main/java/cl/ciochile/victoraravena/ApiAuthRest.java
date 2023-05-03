@@ -17,17 +17,17 @@ import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 /**
- * 
+ *
  * @author Victor Aravena victor.aravena@ciochile.cl
  *
  */
 
 public class ApiAuthRest {
-	
+
 	static String username = null;
 	static String password = null;
 	static String URLBase = null;
-	
+
 	/**
 	 * HTTP POST
 	 * @param URLPath
@@ -52,13 +52,13 @@ public class ApiAuthRest {
             //System.out.println(response);
 //            response = httpclient.execute(httpGet,responseHandler);
             HttpResponse responseRequest = httpclient.execute(httpPost);
-            
+
     		if (responseRequest.getStatusLine().getStatusCode() != 204 && responseRequest.getStatusLine().getStatusCode() != 201) {
     			throw new RuntimeException("Failed : HTTP error code : "
     				+ responseRequest.getStatusLine().getStatusCode());
     		}
-     
-    		
+
+
     		httpclient.getConnectionManager().shutdown();
     		response = true;
         } finally {
@@ -66,10 +66,10 @@ public class ApiAuthRest {
         }
         return response;
     }
-	
+
 	/**
 	 * HTTP PUT
-	 * @param string 
+	 * @param string
 	 * @param sismaCodes
 	 * @param input
 	 * @return
@@ -81,25 +81,25 @@ public class ApiAuthRest {
         Boolean response =  false;
         DefaultHttpClient httpclient = new DefaultHttpClient();
         try {
-        	
+
         	URIBuilder uriBuilder = new URIBuilder(URL);
 			for (String sismaCode : sismaCodes) {
 				uriBuilder.addParameter("processedNids",sismaCode);
 			}
-        	
-        	HttpPut httpPut = new HttpPut(uriBuilder.build()); 
+
+        	HttpPut httpPut = new HttpPut(uriBuilder.build());
             UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(username, password);
             BasicScheme scheme = new BasicScheme();
             Header authorizationHeader = scheme.authenticate(credentials, httpPut);
             httpPut.setHeader(authorizationHeader);
 
             HttpResponse responseRequest = httpclient.execute(httpPut);
-            
+
     		/*if (responseRequest.getStatusLine().getStatusCode() != 204 && responseRequest.getStatusLine().getStatusCode() != 201) {
     			throw new RuntimeException("Failed : HTTP error code : "
     				+ responseRequest.getStatusLine().getStatusCode());
     		}*/
-    		
+
     		httpclient.getConnectionManager().shutdown();
     		response = true;
         } finally {
@@ -107,10 +107,10 @@ public class ApiAuthRest {
         }
         return response;
     }
-	
+
 	/**
 	 * HTTP PUT
-	 * @param string 
+	 * @param string
 	 * @param sismaCodes
 	 * @param input
 	 * @return
@@ -122,25 +122,25 @@ public class ApiAuthRest {
         Boolean response =  false;
         DefaultHttpClient httpclient = new DefaultHttpClient();
         try {
-        	
+
         	URIBuilder uriBuilder = new URIBuilder(URL);
 			for (String sismaCode : sismaCodes) {
 				uriBuilder.addParameter("notProcessedNids",sismaCode);
 			}
-        	
-        	HttpPut httpPut = new HttpPut(uriBuilder.build()); 
+
+        	HttpPut httpPut = new HttpPut(uriBuilder.build());
             UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(username, password);
             BasicScheme scheme = new BasicScheme();
             Header authorizationHeader = scheme.authenticate(credentials, httpPut);
             httpPut.setHeader(authorizationHeader);
 
             HttpResponse responseRequest = httpclient.execute(httpPut);
-            
+
     		/*if (responseRequest.getStatusLine().getStatusCode() != 204 && responseRequest.getStatusLine().getStatusCode() != 201) {
     			throw new RuntimeException("Failed : HTTP error code : "
     				+ responseRequest.getStatusLine().getStatusCode());
     		}*/
-    		
+
     		httpclient.getConnectionManager().shutdown();
     		response = true;
         } finally {
@@ -148,11 +148,11 @@ public class ApiAuthRest {
         }
         return response;
     }
-	
+
 	/**
 	 * HTTP GET
-	 * @param sismaCodes 
-	 * @param sismaCodes 
+	 * @param sismaCodes
+	 * @param sismaCodes
 	 * @param URLPath
 	 * @return
 	 * @throws Exception
@@ -162,31 +162,31 @@ public class ApiAuthRest {
         String URL = URLBase;
         String response =  "";
         DefaultHttpClient httpclient = new DefaultHttpClient();
-        
+
         try {
-        	
+
         	URIBuilder uriBuilder = new URIBuilder(URL);
         			for (String sismaCode : sismaCodes) {
         				uriBuilder.addParameter("locationCodes",sismaCode);
 			}
-        		            	
+
             HttpGet httpGet = new HttpGet(uriBuilder.build());
-            
+
             UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(username, password);
             BasicScheme scheme = new BasicScheme();
             Header authorizationHeader = scheme.authenticate(credentials, httpGet);
             httpGet.setHeader(authorizationHeader);
             ResponseHandler<String> responseHandler = new BasicResponseHandler();
-            
+
             response = httpclient.execute(httpGet,responseHandler);
-           
+
         } finally {
             httpclient.getConnectionManager().shutdown();
         }
         return response;
     }
-	
-	
+
+
 	/**
 	 * HTTP GET
 	 * @param URLPath
@@ -205,50 +205,50 @@ public class ApiAuthRest {
             Header authorizationHeader = scheme.authenticate(credentials, httpGet);
             httpGet.setHeader(authorizationHeader);
             ResponseHandler<String> responseHandler = new BasicResponseHandler();
-            
+
             System.out.println("Executing request: " + httpGet.getRequestLine());
             System.out.println(response);
             response = httpclient.execute(httpGet,responseHandler);
-            
-           
+
+
         } finally {
             httpclient.getConnectionManager().shutdown();
         }
         return response;
     }
-	
-	
+
+
 	/**
 	 * HTTP GET
-	 * @param sismaCodes 
-	 * @param sismaCodes 
+	 * @param sismaCodes
+	 * @param sismaCodes
 	 * @param URLPath
 	 * @return
 	 * @throws Exception
 	 */
 	@SuppressWarnings("deprecation")
-	public static String getRequestGetFsrByStatus(String urlPathProcessed, List<String> sismaCodes, String viralLoadStatus) throws Exception {
+	public static String getRequestGetFsrByStatus(String urlPathProcessed, List<String> sismaCodes, String labResultStatus) throws Exception {
         String URL = URLBase + urlPathProcessed;
         String response =  "";
         DefaultHttpClient httpclient = new DefaultHttpClient();
-        
+
         try {
-        	
+
         	URIBuilder uriBuilder = new URIBuilder(URL);
         	uriBuilder.addParameter("locationCodes",sismaCodes.get(0));
-        	uriBuilder.addParameter("viralLoadStatus",viralLoadStatus);
-        	
-        		            	
+        	uriBuilder.addParameter("labResultStatus",labResultStatus);
+
+
             HttpGet httpGet = new HttpGet(uriBuilder.build());
-            
+
             UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(username, password);
             BasicScheme scheme = new BasicScheme();
             Header authorizationHeader = scheme.authenticate(credentials, httpGet);
             httpGet.setHeader(authorizationHeader);
             ResponseHandler<String> responseHandler = new BasicResponseHandler();
-            
+
             response = httpclient.execute(httpGet,responseHandler);
-           
+
         } finally {
             httpclient.getConnectionManager().shutdown();
         }
@@ -269,5 +269,5 @@ public class ApiAuthRest {
 	public static void setURLBase(String uRLBase) {
 		URLBase = uRLBase;
 	}
-  
+
 }

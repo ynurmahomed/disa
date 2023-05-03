@@ -7,7 +7,7 @@ import javax.validation.Valid;
 
 import org.openmrs.api.context.Context;
 import org.openmrs.messagesource.MessageSourceService;
-import org.openmrs.module.disa.Disa;
+import org.openmrs.module.disa.LabResult;
 import org.openmrs.module.disa.OrgUnit;
 import org.openmrs.module.disa.api.LabResultService;
 import org.openmrs.module.disa.api.OrgUnitService;
@@ -52,7 +52,7 @@ public class ReallocateLabResultsController {
             SearchForm searchForm,
             HttpSession session) {
 
-        Disa vl = labResultService.getByRequestId(requestId);
+        LabResult vl = labResultService.getByRequestId(requestId);
         OrgUnit orgUnit = orgUnitService.getOrgUnitByCode(vl.getHealthFacilityLabCode());
 
         model.addAttribute(new ReallocateForm());
@@ -69,16 +69,15 @@ public class ReallocateLabResultsController {
             HttpSession session) {
 
         if (result.hasErrors()) {
-            Disa vl = labResultService.getByRequestId(requestId);
+            LabResult vl = labResultService.getByRequestId(requestId);
             OrgUnit orgUnit = orgUnitService.getOrgUnitByCode(vl.getHealthFacilityLabCode());
             model.addAttribute(reallocateForm);
             model.addAttribute(orgUnit);
             return "/module/disa/managelabresults/reallocate";
         }
 
-        Disa labResult = new Disa(requestId);
         OrgUnit destination = new OrgUnit(reallocateForm.getHealthFacilityLabCode());
-        Disa update = labResultService.reallocateLabResult(labResult, destination);
+        LabResult update = labResultService.reallocateLabResult(requestId, destination);
 
         @SuppressWarnings("unchecked")
         Map<String, String> params = ((Map<String, String>) session.getAttribute("lastSearchParams"));
@@ -87,7 +86,7 @@ public class ReallocateLabResultsController {
         return "redirect:/module/disa/managelabresults.form";
     }
 
-    private String getReallocatedMessage(String requestId, Disa update) {
+    private String getReallocatedMessage(String requestId, LabResult update) {
         Object[] args = new Object[] { requestId, update.getRequestingFacilityName(),
                 update.getHealthFacilityLabCode() };
         return messageSourceService.getMessage("disa.viralload.reallocate.successful", args, Context.getLocale());

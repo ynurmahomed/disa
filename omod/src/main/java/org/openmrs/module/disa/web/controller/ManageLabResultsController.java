@@ -14,7 +14,7 @@ import javax.validation.Valid;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.messagesource.MessageSourceService;
-import org.openmrs.module.disa.Disa;
+import org.openmrs.module.disa.LabResult;
 import org.openmrs.module.disa.api.LabResultService;
 import org.openmrs.module.disa.api.Page;
 import org.openmrs.module.disa.api.exception.DisaModuleAPIException;
@@ -100,7 +100,7 @@ public class ManageLabResultsController {
 
     @ResponseBody
     @RequestMapping(value = "/json", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Page<Disa> searchJson(@Valid SearchForm searchForm) {
+    public Page<LabResult> searchJson(@Valid SearchForm searchForm) {
         return searchLabResults(searchForm);
     }
 
@@ -123,7 +123,7 @@ public class ManageLabResultsController {
     @RequestMapping(value = "/{requestId}/reschedule", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public void reschedule(@PathVariable String requestId) {
-        labResultService.rescheduleLabResult(new Disa(requestId));
+        labResultService.rescheduleLabResult(requestId);
     }
 
     @ModelAttribute("pageTitle")
@@ -148,7 +148,7 @@ public class ManageLabResultsController {
         model.addAttribute("sismaCodes", sismaCodesTodos);
     }
 
-    private Page<Disa> searchLabResults(SearchForm searchForm) {
+    private Page<LabResult> searchLabResults(SearchForm searchForm) {
         LocalDate startDate = null;
         if (searchForm.getStartDate() != null) {
             startDate = searchForm.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
@@ -172,7 +172,7 @@ public class ManageLabResultsController {
                 searchForm.getDir());
     }
 
-    private List<Disa> getAllLabResults(SearchForm searchForm) {
+    private List<LabResult> getAllLabResults(SearchForm searchForm) {
         LocalDate startDate = null;
         if (searchForm.getStartDate() != null) {
             startDate = searchForm.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
