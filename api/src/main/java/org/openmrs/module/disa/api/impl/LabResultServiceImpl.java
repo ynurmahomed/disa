@@ -12,7 +12,9 @@ import java.util.List;
 import org.apache.http.client.HttpResponseException;
 import org.openmrs.GlobalProperty;
 import org.openmrs.api.AdministrationService;
+import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.disa.LabResult;
+import org.openmrs.module.disa.LabResultStatus;
 import org.openmrs.module.disa.OrgUnit;
 import org.openmrs.module.disa.TypeOfResult;
 import org.openmrs.module.disa.api.LabResultService;
@@ -28,7 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 @Service
-public class LabResultServiceImpl implements LabResultService {
+public class LabResultServiceImpl extends BaseOpenmrsService implements LabResultService {
 
     private DisaAPIHttpClient client;
     private OrgUnitService orgUnitService;
@@ -172,7 +174,7 @@ public class LabResultServiceImpl implements LabResultService {
         labResult.setRequestingFacilityName(orgUnit.getFacility());
         labResult.setRequestingDistrictName(orgUnit.getDistrict());
         labResult.setRequestingProvinceName(orgUnit.getProvince());
-        labResult.setLabResultStatus("PENDING");
+        labResult.setLabResultStatus(LabResultStatus.PENDING);
         updateLabResult(labResult);
         return labResult;
     }
@@ -180,26 +182,40 @@ public class LabResultServiceImpl implements LabResultService {
     @Override
     public void rescheduleLabResult(String requestId) {
         LabResult labResult = getByRequestId(requestId);
-        labResult.setLabResultStatus("PENDING");
+        labResult.setLabResultStatus(LabResultStatus.PENDING);
         updateLabResult(labResult);
     }
 
     @Override
-    public List<String> getHealthFacilityLabCodes(String code) {
+    public List<String> getHealthFacilityLabCodes() {
         List<String> hfCodes = new ArrayList<>();
 
-        if (Constants.ALL.equals(code)) {
-            GlobalProperty gp = administrationService.getGlobalPropertyObject(Constants.DISA_SISMA_CODE);
-            if (gp == null || StringUtils.isEmpty(gp.getPropertyValue())) {
-                throw new DisaModuleAPIException("disa.config.sisma.codes.error",
-                        new Object[] { Constants.DISA_SISMA_CODE });
-            }
-            hfCodes.addAll(Arrays.asList(gp.getPropertyValue().split(",")));
-        } else {
-            hfCodes.add(code);
+        GlobalProperty gp = administrationService.getGlobalPropertyObject(Constants.DISA_SISMA_CODE);
+        if (gp == null || StringUtils.isEmpty(gp.getPropertyValue())) {
+            throw new DisaModuleAPIException("disa.config.sisma.codes.error",
+                    new Object[] { Constants.DISA_SISMA_CODE });
         }
+        hfCodes.addAll(Arrays.asList(gp.getPropertyValue().split(",")));
 
         return hfCodes;
+    }
+
+    @Override
+    public void updateLabResult(LabResult labResult) {
+        try {
+            client.updateResult(labResult);
+        } catch (HttpResponseException e) {
+            throw handleHttpResponseException(e, Collections.singletonList(labResult.getHealthFacilityLabCode()),
+                    "disa.result.update.error");
+        } catch (IOException | URISyntaxException e) {
+            throw new DisaModuleAPIException("disa.result.update.error", (Object[]) null, e);
+        }
+    }
+
+    @Override
+    public List<LabResult> getResultsToSync() {
+        return getAll(null, null, null, LabResultStatus.PENDING.toString(), null, null, getHealthFacilityLabCodes(),
+                null, null, null);
     }
 
     private DisaModuleAPIException handleHttpResponseException(HttpResponseException e,
@@ -240,16 +256,5 @@ public class LabResultServiceImpl implements LabResultService {
 
     private String findUnauthorisedSismaCode(List<String> healthFacilityLabCodes) {
         return client.findUnauthorisedSismaCode(healthFacilityLabCodes);
-    }
-
-    private void updateLabResult(LabResult labResult) {
-        try {
-            client.updateResult(labResult);
-        } catch (HttpResponseException e) {
-            throw handleHttpResponseException(e, Collections.singletonList(labResult.getHealthFacilityLabCode()),
-                    "disa.result.update.error");
-        } catch (IOException | URISyntaxException e) {
-            throw new DisaModuleAPIException("disa.result.update.error", (Object[]) null, e);
-        }
     }
 }

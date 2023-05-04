@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -24,6 +25,7 @@ import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.disa.HIVVLLabResult;
 import org.openmrs.module.disa.LabResult;
 import org.openmrs.module.disa.api.util.Constants;
+import org.openmrs.module.disa.extension.util.DateUtil;
 import org.openmrs.module.disa.extension.util.RestUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -119,7 +121,8 @@ public class ViralLoadResultsDelegate {
 		}
 	}
 
-	private void writeDisaListStaging(LabResult disa, Row row, Locale locale, MessageSourceService messageSourceService) {
+	private void writeDisaListStaging(LabResult disa, Row row, Locale locale,
+			MessageSourceService messageSourceService) {
 		Cell cell = row.createCell(0);
 		cell.setCellValue(disa.getLocation());
 
@@ -152,30 +155,55 @@ public class ViralLoadResultsDelegate {
 		cell.setCellValue(disa.getProcessingDate());
 
 		cell = row.createCell(10);
-		cell.setCellValue(disa.getLabResultDate());
+		LocalDateTime dateOfSampleReceive = disa.getDateOfSampleReceive();
+		if (dateOfSampleReceive != null) {
+			cell.setCellValue(DateUtil.toDate(dateOfSampleReceive));
+		} else {
+			cell.setCellValue("");
+		}
 
-		HIVVLLabResult vl = (HIVVLLabResult) disa;
+		if (disa instanceof HIVVLLabResult) {
+			HIVVLLabResult vl = (HIVVLLabResult) disa;
 
-		cell = row.createCell(11);
-		cell.setCellValue(vl.getViralLoadResultCopies());
+			cell = row.createCell(11);
+			cell.setCellValue(vl.getViralLoadResultCopies());
 
-		cell = row.createCell(12);
-		cell.setCellValue(vl.getViralLoadResultLog());
+			cell = row.createCell(12);
+			cell.setCellValue(vl.getViralLoadResultLog());
 
-		cell = row.createCell(13);
-		cell.setCellValue(vl.getHivViralLoadResult());
+			cell = row.createCell(13);
+			cell.setCellValue(vl.getHivViralLoadResult());
+		} else {
+			cell = row.createCell(11);
+			cell.setCellValue("");
+
+			cell = row.createCell(12);
+			cell.setCellValue("");
+
+			cell = row.createCell(13);
+			cell.setCellValue("");
+		}
 
 		cell = row.createCell(14);
-		cell.setCellValue(disa.getLabResultStatus());
+		cell.setCellValue(disa.getLabResultStatus().toString());
 
 		cell = row.createCell(15);
-		cell.setCellValue(disa.getCreatedAt());
+		cell.setCellValue(DateUtil.toDate(disa.getCreatedAt()));
 
 		cell = row.createCell(16);
-		cell.setCellValue(disa.getUpdatedAt());
+		LocalDateTime updatedAt = disa.getUpdatedAt();
+		if (updatedAt != null) {
+			cell.setCellValue(DateUtil.toDate(updatedAt));
+		} else {
+			cell.setCellValue("");
+		}
 
 		cell = row.createCell(17);
-		cell.setCellValue(disa.getNotProcessingCause());
+		if (disa.getNotProcessingCause() != null) {
+			cell.setCellValue(disa.getNotProcessingCause().toString());
+		} else {
+			cell.setCellValue("");
+		}
 	}
 
 	private void createHeaderRow(Sheet sheet, Locale locale, MessageSourceService messageSourceService) {

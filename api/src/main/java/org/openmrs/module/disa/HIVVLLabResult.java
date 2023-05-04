@@ -4,13 +4,13 @@ public class HIVVLLabResult extends LabResult {
 
     private String viralLoadResultCopies;
 
-	private String viralLoadResultLog;
+    private String viralLoadResultLog;
 
-	private String hivViralLoadResult;
+    private String hivViralLoadResult;
 
     private String lastViralLoadResult;
 
-	private String lastViralLoadDate;
+    private String lastViralLoadDate;
 
     public HIVVLLabResult() {
         setTypeOfResult(TypeOfResult.HIVVL);
@@ -59,5 +59,10 @@ public class HIVVLLabResult extends LabResult {
 
     public void setLastViralLoadDate(String lastViralLoadDate) {
         this.lastViralLoadDate = lastViralLoadDate;
+    }
+
+    @Override
+    public String toString() {
+        return "HIVVLLabResult [requestId=" + getRequestId() + "]";
     }
 }

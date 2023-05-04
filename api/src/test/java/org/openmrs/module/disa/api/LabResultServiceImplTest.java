@@ -26,6 +26,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.openmrs.module.disa.HIVVLLabResult;
 import org.openmrs.module.disa.LabResult;
+import org.openmrs.module.disa.LabResultStatus;
 import org.openmrs.module.disa.OrgUnit;
 import org.openmrs.module.disa.TypeOfResult;
 import org.openmrs.module.disa.api.client.DisaAPIHttpClient;
@@ -92,7 +93,7 @@ public class LabResultServiceImplTest extends BaseContextMockTest {
         assertThat(result.getRequestingFacilityName(), is(orgUnit.getFacility()));
         assertThat(result.getRequestingDistrictName(), is(orgUnit.getDistrict()));
         assertThat(result.getRequestingProvinceName(), is(orgUnit.getProvince()));
-        assertThat(result.getLabResultStatus(), is("PENDING"));
+        assertThat(result.getLabResultStatus(), is(LabResultStatus.PENDING));
         verify(orgUnitService, Mockito.times(1)).getOrgUnitByCode("code");
         verify(client, Mockito.times(1)).updateResult(result);
     }

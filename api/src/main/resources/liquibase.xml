@@ -137,4 +137,17 @@
         </insert>
     </changeSet>
 
+    <changeSet id="disa-2023-05-09" author="yassin">
+        <addColumn tableName="fsr_log">
+            <column name="type_of_result" type="varchar(50)">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <addUniqueConstraint tableName="fsr_log" columnNames="request_id, type_of_result" />
+        <update tableName="fsr_log">
+            <column name="type_of_result">HIVVL</column>
+            <where>type_of_result is NULL</where>
+        </update>
+    </changeSet>
+
 </databaseChangeLog>

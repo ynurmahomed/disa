@@ -11,4 +11,9 @@ public class CD4LabResult extends LabResult {
     public void setCd4Percentage(String cd4Percentage) {
         this.cd4Percentage = cd4Percentage;
     }
+
+    @Override
+    public String toString() {
+        return "CD4LabResult [requestId=" + getRequestId() + "]";
+    }
 }
