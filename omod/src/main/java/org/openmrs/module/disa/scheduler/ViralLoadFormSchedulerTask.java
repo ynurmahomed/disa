@@ -45,7 +45,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 /**
  *
@@ -186,7 +185,11 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 
 			logger.debug("Processing RequestId {}", disa.getRequestId());
 
-			if (disa.getTypeOfResult() == TypeOfResult.HIVVL && !disaService.existsByRequestId(disa.getRequestId())) {
+			if (!disaService.existsByRequestId(disa.getRequestId())) {
+
+				if (disa.getTypeOfResult() != TypeOfResult.HIVVL) {
+					continue;
+				}
 
 				HIVVLLabResult vl = (HIVVLLabResult) disa;
 
@@ -288,7 +291,8 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 		logger.info("Syncing ended...");
 	}
 
-	private void createFsrObs(HIVVLLabResult labResult, Encounter encounter, Date dateWithLeadingZeros) throws ParseException {
+	private void createFsrObs(HIVVLLabResult labResult, Encounter encounter, Date dateWithLeadingZeros)
+			throws ParseException {
 		Obs obs_23835 = new Obs();
 		obs_23835.setPerson(personService.getPersonByUuid(lstPatient.get(0).getUuid()));
 		obs_23835.setObsDatetime(dateWithLeadingZeros);
