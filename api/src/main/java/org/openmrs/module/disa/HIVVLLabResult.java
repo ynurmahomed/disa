@@ -12,8 +12,6 @@ public class HIVVLLabResult extends LabResult {
 
 	private String lastViralLoadDate;
 
-    private String finalViralLoadResult;
-
     public HIVVLLabResult() {
         setTypeOfResult(TypeOfResult.HIVVL);
     }
@@ -61,18 +59,5 @@ public class HIVVLLabResult extends LabResult {
 
     public void setLastViralLoadDate(String lastViralLoadDate) {
         this.lastViralLoadDate = lastViralLoadDate;
-    }
-
-    public String getFinalViralLoadResult() {
-        return finalViralLoadResult;
-    }
-
-    public void setFinalViralLoadResult(String finalViralLoadResult) {
-        this.finalViralLoadResult = finalViralLoadResult;
-    }
-
-    @Override
-    public String getDisplayResult() {
-        return finalViralLoadResult;
     }
 }

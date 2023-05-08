@@ -135,11 +135,6 @@ public class ManageLabResultsController {
         model.addAttribute("pageTitle", openMrs + " - " + pageTitle);
     }
 
-    @ModelAttribute
-    public TypeOfResult[] types() {
-        return TypeOfResult.values();
-    }
-
     /**
      * Populates SISMA code dropdown options.
      */
