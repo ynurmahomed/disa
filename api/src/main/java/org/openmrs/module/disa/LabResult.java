@@ -11,6 +11,8 @@ public abstract class LabResult {
 
 	private transient int id;
 
+	private String finalResult;
+
 	private String requestId;
 
 	private String location;
@@ -89,11 +91,6 @@ public abstract class LabResult {
 	protected LabResult(String requestId) {
 		this.requestId = requestId;
 	}
-
-	/**
-	 * @return A string representation of the result for display purposes.
-	 */
-	public abstract String getDisplayResult();
 
 	public String getSynchronizedBy() {
 		return synchronizedBy;
@@ -393,5 +390,13 @@ public abstract class LabResult {
 
 	protected void setTypeOfResult(TypeOfResult typeOfResult) {
 		this.typeOfResult = typeOfResult;
+	}
+
+	public String getFinalResult() {
+		return finalResult;
+	}
+
+	public void setFinalResult(String finalResult) {
+		this.finalResult = finalResult;
 	}
 }
