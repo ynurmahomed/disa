@@ -24,8 +24,10 @@ import org.junit.rules.ExpectedException;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.openmrs.module.disa.Disa;
+import org.openmrs.module.disa.HIVVLLabResult;
+import org.openmrs.module.disa.LabResult;
 import org.openmrs.module.disa.OrgUnit;
+import org.openmrs.module.disa.TypeOfResult;
 import org.openmrs.module.disa.api.client.DisaAPIHttpClient;
 import org.openmrs.module.disa.api.exception.DisaModuleAPIException;
 import org.openmrs.module.disa.api.impl.LabResultServiceImpl;
@@ -47,9 +49,9 @@ public class LabResultServiceImplTest extends BaseContextMockTest {
 
     @Test
     public void getByRequestIdShouldReturnTheLabResult() throws IOException, URISyntaxException {
-        Disa expected = new Disa();
+        LabResult expected = new HIVVLLabResult();
         when(client.getResultByRequestId("requestId")).thenReturn(expected);
-        Disa result = labResultService.getByRequestId("requestId");
+        LabResult result = labResultService.getByRequestId("requestId");
         Assert.assertEquals(expected, result);
     }
 
@@ -75,7 +77,8 @@ public class LabResultServiceImplTest extends BaseContextMockTest {
 
     @Test
     public void testReallocateLabResult() throws IOException, URISyntaxException {
-        Disa labResult = new Disa();
+        LabResult labResult = new HIVVLLabResult("MZDISAPMB0637467");
+        when(client.getResultByRequestId(anyString())).thenReturn(labResult);
         OrgUnit destination = new OrgUnit();
         destination.setCode("code");
         OrgUnit orgUnit = new OrgUnit();
@@ -84,22 +87,22 @@ public class LabResultServiceImplTest extends BaseContextMockTest {
         orgUnit.setDistrict("district");
         orgUnit.setProvince("province");
         when(orgUnitService.getOrgUnitByCode("code")).thenReturn(orgUnit);
-        Disa result = labResultService.reallocateLabResult(labResult, destination);
+        LabResult result = labResultService.reallocateLabResult("MZDISAPMB0637467", destination);
         assertThat(result.getHealthFacilityLabCode(), is(orgUnit.getCode()));
         assertThat(result.getRequestingFacilityName(), is(orgUnit.getFacility()));
         assertThat(result.getRequestingDistrictName(), is(orgUnit.getDistrict()));
         assertThat(result.getRequestingProvinceName(), is(orgUnit.getProvince()));
-        assertThat(result.getViralLoadStatus(), is("PENDING"));
+        assertThat(result.getLabResultStatus(), is("PENDING"));
         verify(orgUnitService, Mockito.times(1)).getOrgUnitByCode("code");
         verify(client, Mockito.times(1)).updateResult(result);
     }
 
     @Test
     public void testRescheduleLabResult() throws IOException, URISyntaxException {
-        Disa labResult = new Disa();
-        labResultService.rescheduleLabResult(labResult);
-        assertThat(labResult.getViralLoadStatus(), is("PENDING"));
-        verify(client, Mockito.times(1)).updateResult(labResult);
+        LabResult labResult = new HIVVLLabResult("MZDISAPMB0635152");
+        when(client.getResultByRequestId(anyString())).thenReturn(labResult);
+        labResultService.rescheduleLabResult("MZDISAPMB0635152");
+        verify(client, Mockito.times(1)).updateResult(any(LabResult.class));
     }
 
     @Test
@@ -110,6 +113,7 @@ public class LabResultServiceImplTest extends BaseContextMockTest {
             anyString(),
             anyString(),
             anyString(),
+            any(TypeOfResult.class),
             anyString(),
             anyListOf(String.class),
             anyString(),
@@ -130,6 +134,7 @@ public class LabResultServiceImplTest extends BaseContextMockTest {
             "",
             "",
             "",
+            TypeOfResult.ALL,
             "",
             Collections.singletonList(sismaCode),
             "",

@@ -18,8 +18,9 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.openmrs.api.AdministrationService;
-import org.openmrs.module.disa.Disa;
+import org.openmrs.module.disa.LabResult;
 import org.openmrs.module.disa.OrgUnit;
+import org.openmrs.module.disa.TypeOfResult;
 import org.openmrs.module.disa.api.Page;
 import org.openmrs.module.disa.api.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,12 +53,13 @@ public class DisaAPIHttpClient {
 		this.gson = gson;
 	}
 
-	public Page<Disa> searchLabResults(
+	public Page<LabResult> searchLabResults(
 			LocalDateTime startDate,
 			LocalDateTime endDate,
 			String requestId,
-			String viralLoadStatus,
+			String labResultStatus,
 			String notProcessingCause,
+			TypeOfResult typeOfResult,
 			String nid,
 			List<String> healthFacilityLabCodes,
 			String search,
@@ -71,8 +73,9 @@ public class DisaAPIHttpClient {
 		URIBuilder builder = new URIBuilder(URLBase)
 				.setPathSegments("services", "v2", "viralloads", "search-form")
 				.addParameter("requestId", requestId)
-				.addParameter("viralLoadStatus", viralLoadStatus)
+				.addParameter("labResultStatus", labResultStatus)
 				.addParameter("notProcessingCause", notProcessingCause)
+				.addParameter("typeOfResult", typeOfResult == TypeOfResult.ALL ? "" : typeOfResult.name())
 				.addParameter("nid", nid)
 				.addParameter("pageNumber", String.valueOf(pageNumber))
 				.addParameter("pageSize", String.valueOf(pageSize))
@@ -104,17 +107,17 @@ public class DisaAPIHttpClient {
 		String jsonResponse = executor.execute(request)
 				.handleResponse(responseHandler);
 
-		TypeToken<Page<Disa>> pageType = new TypeToken<Page<Disa>>() {
+		TypeToken<Page<LabResult>> pageType = new TypeToken<Page<LabResult>>() {
 		};
 
 		return gson.fromJson(jsonResponse, pageType.getType());
 	}
 
-	public List<Disa> getAllLabResults(
+	public List<LabResult> getAllLabResults(
 			LocalDateTime startDate,
 			LocalDateTime endDate,
 			String requestId,
-			String viralLoadStatus,
+			String labResultStatus,
 			String notProcessingCause,
 			String nid,
 			List<String> healthFacilityLabCodes,
@@ -127,7 +130,7 @@ public class DisaAPIHttpClient {
 		URIBuilder builder = new URIBuilder(URLBase)
 				.setPathSegments("services", "v2", "viralloads", "export")
 				.addParameter("requestId", requestId)
-				.addParameter("viralLoadStatus", viralLoadStatus)
+				.addParameter("labResultStatus", labResultStatus)
 				.addParameter("notProcessingCause", notProcessingCause)
 				.addParameter("nid", nid)
 				.addParameter("orderBy", orderBy)
@@ -158,7 +161,7 @@ public class DisaAPIHttpClient {
 		String jsonResponse = executor.execute(request)
 				.handleResponse(responseHandler);
 
-		TypeToken<List<Disa>> pageType = new TypeToken<List<Disa>>() {
+		TypeToken<List<LabResult>> pageType = new TypeToken<List<LabResult>>() {
 		};
 
 		return gson.fromJson(jsonResponse, pageType.getType());
@@ -209,7 +212,7 @@ public class DisaAPIHttpClient {
 
 	}
 
-	public Disa getResultByRequestId(String requestId) throws URISyntaxException, IOException {
+	public LabResult getResultByRequestId(String requestId) throws URISyntaxException, IOException {
 		setUp();
 
 		URI url = new URIBuilder(URLBase)
@@ -226,7 +229,7 @@ public class DisaAPIHttpClient {
 		String jsonResponse = executor.execute(request)
 				.handleResponse(responseHandler);
 
-		return gson.fromJson(jsonResponse, Disa.class);
+		return gson.fromJson(jsonResponse, LabResult.class);
 	}
 
 	public void deleteResultByRequestId(String requestId) throws IOException, URISyntaxException {
@@ -252,7 +255,7 @@ public class DisaAPIHttpClient {
 
 	}
 
-	public String updateResult(Disa labResult) throws IOException, URISyntaxException {
+	public String updateResult(LabResult labResult) throws IOException, URISyntaxException {
 		setUp();
 
 		URI url = new URIBuilder(URLBase)

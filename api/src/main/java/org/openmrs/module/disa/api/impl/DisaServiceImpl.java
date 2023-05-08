@@ -27,8 +27,9 @@ import org.openmrs.PatientIdentifierType;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.impl.BaseOpenmrsService;
-import org.openmrs.module.disa.Disa;
+import org.openmrs.module.disa.LabResult;
 import org.openmrs.module.disa.FsrLog;
+import org.openmrs.module.disa.HIVVLLabResult;
 import org.openmrs.module.disa.api.DisaService;
 import org.openmrs.module.disa.api.LabResultService;
 import org.openmrs.module.disa.api.db.DisaDAO;
@@ -87,11 +88,11 @@ public class DisaServiceImpl extends BaseOpenmrsService implements DisaService {
 	}
 
 	@Override
-	public void mapIdentifier(String patientUuid, Disa disa) {
+	public void mapIdentifier(String patientUuid, LabResult disa) {
 
-		if (!disa.getViralLoadStatus().equals("NOT_PROCESSED")
+		if (!disa.getLabResultStatus().equals("NOT_PROCESSED")
 				|| !disa.getNotProcessingCause().equals("NID_NOT_FOUND")) {
-			throw new DisaModuleAPIException("The result to map is " + disa.getViralLoadStatus()
+			throw new DisaModuleAPIException("The result to map is " + disa.getLabResultStatus()
 					+ ". It should be NOT_PROCESSED with cause NID_NOT_FOUND.");
 		}
 
@@ -104,9 +105,7 @@ public class DisaServiceImpl extends BaseOpenmrsService implements DisaService {
 		if (identifiers.isEmpty()) {
 
 			// TODO handle network error!!!
-			Disa updateDisa = new Disa(disa.getRequestId());
-			updateDisa.setViralLoadStatus("PENDING");
-			labResultService.rescheduleLabResult(updateDisa);
+			labResultService.rescheduleLabResult(disa.getRequestId());
 
 			PatientIdentifier patientIdentifier = new PatientIdentifier();
 			patientIdentifier.setPatient(patient);
@@ -117,7 +116,7 @@ public class DisaServiceImpl extends BaseOpenmrsService implements DisaService {
 		}
 	}
 
-	public List<Patient> getPatientsToMapSuggestion(Disa disa) {
+	public List<Patient> getPatientsToMapSuggestion(LabResult disa) {
 		String name = disa.getFirstName() + " " + disa.getLastName();
 		List<Patient> patients = patientService.getPatients(name, null, null, false);
 		// return only patients with identifiers

@@ -63,7 +63,10 @@
 							<spring:message code="disa.authorised.date.time" />
 						</th>
 						<th>
-							<spring:message code="disa.viralload.result.copy" />
+							<spring:message code="disa.lab.result" />
+						</th>
+						<th>
+							<spring:message code="disa.lab.result.type" />
 						</th>
 						<th>
 							<spring:message code="disa.status" />
@@ -83,25 +86,26 @@
 					</tr>
 				</thead>
 				<tbody>
-					<c:forEach items="${disaPage.resultList}" var="vlData">
+					<c:forEach items="${disaPage.resultList}" var="labResult">
 						<tr>
-							<td>${vlData.requestingFacilityName}</td>
-							<td>${vlData.requestingDistrictName}</td>
-							<td>${vlData.healthFacilityLabCode}</td>
-							<td>${vlData.nid}</td>
-							<td>${vlData.firstName} ${vlData.lastName}</td>
-							<td>${vlData.gender}</td>
-							<td>${vlData.ageInYears}</td>
-							<td>${vlData.requestId}</td>
-							<td>${vlData.processingDate.substring(0,10)}</td>
-							<td>${vlData.viralLoadResultDate.substring(0,10)}</td>
-							<td>${vlData.finalViralLoadResult}</td>
-							<td>${vlData.viralLoadStatus}</td>
-							<td>${vlData.createdAt.substring(0,10)}</td>
-							<td>${vlData.updatedAt.substring(0,10)}</td>
-							<td>${vlData.notProcessingCause}</td>
+							<td>${labResult.requestingFacilityName}</td>
+							<td>${labResult.requestingDistrictName}</td>
+							<td>${labResult.healthFacilityLabCode}</td>
+							<td>${labResult.nid}</td>
+							<td>${labResult.firstName} ${labResult.lastName}</td>
+							<td>${labResult.gender}</td>
+							<td>${labResult.ageInYears}</td>
+							<td>${labResult.requestId}</td>
+							<td>${labResult.processingDate.substring(0,10)}</td>
+							<td>${labResult.labResultDate.substring(0,10)}</td>
+							<td>${labResult.displayResult}</td>
+							<td>${labResult.typeOfResult}</td>
+							<td>${labResult.labResultStatus}</td>
+							<td>${labResult.createdAt.substring(0,10)}</td>
+							<td>${labResult.updatedAt.substring(0,10)}</td>
+							<td>${labResult.notProcessingCause}</td>
 							<td class="actions" style="text-align: center;">
-								<c:if test="${vlData.viralLoadStatus != 'PROCESSED'}">
+								<c:if test="${labResult.labResultStatus != 'PROCESSED'}">
 
 									<openmrs:message
 											code="disa.manage.actions" />
@@ -109,19 +113,19 @@
 									<div class="actions-tooltip" role="tooltip">
 										<div class="arrow" data-popper-arrow></div>
 										<ul>
-											<c:if test="${vlData.viralLoadStatus == 'NOT_PROCESSED'}">
+											<c:if test="${labResult.labResultStatus == 'NOT_PROCESSED'}">
 												<openmrs:hasPrivilege privilege="Reagendar resultados no Disa Interoperabilidade">
 													<li>
-														<a href="#" data-requestid="${vlData.requestId}"
+														<a href="#" data-requestid="${labResult.requestId}"
 															class="reschedule-vl">
 															<spring:message code="disa.viralload.reschedule" />
 														</a>
 													</li>
 												</openmrs:hasPrivilege>
-												<c:if test="${vlData.notProcessingCause == 'NID_NOT_FOUND'}">
+												<c:if test="${labResult.notProcessingCause == 'NID_NOT_FOUND'}">
 													<openmrs:hasPrivilege privilege="Mapear pacientes no Disa Interoperabilidade">
 														<li>
-															<a href='managelabresults/${vlData.requestId}/map.form'>
+															<a href='managelabresults/${labResult.requestId}/map.form'>
 																<spring:message code="disa.map.nid" />
 															</a>
 														</li>
@@ -130,14 +134,14 @@
 											</c:if>
 											<openmrs:hasPrivilege privilege="Realocar resultados no Disa Interoperabilidade">
 												<li>
-													<a href="managelabresults/${vlData.requestId}/reallocate.form">
+													<a href="managelabresults/${labResult.requestId}/reallocate.form">
 														<spring:message code="disa.viralload.reallocate" />
 													</a>
 												</li>
 											</openmrs:hasPrivilege>
 											<openmrs:hasPrivilege privilege="Remover resultados no Disa Interoperabilidade">
 												<li>
-													<a href="#" data-requestid="${vlData.requestId}"
+													<a href="#" data-requestid="${labResult.requestId}"
 														class="delete-vl">
 														<spring:message code="disa.viralload.delete" />
 													</a>
@@ -180,7 +184,7 @@
 	let table;
 
 	// Translations
-	var viralLoadStatus = {
+	var labResultStatus = {
 		'PROCESSED': "<openmrs:message code='disa.viral.load.status.PROCESSED' />",
 		'NOT_PROCESSED': "<openmrs:message code='disa.viral.load.status.NOT_PROCESSED' />",
 		'PENDING': "<openmrs:message code='disa.viral.load.status.PENDING' />",
@@ -193,6 +197,25 @@
 		'FLAGGED_FOR_REVIEW': "<openmrs:message code='disa.notProcessingCause.FLAGGED_FOR_REVIEW'/>",
 		'DUPLICATED_REQUEST_ID': "<openmrs:message code='disa.notProcessingCause.DUPLICATED_REQUEST_ID'/>",
 	};
+
+	const columns = {
+		"FACILITY_NAME": 0,
+		"DISTRICT_NAME": 1,
+		"FACILITY_CODE": 2,
+		"NID": 3,
+		"FULL_NAME": 4,
+		"GENDER": 5,
+		"AGE": 6,
+		"REQUEST_ID": 7,
+		"PROCESSING_DATE": 8,
+		"RESULT_DATE": 9,
+		"FINAL_RESULT": 10,
+		"TYPE_OF_RESULT": 11,
+		"STATUS": 12,
+		"CREATED_AT": 13,
+		"UPDATED_AT": 14,
+		"NOT_PROCESSING_CAUSE": 15,
+	}
 
 	/**
 	 * Return the current OpenMRS user from session.
@@ -381,7 +404,21 @@
 			buttons: [
 				{
 					extend: 'colvis',
-					columns: [0,1,2,4,5,6,8,9,10,12,13,14]
+					columns: [
+						columns.FACILITY_NAME,
+						columns.DISTRICT_NAME,
+						columns.FACILITY_CODE,
+						columns.FULL_NAME,
+						columns.GENDER,
+						columns.REQUEST_ID,
+						columns.PROCESSING_DATE,
+						columns.RESULT_DATE,
+						columns.TYPE_OF_RESULT,
+						columns.FINAL_RESULT,
+						columns.CREATED_AT,
+						columns.UPDATED_AT,
+						columns.NOT_PROCESSING_CAUSE
+					]
 				}
 
 			],
@@ -389,13 +426,12 @@
 			serverSide: true,
 			deferLoading: "${disaPage.totalResults}",
 			order: [
-				// Created at column
-				[13, 'desc']
+				[columns.CREATED_AT, 'desc']
 			],
 			columnDefs: [
 				// Hide updated at by default.
 				{
-					targets: [14],
+					targets: [columns.UPDATED_AT],
 					visible: false
 				},
         	],
@@ -422,14 +458,18 @@
 					render: (data, type, row, meta) => data.substring(0, 10)
 				},
 				{
-					data: "viralLoadResultDate",
-					render: (data, type, row, meta) => data.substring(0, 10)
+					data: "labResultDate",
+					render: (data, type, row, meta) => data && data.substring(0, 10)
 				},
-				{ data: "finalViralLoadResult" },
+				{ data: "displayResult" },
 				{
-					data: "viralLoadStatus",
+					data: "typeOfResult",
 					orderable: false,
-					render: (data, type, row, meta) => viralLoadStatus[data]
+				},
+				{
+					data: "labResultStatus",
+					orderable: false,
+					render: (data, type, row, meta) => labResultStatus[data]
 				},
 				{
 					data: "createdAt",
@@ -457,7 +497,7 @@
 					render: ( data, type, row, meta ) => {
 
 						// If processed render nothing
-						if (row.viralLoadStatus === "PROCESSED") {
+						if (row.labResultStatus === "PROCESSED") {
 							return null;
 						}
 
@@ -474,7 +514,7 @@
 						// Actions list
 						const ul = document.createElement("ul");
 
-						if (row.viralLoadStatus === "NOT_PROCESSED") {
+						if (row.labResultStatus === "NOT_PROCESSED") {
 
 							// Reschedule
 							if (hasPrivilege(user, "Reagendar resultados no Disa Interoperabilidade")) {

@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.validation.constraints.Size;
 
+import org.openmrs.module.disa.TypeOfResult;
 import org.openmrs.module.disa.api.util.Constants;
 
 public class SearchForm {
@@ -33,6 +34,8 @@ public class SearchForm {
     private String dir;
 
     private String search;
+
+    private TypeOfResult typeOfResult;
 
     public SearchForm() {
         this.vlState = Constants.ALL;
@@ -134,6 +137,14 @@ public class SearchForm {
 
     public void setSearch(String search) {
         this.search = search;
+    }
+
+    public TypeOfResult getTypeOfResult() {
+        return typeOfResult;
+    }
+
+    public void setTypeOfResult(TypeOfResult typeOfResult) {
+        this.typeOfResult = typeOfResult;
     }
 
     @Override

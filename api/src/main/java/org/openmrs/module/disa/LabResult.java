@@ -7,7 +7,7 @@ import java.util.Date;
  * @author machabane
  *
  */
-public class Disa {
+public abstract class LabResult {
 
 	private transient int id;
 
@@ -53,17 +53,11 @@ public class Disa {
 
 	private String sampleType;
 
-	private String viralLoadResultCopies;
-
-	private String viralLoadResultLog;
-
-	private String viralLoadResultDate;
+	private String labResultDate;
 
 	private String aprovedBy;
 
 	private String labComments;
-
-	private String hivViralLoadResult;
 
 	private String requestingFacilityName;
 
@@ -71,13 +65,9 @@ public class Disa {
 
 	private String requestingProvinceName;
 
-	private String viralLoadStatus;
+	private String labResultStatus;
 
 	private String notProcessingCause;
-
-	private String lastViralLoadResult;
-
-	private String lastViralLoadDate;
 
 	private String artRegimen;
 
@@ -87,18 +77,23 @@ public class Disa {
 
 	private String dataDeInicioDoTARV;
 
-	private String finalViralLoadResult;
-
 	private String synchronizedBy;
 
 	private Integer ageInYears;
 
-	public Disa() {
+	private TypeOfResult typeOfResult;
+
+	protected LabResult() {
 	}
 
-	public Disa(String requestId) {
+	protected LabResult(String requestId) {
 		this.requestId = requestId;
 	}
+
+	/**
+	 * @return A string representation of the result for display purposes.
+	 */
+	public abstract String getDisplayResult();
 
 	public String getSynchronizedBy() {
 		return synchronizedBy;
@@ -106,14 +101,6 @@ public class Disa {
 
 	public void setSynchronizedBy(String synchronizedBy) {
 		this.synchronizedBy = synchronizedBy;
-	}
-
-	public String getFinalViralLoadResult() {
-		return finalViralLoadResult;
-	}
-
-	public void setFinalViralLoadResult(String finalViralLoadResult) {
-		this.finalViralLoadResult = finalViralLoadResult;
 	}
 
 	public String getDataDeInicioDoTARV() {
@@ -148,12 +135,12 @@ public class Disa {
 		this.artRegimen = artRegimen;
 	}
 
-	public String getViralLoadStatus() {
-		return viralLoadStatus;
+	public String getLabResultStatus() {
+		return labResultStatus;
 	}
 
-	public void setViralLoadStatus(String viralLoadStatus) {
-		this.viralLoadStatus = viralLoadStatus;
+	public void setLabResultStatus(String labResultStatus) {
+		this.labResultStatus = labResultStatus;
 	}
 
 	public int getId() {
@@ -324,28 +311,12 @@ public class Disa {
 		this.sampleType = sampleType;
 	}
 
-	public String getViralLoadResultCopies() {
-		return viralLoadResultCopies;
+	public String getLabResultDate() {
+		return labResultDate;
 	}
 
-	public void setViralLoadResultCopies(String viralLoadResultCopies) {
-		this.viralLoadResultCopies = viralLoadResultCopies;
-	}
-
-	public String getViralLoadResultLog() {
-		return viralLoadResultLog;
-	}
-
-	public void setViralLoadResultLog(String viralLoadResultLog) {
-		this.viralLoadResultLog = viralLoadResultLog;
-	}
-
-	public String getViralLoadResultDate() {
-		return viralLoadResultDate;
-	}
-
-	public void setViralLoadResultDate(String viralLoadResultDate) {
-		this.viralLoadResultDate = viralLoadResultDate;
+	public void setLabResultDate(String labResultDate) {
+		this.labResultDate = labResultDate;
 	}
 
 	public String getAprovedBy() {
@@ -364,14 +335,6 @@ public class Disa {
 		this.labComments = labComments;
 	}
 
-	public String getHivViralLoadResult() {
-		return hivViralLoadResult;
-	}
-
-	public void setHivViralLoadResult(String hivViralLoadResult) {
-		this.hivViralLoadResult = hivViralLoadResult;
-	}
-
 	public String getRequestingFacilityName() {
 		return requestingFacilityName;
 	}
@@ -386,22 +349,6 @@ public class Disa {
 
 	public void setNotProcessingCause(String notProcessingCause) {
 		this.notProcessingCause = notProcessingCause;
-	}
-
-	public String getLastViralLoadResult() {
-		return lastViralLoadResult;
-	}
-
-	public void setLastViralLoadResult(String lastViralLoadResult) {
-		this.lastViralLoadResult = lastViralLoadResult;
-	}
-
-	public String getLastViralLoadDate() {
-		return lastViralLoadDate;
-	}
-
-	public void setLastViralLoadDate(String lastViralLoadDate) {
-		this.lastViralLoadDate = lastViralLoadDate;
 	}
 
 	public String getRequestingDistrictName() {
@@ -438,5 +385,13 @@ public class Disa {
 
 	public Integer getAgeInYears() {
 		return ageInYears;
+	}
+
+	public TypeOfResult getTypeOfResult() {
+		return typeOfResult;
+	}
+
+	protected void setTypeOfResult(TypeOfResult typeOfResult) {
+		this.typeOfResult = typeOfResult;
 	}
 }
