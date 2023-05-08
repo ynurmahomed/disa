@@ -12,9 +12,9 @@ import java.util.List;
 import org.apache.http.client.HttpResponseException;
 import org.openmrs.GlobalProperty;
 import org.openmrs.api.AdministrationService;
-import org.openmrs.module.disa.HIVVLLabResult;
 import org.openmrs.module.disa.LabResult;
 import org.openmrs.module.disa.OrgUnit;
+import org.openmrs.module.disa.TypeOfResult;
 import org.openmrs.module.disa.api.LabResultService;
 import org.openmrs.module.disa.api.OrgUnitService;
 import org.openmrs.module.disa.api.Page;
@@ -49,6 +49,7 @@ public class LabResultServiceImpl implements LabResultService {
             LocalDate startDate, LocalDate endDate,
             String requestId,
             String labResultStatus, String notProcessingCause,
+            TypeOfResult typeOfResult,
             String nid, List<String> healthFacilityLabCodes,
             String search,
             int pageNumber, int pageSize,
@@ -68,6 +69,10 @@ public class LabResultServiceImpl implements LabResultService {
                 notProcessingCause = "";
             }
 
+            if (typeOfResult == null) {
+                typeOfResult = TypeOfResult.ALL;
+            }
+
             LocalDateTime start = null;
             LocalDateTime end = null;
             if (startDate != null) {
@@ -79,7 +84,9 @@ public class LabResultServiceImpl implements LabResultService {
 
             return client.searchLabResults(start, end, requestId,
                     labResultStatus,
-                    notProcessingCause, nid, healthFacilityLabCodes,
+                    notProcessingCause,
+                    typeOfResult,
+                    nid, healthFacilityLabCodes,
                     search,
                     pageNumber, pageSize, orderBy, direction);
 

@@ -20,6 +20,7 @@ import org.apache.http.impl.client.BasicResponseHandler;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.module.disa.LabResult;
 import org.openmrs.module.disa.OrgUnit;
+import org.openmrs.module.disa.TypeOfResult;
 import org.openmrs.module.disa.api.Page;
 import org.openmrs.module.disa.api.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +59,7 @@ public class DisaAPIHttpClient {
 			String requestId,
 			String labResultStatus,
 			String notProcessingCause,
+			TypeOfResult typeOfResult,
 			String nid,
 			List<String> healthFacilityLabCodes,
 			String search,
@@ -73,6 +75,7 @@ public class DisaAPIHttpClient {
 				.addParameter("requestId", requestId)
 				.addParameter("labResultStatus", labResultStatus)
 				.addParameter("notProcessingCause", notProcessingCause)
+				.addParameter("typeOfResult", typeOfResult == TypeOfResult.ALL ? "" : typeOfResult.name())
 				.addParameter("nid", nid)
 				.addParameter("pageNumber", String.valueOf(pageNumber))
 				.addParameter("pageSize", String.valueOf(pageSize))

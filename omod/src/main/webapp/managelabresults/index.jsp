@@ -66,6 +66,9 @@
 							<spring:message code="disa.lab.result" />
 						</th>
 						<th>
+							<spring:message code="disa.lab.result.type" />
+						</th>
+						<th>
 							<spring:message code="disa.status" />
 						</th>
 						<th>
@@ -96,6 +99,7 @@
 							<td>${labResult.processingDate.substring(0,10)}</td>
 							<td>${labResult.labResultDate.substring(0,10)}</td>
 							<td>${labResult.displayResult}</td>
+							<td>${labResult.typeOfResult}</td>
 							<td>${labResult.labResultStatus}</td>
 							<td>${labResult.createdAt.substring(0,10)}</td>
 							<td>${labResult.updatedAt.substring(0,10)}</td>
@@ -193,6 +197,25 @@
 		'FLAGGED_FOR_REVIEW': "<openmrs:message code='disa.notProcessingCause.FLAGGED_FOR_REVIEW'/>",
 		'DUPLICATED_REQUEST_ID': "<openmrs:message code='disa.notProcessingCause.DUPLICATED_REQUEST_ID'/>",
 	};
+
+	const columns = {
+		"FACILITY_NAME": 0,
+		"DISTRICT_NAME": 1,
+		"FACILITY_CODE": 2,
+		"NID": 3,
+		"FULL_NAME": 4,
+		"GENDER": 5,
+		"AGE": 6,
+		"REQUEST_ID": 7,
+		"PROCESSING_DATE": 8,
+		"RESULT_DATE": 9,
+		"FINAL_RESULT": 10,
+		"TYPE_OF_RESULT": 11,
+		"STATUS": 12,
+		"CREATED_AT": 13,
+		"UPDATED_AT": 14,
+		"NOT_PROCESSING_CAUSE": 15,
+	}
 
 	/**
 	 * Return the current OpenMRS user from session.
@@ -381,7 +404,21 @@
 			buttons: [
 				{
 					extend: 'colvis',
-					columns: [0,1,2,4,5,6,8,9,10,12,13,14]
+					columns: [
+						columns.FACILITY_NAME,
+						columns.DISTRICT_NAME,
+						columns.FACILITY_CODE,
+						columns.FULL_NAME,
+						columns.GENDER,
+						columns.REQUEST_ID,
+						columns.PROCESSING_DATE,
+						columns.RESULT_DATE,
+						columns.TYPE_OF_RESULT,
+						columns.FINAL_RESULT,
+						columns.CREATED_AT,
+						columns.UPDATED_AT,
+						columns.NOT_PROCESSING_CAUSE
+					]
 				}
 
 			],
@@ -389,13 +426,12 @@
 			serverSide: true,
 			deferLoading: "${disaPage.totalResults}",
 			order: [
-				// Created at column
-				[13, 'desc']
+				[columns.CREATED_AT, 'desc']
 			],
 			columnDefs: [
 				// Hide updated at by default.
 				{
-					targets: [14],
+					targets: [columns.UPDATED_AT],
 					visible: false
 				},
         	],
@@ -423,9 +459,13 @@
 				},
 				{
 					data: "labResultDate",
-					render: (data, type, row, meta) => data.substring(0, 10)
+					render: (data, type, row, meta) => data && data.substring(0, 10)
 				},
 				{ data: "displayResult" },
+				{
+					data: "typeOfResult",
+					orderable: false,
+				},
 				{
 					data: "labResultStatus",
 					orderable: false,

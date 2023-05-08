@@ -27,6 +27,7 @@ import org.mockito.Mockito;
 import org.openmrs.module.disa.HIVVLLabResult;
 import org.openmrs.module.disa.LabResult;
 import org.openmrs.module.disa.OrgUnit;
+import org.openmrs.module.disa.TypeOfResult;
 import org.openmrs.module.disa.api.client.DisaAPIHttpClient;
 import org.openmrs.module.disa.api.exception.DisaModuleAPIException;
 import org.openmrs.module.disa.api.impl.LabResultServiceImpl;
@@ -112,6 +113,7 @@ public class LabResultServiceImplTest extends BaseContextMockTest {
             anyString(),
             anyString(),
             anyString(),
+            any(TypeOfResult.class),
             anyString(),
             anyListOf(String.class),
             anyString(),
@@ -132,6 +134,7 @@ public class LabResultServiceImplTest extends BaseContextMockTest {
             "",
             "",
             "",
+            TypeOfResult.ALL,
             "",
             Collections.singletonList(sismaCode),
             "",
