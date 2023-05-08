@@ -222,16 +222,16 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 						updatelabResultStatus(notProcessedNoResult, Constants.VIRAL_LOAD_NO_RESULT);
 						resultsEvaluated++;
 						continue;
-					} else if (!GenericUtil.isNumeric(vl.getFinalViralLoadResult().trim())
-							&& !(vl.getFinalViralLoadResult().contains(Constants.LESS_THAN))
-							&& !(vl.getFinalViralLoadResult().contains(Constants.MORE_THAN))
-							&& !(vl.getFinalViralLoadResult().trim().equalsIgnoreCase(Constants.INDETECTAVEL))) {
+					} else if (!GenericUtil.isNumeric(vl.getFinalResult().trim())
+							&& !(vl.getFinalResult().contains(Constants.LESS_THAN))
+							&& !(vl.getFinalResult().contains(Constants.MORE_THAN))
+							&& !(vl.getFinalResult().trim().equalsIgnoreCase(Constants.INDETECTAVEL))) {
 						notProcessedFlaggedReview = vl.getRequestId();
 						updatelabResultStatus(notProcessedFlaggedReview, Constants.FLAGGED_FOR_REVIEW);
 						resultsEvaluated++;
 						continue;
-					} else if (vl.getFinalViralLoadResult().contains(Constants.MORE_THAN)) {
-						String trim = vl.getFinalViralLoadResult().trim();
+					} else if (vl.getFinalResult().contains(Constants.MORE_THAN)) {
+						String trim = vl.getFinalResult().trim();
 						String maybeNumeric = trim.substring(trim.indexOf(Constants.MORE_THAN) + 1).trim();
 						if (!GenericUtil.isNumeric(maybeNumeric)) {
 							notProcessedFlaggedReview = vl.getRequestId();
@@ -521,19 +521,19 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 
 		// Using FinalViralLoadResult column only
 		// field: Cópias/ml
-		if (GenericUtil.isNumeric(labResult.getFinalViralLoadResult().trim())) {
+		if (GenericUtil.isNumeric(labResult.getFinalResult().trim())) {
 			Obs obs_856 = new Obs();
 			obs_856.setPerson(personService.getPersonByUuid(lstPatient.get(0).getUuid()));
 			obs_856.setObsDatetime(dateWithLeadingZeros);
 			obs_856.setConcept(conceptService.getConceptByUuid(Constants.VIRAL_LOAD_COPIES));
 			obs_856.setLocation(locationBySismaCode);
 			obs_856.setEncounter(encounter);
-			obs_856.setValueNumeric(Double.valueOf(labResult.getFinalViralLoadResult().trim()));
+			obs_856.setValueNumeric(Double.valueOf(labResult.getFinalResult().trim()));
 			obsService.saveObs(obs_856, "");
 		} else
 
 		// field: dropbox with answer label Indectetável
-		if (labResult.getFinalViralLoadResult().trim().equalsIgnoreCase(Constants.INDETECTAVEL)) {
+		if (labResult.getFinalResult().trim().equalsIgnoreCase(Constants.INDETECTAVEL)) {
 			Obs obs_1305 = new Obs();
 			obs_1305.setPerson(personService.getPersonByUuid(lstPatient.get(0).getUuid()));
 			obs_1305.setObsDatetime(dateWithLeadingZeros);
@@ -547,7 +547,7 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 		} else
 
 		// field: dropbox with answer <
-		if (labResult.getFinalViralLoadResult().contains(Constants.LESS_THAN)) {
+		if (labResult.getFinalResult().contains(Constants.LESS_THAN)) {
 			Obs obs_1305 = new Obs();
 			obs_1305.setPerson(personService.getPersonByUuid(lstPatient.get(0).getUuid()));
 			obs_1305.setObsDatetime(dateWithLeadingZeros);
@@ -556,7 +556,7 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 			obs_1305.setValueCoded(conceptService.getConceptByUuid(Constants.LESSTHAN));
 			obs_1305.setLocation(locationBySismaCode);
 			obs_1305.setEncounter(encounter);
-			obs_1305.setComment(labResult.getFinalViralLoadResult()
+			obs_1305.setComment(labResult.getFinalResult()
 					.trim()
 					.substring(1)
 					.replace(Constants.LESS_THAN, "")
@@ -565,14 +565,14 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 					.replace(Constants.ML, "")
 					.trim());
 			obsService.saveObs(obs_1305, "");
-		} else if (labResult.getFinalViralLoadResult().contains(Constants.MORE_THAN)) {
+		} else if (labResult.getFinalResult().contains(Constants.MORE_THAN)) {
 			Obs obs_856 = new Obs();
 			obs_856.setPerson(personService.getPersonByUuid(lstPatient.get(0).getUuid()));
 			obs_856.setObsDatetime(dateWithLeadingZeros);
 			obs_856.setConcept(conceptService.getConceptByUuid(Constants.VIRAL_LOAD_COPIES));
 			obs_856.setLocation(locationBySismaCode);
 			obs_856.setEncounter(encounter);
-			String trim = labResult.getFinalViralLoadResult().trim();
+			String trim = labResult.getFinalResult().trim();
 			String numericPart = trim.substring(trim.indexOf(Constants.MORE_THAN) + 1);
 			obs_856.setValueNumeric(Double.valueOf(numericPart));
 			obsService.saveObs(obs_856, "");
@@ -613,7 +613,7 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 	}
 
 	private boolean hasNoResult(HIVVLLabResult vl) {
-		return (vl.getFinalViralLoadResult() == null || vl.getFinalViralLoadResult().isEmpty());
+		return (vl.getFinalResult() == null || vl.getFinalResult().isEmpty());
 	}
 
 	private List<LabResult> getJsonViralLoad() {

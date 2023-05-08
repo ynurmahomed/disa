@@ -56,15 +56,10 @@ import org.openmrs.api.ProviderService;
 import org.openmrs.api.UserService;
 import org.openmrs.api.db.ContextDAO;
 import org.openmrs.module.disa.HIVVLLabResult;
-import org.openmrs.module.disa.LabResult;
-import org.openmrs.module.disa.TypeOfResult;
 import org.openmrs.module.disa.api.DisaService;
 import org.openmrs.module.disa.api.util.Constants;
 import org.openmrs.module.disa.extension.util.RestUtil;
 import org.openmrs.test.BaseContextMockTest;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import com.google.gson.Gson;
 
 public class ViralLoadFormSchedulerTaskTest extends BaseContextMockTest {
 
@@ -131,7 +126,7 @@ public class ViralLoadFormSchedulerTaskTest extends BaseContextMockTest {
 		disa = new HIVVLLabResult();
 		disa.setRequestId("MZDISAPQM0000000");
 		disa.setNid("000000000/0000/00000");
-		disa.setFinalViralLoadResult("INDETECTAVEL");
+		disa.setFinalResult("INDETECTAVEL");
 		disa.setHealthFacilityLabCode("1040107");
 		disa.setPregnant("");
 		disa.setBreastFeeding("");
@@ -296,7 +291,7 @@ public class ViralLoadFormSchedulerTaskTest extends BaseContextMockTest {
 	@Test
 	public void executeShouldSetStatusToNotProcessedNoResult() throws Exception {
 
-		disa.setFinalViralLoadResult("");
+		disa.setFinalResult("");
 		when(restUtil.getRequestGet(anyListOf(String.class), eq(province)))
 				.thenReturn(Arrays.asList(disa));
 
@@ -322,7 +317,7 @@ public class ViralLoadFormSchedulerTaskTest extends BaseContextMockTest {
 	@Test
 	public void executeShouldSetStatusToNotProcessedFlaggedForReview() throws Exception {
 
-		disa.setFinalViralLoadResult("ABCDEFGH");
+		disa.setFinalResult("ABCDEFGH");
 		when(restUtil.getRequestGet(anyListOf(String.class), eq(province)))
 				.thenReturn(Arrays.asList(disa));
 
@@ -385,7 +380,7 @@ public class ViralLoadFormSchedulerTaskTest extends BaseContextMockTest {
 	@Test
 	public void executeShouldHandleNumericValues() throws Exception {
 
-		disa.setFinalViralLoadResult(" 123456     ");
+		disa.setFinalResult(" 123456     ");
 		when(restUtil.getRequestGet(anyListOf(String.class), eq(province)))
 				.thenReturn(Arrays.asList(disa));
 
@@ -426,7 +421,7 @@ public class ViralLoadFormSchedulerTaskTest extends BaseContextMockTest {
 	@Test
 	public void executeShouldHandleLessThanValues() throws Exception {
 
-		disa.setFinalViralLoadResult("< 400 copias / ml");
+		disa.setFinalResult("< 400 copias / ml");
 		when(restUtil.getRequestGet(anyListOf(String.class), eq(province)))
 				.thenReturn(Arrays.asList(disa));
 
@@ -469,7 +464,7 @@ public class ViralLoadFormSchedulerTaskTest extends BaseContextMockTest {
 	@Test
 	public void executeShouldNotSaveMoreThanValuesWithInvalidNumericValues() throws Exception {
 
-		disa.setFinalViralLoadResult("> 10.000.000,00");
+		disa.setFinalResult("> 10.000.000,00");
 		when(restUtil.getRequestGet(anyListOf(String.class), eq(province)))
 				.thenReturn(Arrays.asList(disa));
 
@@ -496,7 +491,7 @@ public class ViralLoadFormSchedulerTaskTest extends BaseContextMockTest {
 	@Test
 	public void executeShouldHandleMoreThanValues() throws Exception {
 
-		disa.setFinalViralLoadResult("> 10000000");
+		disa.setFinalResult("> 10000000");
 		when(restUtil.getRequestGet(anyListOf(String.class), eq(province)))
 				.thenReturn(Arrays.asList(disa));
 
@@ -538,7 +533,7 @@ public class ViralLoadFormSchedulerTaskTest extends BaseContextMockTest {
 	@Test
 	public void executeShouldCreateEncounterAtStartOfDay() throws Exception {
 
-		disa.setFinalViralLoadResult(" 123456     ");
+		disa.setFinalResult(" 123456     ");
 		when(restUtil.getRequestGet(anyListOf(String.class), eq(province)))
 				.thenReturn(Arrays.asList(disa));
 

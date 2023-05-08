@@ -98,7 +98,7 @@
 							<td>${labResult.requestId}</td>
 							<td>${labResult.processingDate.substring(0,10)}</td>
 							<td>${labResult.labResultDate.substring(0,10)}</td>
-							<td>${labResult.displayResult}</td>
+							<td>${labResult.finalResult}</td>
 							<td>${labResult.typeOfResult}</td>
 							<td>${labResult.labResultStatus}</td>
 							<td>${labResult.createdAt.substring(0,10)}</td>
@@ -196,6 +196,12 @@
 		'DUPLICATE_NID': "<openmrs:message code='disa.notProcessingCause.DUPLICATE_NID'/>",
 		'FLAGGED_FOR_REVIEW': "<openmrs:message code='disa.notProcessingCause.FLAGGED_FOR_REVIEW'/>",
 		'DUPLICATED_REQUEST_ID': "<openmrs:message code='disa.notProcessingCause.DUPLICATED_REQUEST_ID'/>",
+	};
+
+	var typeOfResult = {
+		'ALL': "<openmrs:message code='disa.typeOfResult.ALL' />",
+		'HIVVL': "<openmrs:message code='disa.typeOfResult.HIVVL'/>",
+		'CD4': "<openmrs:message code='disa.typeOfResult.CD4'/>",
 	};
 
 	const columns = {
@@ -461,10 +467,11 @@
 					data: "labResultDate",
 					render: (data, type, row, meta) => data && data.substring(0, 10)
 				},
-				{ data: "displayResult" },
+				{ data: "finalResult" },
 				{
 					data: "typeOfResult",
 					orderable: false,
+					render: (data, type, row, meta) => typeOfResult[data]
 				},
 				{
 					data: "labResultStatus",

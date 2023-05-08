@@ -78,7 +78,15 @@
 				<openmrs:message code="disa.lab.result.type" />:
 			</label>
 			<form:select path="typeOfResult">
-				<form:options items="${types}"/>
+				<form:option value="ALL">
+					<openmrs:message code="disa.typeOfResult.ALL" />
+				</form:option>
+				<form:option value="HIVVL">
+					<openmrs:message code="disa.typeOfResult.HIVVL" />
+				</form:option>
+				<form:option value="CD4">
+					<openmrs:message code="disa.typeOfResult.CD4" />
+				</form:option>
 			</form:select>
 		</div>
 		<div class="divider"></div>
