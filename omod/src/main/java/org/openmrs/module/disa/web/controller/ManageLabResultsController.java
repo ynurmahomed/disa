@@ -166,19 +166,21 @@ public class ManageLabResultsController {
         return labResultService.search(
                 startDate,
                 endDate,
-                searchForm.getRequestId() != null ? searchForm.getRequestId().replaceAll("\\s", "") : "",
+                clearWhiteSpace(searchForm.getRequestId()),
                 searchForm.getVlState(),
                 searchForm.getNotProcessingCause(),
                 searchForm.getTypeOfResult(),
-                searchForm.getNid() != null ? searchForm.getNid().trim() : "",
-                searchForm.getVlSisma().equals(Constants.ALL)
-                        ? labResultService.getHealthFacilityLabCodes()
-                        : Arrays.asList(searchForm.getVlSisma()),
+                clearWhiteSpace(searchForm.getNid()),
+                labResultService.getHealthFacilityLabCodes(),
                 searchForm.getSearch(),
                 searchForm.getPageNumber(),
                 searchForm.getPageSize(),
                 searchForm.getOrderBy(),
                 searchForm.getDir());
+    }
+
+    private String clearWhiteSpace(String str) {
+        return str != null ? str.replaceAll("\\s", "") : "";
     }
 
     private List<LabResult> getAllLabResults(SearchForm searchForm) {
