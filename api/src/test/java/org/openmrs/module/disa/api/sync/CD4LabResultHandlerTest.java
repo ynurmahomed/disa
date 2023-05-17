@@ -97,4 +97,12 @@ public class CD4LabResultHandlerTest extends BaseContextMockTest {
         assertThat(labResult.getLabResultStatus(), is(LabResultStatus.PROCESSED));
     }
 
+    @Test
+    public void shouldProcessPositiveIntegersWithSpaces() {
+        labResult.setFinalResult(" 123  ");
+        cd4LabResultHandler.handle(labResult);
+
+        assertThat(labResult.getLabResultStatus(), is(LabResultStatus.PROCESSED));
+    }
+
 }

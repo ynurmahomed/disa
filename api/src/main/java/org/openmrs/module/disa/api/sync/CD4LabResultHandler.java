@@ -75,7 +75,7 @@ public class CD4LabResultHandler extends BaseLabResultHandler {
 
             Integer result = null;
             try {
-                result = Integer.parseUnsignedInt(cd4.getFinalResult());
+                result = Integer.parseUnsignedInt(cd4.getFinalResult().trim());
             } catch (NumberFormatException e) {
                 cd4.setLabResultStatus(LabResultStatus.NOT_PROCESSED);
                 // TODO change to invalid result
