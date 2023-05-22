@@ -19,6 +19,7 @@ import org.openmrs.module.disa.api.sync.PatientNidLookup;
 import org.openmrs.module.disa.api.sync.ProviderLookup;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -44,6 +45,7 @@ public class DisaModuleAPIConfig {
     }
 
     @Bean
+    @Scope("prototype")
     public LabResultProcessor labResultHandler(
             DuplicateRequestIdLookup duplicateRequestIdLookup,
             PatientNidLookup patientNidLookup,
