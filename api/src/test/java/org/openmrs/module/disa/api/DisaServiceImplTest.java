@@ -24,6 +24,8 @@ import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.module.disa.HIVVLLabResult;
 import org.openmrs.module.disa.LabResult;
+import org.openmrs.module.disa.LabResultStatus;
+import org.openmrs.module.disa.NotProcessingCause;
 import org.openmrs.module.disa.api.db.DisaDAO;
 import org.openmrs.module.disa.api.exception.DisaModuleAPIException;
 import org.openmrs.module.disa.api.impl.DisaServiceImpl;
@@ -51,8 +53,8 @@ public class DisaServiceImplTest extends BaseContextMockTest {
     public void mapIdentifierShouldSavePatientIdentifier() {
         String patientUuid = "patientUuid";
         LabResult disa = new HIVVLLabResult();
-        disa.setLabResultStatus("NOT_PROCESSED");
-        disa.setNotProcessingCause("NID_NOT_FOUND");
+        disa.setLabResultStatus(LabResultStatus.NOT_PROCESSED);
+        disa.setNotProcessingCause(NotProcessingCause.NID_NOT_FOUND);
         disa.setNid("12345");
         disa.setRequestId("requestId");
         Patient patient = new Patient();
@@ -74,8 +76,8 @@ public class DisaServiceImplTest extends BaseContextMockTest {
     public void mapIdentifierShouldThrowExceptionWhenResultIsProcessed() {
         String patientUuid = "patientUuid";
         LabResult disa = new HIVVLLabResult();
-        disa.setLabResultStatus("PROCESSED");
-        disa.setNotProcessingCause("NID_NOT_FOUND");
+        disa.setLabResultStatus(LabResultStatus.PROCESSED);
+        disa.setNotProcessingCause(NotProcessingCause.NID_NOT_FOUND);
         disa.setNid("12345");
         disa.setRequestId("requestId");
         Patient patient = new Patient();
@@ -97,8 +99,8 @@ public class DisaServiceImplTest extends BaseContextMockTest {
     public void mapIdentifierShouldThrowExceptionWhenResultIsPending() {
         String patientUuid = "patientUuid";
         LabResult disa = new HIVVLLabResult();
-        disa.setLabResultStatus("PENDING");
-        disa.setNotProcessingCause("NID_NOT_FOUND");
+        disa.setLabResultStatus(LabResultStatus.PENDING);
+        disa.setNotProcessingCause(NotProcessingCause.NID_NOT_FOUND);
         disa.setNid("12345");
         disa.setRequestId("requestId");
         Patient patient = new Patient();

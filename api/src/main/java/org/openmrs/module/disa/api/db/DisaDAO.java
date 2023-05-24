@@ -19,23 +19,24 @@ import java.util.List;
 import org.openmrs.LocationAttribute;
 import org.openmrs.Patient;
 import org.openmrs.module.disa.FsrLog;
+import org.openmrs.module.disa.TypeOfResult;
 import org.openmrs.module.disa.api.DisaService;
 
 /**
  *  Database methods for {@link DisaService}.
  */
 public interface DisaDAO {
-	
+
 	/*
 	 * Add DAO methods here
 	 */
-	
+
 	public List<LocationAttribute> getAllLocationAttribute(String valueReference);
-	
+
 	public Serializable saveFsrLog(FsrLog fsrLog);
-	
-	public boolean existsByRequestId(String requestId);
-	
+
+	public boolean existsByRequestIdAndTypeOfResult(String requestId, TypeOfResult typeOfResult);
+
 	public List<Integer> getPatientByNid(String identifier);
 
 	public List<Patient> getPatientByPatientId(Integer patientId);

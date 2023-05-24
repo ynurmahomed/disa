@@ -25,6 +25,7 @@ import org.hibernate.SessionFactory;
 import org.openmrs.LocationAttribute;
 import org.openmrs.Patient;
 import org.openmrs.module.disa.FsrLog;
+import org.openmrs.module.disa.TypeOfResult;
 import org.openmrs.module.disa.api.db.DisaDAO;
 
 /**
@@ -33,23 +34,23 @@ import org.openmrs.module.disa.api.db.DisaDAO;
 @SuppressWarnings("unchecked")
 public class HibernateDisaDAO implements DisaDAO {
 	protected final Log log = LogFactory.getLog(this.getClass());
-	
+
 	private SessionFactory sessionFactory;
-	
+
 	/**
      * @param sessionFactory the sessionFactory to set
      */
     public void setSessionFactory(SessionFactory sessionFactory) {
 	    this.sessionFactory = sessionFactory;
     }
-    
+
 	/**
      * @return the sessionFactory
      */
     public SessionFactory getSessionFactory() {
 	    return sessionFactory;
     }
-    
+
 	private org.hibernate.Session getCurrentSession() {
 		try {
 			return this.sessionFactory.getCurrentSession();
@@ -69,17 +70,20 @@ public class HibernateDisaDAO implements DisaDAO {
 		final Query query = this.getCurrentSession().createQuery(hql).setParameter("valueReference", valueReference);
 		return query.list();
 	}
-	
+
 	@Override
 	public Serializable saveFsrLog(FsrLog fsrLog) {
-		return this.getCurrentSession().save(fsrLog); 
+		return this.getCurrentSession().save(fsrLog);
 	}
 
 	@SuppressWarnings("rawtypes")
 	@Override
-	public boolean existsByRequestId(String requestId) {
-		final String hql = "SELECT f FROM FsrLog f WHERE f.requestId = :requestId ";
-		final Query query = this.getCurrentSession().createQuery(hql).setParameter("requestId", requestId);
+	public boolean existsByRequestIdAndTypeOfResult(String requestId, TypeOfResult typeOfResult) {
+		final String hql = "SELECT f FROM FsrLog f WHERE f.requestId = :requestId AND f.typeOfResult = :typeOfResult";
+		final Query query = this.getCurrentSession()
+			.createQuery(hql)
+			.setParameter("requestId", requestId)
+			.setParameter("typeOfResult", typeOfResult);
 		List list=query.list();
 		return list!=null && !list.isEmpty();
 	}
@@ -89,14 +93,14 @@ public class HibernateDisaDAO implements DisaDAO {
 		final String sql = "SELECT distinct pi.patient_id FROM patient_identifier pi "
 		+ "INNER JOIN person pe ON pe.person_id = pi.patient_id "
 		+ "INNER JOIN patient p ON p.patient_id = p.patient_id "
-		+ "WHERE identifier = '"+identifier+"'" 
-		+ "AND pi.voided = 0 " 
-		+ "AND pe.voided = 0 " 
-		+ "AND p.voided = 0"; 
+		+ "WHERE identifier = '"+identifier+"'"
+		+ "AND pi.voided = 0 "
+		+ "AND pe.voided = 0 "
+		+ "AND p.voided = 0";
 		final Query query = this.sessionFactory.getCurrentSession().createSQLQuery(sql);
 		List<Object[]> objs = query.list();
 		List<Integer> patientIds = new ArrayList<Integer>();
-		
+
 		for (Object aux : objs) {
 			patientIds.add((Integer) aux);
 		}
