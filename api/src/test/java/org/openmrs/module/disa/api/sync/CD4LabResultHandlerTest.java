@@ -69,7 +69,7 @@ public class CD4LabResultHandlerTest extends BaseContextMockTest {
         cd4LabResultHandler.handle(labResult);
 
         assertThat(labResult.getLabResultStatus(), is(LabResultStatus.NOT_PROCESSED));
-        assertThat(labResult.getNotProcessingCause(), is(NotProcessingCause.FLAGGED_FOR_REVIEW));
+        assertThat(labResult.getNotProcessingCause(), is(NotProcessingCause.INVALID_RESULT));
     }
 
     @Test
@@ -78,7 +78,7 @@ public class CD4LabResultHandlerTest extends BaseContextMockTest {
         cd4LabResultHandler.handle(labResult);
 
         assertThat(labResult.getLabResultStatus(), is(LabResultStatus.NOT_PROCESSED));
-        assertThat(labResult.getNotProcessingCause(), is(NotProcessingCause.FLAGGED_FOR_REVIEW));
+        assertThat(labResult.getNotProcessingCause(), is(NotProcessingCause.INVALID_RESULT));
     }
 
     @Test

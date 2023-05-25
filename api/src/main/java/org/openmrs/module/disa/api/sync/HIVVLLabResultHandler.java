@@ -107,21 +107,21 @@ public class HIVVLLabResultHandler extends BaseLabResultHandler {
     private void validateResult(HIVVLLabResult vl) {
         if (hasNoResult(vl)) {
 
-            updateNotProcessed(vl, NotProcessingCause.NO_RESULT);
+            updateNotProcessed(vl, NotProcessingCause.INVALID_RESULT);
 
         } else if (!isNumeric(vl.getFinalResult().trim())
                 && !(vl.getFinalResult().contains(Constants.LESS_THAN))
                 && !(vl.getFinalResult().contains(Constants.MORE_THAN))
                 && !(vl.getFinalResult().trim().equalsIgnoreCase(Constants.INDETECTAVEL))) {
 
-            updateNotProcessed(vl, NotProcessingCause.FLAGGED_FOR_REVIEW);
+            updateNotProcessed(vl, NotProcessingCause.INVALID_RESULT);
 
         } else if (vl.getFinalResult().contains(Constants.MORE_THAN)) {
 
             String trim = vl.getFinalResult().trim();
             String maybeNumeric = trim.substring(trim.indexOf(Constants.MORE_THAN) + 1).trim();
             if (!isNumeric(maybeNumeric)) {
-                updateNotProcessed(vl, NotProcessingCause.FLAGGED_FOR_REVIEW);
+                updateNotProcessed(vl, NotProcessingCause.INVALID_RESULT);
             }
         }
     }

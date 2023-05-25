@@ -192,9 +192,8 @@
 
 	var notProcessingCause = {
 		'NID_NOT_FOUND': "<openmrs:message code='disa.notProcessingCause.NID_NOT_FOUND' />",
-		'NO_RESULT': "<openmrs:message code='disa.notProcessingCause.NO_RESULT'/>",
+		'INVALID_RESULT': "<openmrs:message code='disa.notProcessingCause.INVALID_RESULT'/>",
 		'DUPLICATE_NID': "<openmrs:message code='disa.notProcessingCause.DUPLICATE_NID'/>",
-		'FLAGGED_FOR_REVIEW': "<openmrs:message code='disa.notProcessingCause.FLAGGED_FOR_REVIEW'/>",
 		'DUPLICATED_REQUEST_ID': "<openmrs:message code='disa.notProcessingCause.DUPLICATED_REQUEST_ID'/>",
 	};
 

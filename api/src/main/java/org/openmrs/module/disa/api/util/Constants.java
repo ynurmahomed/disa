@@ -128,8 +128,6 @@ public class Constants {
 
 	public static final String NID = "nid";
 	public static final String DUPLICATED_REQUEST_ID = "duplicatedReqId";
-	public static final String VIRAL_LOAD_NO_RESULT = "result";
-	public static final String FLAGGED_FOR_REVIEW = "review";
 	public static final String DUPLICATED_NID = "duplicate";
 
 	public static final String MORE_THAN = ">";

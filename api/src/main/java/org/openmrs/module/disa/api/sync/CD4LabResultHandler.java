@@ -79,7 +79,7 @@ public class CD4LabResultHandler extends BaseLabResultHandler {
             } catch (NumberFormatException e) {
                 cd4.setLabResultStatus(LabResultStatus.NOT_PROCESSED);
                 // TODO change to invalid result
-                cd4.setNotProcessingCause(NotProcessingCause.FLAGGED_FOR_REVIEW);
+                cd4.setNotProcessingCause(NotProcessingCause.INVALID_RESULT);
             }
 
             if (result != null) {

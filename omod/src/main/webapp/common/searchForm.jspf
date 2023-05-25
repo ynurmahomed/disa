@@ -37,14 +37,14 @@
 				<form:option value="ALL">
 					<openmrs:message code="disa.viral.load.status.ALL" />
 				</form:option>
-				<form:option value="PROCESSED">
-					<openmrs:message code="disa.viral.load.status.PROCESSED" />
-				</form:option>
 				<form:option value="NOT_PROCESSED">
 					<openmrs:message code="disa.viral.load.status.NOT_PROCESSED" />
 				</form:option>
 				<form:option value="PENDING">
 					<openmrs:message code="disa.viral.load.status.PENDING" />
+				</form:option>
+				<form:option value="PROCESSED">
+					<openmrs:message code="disa.viral.load.status.PROCESSED" />
 				</form:option>
 			</form:select>
 		</div>
@@ -56,20 +56,17 @@
 				<form:option value="ALL">
 					<openmrs:message code="disa.notProcessingCause.ALL" />
 				</form:option>
-				<form:option value="NID_NOT_FOUND">
-					<openmrs:message code="disa.notProcessingCause.NID_NOT_FOUND" />
-				</form:option>
-				<form:option value="NO_RESULT">
-					<openmrs:message code="disa.notProcessingCause.NO_RESULT" />
-				</form:option>
-				<form:option value="FLAGGED_FOR_REVIEW">
-					<openmrs:message code="disa.notProcessingCause.FLAGGED_FOR_REVIEW" />
+				<form:option value="DUPLICATED_REQUEST_ID">
+					<openmrs:message code="disa.notProcessingCause.DUPLICATED_REQUEST_ID" />
 				</form:option>
 				<form:option value="DUPLICATE_NID">
 					<openmrs:message code="disa.notProcessingCause.DUPLICATE_NID" />
 				</form:option>
-				<form:option value="DUPLICATED_REQUEST_ID">
-					<openmrs:message code="disa.notProcessingCause.DUPLICATED_REQUEST_ID" />
+				<form:option value="NID_NOT_FOUND">
+					<openmrs:message code="disa.notProcessingCause.NID_NOT_FOUND" />
+				</form:option>
+				<form:option value="INVALID_RESULT">
+					<openmrs:message code="disa.notProcessingCause.INVALID_RESULT" />
 				</form:option>
 			</form:select>
 		</div>
