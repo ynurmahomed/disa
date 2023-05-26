@@ -51,7 +51,7 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 	}
 
 	@Transactional(rollbackFor = Exception.class)
-	private void createViralLoadForm() throws Exception, HttpHostConnectException {
+	private void createViralLoadForm() throws HttpHostConnectException {
 
 		List<LabResult> labResults = labResultService.getResultsToSync();
 

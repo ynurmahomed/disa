@@ -209,21 +209,21 @@ public class HIVVLLabResultHandlerTest extends BaseContextMockTest {
         hivvlLabResultHandler.handle(labResult);
 
         assertThat(labResult.getLabResultStatus(), is(LabResultStatus.NOT_PROCESSED));
-        assertThat(labResult.getNotProcessingCause(), is(NotProcessingCause.NO_RESULT));
+        assertThat(labResult.getNotProcessingCause(), is(NotProcessingCause.INVALID_RESULT));
 
         // calls next handler
         verify(next, times(1)).handle(labResult);
     }
 
     @Test
-    public void shouldSetStatusToNotProcessedFlaggedForReviewAndUpdateTheResult() {
+    public void shouldSetStatusToNotProcessedInvalidResultAndUpdateTheResult() {
 
         labResult.setFinalResult("ABCDEFGH");
 
         hivvlLabResultHandler.handle(labResult);
 
         assertThat(labResult.getLabResultStatus(), is(LabResultStatus.NOT_PROCESSED));
-        assertThat(labResult.getNotProcessingCause(), is(NotProcessingCause.FLAGGED_FOR_REVIEW));
+        assertThat(labResult.getNotProcessingCause(), is(NotProcessingCause.INVALID_RESULT));
 
         // calls next handler
         verify(next, times(1)).handle(labResult);
@@ -318,21 +318,21 @@ public class HIVVLLabResultHandlerTest extends BaseContextMockTest {
         verify(encounterService, never()).saveEncounter(anyObject());
 
         assertThat(labResult.getLabResultStatus(), is(LabResultStatus.NOT_PROCESSED));
-        assertThat(labResult.getNotProcessingCause(), is(NotProcessingCause.FLAGGED_FOR_REVIEW));
+        assertThat(labResult.getNotProcessingCause(), is(NotProcessingCause.INVALID_RESULT));
 
         // calls next handler
         verify(next, times(1)).handle(labResult);
     }
 
     @Test
-    public void shouldSetResultsWithMoreThanValuesWithInvalidNumericValuesAsFlaggedForReview() throws Exception {
+    public void shouldSetResultsWithMoreThanValuesWithInvalidNumericValuesAsInvalidResult() throws Exception {
 
         labResult.setFinalResult("> 10.000.000,00");
 
         hivvlLabResultHandler.handle(labResult);
 
         assertThat(labResult.getLabResultStatus(), is(LabResultStatus.NOT_PROCESSED));
-        assertThat(labResult.getNotProcessingCause(), is(NotProcessingCause.FLAGGED_FOR_REVIEW));
+        assertThat(labResult.getNotProcessingCause(), is(NotProcessingCause.INVALID_RESULT));
 
         // calls next handler
         verify(next, times(1)).handle(labResult);
