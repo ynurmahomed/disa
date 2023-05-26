@@ -56,10 +56,15 @@ public class MapUnprocessedLabResultsController {
 	@RequestMapping(value = "", method = RequestMethod.GET)
 	public String patientIdentifierMapping(
 			@PathVariable String requestId,
+			@RequestParam(required = false) String errorPatientRequired,
 			ModelMap model,
 			HttpServletRequest request) {
 
 		LabResult labResult = labResultService.getByRequestId(requestId);
+
+		if (errorPatientRequired != null) {
+			model.addAttribute("errorPatientRequired", errorPatientRequired);
+		}
 
 		// If there isn't a requestId in the session or there is a different requestId,
 		// load a new patient list.
@@ -131,11 +136,14 @@ public class MapUnprocessedLabResultsController {
 			model.addAttribute("errorPatientRequired", "disa.error.patient.required");
 		} else {
 			Patient patientToAdd = patientService.getPatient(patient.getId());
-			if (!patients.contains(patientToAdd)) {
+			PatientIdentifier patientIdentifier = patientToAdd.getPatientIdentifier();
+			if (patientIdentifier == null) {
+				model.addAttribute("errorPatientRequired", "disa.error.patient.required.nid");
+			} else  if (!patients.contains(patientToAdd)) {
 				// TODO This is a workaround to LazyInitialization error when getting
 				// identifiers from patient on jsp
 				Set<PatientIdentifier> identifiers = new TreeSet<>();
-				identifiers.add(patientToAdd.getPatientIdentifier());
+				identifiers.add(patientIdentifier);
 				patientToAdd.setIdentifiers(identifiers);
 				patients.add(patientToAdd);
 			}
