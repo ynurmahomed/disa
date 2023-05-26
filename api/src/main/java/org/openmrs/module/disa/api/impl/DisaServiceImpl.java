@@ -27,9 +27,10 @@ import org.openmrs.PatientIdentifierType;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.impl.BaseOpenmrsService;
-import org.openmrs.module.disa.LabResult;
 import org.openmrs.module.disa.FsrLog;
-import org.openmrs.module.disa.HIVVLLabResult;
+import org.openmrs.module.disa.LabResult;
+import org.openmrs.module.disa.LabResultStatus;
+import org.openmrs.module.disa.NotProcessingCause;
 import org.openmrs.module.disa.api.DisaService;
 import org.openmrs.module.disa.api.LabResultService;
 import org.openmrs.module.disa.api.db.DisaDAO;
@@ -73,8 +74,8 @@ public class DisaServiceImpl extends BaseOpenmrsService implements DisaService {
 	}
 
 	@Override
-	public boolean existsByRequestId(String requestId) {
-		return dao.existsByRequestId(requestId);
+	public boolean existsInFsrLog(LabResult labResult) {
+		return dao.existsByRequestIdAndTypeOfResult(labResult.getRequestId(), labResult.getTypeOfResult());
 	}
 
 	@Override
@@ -90,8 +91,8 @@ public class DisaServiceImpl extends BaseOpenmrsService implements DisaService {
 	@Override
 	public void mapIdentifier(String patientUuid, LabResult disa) {
 
-		if (!disa.getLabResultStatus().equals("NOT_PROCESSED")
-				|| !disa.getNotProcessingCause().equals("NID_NOT_FOUND")) {
+		if (disa.getLabResultStatus() != LabResultStatus.NOT_PROCESSED
+				|| disa.getNotProcessingCause() != NotProcessingCause.NID_NOT_FOUND) {
 			throw new DisaModuleAPIException("The result to map is " + disa.getLabResultStatus()
 					+ ". It should be NOT_PROCESSED with cause NID_NOT_FOUND.");
 		}
@@ -121,7 +122,7 @@ public class DisaServiceImpl extends BaseOpenmrsService implements DisaService {
 		List<Patient> patients = patientService.getPatients(name, null, null, false);
 		// return only patients with identifiers
 		return patients.stream()
-				.filter(p -> !p.getIdentifiers().isEmpty())
+				.filter(p -> !p.getActiveIdentifiers().isEmpty())
 				.collect(Collectors.toList());
 	}
 }

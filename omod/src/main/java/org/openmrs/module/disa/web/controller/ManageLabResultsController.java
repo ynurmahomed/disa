@@ -41,6 +41,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.google.gson.Gson;
+
 @Controller
 @RequestMapping("/module/disa/managelabresults")
 @SessionAttributes({ "flashMessage" })
@@ -54,14 +56,18 @@ public class ManageLabResultsController {
 
     private AdministrationService administrationService;
 
+    private Gson gson;
+
     @Autowired
     public ManageLabResultsController(
             LabResultService labResultService,
             MessageSourceService messageSourceService,
-            @Qualifier("adminService") AdministrationService administrationService) {
+            @Qualifier("adminService") AdministrationService administrationService,
+            Gson gson) {
         this.labResultService = labResultService;
         this.messageSourceService = messageSourceService;
         this.administrationService = administrationService;
+        this.gson = gson;
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
@@ -100,8 +106,8 @@ public class ManageLabResultsController {
 
     @ResponseBody
     @RequestMapping(value = "/json", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Page<LabResult> searchJson(@Valid SearchForm searchForm) {
-        return searchLabResults(searchForm);
+    public String searchJson(@Valid SearchForm searchForm) {
+        return gson.toJson(searchLabResults(searchForm));
     }
 
     @RequestMapping(value = "/export", method = RequestMethod.GET)
@@ -165,7 +171,7 @@ public class ManageLabResultsController {
                 searchForm.getNotProcessingCause(),
                 searchForm.getTypeOfResult(),
                 clearWhiteSpace(searchForm.getNid()),
-                labResultService.getHealthFacilityLabCodes(searchForm.getVlSisma()),
+                labResultService.getHealthFacilityLabCodes(),
                 searchForm.getSearch(),
                 searchForm.getPageNumber(),
                 searchForm.getPageSize(),
@@ -193,7 +199,9 @@ public class ManageLabResultsController {
                 searchForm.getVlState(),
                 searchForm.getNotProcessingCause(),
                 searchForm.getNid(),
-                labResultService.getHealthFacilityLabCodes(searchForm.getVlSisma()),
+                searchForm.getVlSisma().equals(Constants.ALL)
+                        ? labResultService.getHealthFacilityLabCodes()
+                        : Arrays.asList(searchForm.getVlSisma()),
                 searchForm.getSearch(),
                 searchForm.getOrderBy(),
                 searchForm.getDir());

@@ -1,5 +1,6 @@
 package org.openmrs.module.disa;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -19,11 +20,11 @@ public abstract class LabResult {
 
 	private String createdBy;
 
-	private String createdAt;
+	private LocalDateTime createdAt;
 
 	private String updatedBy;
 
-	private String updatedAt;
+	private LocalDateTime updatedAt;
 
 	private String nid;
 
@@ -45,17 +46,17 @@ public abstract class LabResult {
 
 	private String reasonForTest;
 
-	private String harvestDate;
+	private LocalDateTime harvestDate;
 
 	private String harvestType;
 
-	private String dateOfSampleReceive;
+	private LocalDateTime dateOfSampleReceive;
 
 	private String processingDate;
 
 	private String sampleType;
 
-	private String labResultDate;
+	private LocalDateTime labResultDate;
 
 	private String aprovedBy;
 
@@ -67,9 +68,9 @@ public abstract class LabResult {
 
 	private String requestingProvinceName;
 
-	private String labResultStatus;
+	private LabResultStatus labResultStatus;
 
-	private String notProcessingCause;
+	private NotProcessingCause notProcessingCause;
 
 	private String artRegimen;
 
@@ -84,6 +85,8 @@ public abstract class LabResult {
 	private Integer ageInYears;
 
 	private TypeOfResult typeOfResult;
+
+	private LocalDateTime registeredDateTime;
 
 	protected LabResult() {
 	}
@@ -132,11 +135,11 @@ public abstract class LabResult {
 		this.artRegimen = artRegimen;
 	}
 
-	public String getLabResultStatus() {
+	public LabResultStatus getLabResultStatus() {
 		return labResultStatus;
 	}
 
-	public void setLabResultStatus(String labResultStatus) {
+	public void setLabResultStatus(LabResultStatus labResultStatus) {
 		this.labResultStatus = labResultStatus;
 	}
 
@@ -164,11 +167,11 @@ public abstract class LabResult {
 		this.createdBy = createdBy;
 	}
 
-	public String getCreatedAt() {
+	public LocalDateTime getCreatedAt() {
 		return createdAt;
 	}
 
-	public void setCreatedAt(String createdAt) {
+	public void setCreatedAt(LocalDateTime createdAt) {
 		this.createdAt = createdAt;
 	}
 
@@ -180,11 +183,11 @@ public abstract class LabResult {
 		this.updatedBy = updatedBy;
 	}
 
-	public String getUpdatedAt() {
+	public LocalDateTime getUpdatedAt() {
 		return updatedAt;
 	}
 
-	public void setUpdatedAt(String updatedAt) {
+	public void setUpdatedAt(LocalDateTime updatedAt) {
 		this.updatedAt = updatedAt;
 	}
 
@@ -268,14 +271,6 @@ public abstract class LabResult {
 		this.reasonForTest = reasonForTest;
 	}
 
-	public String getHarvestDate() {
-		return harvestDate;
-	}
-
-	public void setHarvestDate(String harvestDate) {
-		this.harvestDate = harvestDate;
-	}
-
 	public String getHarvestType() {
 		return harvestType;
 	}
@@ -284,11 +279,11 @@ public abstract class LabResult {
 		this.harvestType = harvestType;
 	}
 
-	public String getDateOfSampleReceive() {
+	public LocalDateTime getDateOfSampleReceive() {
 		return dateOfSampleReceive;
 	}
 
-	public void setDateOfSampleReceive(String dateOfSampleReceive) {
+	public void setDateOfSampleReceive(LocalDateTime dateOfSampleReceive) {
 		this.dateOfSampleReceive = dateOfSampleReceive;
 	}
 
@@ -308,11 +303,11 @@ public abstract class LabResult {
 		this.sampleType = sampleType;
 	}
 
-	public String getLabResultDate() {
+	public LocalDateTime getLabResultDate() {
 		return labResultDate;
 	}
 
-	public void setLabResultDate(String labResultDate) {
+	public void setLabResultDate(LocalDateTime labResultDate) {
 		this.labResultDate = labResultDate;
 	}
 
@@ -340,11 +335,11 @@ public abstract class LabResult {
 		this.requestingFacilityName = requestingFacilityName;
 	}
 
-	public String getNotProcessingCause() {
+	public NotProcessingCause getNotProcessingCause() {
 		return notProcessingCause;
 	}
 
-	public void setNotProcessingCause(String notProcessingCause) {
+	public void setNotProcessingCause(NotProcessingCause notProcessingCause) {
 		this.notProcessingCause = notProcessingCause;
 	}
 
@@ -398,5 +393,33 @@ public abstract class LabResult {
 
 	public void setFinalResult(String finalResult) {
 		this.finalResult = finalResult;
+	}
+
+	public boolean isPending() {
+		return LabResultStatus.PENDING == labResultStatus;
+	}
+
+	public boolean isNotProcessed() {
+		return LabResultStatus.NOT_PROCESSED == labResultStatus;
+	}
+
+	public boolean isProcessed() {
+		return LabResultStatus.PROCESSED == labResultStatus;
+	}
+
+	public LocalDateTime getHarvestDate() {
+		return harvestDate;
+	}
+
+	public void setHarvestDate(LocalDateTime specimenDateTime) {
+		this.harvestDate = specimenDateTime;
+	}
+
+	public LocalDateTime getRegisteredDateTime() {
+		return registeredDateTime;
+	}
+
+	public void setRegisteredDateTime(LocalDateTime registeredDateTime) {
+		this.registeredDateTime = registeredDateTime;
 	}
 }

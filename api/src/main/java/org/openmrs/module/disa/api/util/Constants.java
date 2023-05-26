@@ -7,7 +7,7 @@ package org.openmrs.module.disa.api.util;
  */
 public class Constants {
 
-	//Concepts
+	// Concepts
 	public static final String LAB_NUMBER = "e173835b-135c-4fab-9b5e-b255565980e5";
 	public static final String PICKING_LOCATION = "e5269927-e25d-464e-9584-dc6ea2d8af64";
 	public static final String ENCOUNTER_SERVICE = "f448b038-f0af-4a0f-9a48-635e1838d22d";
@@ -31,6 +31,10 @@ public class Constants {
 	public static final String DISA_FORM = "5b7cecc3-4ba3-4710-85ae-fc0c13e83e27";
 	public static final String ORDER_ID = "e8c63cd6-9113-48b2-99cd-6112103f1448";
 	public static final String DISA_NID = "79ad599a-50df-48f8-865c-0095ec9a9d01";
+	public static final String CD4_ABSOLUTE = "e1dd5ab4-1d5f-11e0-b929-000c29ad1d07";
+	public static final String CD4_PERCENT = "e1d48fba-1d5f-11e0-b929-000c29ad1d07";
+	public static final String SAMPLE_REGISTRATION_DATE = "a01695c6-71d9-4b5b-874f-892fba0a0b7b";
+	public static final String RESULT_APPROVAL_DATE = "c5ed82fb-ba94-4ac4-b20b-a55ff453ca0a";
 
 	public static final String LAST_VIRALLOAD_RESULT = "79c69931-b656-4b88-9f13-39274a1f6e45";
 	public static final String ART_REGIMEN = "d5506770-307c-4d44-b975-f17c6bd1da53";
@@ -124,8 +128,6 @@ public class Constants {
 
 	public static final String NID = "nid";
 	public static final String DUPLICATED_REQUEST_ID = "duplicatedReqId";
-	public static final String VIRAL_LOAD_NO_RESULT = "result";
-	public static final String FLAGGED_FOR_REVIEW = "review";
 	public static final String DUPLICATED_NID = "duplicate";
 
 	public static final String MORE_THAN = ">";

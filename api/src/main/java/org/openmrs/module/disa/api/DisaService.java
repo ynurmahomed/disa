@@ -46,7 +46,7 @@ public interface DisaService extends OpenmrsService {
 
 	public Serializable saveFsrLog(FsrLog fsrLog);
 
-	public boolean existsByRequestId(String requestId);
+	public boolean existsInFsrLog(LabResult labResult);
 
 	public List<Integer> getPatientByNid(String identifier);
 

@@ -49,6 +49,7 @@
 		<property name="interceptorNames">
 			<list>
 				<value>authorizationInterceptor</value>
+				<value>loggingInterceptor</value>
 			</list>
 		</property>
 	</bean>
@@ -59,9 +60,9 @@
 			<list>
 				<value>${project.parent.groupId}.${project.parent.artifactId}.api.DisaService</value>
 				<ref local="disaService"/>
+				<value>${project.parent.groupId}.${project.parent.artifactId}.api.LabResultService</value>
+				<ref local="labResultService"/>
 			</list>
 		</property>
 	</bean>
-
-
 </beans>

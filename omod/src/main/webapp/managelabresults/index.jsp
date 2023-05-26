@@ -96,13 +96,13 @@
 							<td>${labResult.gender}</td>
 							<td>${labResult.ageInYears}</td>
 							<td>${labResult.requestId}</td>
-							<td>${labResult.processingDate.substring(0,10)}</td>
-							<td>${labResult.labResultDate.substring(0,10)}</td>
+							<td>${labResult.processingDate.toString().substring(0,10)}</td>
+							<td>${labResult.labResultDate.toString().substring(0,10)}</td>
 							<td>${labResult.finalResult}</td>
 							<td>${labResult.typeOfResult}</td>
 							<td>${labResult.labResultStatus}</td>
-							<td>${labResult.createdAt.substring(0,10)}</td>
-							<td>${labResult.updatedAt.substring(0,10)}</td>
+							<td>${labResult.createdAt.toString().substring(0,10)}</td>
+							<td>${labResult.updatedAt.toString().substring(0,10)}</td>
 							<td>${labResult.notProcessingCause}</td>
 							<td class="actions" style="text-align: center;">
 								<c:if test="${labResult.labResultStatus != 'PROCESSED'}">
@@ -192,9 +192,8 @@
 
 	var notProcessingCause = {
 		'NID_NOT_FOUND': "<openmrs:message code='disa.notProcessingCause.NID_NOT_FOUND' />",
-		'NO_RESULT': "<openmrs:message code='disa.notProcessingCause.NO_RESULT'/>",
+		'INVALID_RESULT': "<openmrs:message code='disa.notProcessingCause.INVALID_RESULT'/>",
 		'DUPLICATE_NID': "<openmrs:message code='disa.notProcessingCause.DUPLICATE_NID'/>",
-		'FLAGGED_FOR_REVIEW': "<openmrs:message code='disa.notProcessingCause.FLAGGED_FOR_REVIEW'/>",
 		'DUPLICATED_REQUEST_ID': "<openmrs:message code='disa.notProcessingCause.DUPLICATED_REQUEST_ID'/>",
 	};
 
@@ -445,7 +444,10 @@
 				{ data: "requestingFacilityName" },
 				{ data: "requestingDistrictName" },
 				{ data: "healthFacilityLabCode" },
-				{ data: "nid" },
+				{
+					data: "nid",
+					render: (data) => data || null
+				},
 				{
 					data: "firstName",
 					render: (data, type, row, meta) => {

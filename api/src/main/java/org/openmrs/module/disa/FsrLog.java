@@ -5,37 +5,43 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="fsr_log")
+@Table(name = "fsr_log")
 public class FsrLog implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	@Id
 	@GeneratedValue
 	private Integer id;
 
-	@Column(name="patient_id")
+	@Column(name = "patient_id")
 	private Integer patientId;
-	
-	@Column(name="encounter_id")
+
+	@Column(name = "encounter_id")
 	private Integer encounterId;
-	
-	@Column(name="patient_identifier")
+
+	@Column(name = "patient_identifier")
 	private String patientIdentifier;
-	
-	@Column(name="request_id")
+
+	@Column(name = "request_id")
 	private String requestId;
-	
-	@Column(name="creator")
+
+	@Column(name = "creator")
 	private Integer creator;
-	
-	@Column(name="date_created")
+
+	@Column(name = "date_created")
 	private Date dateCreated;
+
+	@Column(name = "type_of_result")
+	@Enumerated(EnumType.STRING)
+	private TypeOfResult typeOfResult;
 
 	public Integer getPatientId() {
 		return patientId;
@@ -83,5 +89,9 @@ public class FsrLog implements Serializable {
 
 	public void setCreator(Integer creator) {
 		this.creator = creator;
+	}
+
+	public void setTypOfResult(TypeOfResult typeOfResult) {
+		this.typeOfResult = typeOfResult;
 	}
 }
