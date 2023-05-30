@@ -15,17 +15,21 @@ package org.openmrs.module.disa.api.impl;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Encounter;
 import org.openmrs.LocationAttribute;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.PatientIdentifierType;
+import org.openmrs.api.EncounterService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
+import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.disa.FsrLog;
 import org.openmrs.module.disa.LabResult;
@@ -46,6 +50,7 @@ public class DisaServiceImpl extends BaseOpenmrsService implements DisaService {
 
 	protected final Log log = LogFactory.getLog(this.getClass());
 
+	private EncounterService encounterService;
 	private LabResultService labResultService;
 	private PatientService patientService;
 	private LocationService locationService;
@@ -56,11 +61,13 @@ public class DisaServiceImpl extends BaseOpenmrsService implements DisaService {
 			DisaDAO dao,
 			LabResultService labResultService,
 			@Qualifier("patientService") PatientService patientService,
-			@Qualifier("locationService") LocationService locationService) {
+			@Qualifier("locationService") LocationService locationService,
+			EncounterService encounterService) {
 		this.dao = dao;
 		this.labResultService = labResultService;
 		this.patientService = patientService;
 		this.locationService = locationService;
+		this.encounterService = encounterService;
 	}
 
 	@Override
@@ -124,5 +131,23 @@ public class DisaServiceImpl extends BaseOpenmrsService implements DisaService {
 		return patients.stream()
 				.filter(p -> !p.getActiveIdentifiers().isEmpty())
 				.collect(Collectors.toList());
+	}
+
+	public void handleProcessedLabResult(LabResult labResult, Encounter encounter) {
+		encounterService.saveEncounter(encounter);
+
+		FsrLog fsrLog = new FsrLog();
+		fsrLog.setPatientId(encounter.getPatient().getPatientId());
+		fsrLog.setEncounterId(encounter.getEncounterId());
+		fsrLog.setPatientIdentifier(labResult.getNid());
+		fsrLog.setRequestId(labResult.getRequestId());
+		fsrLog.setCreator(Context.getAuthenticatedUser().getId());
+		fsrLog.setDateCreated(new Date());
+		fsrLog.setTypOfResult(labResult.getTypeOfResult());
+		saveFsrLog(fsrLog);
+
+		String defaultLocationUuid = locationService.getDefaultLocation().getUuid();
+		labResult.setSynchronizedBy(defaultLocationUuid);
+		labResultService.updateLabResult(labResult);
 	}
 }
