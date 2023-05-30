@@ -10,7 +10,6 @@ import org.openmrs.module.disa.api.sync.LabResultProcessor;
 import org.openmrs.scheduler.tasks.AbstractTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
@@ -50,7 +49,6 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 		logger.info("module ended...");
 	}
 
-	@Transactional(rollbackFor = Exception.class)
 	private void createViralLoadForm() throws HttpHostConnectException {
 
 		List<LabResult> labResults = labResultService.getResultsToSync();
