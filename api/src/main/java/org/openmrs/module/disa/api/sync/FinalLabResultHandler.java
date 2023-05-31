@@ -1,12 +1,6 @@
 package org.openmrs.module.disa.api.sync;
 
-import java.util.Date;
-
 import org.openmrs.Encounter;
-import org.openmrs.api.EncounterService;
-import org.openmrs.api.LocationService;
-import org.openmrs.api.context.Context;
-import org.openmrs.module.disa.FsrLog;
 import org.openmrs.module.disa.LabResult;
 import org.openmrs.module.disa.LabResultStatus;
 import org.openmrs.module.disa.api.DisaService;
@@ -33,17 +27,12 @@ public class FinalLabResultHandler extends BaseLabResultHandler {
     private static final Logger logger = LoggerFactory.getLogger(FinalLabResultHandler.class);
 
     private LabResultService labResultService;
-    private EncounterService encounterService;
     private DisaService disaService;
-    private LocationService locationService;
 
     @Autowired
-    public FinalLabResultHandler(LabResultService labResultService, EncounterService encounterService,
-            DisaService disaService, LocationService locationService) {
+    public FinalLabResultHandler(LabResultService labResultService, DisaService disaService) {
         this.labResultService = labResultService;
-        this.encounterService = encounterService;
         this.disaService = disaService;
-        this.locationService = locationService;
     }
 
     @Override
@@ -69,21 +58,7 @@ public class FinalLabResultHandler extends BaseLabResultHandler {
             throw new DisaModuleAPIException(ENCOUNTER_KEY + " is missing from the sync context");
         }
 
-        encounterService.saveEncounter(encounter);
-
-        FsrLog fsrLog = new FsrLog();
-        fsrLog.setPatientId(encounter.getPatient().getPatientId());
-        fsrLog.setEncounterId(encounter.getEncounterId());
-        fsrLog.setPatientIdentifier(labResult.getNid());
-        fsrLog.setRequestId(labResult.getRequestId());
-        fsrLog.setCreator(Context.getAuthenticatedUser().getId());
-        fsrLog.setDateCreated(new Date());
-        fsrLog.setTypOfResult(labResult.getTypeOfResult());
-        disaService.saveFsrLog(fsrLog);
-
-        String defaultLocationUuid = locationService.getDefaultLocation().getUuid();
-        labResult.setSynchronizedBy(defaultLocationUuid);
-        labResultService.updateLabResult(labResult);
+        disaService.handleProcessedLabResult(labResult, encounter);
 
         // Clear the sync context
         clearSyncContext();

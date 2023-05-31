@@ -16,12 +16,13 @@ package org.openmrs.module.disa.api;
 import java.io.Serializable;
 import java.util.List;
 
+import org.openmrs.Encounter;
 import org.openmrs.LocationAttribute;
 import org.openmrs.Patient;
 import org.openmrs.annotation.Authorized;
 import org.openmrs.api.OpenmrsService;
-import org.openmrs.module.disa.LabResult;
 import org.openmrs.module.disa.FsrLog;
+import org.openmrs.module.disa.LabResult;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -56,4 +57,6 @@ public interface DisaService extends OpenmrsService {
 	void mapIdentifier(String patientUuid, LabResult disa);
 
 	List<Patient> getPatientsToMapSuggestion(LabResult disa);
+
+	void handleProcessedLabResult(LabResult labResult, Encounter encounter);
 }
