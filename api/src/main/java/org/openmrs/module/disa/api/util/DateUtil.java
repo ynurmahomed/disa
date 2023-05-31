@@ -16,8 +16,8 @@ import java.util.Date;
  */
 public class DateUtil {
 
-	public static Date parseAtMidnight(String date) {
-		Instant instant = LocalDateTime.parse(date)
+	public static Date atMidnight(LocalDateTime date) {
+		Instant instant = date
 				.with(LocalTime.MIDNIGHT)
 				.atZone(ZoneId.systemDefault())
 				.toInstant();

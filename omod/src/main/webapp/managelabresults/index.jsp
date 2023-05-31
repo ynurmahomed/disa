@@ -157,8 +157,9 @@
 			</table>
 			<br />
 			<div class="submit-btn center">
-				<input type="button" value='<spring:message code="disa.btn.export"/>'
-					name="exportViralLoadResults" onclick="window.location.href = '${exportUri}'" />
+				<button onclick="window.location.href = '${exportUri}'" >
+					<spring:message code="disa.btn.export"/>
+				</button>
 			</div>
 		</div>
 	</div>
@@ -459,7 +460,10 @@
 					}
 				},
 				{ data: "gender" },
-				{ data: "ageInYears" },
+				{
+					data: "ageInYears",
+					render: (data) => data || null
+				},
 				{ data: "requestId" },
 				{
 					data: "processingDate",
