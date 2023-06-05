@@ -1,17 +1,17 @@
 package org.openmrs.module.disa.api.sync;
 
-import java.text.Normalizer;
-import java.text.ParseException;
 import java.util.Date;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
+import org.openmrs.Concept;
 import org.openmrs.Encounter;
 import org.openmrs.EncounterRole;
 import org.openmrs.EncounterType;
 import org.openmrs.Location;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
+import org.openmrs.Person;
 import org.openmrs.Provider;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.EncounterService;
@@ -93,7 +93,7 @@ public class HIVVLLabResultHandler extends BaseLabResultHandler {
                 encounter.setForm(formService.getFormByUuid(Constants.DISA_FORM));
                 encounter.setProvider(encounterRole, provider);
 
-                createFsrObs(vl, encounter, dateWithLeadingZeros);
+                createFsrObs(vl, encounter);
 
                 labResult.setLabResultStatus(LabResultStatus.PROCESSED);
                 getSyncContext().put(ENCOUNTER_KEY, encounter);
@@ -116,57 +116,65 @@ public class HIVVLLabResultHandler extends BaseLabResultHandler {
 
             updateNotProcessed(vl, NotProcessingCause.INVALID_RESULT);
 
-        } else if (vl.getFinalResult().contains(Constants.MORE_THAN)) {
-
-            String trim = vl.getFinalResult().trim();
-            String maybeNumeric = trim.substring(trim.indexOf(Constants.MORE_THAN) + 1).trim();
+        } else if (vl.getFinalResult().contains(Constants.MORE_THAN)
+                || vl.getFinalResult().contains(Constants.LESS_THAN)) {
+            String finalResult = vl.getFinalResult();
+            String maybeNumeric = removeAllExceptNumericPart(
+                    finalResult.substring(finalResult.indexOf(Constants.MORE_THAN) + 1));
             if (!isNumeric(maybeNumeric)) {
                 updateNotProcessed(vl, NotProcessingCause.INVALID_RESULT);
             }
         }
     }
 
-    private void createFsrObs(HIVVLLabResult labResult, Encounter encounter, Date dateWithLeadingZeros) {
+    private String removeAllExceptNumericPart(String result) {
+        return result
+                .toLowerCase()
+                .replaceAll("\\s", "")
+                .replace(Constants.LESS_THAN, "")
+                .replace(Constants.MORE_THAN, "")
+                .replace(Constants.COPIES, "")
+                .replace("copies", "")
+                .replace("cp", "")
+                .replace(Constants.FORWARD_SLASH, "")
+                .replace(Constants.ML, "");
+    }
+
+    private void createFsrObs(HIVVLLabResult labResult, Encounter encounter) {
         Obs obs23835 = new Obs();
-        obs23835.setPerson(personService.getPersonByUuid(encounter.getPatient().getUuid()));
-        obs23835.setObsDatetime(dateWithLeadingZeros);
+        Person person = personService.getPersonByUuid(encounter.getPatient().getUuid());
+        Date obsDatetime = encounter.getEncounterDatetime();
+        Location location = encounter.getLocation();
+
+        // Request ID
+        Obs obs22771 = new Obs();
+        obs22771.setPerson(person);
+        obs22771.setObsDatetime(obsDatetime);
+        obs22771.setConcept(conceptService.getConceptByUuid(Constants.ORDER_ID));
+        obs22771.setLocation(location);
+        obs22771.setEncounter(encounter);
+        if (!(labResult.getRequestId() == null) && StringUtils.isNotEmpty(labResult.getRequestId().trim())) {
+            obs22771.setValueText(labResult.getRequestId().trim());
+            encounter.addObs(obs22771);
+        }
+
+        // Requesting Laboratory ID
+        obs23835.setPerson(person);
+        obs23835.setObsDatetime(obsDatetime);
         obs23835.setConcept(conceptService.getConceptByUuid(Constants.LAB_NUMBER));
-        obs23835.setLocation(encounter.getLocation());
+        obs23835.setLocation(location);
         obs23835.setEncounter(encounter);
-        if (StringUtils.isNotEmpty(labResult.getHealthFacilityLabCode())) {// RequestingFacilityCode
+        if (StringUtils.isNotEmpty(labResult.getHealthFacilityLabCode())) {
             obs23835.setValueText(labResult.getHealthFacilityLabCode());
             encounter.addObs(obs23835);
         }
 
-        Obs obs23883 = new Obs();
-        obs23883.setPerson(personService.getPersonByUuid(encounter.getPatient().getUuid()));
-        obs23883.setObsDatetime(dateWithLeadingZeros);
-        obs23883.setConcept(conceptService.getConceptByUuid(Constants.PICKING_LOCATION));
-        obs23883.setLocation(encounter.getLocation());
-        obs23883.setEncounter(encounter);
-        if (StringUtils.isNotEmpty(labResult.getRequestingFacilityName())) {// RequestingFacilityName
-            obs23883.setValueText(labResult.getRequestingFacilityName());
-            encounter.addObs(obs23883);
-        }
-
-        Obs obs23836 = new Obs();
-        obs23836.setPerson(personService.getPersonByUuid(encounter.getPatient().getUuid()));
-        obs23836.setObsDatetime(dateWithLeadingZeros);
-        obs23836.setConcept(conceptService.getConceptByUuid(Constants.ENCOUNTER_SERVICE));
-        obs23836.setLocation(encounter.getLocation());
-        obs23836.setEncounter(encounter);
-        if (!(labResult.getEncounter() == null)
-                && StringUtils.isNotEmpty(wardSelection(labResult.getEncounter().trim()))) {// WARD
-            obs23836.setValueCoded(conceptService
-                    .getConceptByName(wardSelection(labResult.getEncounter().trim())));
-            encounter.addObs(obs23836);
-        }
-
+        // Currently pregnant?
         Obs obs1982 = new Obs();
-        obs1982.setPerson(personService.getPersonByUuid(encounter.getPatient().getUuid()));
-        obs1982.setObsDatetime(dateWithLeadingZeros);
+        obs1982.setPerson(person);
+        obs1982.setObsDatetime(obsDatetime);
         obs1982.setConcept(conceptService.getConceptByUuid(Constants.PREGNANT));
-        obs1982.setLocation(encounter.getLocation());
+        obs1982.setLocation(location);
         obs1982.setEncounter(encounter);
         if (labResult.getPregnant().trim().equalsIgnoreCase(Constants.YES)
                 || labResult.getPregnant().trim().equalsIgnoreCase(Constants.SIM)) {// Pregnant
@@ -181,14 +189,15 @@ public class HIVVLLabResultHandler extends BaseLabResultHandler {
             encounter.addObs(obs1982);
         }
 
+        // Currently breastfeeding?
         Obs obs6332 = new Obs();
-        obs6332.setPerson(personService.getPersonByUuid(encounter.getPatient().getUuid()));
-        obs6332.setObsDatetime(dateWithLeadingZeros);
+        obs6332.setPerson(person);
+        obs6332.setObsDatetime(obsDatetime);
         obs6332.setConcept(conceptService.getConceptByUuid(Constants.LACTATION));
-        obs6332.setLocation(encounter.getLocation());
+        obs6332.setLocation(location);
         obs6332.setEncounter(encounter);
         if (labResult.getBreastFeeding().trim().equalsIgnoreCase(Constants.YES)
-                || labResult.getPregnant().trim().equalsIgnoreCase(Constants.SIM)) {// BreastFeeding
+                || labResult.getPregnant().trim().equalsIgnoreCase(Constants.SIM)) {
             obs6332.setValueCoded(conceptService.getConceptByUuid(Constants.CONCEPT_YES));
             encounter.addObs(obs6332);
         } else if (labResult.getBreastFeeding().trim().equalsIgnoreCase(Constants.NO)
@@ -200,13 +209,54 @@ public class HIVVLLabResultHandler extends BaseLabResultHandler {
             encounter.addObs(obs6332);
         }
 
+        // Requesting facility name
+        Obs obs23883 = new Obs();
+        obs23883.setPerson(person);
+        obs23883.setObsDatetime(obsDatetime);
+        obs23883.setConcept(conceptService.getConceptByUuid(Constants.PICKING_LOCATION));
+        obs23883.setLocation(location);
+        obs23883.setEncounter(encounter);
+        if (StringUtils.isNotEmpty(labResult.getRequestingFacilityName())) {
+            obs23883.setValueText(labResult.getRequestingFacilityName());
+            encounter.addObs(obs23883);
+        }
+
+        // Specimen collection Date
+        Obs obs23821 = new Obs();
+        obs23821.setPerson(person);
+        obs23821.setObsDatetime(obsDatetime);
+        obs23821.setConcept(conceptService.getConceptByUuid(Constants.SAMPLE_COLLECTION_DATE));
+        obs23821.setLocation(location);
+        obs23821.setEncounter(encounter);
+        if (labResult.getHarvestDate() != null) {
+            obs23821.setValueDate(DateUtil.toDate(labResult.getHarvestDate()));
+            encounter.addObs(obs23821);
+        }
+
+        // Specimen registration date
+        if (labResult.getRegisteredDateTime() != null) {
+            Concept sampleCollectionDate = conceptService.getConceptByUuid(Constants.SAMPLE_REGISTRATION_DATE);
+            Obs obs165461 = new Obs(person, sampleCollectionDate, obsDatetime, location);
+            obs165461.setValueDate(DateUtil.toDate(labResult.getRegisteredDateTime()));
+            encounter.addObs(obs165461);
+        }
+
+        // Result authorization date
+        if (labResult.getLabResultDate() != null) {
+            Concept resultApprovalDate = conceptService.getConceptByUuid(Constants.RESULT_APPROVAL_DATE);
+            Obs obs165462 = new Obs(person, resultApprovalDate, obsDatetime, location);
+            obs165462.setValueDate(DateUtil.toDate(labResult.getLabResultDate()));
+            encounter.addObs(obs165462);
+        }
+
+        // Reason for requesting viral load
         Obs obs23818 = new Obs();
-        obs23818.setPerson(personService.getPersonByUuid(encounter.getPatient().getUuid()));
-        obs23818.setObsDatetime(dateWithLeadingZeros);
+        obs23818.setPerson(person);
+        obs23818.setObsDatetime(obsDatetime);
         obs23818.setConcept(conceptService.getConceptByUuid(Constants.REASON_FOR_TEST));
-        obs23818.setLocation(encounter.getLocation());
+        obs23818.setLocation(location);
         obs23818.setEncounter(encounter);
-        if (labResult.getReasonForTest().trim().equalsIgnoreCase(Constants.ROUTINE)) {// ReasonForTest
+        if (labResult.getReasonForTest().trim().equalsIgnoreCase(Constants.ROUTINE)) {
             obs23818.setValueCoded(conceptService.getConceptByUuid(Constants.ROUTINE_VIRAL_LOAD));
             encounter.addObs(obs23818);
         } else if (labResult.getReasonForTest().trim().equalsIgnoreCase(Constants.SUSPECTED_TREATMENT_FAILURE)) {
@@ -221,238 +271,54 @@ public class HIVVLLabResultHandler extends BaseLabResultHandler {
             encounter.addObs(obs23818);
         }
 
-        Obs obs23821 = new Obs();
-        obs23821.setPerson(personService.getPersonByUuid(encounter.getPatient().getUuid()));
-        obs23821.setObsDatetime(dateWithLeadingZeros);
-        obs23821.setConcept(conceptService.getConceptByUuid(Constants.SAMPLE_COLLECTION_DATE));
-        obs23821.setLocation(encounter.getLocation());
-        obs23821.setEncounter(encounter);
-        if (labResult.getHarvestDate() != null) {// SpecimenDatetime
-            obs23821.setValueDate(DateUtil.toDate(labResult.getHarvestDate()));
-            encounter.addObs(obs23821);
-        }
-
-        Obs obs23824 = new Obs();
-        obs23824.setPerson(personService.getPersonByUuid(encounter.getPatient().getUuid()));
-        obs23824.setObsDatetime(dateWithLeadingZeros);
-        obs23824.setConcept(conceptService.getConceptByUuid(Constants.SAMPLE_COLLECTION_METHOD));
-        obs23824.setLocation(encounter.getLocation());
-        obs23824.setEncounter(encounter);
-        if (!(labResult.getHarvestType() == null)) {
-            if (removeAccents(labResult.getHarvestType().trim()).equalsIgnoreCase(Constants.PV)) {// TypeOfSampleCollection
-                obs23824
-                        .setValueCoded(conceptService.getConceptByUuid(Constants.VENOUS_PUNCTURE));
-                encounter.addObs(obs23824);
-            } else if (removeAccents(labResult.getHarvestType().trim()).equalsIgnoreCase(Constants.PD)) {
-                obs23824.setValueCoded(
-                        conceptService.getConceptByUuid(Constants.DIGITAL_PUNCTURE));
-                encounter.addObs(obs23824);
-            }
-        }
-
-        Obs obs23826 = new Obs();
-        obs23826.setPerson(personService.getPersonByUuid(encounter.getPatient().getUuid()));
-        obs23826.setObsDatetime(dateWithLeadingZeros);
-        obs23826.setConcept(conceptService.getConceptByUuid(Constants.SAMPLE_DATE_RECEIPT));
-        obs23826.setLocation(encounter.getLocation());
-        obs23826.setEncounter(encounter);
-        if (labResult.getDateOfSampleReceive() != null) {// ReceivedDateTime
-            obs23826.setValueDate(DateUtil.toDate(labResult.getDateOfSampleReceive()));
-            encounter.addObs(obs23826);
-        }
-
-        Obs obs23833 = new Obs();
-        obs23833.setPerson(personService.getPersonByUuid(encounter.getPatient().getUuid()));
-        obs23833.setObsDatetime(dateWithLeadingZeros);
-        obs23833.setConcept(conceptService.getConceptByUuid(Constants.SAMPLE_PROCESSING_DATE));
-        obs23833.setLocation(encounter.getLocation());
-        obs23833.setEncounter(encounter);
-        if (labResult.getProcessingDate() != null) {// AnalysisDateTime
-            obs23833.setValueDate(DateUtil.atMidnight(labResult.getProcessingDate()));
-            encounter.addObs(obs23833);
-        }
-
-        // LastViralLoadResult & LastViralLoadDate
-        Obs obs165314 = new Obs();
-        obs165314.setPerson(personService.getPersonByUuid(encounter.getPatient().getUuid()));
-        obs165314.setObsDatetime(dateWithLeadingZeros);
-        obs165314.setConcept(conceptService.getConceptByUuid(Constants.LAST_VIRALLOAD_RESULT));
-        obs165314.setLocation(encounter.getLocation());
-        obs165314.setEncounter(encounter);
-        obs165314.setValueText(labResult.getLastViralLoadResult());
-        if (DateUtil.isValidDate(labResult.getLastViralLoadDate())) {
-
-            try {
-                obs165314.setObsDatetime((DateUtil.stringToDate(labResult.getLastViralLoadDate())));
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-
-            encounter.addObs(obs165314);
-        }
-
-        // PrimeiraLinha & SegundaLinha
-        Obs obs21151 = new Obs();
-        obs21151.setPerson(personService.getPersonByUuid(encounter.getPatient().getUuid()));
-        obs21151.setObsDatetime(dateWithLeadingZeros);
-        obs21151.setConcept(conceptService.getConceptByUuid(Constants.LINHA_TERAPEUTICA));
-        obs21151.setLocation(encounter.getLocation());
-        obs21151.setEncounter(encounter);
-        if (labResult.getPrimeiraLinha().equalsIgnoreCase(Constants.SIM)) {
-            obs21151.setValueCoded(conceptService.getConceptByUuid(Constants.PRIMEIRA_LINHA));
-            encounter.addObs(obs21151);
-        } else if (labResult.getSegundaLinha().equalsIgnoreCase(Constants.SIM)) {
-            obs21151.setValueCoded(conceptService.getConceptByUuid(Constants.SEGUNDA_LINHA));
-            encounter.addObs(obs21151);
-        }
-
-        // ARTRegimen
-        Obs obs165315 = new Obs();
-        obs165315.setPerson(personService.getPersonByUuid(encounter.getPatient().getUuid()));
-        obs165315.setObsDatetime(dateWithLeadingZeros);
-        obs165315.setConcept(conceptService.getConceptByUuid(Constants.ART_REGIMEN));
-        obs165315.setLocation(encounter.getLocation());
-        obs165315.setEncounter(encounter);
-        if (StringUtils.isNotEmpty(labResult.getArtRegimen())) {
-            obs165315.setValueText(labResult.getArtRegimen());
-            encounter.addObs(obs165315);
-        }
-
-        // DataDeInicioDoTARV
-        Obs obs1190 = new Obs();
-        obs1190.setPerson(personService.getPersonByUuid(encounter.getPatient().getUuid()));
-        obs1190.setObsDatetime(dateWithLeadingZeros);
-        obs1190.setConcept(conceptService.getConceptByUuid(Constants.ART_START_DATE));
-        obs1190.setLocation(encounter.getLocation());
-        obs1190.setEncounter(encounter);
-        if (DateUtil.isValidDate(labResult.getDataDeInicioDoTARV())) {
-            try {
-                obs1190.setValueDatetime(DateUtil.stringToDate(labResult.getDataDeInicioDoTARV()));
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-            encounter.addObs(obs1190);
-        }
-
-        // SpecimenDatetime
-        Obs obs23840 = new Obs();
-        obs23840.setPerson(personService.getPersonByUuid(encounter.getPatient().getUuid()));
-        obs23840.setObsDatetime(dateWithLeadingZeros);
-        obs23840.setConcept(conceptService.getConceptByUuid(Constants.VIRAL_LOAD_REQUEST_DATE));
-        obs23840.setLocation(encounter.getLocation());
-        obs23840.setEncounter(encounter);
-        if (labResult.getHarvestDate() != null) {
-            obs23840.setValueDate(DateUtil.toDate(labResult.getHarvestDate()));
-            encounter.addObs(obs23840);
-        }
-
-        // LIMSSpecimenSourceCode
-        Obs obs23832 = new Obs();
-        obs23832.setPerson(personService.getPersonByUuid(encounter.getPatient().getUuid()));
-        obs23832.setObsDatetime(dateWithLeadingZeros);
-        obs23832.setConcept(conceptService.getConceptByUuid(Constants.SAMPLE_TYPE));
-        obs23832.setLocation(encounter.getLocation());
-        obs23832.setEncounter(encounter);
-        if (!(labResult.getSampleType() == null)
-                && labResult.getSampleType().trim().equalsIgnoreCase(Constants.DRYBLOODSPOT)) {
-            obs23832.setValueCoded(conceptService.getConceptByUuid(Constants.DRY_BLOOD_SPOT));
-            encounter.addObs(obs23832);
-        } else if (!(labResult.getSampleType() == null)
-                && labResult.getSampleType().trim().equalsIgnoreCase(Constants.PLASMA)) {
-            obs23832.setValueCoded(conceptService.getConceptByUuid(Constants.PLASMA_));
-            encounter.addObs(obs23832);
-        }
-
         // Using FinalViralLoadResult column only
         // field: Cópias/ml
         if (isNumeric(labResult.getFinalResult().trim())) {
             Obs obs856 = new Obs();
-            obs856.setPerson(personService.getPersonByUuid(encounter.getPatient().getUuid()));
-            obs856.setObsDatetime(dateWithLeadingZeros);
+            obs856.setPerson(person);
+            obs856.setObsDatetime(obsDatetime);
             obs856.setConcept(conceptService.getConceptByUuid(Constants.VIRAL_LOAD_COPIES));
-            obs856.setLocation(encounter.getLocation());
+            obs856.setLocation(location);
             obs856.setEncounter(encounter);
             obs856.setValueNumeric(Double.valueOf(labResult.getFinalResult().trim()));
             encounter.addObs(obs856);
-        } else
-
-        // field: dropbox with answer label Indectetável
-        if (labResult.getFinalResult().trim().equalsIgnoreCase(Constants.INDETECTAVEL)) {
+        } else if (labResult.getFinalResult().trim().equalsIgnoreCase(Constants.INDETECTAVEL)) {
+            // field: dropbox with answer label Indectetável
             Obs obs1305 = new Obs();
-            obs1305.setPerson(personService.getPersonByUuid(encounter.getPatient().getUuid()));
-            obs1305.setObsDatetime(dateWithLeadingZeros);
+            obs1305.setPerson(person);
+            obs1305.setObsDatetime(obsDatetime);
             obs1305.setConcept(
                     conceptService.getConceptByUuid(Constants.HIV_VIRAL_LOAD_QUALITATIVE));
             obs1305.setValueCoded(
                     conceptService.getConceptByUuid(Constants.UNDETECTABLE_VIRAL_LOAD));
-            obs1305.setLocation(encounter.getLocation());
+            obs1305.setLocation(location);
             obs1305.setEncounter(encounter);
             encounter.addObs(obs1305);
-        } else
-
-        // field: dropbox with answer <
-        if (labResult.getFinalResult().contains(Constants.LESS_THAN)) {
+        } else if (labResult.getFinalResult().contains(Constants.LESS_THAN)) {
+            // field: dropbox with answer <
             Obs obs1305 = new Obs();
-            obs1305.setPerson(personService.getPersonByUuid(encounter.getPatient().getUuid()));
-            obs1305.setObsDatetime(dateWithLeadingZeros);
+            obs1305.setPerson(person);
+            obs1305.setObsDatetime(obsDatetime);
             obs1305.setConcept(
                     conceptService.getConceptByUuid(Constants.HIV_VIRAL_LOAD_QUALITATIVE));
             obs1305.setValueCoded(conceptService.getConceptByUuid(Constants.LESSTHAN));
-            obs1305.setLocation(encounter.getLocation());
+            obs1305.setLocation(location);
             obs1305.setEncounter(encounter);
-            obs1305.setComment(labResult.getFinalResult()
-                    .trim()
-                    .substring(1)
-                    .replace(Constants.LESS_THAN, "")
-                    .replace(Constants.COPIES, "")
-                    .replace(Constants.FORWARD_SLASH, "")
-                    .replace(Constants.ML, "")
-                    .trim());
+            String finalResult = labResult.getFinalResult();
+            obs1305.setComment(removeAllExceptNumericPart(finalResult));
             encounter.addObs(obs1305);
         } else if (labResult.getFinalResult().contains(Constants.MORE_THAN)) {
             Obs obs856 = new Obs();
-            obs856.setPerson(personService.getPersonByUuid(encounter.getPatient().getUuid()));
-            obs856.setObsDatetime(dateWithLeadingZeros);
+            obs856.setPerson(person);
+            obs856.setObsDatetime(obsDatetime);
             obs856.setConcept(conceptService.getConceptByUuid(Constants.VIRAL_LOAD_COPIES));
-            obs856.setLocation(encounter.getLocation());
+            obs856.setLocation(location);
             obs856.setEncounter(encounter);
-            String trim = labResult.getFinalResult().trim();
-            String numericPart = trim.substring(trim.indexOf(Constants.MORE_THAN) + 1);
+            String finalResult = labResult.getFinalResult();
+            String numericPart = removeAllExceptNumericPart(
+                    finalResult.substring(finalResult.indexOf(Constants.MORE_THAN) + 1));
             obs856.setValueNumeric(Double.valueOf(numericPart));
             encounter.addObs(obs856);
-        }
-
-        Obs obs23839 = new Obs();
-        obs23839.setPerson(personService.getPersonByUuid(encounter.getPatient().getUuid()));
-        obs23839.setObsDatetime(dateWithLeadingZeros);
-        obs23839.setConcept(conceptService.getConceptByUuid(Constants.APPROVED_BY));
-        obs23839.setEncounter(encounter);
-        obs23839.setLocation(encounter.getLocation());
-        if (!(labResult.getAprovedBy() == null) && StringUtils.isNotEmpty(labResult.getAprovedBy().trim())) {
-            obs23839.setValueText(labResult.getAprovedBy().trim());
-            encounter.addObs(obs23839);
-        }
-
-        Obs obs23841 = new Obs();
-        obs23841.setPerson(personService.getPersonByUuid(encounter.getPatient().getUuid()));
-        obs23841.setObsDatetime(dateWithLeadingZeros);
-        obs23841.setConcept(conceptService.getConceptByUuid(Constants.LAB_COMMENTS));
-        obs23841.setLocation(encounter.getLocation());
-        obs23841.setEncounter(encounter);
-        if (!(labResult.getLabComments() == null) && StringUtils.isNotEmpty(labResult.getLabComments().trim())) {
-            obs23841.setValueText(labResult.getLabComments().trim());
-            encounter.addObs(obs23841);
-        }
-
-        Obs obs22771 = new Obs();
-        obs22771.setPerson(personService.getPersonByUuid(encounter.getPatient().getUuid()));
-        obs22771.setObsDatetime(dateWithLeadingZeros);
-        obs22771.setConcept(conceptService.getConceptByUuid(Constants.ORDER_ID));
-        obs22771.setLocation(encounter.getLocation());
-        obs22771.setEncounter(encounter);
-        if (!(labResult.getRequestId() == null) && StringUtils.isNotEmpty(labResult.getRequestId().trim())) {
-            obs22771.setValueText(labResult.getRequestId().trim());
-            encounter.addObs(obs22771);
         }
     }
 
@@ -471,55 +337,5 @@ public class HIVVLLabResultHandler extends BaseLabResultHandler {
 
     private boolean hasNoResult(HIVVLLabResult vl) {
         return (vl.getFinalResult() == null || vl.getFinalResult().isEmpty());
-    }
-
-    private String wardSelection(String we) {
-        String wardConcept;
-        switch (we) {
-            case "CI":
-                wardConcept = Constants.CONSULTA_INTEGRADA;
-                break;
-            case "SMI":
-                wardConcept = Constants.SAUDE_MATERNO_INFANTIL;
-                break;
-            case "CPN":
-                wardConcept = Constants.CONSULTA_PRE_NATAL;
-                break;
-            case "HDD":
-                wardConcept = Constants.HOSPITAL_DO_DIA;
-                break;
-            case "CCR":
-                wardConcept = Constants.CONSULTA_DE_CRIANCAS_EM_RISCO;
-                break;
-            case "TARV":
-                wardConcept = Constants.TARV;
-                break;
-            case "TAP":
-                wardConcept = Constants.TRIAGEM_PEDIATRIA;
-                break;
-            case "TAD":
-                wardConcept = Constants.TRIAGEM_ADULTOS;
-                break;
-            case "PED":
-                wardConcept = Constants.ENF_PEDIATRIA;
-                break;
-            case "LAB":
-                wardConcept = Constants.LABORATORIO;
-                break;
-            default:
-                wardConcept = Constants.OUTRO_NAO_CODIFICADO;
-        }
-        return wardConcept;
-    }
-
-    public String removeAccents(String specialCharacter) {
-        try {
-            byte[] bs = specialCharacter.getBytes("ISO-8859-15");
-            return Normalizer.normalize(new String(bs, "UTF-8"), Normalizer.Form.NFD)
-                    .replaceAll("[^\\p{ASCII}]", "");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 }

@@ -309,6 +309,62 @@ public class HIVVLLabResultHandlerTest extends BaseContextMockTest {
     }
 
     @Test
+    public void shouldHandleLessThanCpMl() throws Exception {
+
+        labResult.setFinalResult("< 400 CP / mL");
+
+        hivvlLabResultHandler.handle(labResult);
+
+        Encounter encounter = (Encounter) hivvlLabResultHandler.getSyncContext()
+                .get(BaseLabResultHandler.ENCOUNTER_KEY);
+
+        assertThat(encounter.getEncounterType(), is(encounterType));
+        assertThat(encounter.getPatient(), is(patient));
+
+        // Viral load copies should be empty
+        assertThat(encounter.getObs(),
+                not(hasItem(hasProperty("concept", equalTo(viralLoadCopies)))));
+
+        // Viral load qualitative should be '<'
+        assertThat(encounter.getObs(),
+                hasItem(allOf(
+                        hasProperty("concept", equalTo(viralLoadQualitative)),
+                        hasProperty("valueCoded", equalTo(lessThan)),
+                        hasProperty("comment", equalTo("400")))));
+
+        // calls next handler
+        verify(next, times(1)).handle(labResult);
+    }
+
+    @Test
+    public void shouldHandleLessThanCopiesMl() throws Exception {
+
+        labResult.setFinalResult("< 400 CoPiEs / Ml");
+
+        hivvlLabResultHandler.handle(labResult);
+
+        Encounter encounter = (Encounter) hivvlLabResultHandler.getSyncContext()
+                .get(BaseLabResultHandler.ENCOUNTER_KEY);
+
+        assertThat(encounter.getEncounterType(), is(encounterType));
+        assertThat(encounter.getPatient(), is(patient));
+
+        // Viral load copies should be empty
+        assertThat(encounter.getObs(),
+                not(hasItem(hasProperty("concept", equalTo(viralLoadCopies)))));
+
+        // Viral load qualitative should be '<'
+        assertThat(encounter.getObs(),
+                hasItem(allOf(
+                        hasProperty("concept", equalTo(viralLoadQualitative)),
+                        hasProperty("valueCoded", equalTo(lessThan)),
+                        hasProperty("comment", equalTo("400")))));
+
+        // calls next handler
+        verify(next, times(1)).handle(labResult);
+    }
+
+    @Test
     public void shouldNotSaveMoreThanValuesWithInvalidNumericValues() throws Exception {
 
         labResult.setFinalResult("> 10.000.000,00");
@@ -342,6 +398,87 @@ public class HIVVLLabResultHandlerTest extends BaseContextMockTest {
     public void shouldHandleMoreThanValues() throws Exception {
 
         labResult.setFinalResult("> 10000000");
+
+        hivvlLabResultHandler.handle(labResult);
+
+        Encounter encounter = (Encounter) hivvlLabResultHandler.getSyncContext()
+                .get(BaseLabResultHandler.ENCOUNTER_KEY);
+
+        assertThat(encounter.getEncounterType(), is(encounterType));
+        assertThat(encounter.getPatient(), is(patient));
+
+        // Viral load copies should be the numeric value
+        assertThat(encounter.getObs(),
+                hasItem(allOf(
+                        hasProperty("concept", equalTo(viralLoadCopies)),
+                        hasProperty("valueNumeric", equalTo(10_000_000.0)))));
+
+        // Viral load qualitative should empty
+        assertThat(encounter.getObs(),
+                not(hasItem(hasProperty("concept", equalTo(viralLoadQualitative)))));
+
+        // calls next handler
+        verify(next, times(1)).handle(labResult);
+    }
+
+    @Test
+    public void shouldHandleMoreThanValuesWithCpMl() throws Exception {
+
+        labResult.setFinalResult("> 10000000 cp/ml");
+
+        hivvlLabResultHandler.handle(labResult);
+
+        Encounter encounter = (Encounter) hivvlLabResultHandler.getSyncContext()
+                .get(BaseLabResultHandler.ENCOUNTER_KEY);
+
+        assertThat(encounter.getEncounterType(), is(encounterType));
+        assertThat(encounter.getPatient(), is(patient));
+
+        // Viral load copies should be the numeric value
+        assertThat(encounter.getObs(),
+                hasItem(allOf(
+                        hasProperty("concept", equalTo(viralLoadCopies)),
+                        hasProperty("valueNumeric", equalTo(10_000_000.0)))));
+
+        // Viral load qualitative should empty
+        assertThat(encounter.getObs(),
+                not(hasItem(hasProperty("concept", equalTo(viralLoadQualitative)))));
+
+        // calls next handler
+        verify(next, times(1)).handle(labResult);
+    }
+
+    @Test
+    public void shouldHandleMoreThanValuesWithCopiesMl() throws Exception {
+
+        labResult.setFinalResult("> 10000000 copies / ml");
+
+        hivvlLabResultHandler.handle(labResult);
+
+        Encounter encounter = (Encounter) hivvlLabResultHandler.getSyncContext()
+                .get(BaseLabResultHandler.ENCOUNTER_KEY);
+
+        assertThat(encounter.getEncounterType(), is(encounterType));
+        assertThat(encounter.getPatient(), is(patient));
+
+        // Viral load copies should be the numeric value
+        assertThat(encounter.getObs(),
+                hasItem(allOf(
+                        hasProperty("concept", equalTo(viralLoadCopies)),
+                        hasProperty("valueNumeric", equalTo(10_000_000.0)))));
+
+        // Viral load qualitative should empty
+        assertThat(encounter.getObs(),
+                not(hasItem(hasProperty("concept", equalTo(viralLoadQualitative)))));
+
+        // calls next handler
+        verify(next, times(1)).handle(labResult);
+    }
+
+    @Test
+    public void shouldHandleMoreThanValuesWithCopiasMl() throws Exception {
+
+        labResult.setFinalResult("> 10000000 copias / ml");
 
         hivvlLabResultHandler.handle(labResult);
 
