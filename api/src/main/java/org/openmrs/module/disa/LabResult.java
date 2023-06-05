@@ -52,7 +52,7 @@ public abstract class LabResult {
 
 	private LocalDateTime dateOfSampleReceive;
 
-	private String processingDate;
+	private LocalDateTime processingDate;
 
 	private String sampleType;
 
@@ -287,11 +287,11 @@ public abstract class LabResult {
 		this.dateOfSampleReceive = dateOfSampleReceive;
 	}
 
-	public String getProcessingDate() {
+	public LocalDateTime getProcessingDate() {
 		return processingDate;
 	}
 
-	public void setProcessingDate(String processingDate) {
+	public void setProcessingDate(LocalDateTime processingDate) {
 		this.processingDate = processingDate;
 	}
 

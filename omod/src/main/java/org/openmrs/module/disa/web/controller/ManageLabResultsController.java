@@ -1,5 +1,6 @@
 package org.openmrs.module.disa.web.controller;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -18,15 +19,17 @@ import org.openmrs.module.disa.LabResult;
 import org.openmrs.module.disa.api.LabResultService;
 import org.openmrs.module.disa.api.Page;
 import org.openmrs.module.disa.api.exception.DisaModuleAPIException;
+import org.openmrs.module.disa.api.report.StagingServerReport;
 import org.openmrs.module.disa.api.util.Constants;
-import org.openmrs.module.disa.web.delegate.ViralLoadResultsDelegate;
 import org.openmrs.module.disa.web.model.SearchForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.MultiValueMap;
@@ -45,7 +48,7 @@ import com.google.gson.Gson;
 
 @Controller
 @RequestMapping("/module/disa/managelabresults")
-@SessionAttributes({ "flashMessage" })
+@SessionAttributes({ "flashMessage", "lastSearchParams" })
 public class ManageLabResultsController {
 
     private static final Logger log = LoggerFactory.getLogger(ManageLabResultsController.class);
@@ -93,7 +96,7 @@ public class ManageLabResultsController {
 
             try {
                 model.addAttribute("disaPage", searchLabResults(searchForm));
-                session.setAttribute("lastSearchParams", params);
+                model.addAttribute("lastSearchParams", params);
             } catch (DisaModuleAPIException e) {
                 log.error("", e);
                 model.addAttribute("flashMessage", e.getLocalizedMessage());
@@ -111,13 +114,43 @@ public class ManageLabResultsController {
     }
 
     @RequestMapping(value = "/export", method = RequestMethod.GET)
-    public void export(
+    public String export(@Valid SearchForm searchForm, ModelMap model) {
+
+        String query = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .queryParams((MultiValueMap<String, String>) model.get("lastSearchParams"))
+                .build()
+                .getQuery();
+
+        if (searchForm.getStartDate() == null || searchForm.getEndDate() == null) {
+            model.addAttribute("flashMessage", messageSourceService.getMessage("disa.error.date.range", null,
+                    Context.getLocale()));
+            return "redirect:/module/disa/managelabresults.form?" + query;
+        }
+
+        return "redirect:/module/disa/managelabresults/download.form?" + query;
+    }
+
+    @RequestMapping(value = "/download", method = RequestMethod.GET)
+    public ResponseEntity<byte[]> download(
             @Valid SearchForm searchForm,
             ModelMap model,
-            HttpServletResponse response) throws Exception {
+            HttpServletResponse response) throws IOException {
 
-        ViralLoadResultsDelegate delegate = new ViralLoadResultsDelegate();
-        delegate.createExcelFileStaging(getAllLabResults(searchForm), response, messageSourceService);
+        if (searchForm.getStartDate() == null || searchForm.getEndDate() == null) {
+            model.addAttribute("flashMessage", messageSourceService.getMessage("disa.error.date.range", null,
+                    Context.getLocale()));
+            return ResponseEntity.badRequest().body(new byte[] {});
+        }
+
+        StagingServerReport report = new StagingServerReport(messageSourceService);
+        report.addStagingServerSheet(getAllLabResults(searchForm));
+
+        return ResponseEntity.ok()
+                .contentType(new MediaType("application", "ms-excel"))
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=Viral Load Data Details Staging Server.xls")
+                .body(report.generateReport());
     }
 
     @RequestMapping(value = "/{requestId}", method = RequestMethod.DELETE)

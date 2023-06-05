@@ -268,7 +268,7 @@ public class HIVVLLabResultHandler extends BaseLabResultHandler {
         obs23833.setLocation(encounter.getLocation());
         obs23833.setEncounter(encounter);
         if (labResult.getProcessingDate() != null) {// AnalysisDateTime
-            obs23833.setValueDate(DateUtil.parseAtMidnight(labResult.getProcessingDate()));
+            obs23833.setValueDate(DateUtil.atMidnight(labResult.getProcessingDate()));
             encounter.addObs(obs23833);
         }
 
