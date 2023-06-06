@@ -33,10 +33,12 @@
                 </div>
             </div>
             <div class="submit-btn center">
-                <input type="button"
-                        value='<spring:message code="general.previous"/>'
-                        name="previous"  onclick="history.back()"/>
-                <input type="submit" value="<openmrs:message code='disa.viralload.reallocate'/>"/>
+                <button onclick="history.back()">
+                    <spring:message code="general.previous"/>
+                </button>
+                <button type="submit">
+                    <openmrs:message code='disa.viralload.reallocate'/>
+                </button>
             </div>
         </form:form>
 	</div>
