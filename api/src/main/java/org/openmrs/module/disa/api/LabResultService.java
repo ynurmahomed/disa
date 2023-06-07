@@ -34,10 +34,7 @@ public interface LabResultService extends OpenmrsService {
                         String labResultStatus,
                         String notProcessingCause,
                         String nid,
-                        List<String> healthFacilityLabCodes,
-                        String search,
-                        String orderBy,
-                        String direction);
+                        List<String> healthFacilityLabCodes);
 
         @Authorized({ "Pesquisar resultados no Disa Interoperabilidade" })
         LabResult getByRequestId(String requestId);

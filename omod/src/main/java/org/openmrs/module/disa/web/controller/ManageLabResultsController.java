@@ -149,7 +149,7 @@ public class ManageLabResultsController {
         return ResponseEntity.ok()
                 .contentType(new MediaType("application", "ms-excel"))
                 .header(HttpHeaders.CONTENT_DISPOSITION,
-                        "attachment; filename=Viral Load Data Details Staging Server.xls")
+                        "attachment; filename=Lab Results Data Details Staging Server.xls")
                 .body(report.generateReport());
     }
 
@@ -234,9 +234,6 @@ public class ManageLabResultsController {
                 searchForm.getNid(),
                 searchForm.getVlSisma().equals(Constants.ALL)
                         ? labResultService.getHealthFacilityLabCodes()
-                        : Arrays.asList(searchForm.getVlSisma()),
-                searchForm.getSearch(),
-                searchForm.getOrderBy(),
-                searchForm.getDir());
+                        : Arrays.asList(searchForm.getVlSisma()));
     }
 }
