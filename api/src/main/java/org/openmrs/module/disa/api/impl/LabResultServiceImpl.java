@@ -144,9 +144,9 @@ public class LabResultServiceImpl extends BaseOpenmrsService implements LabResul
     }
 
     @Override
-    public LabResult getByRequestId(String requestId) {
+    public LabResult getById(long id) {
         try {
-            return client.getResultByRequestId(requestId);
+            return client.getResultById(id);
         } catch (HttpResponseException e) {
             throw handleHttpResponseException(e, Collections.emptyList(), "disa.result.get.error");
         } catch (IOException | URISyntaxException e) {
@@ -155,9 +155,9 @@ public class LabResultServiceImpl extends BaseOpenmrsService implements LabResul
     }
 
     @Override
-    public void deleteByRequestId(String requestId) {
+    public void deleteById(long id) {
         try {
-            client.deleteResultByRequestId(requestId);
+            client.deleteResultById(id);
         } catch (HttpResponseException e) {
             throw handleHttpResponseException(e, Collections.emptyList(), "disa.result.delete.error");
         } catch (IOException | URISyntaxException e) {
@@ -167,9 +167,9 @@ public class LabResultServiceImpl extends BaseOpenmrsService implements LabResul
     }
 
     @Override
-    public LabResult reallocateLabResult(String requestId, OrgUnit destination) {
+    public LabResult reallocateLabResult(long id, OrgUnit destination) {
         OrgUnit orgUnit = orgUnitService.getOrgUnitByCode(destination.getCode());
-        LabResult labResult = getByRequestId(requestId);
+        LabResult labResult = getById(id);
         labResult.setHealthFacilityLabCode(orgUnit.getCode());
         labResult.setRequestingFacilityName(orgUnit.getFacility());
         labResult.setRequestingDistrictName(orgUnit.getDistrict());
@@ -180,8 +180,8 @@ public class LabResultServiceImpl extends BaseOpenmrsService implements LabResul
     }
 
     @Override
-    public void rescheduleLabResult(String requestId) {
-        LabResult labResult = getByRequestId(requestId);
+    public void rescheduleLabResult(long id) {
+        LabResult labResult = getById(id);
         labResult.setLabResultStatus(LabResultStatus.PENDING);
         updateLabResult(labResult);
     }

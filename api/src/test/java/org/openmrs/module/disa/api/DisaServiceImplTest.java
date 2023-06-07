@@ -69,7 +69,7 @@ public class DisaServiceImplTest extends BaseContextMockTest {
         disaServiceImpl.mapIdentifier(patientUuid, disa);
 
         verify(patientService, times(1)).savePatientIdentifier(any(PatientIdentifier.class));
-        verify(labResultService, times(1)).rescheduleLabResult(disa.getRequestId());
+        verify(labResultService, times(1)).rescheduleLabResult(disa.getId());
     }
 
     @Test(expected = DisaModuleAPIException.class)
@@ -92,7 +92,7 @@ public class DisaServiceImplTest extends BaseContextMockTest {
         disaServiceImpl.mapIdentifier(patientUuid, disa);
 
         verify(patientService, times(0)).savePatientIdentifier(any(PatientIdentifier.class));
-        verify(labResultService, times(0)).rescheduleLabResult(disa.getRequestId());
+        verify(labResultService, times(0)).rescheduleLabResult(disa.getId());
     }
 
     @Test(expected = DisaModuleAPIException.class)
@@ -115,7 +115,7 @@ public class DisaServiceImplTest extends BaseContextMockTest {
         disaServiceImpl.mapIdentifier(patientUuid, disa);
 
         verify(patientService, never()).savePatientIdentifier(any(PatientIdentifier.class));
-        verify(labResultService, never()).rescheduleLabResult(disa.getRequestId());
+        verify(labResultService, never()).rescheduleLabResult(disa.getId());
     }
 
     @Test

@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 @Controller
-@RequestMapping("/module/disa/managelabresults/{requestId}/reallocate")
+@RequestMapping("/module/disa/managelabresults/{id}/reallocate")
 @SessionAttributes({"flashMessage"})
 public class ReallocateLabResultsController {
 
@@ -47,12 +47,12 @@ public class ReallocateLabResultsController {
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String reallocateForm(
-            @PathVariable String requestId,
+            @PathVariable long id,
             ModelMap model,
             SearchForm searchForm,
             HttpSession session) {
 
-        LabResult vl = labResultService.getByRequestId(requestId);
+        LabResult vl = labResultService.getById(id);
         OrgUnit orgUnit = orgUnitService.getOrgUnitByCode(vl.getHealthFacilityLabCode());
 
         model.addAttribute(new ReallocateForm());
@@ -62,33 +62,34 @@ public class ReallocateLabResultsController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public String reallocate(@PathVariable String requestId,
+    public String reallocate(@PathVariable long id,
             @Valid @ModelAttribute ReallocateForm reallocateForm,
             BindingResult result,
             ModelMap model,
             HttpSession session) {
 
         if (result.hasErrors()) {
-            LabResult vl = labResultService.getByRequestId(requestId);
-            OrgUnit orgUnit = orgUnitService.getOrgUnitByCode(vl.getHealthFacilityLabCode());
+            LabResult labResult = labResultService.getById(id);
+            OrgUnit orgUnit = orgUnitService.getOrgUnitByCode(labResult.getHealthFacilityLabCode());
             model.addAttribute(reallocateForm);
             model.addAttribute(orgUnit);
             return "/module/disa/managelabresults/reallocate";
         }
 
         OrgUnit destination = new OrgUnit(reallocateForm.getHealthFacilityLabCode());
-        LabResult update = labResultService.reallocateLabResult(requestId, destination);
+        LabResult update = labResultService.reallocateLabResult(id, destination);
 
         @SuppressWarnings("unchecked")
         Map<String, String> params = ((Map<String, String>) session.getAttribute("lastSearchParams"));
         model.addAllAttributes(params);
-        model.addAttribute("flashMessage", getReallocatedMessage(requestId, update));
+        model.addAttribute("flashMessage", getReallocatedMessage(update));
         return "redirect:/module/disa/managelabresults.form";
     }
 
-    private String getReallocatedMessage(String requestId, LabResult update) {
-        Object[] args = new Object[] { requestId, update.getRequestingFacilityName(),
-                update.getHealthFacilityLabCode() };
+    private String getReallocatedMessage(LabResult labResult) {
+        // TODO check if reallocation message still makes sence
+        Object[] args = new Object[] { labResult.getRequestId(), labResult.getRequestingFacilityName(),
+                labResult.getHealthFacilityLabCode() };
         return messageSourceService.getMessage("disa.viralload.reallocate.successful", args, Context.getLocale());
     }
 
