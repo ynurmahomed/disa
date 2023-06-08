@@ -34,22 +34,19 @@ public interface LabResultService extends OpenmrsService {
                         String labResultStatus,
                         String notProcessingCause,
                         String nid,
-                        List<String> healthFacilityLabCodes,
-                        String search,
-                        String orderBy,
-                        String direction);
+                        List<String> healthFacilityLabCodes);
 
         @Authorized({ "Pesquisar resultados no Disa Interoperabilidade" })
-        LabResult getByRequestId(String requestId);
+        LabResult getById(long id);
 
         @Authorized({ "Remover resultados no Disa Interoperabilidade" })
-        void deleteByRequestId(String requestId);
+        void deleteById(long id);
 
         @Authorized({ "Realocar resultados no Disa Interoperabilidade" })
-        LabResult reallocateLabResult(String requestId, OrgUnit destination);
+        LabResult reallocateLabResult(long id, OrgUnit destination);
 
         @Authorized({ "Reagendar resultados no Disa Interoperabilidade" })
-        void rescheduleLabResult(String requestId);
+        void rescheduleLabResult(long id);
 
         // TODO might need to give this privilege to the lab technician and admin
         @Authorized({ "Atualizar resultados no Disa Interoperabilidade" })

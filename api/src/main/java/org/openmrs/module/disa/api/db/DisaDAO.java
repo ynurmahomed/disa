@@ -18,7 +18,7 @@ import java.util.List;
 
 import org.openmrs.LocationAttribute;
 import org.openmrs.Patient;
-import org.openmrs.module.disa.FsrLog;
+import org.openmrs.module.disa.SyncLog;
 import org.openmrs.module.disa.TypeOfResult;
 import org.openmrs.module.disa.api.DisaService;
 
@@ -33,7 +33,7 @@ public interface DisaDAO {
 
 	public List<LocationAttribute> getAllLocationAttribute(String valueReference);
 
-	public Serializable saveFsrLog(FsrLog fsrLog);
+	public Serializable saveFsrLog(SyncLog fsrLog);
 
 	public boolean existsByRequestIdAndTypeOfResult(String requestId, TypeOfResult typeOfResult);
 

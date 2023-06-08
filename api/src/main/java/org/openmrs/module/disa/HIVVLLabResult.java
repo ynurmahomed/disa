@@ -16,8 +16,8 @@ public class HIVVLLabResult extends LabResult {
         setTypeOfResult(TypeOfResult.HIVVL);
     }
 
-    public HIVVLLabResult(String requestId) {
-        super(requestId);
+    public HIVVLLabResult(long l) {
+        super(l);
         setTypeOfResult(TypeOfResult.HIVVL);
     }
 

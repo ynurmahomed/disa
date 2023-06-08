@@ -31,7 +31,7 @@ import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
-import org.openmrs.module.disa.FsrLog;
+import org.openmrs.module.disa.SyncLog;
 import org.openmrs.module.disa.LabResult;
 import org.openmrs.module.disa.LabResultStatus;
 import org.openmrs.module.disa.NotProcessingCause;
@@ -76,7 +76,7 @@ public class DisaServiceImpl extends BaseOpenmrsService implements DisaService {
 	}
 
 	@Override
-	public Serializable saveFsrLog(FsrLog fsrLog) {
+	public Serializable saveSyncLog(SyncLog fsrLog) {
 		return dao.saveFsrLog(fsrLog);
 	}
 
@@ -113,7 +113,7 @@ public class DisaServiceImpl extends BaseOpenmrsService implements DisaService {
 		if (identifiers.isEmpty()) {
 
 			// TODO handle network error!!!
-			labResultService.rescheduleLabResult(disa.getRequestId());
+			labResultService.rescheduleLabResult(disa.getId());
 
 			PatientIdentifier patientIdentifier = new PatientIdentifier();
 			patientIdentifier.setPatient(patient);
@@ -136,7 +136,7 @@ public class DisaServiceImpl extends BaseOpenmrsService implements DisaService {
 	public void handleProcessedLabResult(LabResult labResult, Encounter encounter) {
 		encounterService.saveEncounter(encounter);
 
-		FsrLog fsrLog = new FsrLog();
+		SyncLog fsrLog = new SyncLog();
 		fsrLog.setPatientId(encounter.getPatient().getPatientId());
 		fsrLog.setEncounterId(encounter.getEncounterId());
 		fsrLog.setPatientIdentifier(labResult.getNid());
@@ -144,7 +144,7 @@ public class DisaServiceImpl extends BaseOpenmrsService implements DisaService {
 		fsrLog.setCreator(Context.getAuthenticatedUser().getId());
 		fsrLog.setDateCreated(new Date());
 		fsrLog.setTypOfResult(labResult.getTypeOfResult());
-		saveFsrLog(fsrLog);
+		saveSyncLog(fsrLog);
 
 		String defaultLocationUuid = locationService.getDefaultLocation().getUuid();
 		labResult.setSynchronizedBy(defaultLocationUuid);

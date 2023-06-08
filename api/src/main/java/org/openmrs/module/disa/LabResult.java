@@ -10,7 +10,7 @@ import java.util.Date;
  */
 public abstract class LabResult {
 
-	private transient int id;
+	private long id;
 
 	private String finalResult;
 
@@ -91,8 +91,8 @@ public abstract class LabResult {
 	protected LabResult() {
 	}
 
-	protected LabResult(String requestId) {
-		this.requestId = requestId;
+	protected LabResult(long id) {
+		this.id = id;
 	}
 
 	public String getSynchronizedBy() {
@@ -143,11 +143,11 @@ public abstract class LabResult {
 		this.labResultStatus = labResultStatus;
 	}
 
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 

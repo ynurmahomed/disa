@@ -150,4 +150,10 @@
         </update>
     </changeSet>
 
+    <changeSet id="disa-2023-06-05" author="yassin">
+        <renameTable
+            newTableName="disa_sync_log"
+            oldTableName="fsr_log"/>
+    </changeSet>
+
 </databaseChangeLog>

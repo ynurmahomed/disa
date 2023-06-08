@@ -19,23 +19,22 @@ import org.openmrs.module.disa.LabResult;
 
 public class StagingServerReport {
 
-    private static final int LOCATION = 0;
-    private static final int HF_NAME = 1;
-    private static final int DISTRICT_NAME = 2;
-    private static final int SISMA_CODE = 3;
-    private static final int NID = 4;
-    private static final int NAME = 5;
-    private static final int GENDER = 6;
-    private static final int AGE = 7;
-    private static final int REQUEST_ID = 8;
-    private static final int ANALYSIS_DATE = 9;
-    private static final int AUTHORIZED_DATE = 10;
-    private static final int FINAL_RESULT = 11;
-    private static final int TYPE_OF_RESULT = 12;
-    private static final int STATUS = 13;
-    private static final int CREATED_AT = 14;
-    private static final int UPDATED_AT = 15;
-    private static final int NOT_PROCESSING_CAUSE = 16;
+    private static final int HF_NAME = 0;
+    private static final int DISTRICT_NAME = 1;
+    private static final int SISMA_CODE = 2;
+    private static final int NID = 3;
+    private static final int NAME = 4;
+    private static final int GENDER = 5;
+    private static final int AGE = 6;
+    private static final int REQUEST_ID = 7;
+    private static final int ANALYSIS_DATE = 8;
+    private static final int AUTHORIZED_DATE = 9;
+    private static final int FINAL_RESULT = 10;
+    private static final int TYPE_OF_RESULT = 11;
+    private static final int STATUS = 12;
+    private static final int CREATED_AT = 13;
+    private static final int UPDATED_AT = 14;
+    private static final int NOT_PROCESSING_CAUSE = 15;
 
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
@@ -58,7 +57,6 @@ public class StagingServerReport {
             addLabResultRow(labResult, row);
         }
 
-        sheet.autoSizeColumn(LOCATION);
         sheet.autoSizeColumn(HF_NAME);
         sheet.autoSizeColumn(DISTRICT_NAME);
         sheet.autoSizeColumn(SISMA_CODE);
@@ -93,10 +91,6 @@ public class StagingServerReport {
         cellStyle.setWrapText(true);
 
         Row row = sheet.createRow(0);
-
-        Cell cellNid = row.createCell(LOCATION);
-        cellNid.setCellStyle(cellStyle);
-        cellNid.setCellValue(messageSourceService.getMessage("disa.location"));
 
         Cell cellNome = row.createCell(HF_NAME);
         cellNome.setCellStyle(cellStyle);
@@ -165,10 +159,7 @@ public class StagingServerReport {
     }
 
     private void addLabResultRow(LabResult disa, Row row) {
-        Cell cell = row.createCell(LOCATION);
-        cell.setCellValue(disa.getLocation());
-
-        cell = row.createCell(HF_NAME);
+        Cell cell = row.createCell(HF_NAME);
         cell.setCellValue(disa.getRequestingFacilityName());
 
         cell = row.createCell(DISTRICT_NAME);
@@ -197,7 +188,7 @@ public class StagingServerReport {
 
         cell = row.createCell(AUTHORIZED_DATE);
         cell.setCellValue(
-                disa.getDateOfSampleReceive() != null ? disa.getDateOfSampleReceive().format(DATE_FORMAT) : "");
+                disa.getLabResultDate() != null ? disa.getLabResultDate().format(DATE_FORMAT) : "");
 
         cell = row.createCell(FINAL_RESULT);
         cell.setCellValue(disa.getFinalResult());

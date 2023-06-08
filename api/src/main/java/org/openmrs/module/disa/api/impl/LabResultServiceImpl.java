@@ -104,9 +104,7 @@ public class LabResultServiceImpl extends BaseOpenmrsService implements LabResul
             LocalDate startDate, LocalDate endDate,
             String requestId,
             String labResultStatus, String notProcessingCause,
-            String nid, List<String> healthFacilityLabCodes,
-            String search,
-            String orderBy, String direction) {
+            String nid, List<String> healthFacilityLabCodes) {
 
         try {
 
@@ -133,9 +131,7 @@ public class LabResultServiceImpl extends BaseOpenmrsService implements LabResul
 
             return client.getAllLabResults(start, end, requestId,
                     labResultStatus,
-                    notProcessingCause, nid, healthFacilityLabCodes,
-                    search,
-                    orderBy, direction);
+                    notProcessingCause, nid, healthFacilityLabCodes);
         } catch (HttpResponseException e) {
             throw handleHttpResponseException(e, healthFacilityLabCodes, "disa.result.export.error");
         } catch (IOException | URISyntaxException e) {
@@ -144,9 +140,9 @@ public class LabResultServiceImpl extends BaseOpenmrsService implements LabResul
     }
 
     @Override
-    public LabResult getByRequestId(String requestId) {
+    public LabResult getById(long id) {
         try {
-            return client.getResultByRequestId(requestId);
+            return client.getResultById(id);
         } catch (HttpResponseException e) {
             throw handleHttpResponseException(e, Collections.emptyList(), "disa.result.get.error");
         } catch (IOException | URISyntaxException e) {
@@ -155,9 +151,9 @@ public class LabResultServiceImpl extends BaseOpenmrsService implements LabResul
     }
 
     @Override
-    public void deleteByRequestId(String requestId) {
+    public void deleteById(long id) {
         try {
-            client.deleteResultByRequestId(requestId);
+            client.deleteResultById(id);
         } catch (HttpResponseException e) {
             throw handleHttpResponseException(e, Collections.emptyList(), "disa.result.delete.error");
         } catch (IOException | URISyntaxException e) {
@@ -167,9 +163,9 @@ public class LabResultServiceImpl extends BaseOpenmrsService implements LabResul
     }
 
     @Override
-    public LabResult reallocateLabResult(String requestId, OrgUnit destination) {
+    public LabResult reallocateLabResult(long id, OrgUnit destination) {
         OrgUnit orgUnit = orgUnitService.getOrgUnitByCode(destination.getCode());
-        LabResult labResult = getByRequestId(requestId);
+        LabResult labResult = getById(id);
         labResult.setHealthFacilityLabCode(orgUnit.getCode());
         labResult.setRequestingFacilityName(orgUnit.getFacility());
         labResult.setRequestingDistrictName(orgUnit.getDistrict());
@@ -180,8 +176,8 @@ public class LabResultServiceImpl extends BaseOpenmrsService implements LabResul
     }
 
     @Override
-    public void rescheduleLabResult(String requestId) {
-        LabResult labResult = getByRequestId(requestId);
+    public void rescheduleLabResult(long id) {
+        LabResult labResult = getById(id);
         labResult.setLabResultStatus(LabResultStatus.PENDING);
         updateLabResult(labResult);
     }
@@ -214,8 +210,7 @@ public class LabResultServiceImpl extends BaseOpenmrsService implements LabResul
 
     @Override
     public List<LabResult> getResultsToSync() {
-        return getAll(null, null, null, LabResultStatus.PENDING.toString(), null, null, getHealthFacilityLabCodes(),
-                null, null, null);
+        return getAll(null, null, null, LabResultStatus.PENDING.toString(), null, null, getHealthFacilityLabCodes());
     }
 
     private DisaModuleAPIException handleHttpResponseException(HttpResponseException e,
