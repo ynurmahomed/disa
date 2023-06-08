@@ -120,10 +120,7 @@ public class DisaAPIHttpClient {
 			String labResultStatus,
 			String notProcessingCause,
 			String nid,
-			List<String> healthFacilityLabCodes,
-			String search,
-			String orderBy,
-			String direction) throws URISyntaxException, IOException {
+			List<String> healthFacilityLabCodes) throws URISyntaxException, IOException {
 
 		setUp();
 
@@ -132,10 +129,7 @@ public class DisaAPIHttpClient {
 				.addParameter("requestId", requestId)
 				.addParameter("labResultStatus", labResultStatus)
 				.addParameter("notProcessingCause", notProcessingCause)
-				.addParameter("nid", nid)
-				.addParameter("orderBy", orderBy)
-				.addParameter("direction", direction)
-				.addParameter("search", search);
+				.addParameter("nid", nid);
 
 		if (startDate != null) {
 			builder.addParameter("startDate", startDate.format(DATE_TIME_FORMATTER));

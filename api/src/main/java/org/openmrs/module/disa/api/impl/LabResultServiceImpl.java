@@ -104,9 +104,7 @@ public class LabResultServiceImpl extends BaseOpenmrsService implements LabResul
             LocalDate startDate, LocalDate endDate,
             String requestId,
             String labResultStatus, String notProcessingCause,
-            String nid, List<String> healthFacilityLabCodes,
-            String search,
-            String orderBy, String direction) {
+            String nid, List<String> healthFacilityLabCodes) {
 
         try {
 
@@ -133,9 +131,7 @@ public class LabResultServiceImpl extends BaseOpenmrsService implements LabResul
 
             return client.getAllLabResults(start, end, requestId,
                     labResultStatus,
-                    notProcessingCause, nid, healthFacilityLabCodes,
-                    search,
-                    orderBy, direction);
+                    notProcessingCause, nid, healthFacilityLabCodes);
         } catch (HttpResponseException e) {
             throw handleHttpResponseException(e, healthFacilityLabCodes, "disa.result.export.error");
         } catch (IOException | URISyntaxException e) {
@@ -214,8 +210,7 @@ public class LabResultServiceImpl extends BaseOpenmrsService implements LabResul
 
     @Override
     public List<LabResult> getResultsToSync() {
-        return getAll(null, null, null, LabResultStatus.PENDING.toString(), null, null, getHealthFacilityLabCodes(),
-                null, null, null);
+        return getAll(null, null, null, LabResultStatus.PENDING.toString(), null, null, getHealthFacilityLabCodes());
     }
 
     private DisaModuleAPIException handleHttpResponseException(HttpResponseException e,
