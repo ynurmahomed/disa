@@ -113,7 +113,7 @@ public class DisaServiceImpl extends BaseOpenmrsService implements DisaService {
 		if (identifiers.isEmpty()) {
 
 			// TODO handle network error!!!
-			labResultService.rescheduleLabResult(disa.getRequestId());
+			labResultService.rescheduleLabResult(disa.getId());
 
 			PatientIdentifier patientIdentifier = new PatientIdentifier();
 			patientIdentifier.setPatient(patient);

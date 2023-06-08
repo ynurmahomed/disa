@@ -153,16 +153,16 @@ public class ManageLabResultsController {
                 .body(report.generateReport());
     }
 
-    @RequestMapping(value = "/{requestId}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable String requestId) {
-        labResultService.deleteByRequestId(requestId);
+    public void delete(@PathVariable long id) {
+        labResultService.deleteById(id);
     }
 
-    @RequestMapping(value = "/{requestId}/reschedule", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/{id}/reschedule", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public void reschedule(@PathVariable String requestId) {
-        labResultService.rescheduleLabResult(requestId);
+    public void reschedule(@PathVariable long id) {
+        labResultService.rescheduleLabResult(id);
     }
 
     @ModelAttribute("pageTitle")

@@ -212,11 +212,11 @@ public class DisaAPIHttpClient {
 
 	}
 
-	public LabResult getResultByRequestId(String requestId) throws URISyntaxException, IOException {
+	public LabResult getResultById(long id) throws URISyntaxException, IOException {
 		setUp();
 
 		URI url = new URIBuilder(URLBase)
-				.setPathSegments("services", "lab-results", requestId)
+				.setPathSegments("services", "lab-results", String.valueOf(id))
 				.build();
 
 		Executor executor = Executor.newInstance()
@@ -232,11 +232,11 @@ public class DisaAPIHttpClient {
 		return gson.fromJson(jsonResponse, LabResult.class);
 	}
 
-	public void deleteResultByRequestId(String requestId) throws IOException, URISyntaxException {
+	public void deleteResultById(long id) throws IOException, URISyntaxException {
 		setUp();
 
 		URI url = new URIBuilder(URLBase)
-				.setPathSegments("services", "lab-results", requestId)
+				.setPathSegments("services", "lab-results", String.valueOf(id))
 				.build();
 
 		Executor executor = Executor.newInstance()
@@ -259,7 +259,7 @@ public class DisaAPIHttpClient {
 		setUp();
 
 		URI url = new URIBuilder(URLBase)
-				.setPathSegments("services", "lab-results", labResult.getRequestId())
+				.setPathSegments("services", "lab-results", String.valueOf(labResult.getId()))
 				.build();
 
 		Executor executor = Executor.newInstance()
