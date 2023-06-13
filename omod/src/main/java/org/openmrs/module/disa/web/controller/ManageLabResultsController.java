@@ -180,7 +180,7 @@ public class ManageLabResultsController {
         String propertyValue = administrationService.getGlobalPropertyObject(Constants.DISA_SISMA_CODE)
                 .getPropertyValue();
         List<String> sismaCodes = Arrays.asList(propertyValue.split(","));
-        List<String> sismaCodesTodos = new ArrayList<String>();
+        List<String> sismaCodesTodos = new ArrayList<>();
 
         sismaCodesTodos.addAll(sismaCodes);
 
@@ -196,24 +196,24 @@ public class ManageLabResultsController {
         if (searchForm.getEndDate() != null) {
             endDate = searchForm.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         }
+        String requestId = searchForm.getRequestId();
+        if (requestId.equals(SearchForm.REQUEST_ID_PREFIX)) {
+            requestId = "";
+        }
         return labResultService.search(
                 startDate,
                 endDate,
-                clearWhiteSpace(searchForm.getRequestId()),
+                requestId,
                 searchForm.getVlState(),
                 searchForm.getNotProcessingCause(),
                 searchForm.getTypeOfResult(),
-                clearWhiteSpace(searchForm.getNid()),
+                searchForm.getNid(),
                 labResultService.getHealthFacilityLabCodes(),
                 searchForm.getSearch(),
                 searchForm.getPageNumber(),
                 searchForm.getPageSize(),
                 searchForm.getOrderBy(),
                 searchForm.getDir());
-    }
-
-    private String clearWhiteSpace(String str) {
-        return str != null ? str.replaceAll("\\s", "") : "";
     }
 
     private List<LabResult> getAllLabResults(SearchForm searchForm) {

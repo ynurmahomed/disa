@@ -9,6 +9,8 @@ import org.openmrs.module.disa.api.util.Constants;
 
 public class SearchForm {
 
+    public static final String REQUEST_ID_PREFIX = "MZDISA";
+
     @Size(max = 22)
     private String requestId;
 
@@ -41,6 +43,7 @@ public class SearchForm {
         this.vlState = Constants.ALL;
         this.notProcessingCause = Constants.ALL;
         this.vlSisma = Constants.ALL;
+        this.requestId = REQUEST_ID_PREFIX;
     }
 
     public String getRequestId() {
@@ -48,7 +51,12 @@ public class SearchForm {
     }
 
     public void setRequestId(String requestId) {
-        this.requestId = requestId;
+        String reqId = clearWhiteSpace(requestId);
+        if (!reqId.startsWith(REQUEST_ID_PREFIX)) {
+            this.requestId = REQUEST_ID_PREFIX + reqId;
+        } else {
+            this.requestId = reqId;
+        }
     }
 
     public String getNid() {
@@ -56,7 +64,7 @@ public class SearchForm {
     }
 
     public void setNid(String nid) {
-        this.nid = nid;
+        this.nid = clearWhiteSpace(nid);
     }
 
     public String getVlSisma() {
@@ -145,6 +153,10 @@ public class SearchForm {
 
     public void setTypeOfResult(TypeOfResult typeOfResult) {
         this.typeOfResult = typeOfResult;
+    }
+
+    private String clearWhiteSpace(String str) {
+        return str != null ? str.replaceAll("\\s", "") : "";
     }
 
     @Override
