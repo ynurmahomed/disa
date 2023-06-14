@@ -4,8 +4,11 @@
 			<label for="startDate">
 				<openmrs:message code="disa.start.date" />:
 			</label>
-			<form:input path="startDate" size="10" id="startDate" onclick="showCalendar(this);" autocomplete="off"
-				autofocus="true" />
+			<div class="input-wrapper">
+				<form:input path="startDate" size="10" id="startDate" onclick="showCalendar(this);"
+					autocomplete="off" autofocus="true" placeholder=""/>
+				<div class="clear">&#10005;</div>
+			</div>
 			<spring:hasBindErrors name="searchForm">
 				<c:if test="${errors.hasFieldErrors('startDate')}">
 					<form:errors path="startDate" cssClass="error" />
@@ -16,7 +19,11 @@
 			<label for="endDate">
 				<openmrs:message code="disa.end.date" />:
 			</label>
-			<form:input path="endDate" size="10" id="endDate" onclick="showCalendar(this);" autocomplete="off" />
+			<div class="input-wrapper">
+				<form:input path="endDate" size="10" id="endDate" onclick="showCalendar(this);"
+					autocomplete="off" placeholder=""/>
+				<div class="clear">&#10005;</div>
+			</div>
 			<spring:hasBindErrors name="searchForm">
 				<c:if test="${errors.hasFieldErrors('endDate')}">
 					<form:errors path="endDate" cssClass="error" />
@@ -30,7 +37,8 @@
 			</label>
 			<div class="input-wrapper">
 				<div class="prefix">MZDISA</div>
-				<form:input path="requestId" size="22" maxlength="26" id="requestId"/>
+				<form:input path="requestId" size="22" maxlength="26" id="requestId" placeholder=""/>
+				<div class="clear">&#10005;</div>
 			</div>
 		</div>
 		<div>
@@ -95,7 +103,10 @@
 			<label for="nid">
 				<openmrs:message code="disa.nid" />:
 			</label>
-			<form:input path="nid" size="22" maxlength="31" id="nid" />
+			<div class="input-wrapper">
+				<form:input path="nid" size="22" maxlength="31" id="nid" placeholder=""/>
+				<div class="clear">&#10005;</div>
+			</div>
 		</div>
 		<div>
 			<label for="selSisma">
@@ -115,4 +126,18 @@
 		</div>
 	</div>
 </form:form>
+<script>
+	window.addEventListener('DOMContentLoaded', function () {
+		const clearButtons = document.querySelectorAll('.input-wrapper .clear');
+
+		clearButtons.forEach(function (clearButton) {
+			clearButton.addEventListener('click', function () {
+				const inputElement = clearButton.parentElement.querySelector("input");
+				if (inputElement) {
+					inputElement.value = '';
+				}
+			});
+		});
+	});
+</script>
 <openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/calendar.js" />
