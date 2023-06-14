@@ -106,8 +106,10 @@ public class MapUnprocessedLabResultsController {
 			return "/module/disa/managelabresults/map";
 		} else {
 
-			disaService.mapIdentifier(patientUuid, disa);
-			String mapSuccessfulMsg = messageSourceService.getMessage("disa.viralload.map.successful", null,
+			Patient mapped = disaService.mapIdentifier(patientUuid, disa);
+			String mapSuccessfulMsg = messageSourceService.getMessage("disa.viralload.map.successful",
+					// If successfully mapped, we can trust that the mapped indentifier is not null.
+					new String[] { disa.getNid(), mapped.getPatientIdentifier().getIdentifier() },
 					Context.getLocale());
 
 			if (model.containsAttribute("lastSearchParams")) {
@@ -139,7 +141,7 @@ public class MapUnprocessedLabResultsController {
 			PatientIdentifier patientIdentifier = patientToAdd.getPatientIdentifier();
 			if (patientIdentifier == null) {
 				model.addAttribute("errorPatientRequired", "disa.error.patient.required.nid");
-			} else  if (!patients.contains(patientToAdd)) {
+			} else if (!patients.contains(patientToAdd)) {
 				// TODO This is a workaround to LazyInitialization error when getting
 				// identifiers from patient on jsp
 				Set<PatientIdentifier> identifiers = new TreeSet<>();
