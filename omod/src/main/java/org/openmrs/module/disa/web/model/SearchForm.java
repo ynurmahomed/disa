@@ -1,11 +1,14 @@
 package org.openmrs.module.disa.web.model;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 
 import javax.validation.constraints.Size;
 
 import org.openmrs.module.disa.TypeOfResult;
 import org.openmrs.module.disa.api.util.Constants;
+import org.springframework.util.StringUtils;
 
 public class SearchForm {
 
@@ -43,20 +46,23 @@ public class SearchForm {
         this.vlState = Constants.ALL;
         this.notProcessingCause = Constants.ALL;
         this.vlSisma = Constants.ALL;
-        this.requestId = REQUEST_ID_PREFIX;
     }
 
     public String getRequestId() {
         return this.requestId;
     }
 
-    public void setRequestId(String requestId) {
-        String reqId = clearWhiteSpace(requestId);
-        if (!reqId.startsWith(REQUEST_ID_PREFIX)) {
-            this.requestId = REQUEST_ID_PREFIX + reqId;
+    public String getNormalizedRequestId() {
+        if (!StringUtils.isEmpty(requestId) && !requestId.startsWith(SearchForm.REQUEST_ID_PREFIX)) {
+            return SearchForm.REQUEST_ID_PREFIX + requestId;
         } else {
-            this.requestId = reqId;
+            return requestId;
         }
+    }
+
+    public void setRequestId(String requestId) {
+        this.requestId = clearWhiteSpace(requestId);
+
     }
 
     public String getNid() {
@@ -87,12 +93,28 @@ public class SearchForm {
         return this.startDate;
     }
 
+    public LocalDate getStartLocalDate() {
+        if (startDate != null) {
+            return startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        } else {
+            return null;
+        }
+    }
+
     public void setStartDate(Date startDate) {
         this.startDate = startDate;
     }
 
     public Date getEndDate() {
         return this.endDate;
+    }
+
+    public LocalDate getEndLocalDate() {
+        if (endDate != null) {
+            return endDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        } else {
+            return null;
+        }
     }
 
     public void setEndDate(Date endDate) {

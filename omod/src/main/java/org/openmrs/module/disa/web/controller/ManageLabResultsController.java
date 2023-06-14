@@ -1,8 +1,6 @@
 package org.openmrs.module.disa.web.controller;
 
 import java.io.IOException;
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -188,22 +186,10 @@ public class ManageLabResultsController {
     }
 
     private Page<LabResult> searchLabResults(SearchForm searchForm) {
-        LocalDate startDate = null;
-        if (searchForm.getStartDate() != null) {
-            startDate = searchForm.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        }
-        LocalDate endDate = null;
-        if (searchForm.getEndDate() != null) {
-            endDate = searchForm.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        }
-        String requestId = searchForm.getRequestId();
-        if (requestId.equals(SearchForm.REQUEST_ID_PREFIX)) {
-            requestId = "";
-        }
         return labResultService.search(
-                startDate,
-                endDate,
-                requestId,
+                searchForm.getStartLocalDate(),
+                searchForm.getEndLocalDate(),
+                searchForm.getNormalizedRequestId(),
                 searchForm.getVlState(),
                 searchForm.getNotProcessingCause(),
                 searchForm.getTypeOfResult(),
@@ -217,18 +203,10 @@ public class ManageLabResultsController {
     }
 
     private List<LabResult> getAllLabResults(SearchForm searchForm) {
-        LocalDate startDate = null;
-        if (searchForm.getStartDate() != null) {
-            startDate = searchForm.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        }
-        LocalDate endDate = null;
-        if (searchForm.getEndDate() != null) {
-            endDate = searchForm.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        }
         return labResultService.getAll(
-                startDate,
-                endDate,
-                searchForm.getRequestId(),
+                searchForm.getStartLocalDate(),
+                searchForm.getEndLocalDate(),
+                searchForm.getNormalizedRequestId(),
                 searchForm.getVlState(),
                 searchForm.getNotProcessingCause(),
                 searchForm.getNid(),

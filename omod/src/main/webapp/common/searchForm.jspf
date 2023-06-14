@@ -28,7 +28,10 @@
 			<label for="requestId">
 				<openmrs:message code="disa.requestId" />:
 			</label>
-			<form:input path="requestId" size="22" maxlength="26" id="requestId"/>
+			<div class="input-wrapper">
+				<div class="prefix">MZDISA</div>
+				<form:input path="requestId" size="22" maxlength="26" id="requestId"/>
+			</div>
 		</div>
 		<div>
 			<label for="vlState">
