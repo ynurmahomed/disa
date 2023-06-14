@@ -1,8 +1,6 @@
 package org.openmrs.module.disa.web.controller;
 
 import java.io.IOException;
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -180,7 +178,7 @@ public class ManageLabResultsController {
         String propertyValue = administrationService.getGlobalPropertyObject(Constants.DISA_SISMA_CODE)
                 .getPropertyValue();
         List<String> sismaCodes = Arrays.asList(propertyValue.split(","));
-        List<String> sismaCodesTodos = new ArrayList<String>();
+        List<String> sismaCodesTodos = new ArrayList<>();
 
         sismaCodesTodos.addAll(sismaCodes);
 
@@ -188,22 +186,14 @@ public class ManageLabResultsController {
     }
 
     private Page<LabResult> searchLabResults(SearchForm searchForm) {
-        LocalDate startDate = null;
-        if (searchForm.getStartDate() != null) {
-            startDate = searchForm.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        }
-        LocalDate endDate = null;
-        if (searchForm.getEndDate() != null) {
-            endDate = searchForm.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        }
         return labResultService.search(
-                startDate,
-                endDate,
-                clearWhiteSpace(searchForm.getRequestId()),
+                searchForm.getStartLocalDate(),
+                searchForm.getEndLocalDate(),
+                searchForm.getNormalizedRequestId(),
                 searchForm.getVlState(),
                 searchForm.getNotProcessingCause(),
                 searchForm.getTypeOfResult(),
-                clearWhiteSpace(searchForm.getNid()),
+                searchForm.getNid(),
                 labResultService.getHealthFacilityLabCodes(),
                 searchForm.getSearch(),
                 searchForm.getPageNumber(),
@@ -212,23 +202,11 @@ public class ManageLabResultsController {
                 searchForm.getDir());
     }
 
-    private String clearWhiteSpace(String str) {
-        return str != null ? str.replaceAll("\\s", "") : "";
-    }
-
     private List<LabResult> getAllLabResults(SearchForm searchForm) {
-        LocalDate startDate = null;
-        if (searchForm.getStartDate() != null) {
-            startDate = searchForm.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        }
-        LocalDate endDate = null;
-        if (searchForm.getEndDate() != null) {
-            endDate = searchForm.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        }
         return labResultService.getAll(
-                startDate,
-                endDate,
-                searchForm.getRequestId(),
+                searchForm.getStartLocalDate(),
+                searchForm.getEndLocalDate(),
+                searchForm.getNormalizedRequestId(),
                 searchForm.getVlState(),
                 searchForm.getNotProcessingCause(),
                 searchForm.getNid(),

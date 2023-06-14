@@ -1,7 +1,10 @@
 package org.openmrs.module.disa.api.impl;
 
 import java.io.IOException;
+import java.net.ConnectException;
+import java.net.SocketTimeoutException;
 import java.net.URISyntaxException;
+import java.net.UnknownHostException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -94,6 +97,8 @@ public class LabResultServiceImpl extends BaseOpenmrsService implements LabResul
 
         } catch (HttpResponseException e) {
             throw handleHttpResponseException(e, healthFacilityLabCodes, "disa.result.search.error");
+        } catch (UnknownHostException | ConnectException | SocketTimeoutException e) {
+            throw new DisaModuleAPIException("disa.result.no.internet", (Object[]) null, e);
         } catch (IOException | URISyntaxException e) {
             throw new DisaModuleAPIException("disa.result.search.error", (Object[]) null, e);
         }
@@ -134,6 +139,8 @@ public class LabResultServiceImpl extends BaseOpenmrsService implements LabResul
                     notProcessingCause, nid, healthFacilityLabCodes);
         } catch (HttpResponseException e) {
             throw handleHttpResponseException(e, healthFacilityLabCodes, "disa.result.export.error");
+        } catch (UnknownHostException | ConnectException | SocketTimeoutException e) {
+            throw new DisaModuleAPIException("disa.result.no.internet", (Object[]) null, e);
         } catch (IOException | URISyntaxException e) {
             throw new DisaModuleAPIException("disa.result.export.error", (Object[]) null, e);
         }
@@ -145,6 +152,8 @@ public class LabResultServiceImpl extends BaseOpenmrsService implements LabResul
             return client.getResultById(id);
         } catch (HttpResponseException e) {
             throw handleHttpResponseException(e, Collections.emptyList(), "disa.result.get.error");
+        } catch (UnknownHostException | ConnectException | SocketTimeoutException e) {
+            throw new DisaModuleAPIException("disa.result.no.internet", (Object[]) null, e);
         } catch (IOException | URISyntaxException e) {
             throw new DisaModuleAPIException("disa.result.get.error", (Object[]) null, e);
         }
@@ -156,6 +165,8 @@ public class LabResultServiceImpl extends BaseOpenmrsService implements LabResul
             client.deleteResultById(id);
         } catch (HttpResponseException e) {
             throw handleHttpResponseException(e, Collections.emptyList(), "disa.result.delete.error");
+        } catch (UnknownHostException | ConnectException | SocketTimeoutException e) {
+            throw new DisaModuleAPIException("disa.result.no.internet", (Object[]) null, e);
         } catch (IOException | URISyntaxException e) {
             throw new DisaModuleAPIException("disa.result.delete.error", (Object[]) null, e);
         }
@@ -203,6 +214,8 @@ public class LabResultServiceImpl extends BaseOpenmrsService implements LabResul
         } catch (HttpResponseException e) {
             throw handleHttpResponseException(e, Collections.singletonList(labResult.getHealthFacilityLabCode()),
                     "disa.result.update.error");
+        } catch (UnknownHostException | ConnectException | SocketTimeoutException e) {
+            throw new DisaModuleAPIException("disa.result.no.internet", (Object[]) null, e);
         } catch (IOException | URISyntaxException e) {
             throw new DisaModuleAPIException("disa.result.update.error", (Object[]) null, e);
         }

@@ -1,13 +1,18 @@
 package org.openmrs.module.disa.web.model;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 
 import javax.validation.constraints.Size;
 
 import org.openmrs.module.disa.TypeOfResult;
 import org.openmrs.module.disa.api.util.Constants;
+import org.springframework.util.StringUtils;
 
 public class SearchForm {
+
+    public static final String REQUEST_ID_PREFIX = "MZDISA";
 
     @Size(max = 22)
     private String requestId;
@@ -47,8 +52,17 @@ public class SearchForm {
         return this.requestId;
     }
 
+    public String getNormalizedRequestId() {
+        if (!StringUtils.isEmpty(requestId) && !requestId.startsWith(SearchForm.REQUEST_ID_PREFIX)) {
+            return SearchForm.REQUEST_ID_PREFIX + requestId;
+        } else {
+            return requestId;
+        }
+    }
+
     public void setRequestId(String requestId) {
-        this.requestId = requestId;
+        this.requestId = clearWhiteSpace(requestId);
+
     }
 
     public String getNid() {
@@ -56,7 +70,7 @@ public class SearchForm {
     }
 
     public void setNid(String nid) {
-        this.nid = nid;
+        this.nid = clearWhiteSpace(nid);
     }
 
     public String getVlSisma() {
@@ -79,12 +93,28 @@ public class SearchForm {
         return this.startDate;
     }
 
+    public LocalDate getStartLocalDate() {
+        if (startDate != null) {
+            return startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        } else {
+            return null;
+        }
+    }
+
     public void setStartDate(Date startDate) {
         this.startDate = startDate;
     }
 
     public Date getEndDate() {
         return this.endDate;
+    }
+
+    public LocalDate getEndLocalDate() {
+        if (endDate != null) {
+            return endDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        } else {
+            return null;
+        }
     }
 
     public void setEndDate(Date endDate) {
@@ -145,6 +175,10 @@ public class SearchForm {
 
     public void setTypeOfResult(TypeOfResult typeOfResult) {
         this.typeOfResult = typeOfResult;
+    }
+
+    private String clearWhiteSpace(String str) {
+        return str != null ? str.replaceAll("\\s", "") : "";
     }
 
     @Override
