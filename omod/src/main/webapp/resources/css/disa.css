@@ -185,6 +185,7 @@ button.dt-button.buttons-columnVisibility.active:before {
 }
 
 .input-wrapper .prefix {
+	color: gray;
 	font-size: 0.9em;
 	padding: 1px 0 1px 1px;
 }
@@ -192,4 +193,16 @@ button.dt-button.buttons-columnVisibility.active:before {
 .input-wrapper input {
 	border: none;
 	outline: none;
+}
+
+.input-wrapper:hover .clear {
+	visibility: visible;
+}
+
+.input-wrapper .clear {
+	cursor: default;
+	visibility: hidden;
+	font-weight: bold;
+	color: gray;
+	padding: 0 2px;
 }
