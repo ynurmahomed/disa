@@ -31,10 +31,10 @@ import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
-import org.openmrs.module.disa.SyncLog;
 import org.openmrs.module.disa.LabResult;
 import org.openmrs.module.disa.LabResultStatus;
 import org.openmrs.module.disa.NotProcessingCause;
+import org.openmrs.module.disa.SyncLog;
 import org.openmrs.module.disa.api.DisaService;
 import org.openmrs.module.disa.api.LabResultService;
 import org.openmrs.module.disa.api.db.DisaDAO;
@@ -96,7 +96,7 @@ public class DisaServiceImpl extends BaseOpenmrsService implements DisaService {
 	}
 
 	@Override
-	public void mapIdentifier(String patientUuid, LabResult disa) {
+	public Patient mapIdentifier(String patientUuid, LabResult disa) {
 
 		if (disa.getLabResultStatus() != LabResultStatus.NOT_PROCESSED
 				|| disa.getNotProcessingCause() != NotProcessingCause.NID_NOT_FOUND) {
@@ -122,6 +122,8 @@ public class DisaServiceImpl extends BaseOpenmrsService implements DisaService {
 			patientIdentifier.setLocation(locationService.getDefaultLocation());
 			patientService.savePatientIdentifier(patientIdentifier);
 		}
+
+		return patient;
 	}
 
 	public List<Patient> getPatientsToMapSuggestion(LabResult disa) {

@@ -27,14 +27,13 @@ public class StagingServerReport {
     private static final int GENDER = 5;
     private static final int AGE = 6;
     private static final int REQUEST_ID = 7;
-    private static final int ANALYSIS_DATE = 8;
-    private static final int AUTHORIZED_DATE = 9;
-    private static final int FINAL_RESULT = 10;
-    private static final int TYPE_OF_RESULT = 11;
-    private static final int STATUS = 12;
-    private static final int CREATED_AT = 13;
-    private static final int UPDATED_AT = 14;
-    private static final int NOT_PROCESSING_CAUSE = 15;
+    private static final int AUTHORIZED_DATE = 8;
+    private static final int FINAL_RESULT = 9;
+    private static final int TYPE_OF_RESULT = 10;
+    private static final int STATUS = 11;
+    private static final int CREATED_AT = 12;
+    private static final int UPDATED_AT = 13;
+    private static final int NOT_PROCESSING_CAUSE = 14;
 
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
@@ -65,7 +64,6 @@ public class StagingServerReport {
         sheet.autoSizeColumn(GENDER);
         sheet.autoSizeColumn(AGE);
         sheet.autoSizeColumn(REQUEST_ID);
-        sheet.autoSizeColumn(ANALYSIS_DATE);
         sheet.autoSizeColumn(AUTHORIZED_DATE);
         sheet.autoSizeColumn(FINAL_RESULT);
         sheet.autoSizeColumn(TYPE_OF_RESULT);
@@ -124,10 +122,6 @@ public class StagingServerReport {
         cellRequestId.setCellStyle(cellStyle);
         cellRequestId.setCellValue(messageSourceService.getMessage("disa.request.id"));
 
-        Cell cellAnalysisDateTime = row.createCell(ANALYSIS_DATE);
-        cellAnalysisDateTime.setCellStyle(cellStyle);
-        cellAnalysisDateTime.setCellValue(messageSourceService.getMessage("disa.analysis.date.time"));
-
         Cell cellAuthorisedDateTime = row.createCell(AUTHORIZED_DATE);
         cellAuthorisedDateTime.setCellStyle(cellStyle);
         cellAuthorisedDateTime.setCellValue(messageSourceService.getMessage("disa.authorised.date.time"));
@@ -182,9 +176,6 @@ public class StagingServerReport {
 
         cell = row.createCell(REQUEST_ID);
         cell.setCellValue(disa.getRequestId());
-
-        cell = row.createCell(ANALYSIS_DATE);
-        cell.setCellValue(disa.getProcessingDate() != null ? disa.getProcessingDate().format(DATE_FORMAT) : "");
 
         cell = row.createCell(AUTHORIZED_DATE);
         cell.setCellValue(
