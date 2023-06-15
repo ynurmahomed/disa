@@ -217,7 +217,7 @@
 		"TYPE_OF_RESULT": 11,
 		"STATUS": 12,
 		"CREATED_AT": 13,
-		"UPDATED_AT": 12,
+		"UPDATED_AT": 14,
 		"NOT_PROCESSING_CAUSE": 15,
 	}
 
@@ -419,6 +419,7 @@
 						columns.RESULT_DATE,
 						columns.TYPE_OF_RESULT,
 						columns.FINAL_RESULT,
+						columns.STATUS,
 						columns.CREATED_AT,
 						columns.UPDATED_AT,
 						columns.NOT_PROCESSING_CAUSE

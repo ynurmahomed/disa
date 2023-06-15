@@ -13,6 +13,7 @@
  */
 package org.openmrs.module.disa;
 
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.AdministrationService;
@@ -23,8 +24,7 @@ import org.openmrs.module.disa.api.client.DisaAPIHttpClient;
 import org.openmrs.module.disa.api.util.Constants;
 
 /**
- * This class contains the logic that is run every time this module is either
- * started or stopped.
+ * This class contains the logic that is run every time this module is either started or stopped.
  */
 public class DisaModuleActivator extends BaseModuleActivator {
 
