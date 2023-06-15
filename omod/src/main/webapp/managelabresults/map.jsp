@@ -52,8 +52,9 @@
 				</span>
 			</c:if>
 			<div class="submit-btn">
-				<input type="submit" value='<spring:message code="general.add"/>'
-					name="addPatient" id="btn-addPatient" />
+				<button type="submit">
+					<spring:message code="general.add"/>
+				</button>
 			</div>
 		</form>
 	</div>
@@ -94,10 +95,12 @@
 			</table>
 			<br />
 			<div class="submit-btn center">
-				<input type="button" value='<spring:message code="general.previous"/>'
-					name="previous"  onclick="location.href='${lastSearchUri}'"/>
-				<input type="submit" value='<spring:message code="disa.btn.map"/>'
-					name="mapIdentifier" id="btn-mapIdentifier" />
+				<button type="button" onclick="location.href='${lastSearchUri}'">
+					<spring:message code="general.previous"/>
+				</button>
+				<button type="submit">
+					<spring:message code="disa.btn.map"/>
+				</button>
 			</div>
 		</form>
 	</div>
