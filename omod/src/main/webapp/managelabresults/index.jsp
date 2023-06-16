@@ -425,6 +425,7 @@
 						columns.RESULT_DATE,
 						columns.TYPE_OF_RESULT,
 						columns.FINAL_RESULT,
+						columns.STATUS,
 						columns.CREATED_AT,
 						columns.UPDATED_AT,
 						columns.NOT_PROCESSING_CAUSE
