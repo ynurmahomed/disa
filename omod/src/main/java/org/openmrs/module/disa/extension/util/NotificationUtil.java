@@ -25,7 +25,7 @@ public class NotificationUtil {
 												   String module){
 
 		RestTemplate restTemplate = new RestTemplate();
-		restTemplate.setErrorHandler(new DisaResponseErrorHandler()); 
+		restTemplate.setErrorHandler(new DisaResponseErrorHandler());
 		restTemplate.getMessageConverters().add(0, new StringHttpMessageConverter(StandardCharsets.UTF_8));
 		
 		HttpHeaders headers = new HttpHeaders();

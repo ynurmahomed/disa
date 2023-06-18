@@ -1,13 +1,9 @@
 package org.openmrs.module.disa.extension.util;
 
-<<<<<<< HEAD
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
-=======
->>>>>>> 1b214cf7795bf40f18a6eaa547506a568c67afb3
 import java.util.Properties;
 
 import javax.mail.Message;
@@ -18,15 +14,11 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-<<<<<<< HEAD
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
-import org.openmrs.module.disa.api.util.Constants;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
-=======
->>>>>>> 1b214cf7795bf40f18a6eaa547506a568c67afb3
 /**
  *
  * @author machabane
@@ -126,7 +118,6 @@ public class GenericUtil {
 			messagingException.printStackTrace();
 		}
 	}
-<<<<<<< HEAD
 
 	public static List<NameValuePair> buildParamList(List<String> hfCodes) {
 	    List<NameValuePair> hfs = new ArrayList<>();
@@ -149,6 +140,4 @@ public class GenericUtil {
         }
 		return arrayNode;
 	}
-=======
->>>>>>> 1b214cf7795bf40f18a6eaa547506a568c67afb3
 }
