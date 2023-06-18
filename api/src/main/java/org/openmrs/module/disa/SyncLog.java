@@ -12,8 +12,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "fsr_log")
-public class FsrLog implements Serializable {
+@Table(name = "disa_sync_log")
+public class SyncLog implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 

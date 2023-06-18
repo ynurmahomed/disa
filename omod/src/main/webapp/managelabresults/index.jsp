@@ -29,9 +29,10 @@
 <c:if test="${not empty disaPage.resultList}">
 	<div>
 		<div class="box">
-			<table id="vlResultsTable" class="vlResultsTable" style="width:100%; font-size:12px;">
+			<table id="vlResultsTable" class="resultsTable" style="width:100%; font-size:12px;">
 				<thead>
 					<tr>
+						<th>id</th>
 						<th>
 							<spring:message code="disa.requesting.facility.name" />
 						</th>
@@ -57,7 +58,7 @@
 							<spring:message code="disa.request.id" />
 						</th>
 						<th>
-							<spring:message code="disa.analysis.date.time" />
+							<spring:message code="disa.harvest.date" />
 						</th>
 						<th>
 							<spring:message code="disa.authorised.date.time" />
@@ -88,6 +89,7 @@
 				<tbody>
 					<c:forEach items="${disaPage.resultList}" var="labResult">
 						<tr>
+							<td>${labResult.id}</td>
 							<td>${labResult.requestingFacilityName}</td>
 							<td>${labResult.requestingDistrictName}</td>
 							<td>${labResult.healthFacilityLabCode}</td>
@@ -96,7 +98,7 @@
 							<td>${labResult.gender}</td>
 							<td>${labResult.ageInYears}</td>
 							<td>${labResult.requestId}</td>
-							<td>${labResult.processingDate.toString().substring(0,10)}</td>
+							<td>${labResult.harvestDate.toString().substring(0,10)}</td>
 							<td>${labResult.labResultDate.toString().substring(0,10)}</td>
 							<td>${labResult.finalResult}</td>
 							<td>${labResult.typeOfResult}</td>
@@ -116,7 +118,7 @@
 											<c:if test="${labResult.labResultStatus == 'NOT_PROCESSED'}">
 												<openmrs:hasPrivilege privilege="Reagendar resultados no Disa Interoperabilidade">
 													<li>
-														<a href="#" data-requestid="${labResult.requestId}"
+														<a href="#" data-id="${labResult.id}"
 															class="reschedule-vl">
 															<spring:message code="disa.viralload.reschedule" />
 														</a>
@@ -125,7 +127,7 @@
 												<c:if test="${labResult.notProcessingCause == 'NID_NOT_FOUND'}">
 													<openmrs:hasPrivilege privilege="Mapear pacientes no Disa Interoperabilidade">
 														<li>
-															<a href='managelabresults/${labResult.requestId}/map.form'>
+															<a href='managelabresults/${labResult.id}/map.form'>
 																<spring:message code="disa.map.nid" />
 															</a>
 														</li>
@@ -134,14 +136,14 @@
 											</c:if>
 											<openmrs:hasPrivilege privilege="Realocar resultados no Disa Interoperabilidade">
 												<li>
-													<a href="managelabresults/${labResult.requestId}/reallocate.form">
+													<a href="managelabresults/${labResult.id}/reallocate.form">
 														<spring:message code="disa.viralload.reallocate" />
 													</a>
 												</li>
 											</openmrs:hasPrivilege>
 											<openmrs:hasPrivilege privilege="Remover resultados no Disa Interoperabilidade">
 												<li>
-													<a href="#" data-requestid="${labResult.requestId}"
+													<a href="#" data-id="${labResult.id}"
 														class="delete-vl">
 														<spring:message code="disa.viralload.delete" />
 													</a>
@@ -157,8 +159,9 @@
 			</table>
 			<br />
 			<div class="submit-btn center">
-				<input type="button" value='<spring:message code="disa.btn.export"/>'
-					name="exportViralLoadResults" onclick="window.location.href = '${exportUri}'" />
+				<button onclick="window.location.href = '${exportUri}'" >
+					<spring:message code="disa.btn.export"/>
+				</button>
 			</div>
 		</div>
 	</div>
@@ -204,22 +207,23 @@
 	};
 
 	const columns = {
-		"FACILITY_NAME": 0,
-		"DISTRICT_NAME": 1,
-		"FACILITY_CODE": 2,
-		"NID": 3,
-		"FULL_NAME": 4,
-		"GENDER": 5,
-		"AGE": 6,
-		"REQUEST_ID": 7,
-		"PROCESSING_DATE": 8,
-		"RESULT_DATE": 9,
-		"FINAL_RESULT": 10,
-		"TYPE_OF_RESULT": 11,
-		"STATUS": 12,
-		"CREATED_AT": 13,
-		"UPDATED_AT": 14,
-		"NOT_PROCESSING_CAUSE": 15,
+		"ID": 0,
+		"FACILITY_NAME": 1,
+		"DISTRICT_NAME": 2,
+		"FACILITY_CODE": 3,
+		"NID": 4,
+		"FULL_NAME": 5,
+		"GENDER": 6,
+		"AGE": 7,
+		"REQUEST_ID": 8,
+		"HARVEST_DATE":9,
+		"RESULT_DATE": 10,
+		"FINAL_RESULT": 11,
+		"TYPE_OF_RESULT": 12,
+		"STATUS": 13,
+		"CREATED_AT": 14,
+		"UPDATED_AT": 15,
+		"NOT_PROCESSING_CAUSE": 16,
 	}
 
 	/**
@@ -250,7 +254,7 @@
 		event.preventDefault();
 
 		const anchor = event.currentTarget;
-		const requestId = anchor.dataset.requestid;
+		const id = anchor.dataset.id;
 		const headers = { "Content-Type": "application/json" }
 		const options = { method: "POST", headers};
 
@@ -258,7 +262,7 @@
 
 			document.body.style.cursor = 'wait';
 
-			const response = await fetch(`managelabresults/\${requestId}/reschedule.form`, options);
+			const response = await fetch(`managelabresults/\${id}/reschedule.form`, options);
 
 			if (response.status === 200) {
 				addFlashMessage("<spring:message code='disa.viralload.reschedule.successful'/>");
@@ -280,10 +284,11 @@
 
 		const anchor = event.currentTarget;
 		const requestId = anchor.dataset.requestid;
+		const id = anchor.dataset.id;
 		if (confirm(`<spring:message code='disa.viralload.delete.confirmation.javascript'/>`)) {
 			try {
 				document.body.style.cursor = 'wait';
-				const response = await fetch(`managelabresults/\${requestId}.form`, { method: "DELETE" });
+				const response = await fetch(`managelabresults/\${id}.form`, { method: "DELETE" });
 				if (response.status === 204) {
 					addFlashMessage("<spring:message code='disa.viralload.delete.successful'/>");
 					table.draw(false);
@@ -416,10 +421,11 @@
 						columns.FULL_NAME,
 						columns.GENDER,
 						columns.REQUEST_ID,
-						columns.PROCESSING_DATE,
+						columns.HARVEST_DATE,
 						columns.RESULT_DATE,
 						columns.TYPE_OF_RESULT,
 						columns.FINAL_RESULT,
+						columns.STATUS,
 						columns.CREATED_AT,
 						columns.UPDATED_AT,
 						columns.NOT_PROCESSING_CAUSE
@@ -441,6 +447,7 @@
 				},
         	],
 			columns: [
+				{ data: "id" },
 				{ data: "requestingFacilityName" },
 				{ data: "requestingDistrictName" },
 				{ data: "healthFacilityLabCode" },
@@ -459,11 +466,14 @@
 					}
 				},
 				{ data: "gender" },
-				{ data: "ageInYears" },
+				{
+					data: "ageInYears",
+					render: (data) => data || null
+				},
 				{ data: "requestId" },
 				{
-					data: "processingDate",
-					render: (data, type, row, meta) => data.substring(0, 10)
+					data: "harvestDate",
+					render: (data, type, row, meta) => data && data.substring(0, 10)
 				},
 				{
 					data: "labResultDate",
@@ -531,7 +541,7 @@
 								const rescheduleLink = document.createElement("a");
 								rescheduleLink.href="#";
 								rescheduleLink.className = "reschedule-vl";
-								rescheduleLink.dataset.requestid = row.requestId;
+								rescheduleLink.dataset.id = data.id;
 								rescheduleLink.appendChild(document.createTextNode("<spring:message code='disa.viralload.reschedule' />"));
 								reschedule.appendChild(rescheduleLink);
 								ul.appendChild(reschedule);
@@ -542,7 +552,7 @@
 								if (hasPrivilege(user, "Mapear pacientes no Disa Interoperabilidade")) {
 									const map = document.createElement("li");
 									const mapLink = document.createElement("a");
-									mapLink.href=`managelabresults/\${row.requestId}/map.form`;
+									mapLink.href=`managelabresults/\${data.id}/map.form`;
 									mapLink.appendChild(document.createTextNode("<spring:message code='disa.map.nid' />"));
 									map.appendChild(mapLink);
 									ul.appendChild(map);
@@ -554,7 +564,7 @@
 						if (hasPrivilege(user, "Realocar resultados no Disa Interoperabilidade")) {
 							const reallocate = document.createElement("li");
 							const reallocateLink = document.createElement("a");
-							reallocateLink.href=`managelabresults/\${row.requestId}/reallocate.form`;
+							reallocateLink.href=`managelabresults/\${data.id}/reallocate.form`;
 							reallocateLink.appendChild(document.createTextNode("<spring:message code='disa.viralload.reallocate' />"));
 							reallocate.appendChild(reallocateLink);
 							ul.appendChild(reallocate);
@@ -567,6 +577,7 @@
 							deleteLink.href="#";
 							deleteLink.className = "delete-vl";
 							deleteLink.dataset.requestid = row.requestId;
+							deleteLink.dataset.id = data.id;
 							deleteLink.appendChild(document.createTextNode("<spring:message code='disa.viralload.delete' />"));
 							delete_.appendChild(deleteLink)
 							ul.appendChild(delete_);

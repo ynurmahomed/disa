@@ -1,24 +1,29 @@
-.vlResultsTable {
+.resultsTable {
 	font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
 	border-collapse: collapse;
 	width: 100%;
 }
 
-.vlResultsTable td,
-.vlResultsTable th {
+.resultsTable tr th:first-child,
+.resultsTable tr td:first-child {
+	display: none;
+}
+
+.resultsTable td,
+.resultsTable th {
 	border: 1px solid #ddd;
 	padding: 8px;
 }
 
-.vlResultsTable tr:nth-child(even) {
+.resultsTable tr:nth-child(even) {
 	background-color: #f2f2f2;
 }
 
-.vlResultsTable tr:hover {
+.resultsTable tr:hover {
 	background-color: #ddd;
 }
 
-.vlResultsTable th {
+.resultsTable th {
 	padding-top: 12px;
 	padding-bottom: 12px;
 	text-align: left;
@@ -26,26 +31,26 @@
 	color: white;
 }
 
-.vlResultsTable .actions {
+.resultsTable .actions {
 	cursor: pointer;
 }
 
-.vlResultsTable .actions-tooltip {
+.resultsTable .actions-tooltip {
 	display: none;
 	background-color: #ddd;
 }
 
-.vlResultsTable .actions-tooltip[data-show] {
+.resultsTable .actions-tooltip[data-show] {
 	display: block;
 }
 
-.vlResultsTable .actions-tooltip ul {
+.resultsTable .actions-tooltip ul {
 	padding: 0;
 	margin-top: 0;
 	margin-bottom: 0;
 }
 
-.vlResultsTable .actions-tooltip li {
+.resultsTable .actions-tooltip li {
 	list-style: none;
 	padding: 0.5rem 0.5rem;
 }
@@ -60,7 +65,7 @@
 	justify-content: center;
 }
 
-.submit-btn input {
+.submit-btn button {
 	color: #fff;
 	background: #1aac9b;
 	padding: 8px;
@@ -166,4 +171,38 @@ button.dt-button.buttons-columnVisibility:before {
 
 button.dt-button.buttons-columnVisibility.active:before {
 	content: "- ";
+}
+
+.input-wrapper {
+	display: flex;
+	border: 1px solid cadetblue;
+}
+
+.input-wrapper:focus-within {
+    outline: 1px solid black;
+    border-radius: 3px;
+    border: 1px solid black;
+}
+
+.input-wrapper .prefix {
+	color: gray;
+	font-size: 0.9em;
+	padding: 1px 0 1px 1px;
+}
+
+.input-wrapper input {
+	border: none;
+	outline: none;
+}
+
+.input-wrapper:hover .clear {
+	visibility: visible;
+}
+
+.input-wrapper .clear {
+	cursor: default;
+	visibility: hidden;
+	font-weight: bold;
+	color: gray;
+	padding: 0 2px;
 }

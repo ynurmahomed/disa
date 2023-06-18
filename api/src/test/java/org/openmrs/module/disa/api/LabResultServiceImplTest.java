@@ -4,6 +4,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doThrow;
@@ -51,35 +52,35 @@ public class LabResultServiceImplTest extends BaseContextMockTest {
     @Test
     public void getByRequestIdShouldReturnTheLabResult() throws IOException, URISyntaxException {
         LabResult expected = new HIVVLLabResult();
-        when(client.getResultByRequestId("requestId")).thenReturn(expected);
-        LabResult result = labResultService.getByRequestId("requestId");
+        when(client.getResultById(1l)).thenReturn(expected);
+        LabResult result = labResultService.getById(1l);
         Assert.assertEquals(expected, result);
     }
 
     @Test(expected = DisaModuleAPIException.class)
     public void getByRequestIdShouldThrowException() throws IOException, URISyntaxException {
-        when(client.getResultByRequestId("requestId"))
+        when(client.getResultById(1l))
                 .thenThrow(new URISyntaxException("", ""));
-        labResultService.getByRequestId("requestId");
+        labResultService.getById(1l);
     }
 
     @Test
     public void deleteByRequestIdShouldDeleteTheLabResult() throws IOException, URISyntaxException {
-        labResultService.deleteByRequestId("requestId");
-        verify(client, Mockito.times(1)).deleteResultByRequestId("requestId");
+        labResultService.deleteById(1l);
+        verify(client, Mockito.times(1)).deleteResultById(1l);
     }
 
     @Test(expected = DisaModuleAPIException.class)
     public void deleteByRequestIdSholdThrowException() throws IOException, URISyntaxException {
         doThrow(new URISyntaxException("", ""))
-                .when(client).deleteResultByRequestId("requestId");
-        labResultService.deleteByRequestId("requestId");
+                .when(client).deleteResultById(1l);
+        labResultService.deleteById(1l);
     }
 
     @Test
     public void testReallocateLabResult() throws IOException, URISyntaxException {
-        LabResult labResult = new HIVVLLabResult("MZDISAPMB0637467");
-        when(client.getResultByRequestId(anyString())).thenReturn(labResult);
+        LabResult labResult = new HIVVLLabResult(1l);
+        when(client.getResultById(anyLong())).thenReturn(labResult);
         OrgUnit destination = new OrgUnit();
         destination.setCode("code");
         OrgUnit orgUnit = new OrgUnit();
@@ -88,7 +89,7 @@ public class LabResultServiceImplTest extends BaseContextMockTest {
         orgUnit.setDistrict("district");
         orgUnit.setProvince("province");
         when(orgUnitService.getOrgUnitByCode("code")).thenReturn(orgUnit);
-        LabResult result = labResultService.reallocateLabResult("MZDISAPMB0637467", destination);
+        LabResult result = labResultService.reallocateLabResult(1l, destination);
         assertThat(result.getHealthFacilityLabCode(), is(orgUnit.getCode()));
         assertThat(result.getRequestingFacilityName(), is(orgUnit.getFacility()));
         assertThat(result.getRequestingDistrictName(), is(orgUnit.getDistrict()));
@@ -100,9 +101,9 @@ public class LabResultServiceImplTest extends BaseContextMockTest {
 
     @Test
     public void testRescheduleLabResult() throws IOException, URISyntaxException {
-        LabResult labResult = new HIVVLLabResult("MZDISAPMB0635152");
-        when(client.getResultByRequestId(anyString())).thenReturn(labResult);
-        labResultService.rescheduleLabResult("MZDISAPMB0635152");
+        LabResult labResult = new HIVVLLabResult(1l);
+        when(client.getResultById(anyLong())).thenReturn(labResult);
+        labResultService.rescheduleLabResult(1l);
         verify(client, Mockito.times(1)).updateResult(any(LabResult.class));
     }
 

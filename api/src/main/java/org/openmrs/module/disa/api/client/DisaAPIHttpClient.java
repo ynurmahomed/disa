@@ -17,14 +17,11 @@ import org.apache.http.client.fluent.Request;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.BasicResponseHandler;
-import org.openmrs.api.AdministrationService;
 import org.openmrs.module.disa.LabResult;
 import org.openmrs.module.disa.OrgUnit;
 import org.openmrs.module.disa.TypeOfResult;
 import org.openmrs.module.disa.api.Page;
-import org.openmrs.module.disa.api.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import com.google.gson.Gson;
@@ -38,18 +35,13 @@ public class DisaAPIHttpClient {
 
 	private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-	private AdministrationService administrationService;
 	private Gson gson;
-	private boolean isSetUp;
 	private String username;
 	private String password;
 	private String URLBase;
 
 	@Autowired
-	public DisaAPIHttpClient(
-			@Qualifier("adminService") AdministrationService administrationService,
-			Gson gson) {
-		this.administrationService = administrationService;
+	public DisaAPIHttpClient(Gson gson) {
 		this.gson = gson;
 	}
 
@@ -67,8 +59,6 @@ public class DisaAPIHttpClient {
 			int pageSize,
 			String orderBy,
 			String direction) throws URISyntaxException, IOException {
-
-		setUp();
 
 		URIBuilder builder = new URIBuilder(URLBase)
 				.setPathSegments("services", "v2", "viralloads", "search-form")
@@ -120,22 +110,14 @@ public class DisaAPIHttpClient {
 			String labResultStatus,
 			String notProcessingCause,
 			String nid,
-			List<String> healthFacilityLabCodes,
-			String search,
-			String orderBy,
-			String direction) throws URISyntaxException, IOException {
-
-		setUp();
+			List<String> healthFacilityLabCodes) throws URISyntaxException, IOException {
 
 		URIBuilder builder = new URIBuilder(URLBase)
 				.setPathSegments("services", "lab-results", "export")
 				.addParameter("requestId", requestId)
 				.addParameter("labResultStatus", labResultStatus)
 				.addParameter("notProcessingCause", notProcessingCause)
-				.addParameter("nid", nid)
-				.addParameter("orderBy", orderBy)
-				.addParameter("direction", direction)
-				.addParameter("search", search);
+				.addParameter("nid", nid);
 
 		if (startDate != null) {
 			builder.addParameter("startDate", startDate.format(DATE_TIME_FORMATTER));
@@ -168,7 +150,6 @@ public class DisaAPIHttpClient {
 	}
 
 	public List<OrgUnit> searchOrgUnits(String term) throws URISyntaxException, IOException {
-		setUp();
 
 		URI url = new URIBuilder(URLBase)
 				.setPathSegments("services", "v2", "orgunits", "search")
@@ -192,7 +173,6 @@ public class DisaAPIHttpClient {
 	}
 
 	public OrgUnit getOrgUnitByCode(String code) throws URISyntaxException, IOException {
-		setUp();
 
 		URI url = new URIBuilder(URLBase)
 				.setPathSegments("services", "v2", "orgunits", code)
@@ -212,11 +192,10 @@ public class DisaAPIHttpClient {
 
 	}
 
-	public LabResult getResultByRequestId(String requestId) throws URISyntaxException, IOException {
-		setUp();
+	public LabResult getResultById(long id) throws URISyntaxException, IOException {
 
 		URI url = new URIBuilder(URLBase)
-				.setPathSegments("services", "lab-results", requestId)
+				.setPathSegments("services", "lab-results", String.valueOf(id))
 				.build();
 
 		Executor executor = Executor.newInstance()
@@ -232,11 +211,10 @@ public class DisaAPIHttpClient {
 		return gson.fromJson(jsonResponse, LabResult.class);
 	}
 
-	public void deleteResultByRequestId(String requestId) throws IOException, URISyntaxException {
-		setUp();
+	public void deleteResultById(long id) throws IOException, URISyntaxException {
 
 		URI url = new URIBuilder(URLBase)
-				.setPathSegments("services", "lab-results", requestId)
+				.setPathSegments("services", "lab-results", String.valueOf(id))
 				.build();
 
 		Executor executor = Executor.newInstance()
@@ -256,10 +234,9 @@ public class DisaAPIHttpClient {
 	}
 
 	public String updateResult(LabResult labResult) throws IOException, URISyntaxException {
-		setUp();
 
 		URI url = new URIBuilder(URLBase)
-				.setPathSegments("services", "lab-results", labResult.getRequestId())
+				.setPathSegments("services", "lab-results", String.valueOf(labResult.getId()))
 				.build();
 
 		Executor executor = Executor.newInstance()
@@ -283,7 +260,6 @@ public class DisaAPIHttpClient {
 	 * @throws URISyntaxException
 	 */
 	public String findUnauthorisedSismaCode(List<String> healthFacilityLabCodes) {
-		setUp();
 
 		String code = null;
 
@@ -298,28 +274,29 @@ public class DisaAPIHttpClient {
 						.setPathSegments("services", "v2", "viralloads", "search-form")
 						.addParameter("healthFacilityLabCode", code);
 				Request request = Request.Head(builder.build());
-				executor.execute(request);
+				HttpResponse response = executor.execute(request).returnResponse();
+
+				if (response.getStatusLine().getStatusCode() == 403) {
+					return code;
+				}
 			}
-		} catch (URISyntaxException e) {
+		} catch (URISyntaxException | IOException e) {
 			e.printStackTrace();
-			return null;
-		} catch (HttpResponseException e) {
-			if (e.getStatusCode() == 403) {
-				return code;
-			}
-		} catch (IOException e) {
 			return null;
 		}
 
 		return code;
 	}
 
-	private void setUp() {
-		if (!isSetUp) {
-			URLBase = administrationService.getGlobalPropertyObject(Constants.DISA_URL).getPropertyValue();
-			username = administrationService.getGlobalPropertyObject(Constants.DISA_USERNAME).getPropertyValue();
-			password = administrationService.getGlobalPropertyObject(Constants.DISA_PASSWORD).getPropertyValue();
-			isSetUp = true;
-		}
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public void setURLBase(String uRLBase) {
+		URLBase = uRLBase;
 	}
 }

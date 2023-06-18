@@ -10,7 +10,7 @@ import java.util.Date;
  */
 public abstract class LabResult {
 
-	private transient int id;
+	private long id;
 
 	private String finalResult;
 
@@ -52,7 +52,7 @@ public abstract class LabResult {
 
 	private LocalDateTime dateOfSampleReceive;
 
-	private String processingDate;
+	private LocalDateTime processingDate;
 
 	private String sampleType;
 
@@ -91,8 +91,8 @@ public abstract class LabResult {
 	protected LabResult() {
 	}
 
-	protected LabResult(String requestId) {
-		this.requestId = requestId;
+	protected LabResult(long id) {
+		this.id = id;
 	}
 
 	public String getSynchronizedBy() {
@@ -143,11 +143,11 @@ public abstract class LabResult {
 		this.labResultStatus = labResultStatus;
 	}
 
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 
@@ -287,11 +287,11 @@ public abstract class LabResult {
 		this.dateOfSampleReceive = dateOfSampleReceive;
 	}
 
-	public String getProcessingDate() {
+	public LocalDateTime getProcessingDate() {
 		return processingDate;
 	}
 
-	public void setProcessingDate(String processingDate) {
+	public void setProcessingDate(LocalDateTime processingDate) {
 		this.processingDate = processingDate;
 	}
 

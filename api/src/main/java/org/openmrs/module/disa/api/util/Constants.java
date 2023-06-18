@@ -98,7 +98,6 @@ public class Constants {
 	public static final String ENF_PEDIATRIA = "ENF. PEDIATRIA";
 	public static final String LABORATORIO = "LABORATORIO";
 	public static final String OUTRO_NAO_CODIFICADO = "OUTRO, NAO CODIFICADO";
-	public static final String TODOS = "TODOS";
 	public static final String ALL = "ALL";
 
 	public static final String DISA_MAIL_TO = "disa.api.mail.to";

@@ -24,7 +24,7 @@ import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.openmrs.LocationAttribute;
 import org.openmrs.Patient;
-import org.openmrs.module.disa.FsrLog;
+import org.openmrs.module.disa.SyncLog;
 import org.openmrs.module.disa.TypeOfResult;
 import org.openmrs.module.disa.api.db.DisaDAO;
 
@@ -72,14 +72,14 @@ public class HibernateDisaDAO implements DisaDAO {
 	}
 
 	@Override
-	public Serializable saveFsrLog(FsrLog fsrLog) {
-		return this.getCurrentSession().save(fsrLog);
+	public Serializable saveFsrLog(SyncLog syncLog) {
+		return this.getCurrentSession().save(syncLog);
 	}
 
 	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean existsByRequestIdAndTypeOfResult(String requestId, TypeOfResult typeOfResult) {
-		final String hql = "SELECT f FROM FsrLog f WHERE f.requestId = :requestId AND f.typeOfResult = :typeOfResult";
+		final String hql = "SELECT f FROM SyncLog f WHERE f.requestId = :requestId AND f.typeOfResult = :typeOfResult";
 		final Query query = this.getCurrentSession()
 			.createQuery(hql)
 			.setParameter("requestId", requestId)

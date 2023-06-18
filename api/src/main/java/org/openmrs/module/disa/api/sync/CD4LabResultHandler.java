@@ -162,7 +162,7 @@ public class CD4LabResultHandler extends BaseLabResultHandler {
             encounter.addObs(obs23883);
         }
 
-        // Sample collection date time
+        // Specimen collection Date
         if (cd4.getHarvestDate() != null) {
             Concept sampleCollectionDate = conceptService.getConceptByUuid(Constants.SAMPLE_COLLECTION_DATE);
             Obs obs23821 = new Obs(person, sampleCollectionDate, obsDatetime, location);
@@ -178,7 +178,7 @@ public class CD4LabResultHandler extends BaseLabResultHandler {
             encounter.addObs(obs165461);
         }
 
-        // Result approved date
+        // Result authorization date
         if (cd4.getLabResultDate() != null) {
             Concept resultApprovalDate = conceptService.getConceptByUuid(Constants.RESULT_APPROVAL_DATE);
             Obs obs165462 = new Obs(person, resultApprovalDate, obsDatetime, location);

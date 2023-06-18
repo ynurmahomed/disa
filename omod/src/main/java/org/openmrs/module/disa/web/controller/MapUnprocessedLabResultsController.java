@@ -29,8 +29,8 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @Controller
-@RequestMapping("/module/disa/managelabresults/{requestId}/map")
-@SessionAttributes({ "requestId", "patientList", "lastSearchParams", "flashMessage", "errorSelectPatient" })
+@RequestMapping("/module/disa/managelabresults/{id}/map")
+@SessionAttributes({ "id", "patientList", "lastSearchParams", "flashMessage", "errorSelectPatient" })
 public class MapUnprocessedLabResultsController {
 
 	private LabResultService labResultService;
@@ -55,12 +55,12 @@ public class MapUnprocessedLabResultsController {
 
 	@RequestMapping(value = "", method = RequestMethod.GET)
 	public String patientIdentifierMapping(
-			@PathVariable String requestId,
+			@PathVariable long id,
 			@RequestParam(required = false) String errorPatientRequired,
 			ModelMap model,
 			HttpServletRequest request) {
 
-		LabResult labResult = labResultService.getByRequestId(requestId);
+		LabResult labResult = labResultService.getById(id);
 
 		if (errorPatientRequired != null) {
 			model.addAttribute("errorPatientRequired", errorPatientRequired);
@@ -68,9 +68,9 @@ public class MapUnprocessedLabResultsController {
 
 		// If there isn't a requestId in the session or there is a different requestId,
 		// load a new patient list.
-		if (!model.containsAttribute("requestId")
-				|| (!model.get("requestId").equals(requestId))) {
-			model.addAttribute("requestId", requestId);
+		if (!model.containsAttribute("id")
+				|| (!model.get("id").equals(id))) {
+			model.addAttribute("id", id);
 			model.addAttribute("patientList", disaService.getPatientsToMapSuggestion(labResult));
 		}
 
@@ -94,11 +94,11 @@ public class MapUnprocessedLabResultsController {
 
 	@RequestMapping(value = "", method = RequestMethod.POST)
 	public String mapPatientIdentifier(
-			@PathVariable String requestId,
+			@PathVariable long id,
 			@RequestParam(required = false) String patientUuid,
 			ModelMap model) {
 
-		LabResult disa = labResultService.getByRequestId(requestId);
+		LabResult disa = labResultService.getById(id);
 
 		if (patientUuid == null) {
 			model.addAttribute(disa);
@@ -106,8 +106,10 @@ public class MapUnprocessedLabResultsController {
 			return "/module/disa/managelabresults/map";
 		} else {
 
-			disaService.mapIdentifier(patientUuid, disa);
-			String mapSuccessfulMsg = messageSourceService.getMessage("disa.viralload.map.successful", null,
+			Patient mapped = disaService.mapIdentifier(patientUuid, disa);
+			String mapSuccessfulMsg = messageSourceService.getMessage("disa.viralload.map.successful",
+					// If successfully mapped, we can trust that the mapped indentifier is not null.
+					new String[] { disa.getNid(), mapped.getPatientIdentifier().getIdentifier() },
 					Context.getLocale());
 
 			if (model.containsAttribute("lastSearchParams")) {
@@ -116,9 +118,9 @@ public class MapUnprocessedLabResultsController {
 				model.addAllAttributes(lastSearchParams);
 			}
 
-			// Remove requestId after successfully mapping, so that id does not filter
+			// Remove id after successfully mapping, so that id does not filter
 			// in managelabresults.
-			model.remove("requestId");
+			model.remove("id");
 			model.addAttribute("flashMessage", mapSuccessfulMsg);
 		}
 
@@ -127,7 +129,7 @@ public class MapUnprocessedLabResultsController {
 
 	@RequestMapping(value = "/addPatient", method = RequestMethod.POST)
 	public String addPatient(
-			@PathVariable String requestId,
+			@PathVariable long id,
 			@ModelAttribute("patient") Patient patient,
 			@ModelAttribute("patientList") List<Patient> patients,
 			ModelMap model) {
@@ -139,7 +141,7 @@ public class MapUnprocessedLabResultsController {
 			PatientIdentifier patientIdentifier = patientToAdd.getPatientIdentifier();
 			if (patientIdentifier == null) {
 				model.addAttribute("errorPatientRequired", "disa.error.patient.required.nid");
-			} else  if (!patients.contains(patientToAdd)) {
+			} else if (!patients.contains(patientToAdd)) {
 				// TODO This is a workaround to LazyInitialization error when getting
 				// identifiers from patient on jsp
 				Set<PatientIdentifier> identifiers = new TreeSet<>();
@@ -150,7 +152,7 @@ public class MapUnprocessedLabResultsController {
 			model.addAttribute("patientList", patients);
 		}
 
-		return "redirect:/module/disa/managelabresults/" + requestId + "/map.form";
+		return "redirect:/module/disa/managelabresults/" + id + "/map.form";
 	}
 
 	@ModelAttribute("pageTitle")

@@ -20,7 +20,7 @@
 		<spring:message code="disa.patient" />
 	</b>
 	<div class="box">
-		<table class="vlResultsTable">
+		<table class="resultsTable">
 			<tr>
 				<th><spring:message code="disa.nid" /></th>
 				<th><spring:message code="general.name" /></th>
@@ -52,8 +52,9 @@
 				</span>
 			</c:if>
 			<div class="submit-btn">
-				<input type="submit" value='<spring:message code="general.add"/>'
-					name="addPatient" id="btn-addPatient" />
+				<button type="submit">
+					<spring:message code="general.add"/>
+				</button>
 			</div>
 		</form>
 	</div>
@@ -67,7 +68,7 @@
 			</div>
 		</c:if>
 		<form method="post">
-			<table  id="patientListTable"  class="vlResultsTable" width="100%" cellpadding="2" cellspacing="0"
+			<table  id="patientListTable"  class="resultsTable" width="100%" cellpadding="2" cellspacing="0"
 					style="font-size: 13px;">
 				<thead>
 					<tr>
@@ -94,10 +95,12 @@
 			</table>
 			<br />
 			<div class="submit-btn center">
-				<input type="button" value='<spring:message code="general.previous"/>'
-					name="previous"  onclick="location.href='${lastSearchUri}'"/>
-				<input type="submit" value='<spring:message code="disa.btn.map"/>'
-					name="mapIdentifier" id="btn-mapIdentifier" />
+				<button type="button" onclick="location.href='${lastSearchUri}'">
+					<spring:message code="general.previous"/>
+				</button>
+				<button type="submit">
+					<spring:message code="disa.btn.map"/>
+				</button>
 			</div>
 		</form>
 	</div>

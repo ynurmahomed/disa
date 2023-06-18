@@ -15,7 +15,7 @@ import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.LocationService;
-import org.openmrs.module.disa.FsrLog;
+import org.openmrs.module.disa.SyncLog;
 import org.openmrs.module.disa.HIVVLLabResult;
 import org.openmrs.module.disa.LabResult;
 import org.openmrs.module.disa.LabResultStatus;
@@ -78,7 +78,7 @@ public class DisaServiceUnitTest extends BaseContextMockTest {
 
         disaService.handleProcessedLabResult(labResult, encounter);
 
-        verify(disaDAO, times(1)).saveFsrLog(any(FsrLog.class));
+        verify(disaDAO, times(1)).saveFsrLog(any(SyncLog.class));
     }
 
     @Test
