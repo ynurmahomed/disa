@@ -1,4 +1,4 @@
-package org.openmrs.module.disa.extension.util;
+package org.openmrs.module.disa.api.util;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -18,7 +18,6 @@ import javax.mail.internet.MimeMessage;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
-import org.openmrs.module.disa.api.util.Constants;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 

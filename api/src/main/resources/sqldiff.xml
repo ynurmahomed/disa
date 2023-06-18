@@ -66,30 +66,10 @@
 			INSERT INTO global_property 
 			(property,property_value,description,uuid,datatype,datatype_config,preferred_handler,handler_config,date_changed,changed_by) 
 			VALUES ('disa.started','false','DO NOT MODIFY. true/false whether or not the disa module has been started.  This is used to make sure modules that were running  prior to a restart are started again','d54c25dd-cbeb-4317-b306-4b1a3e68a8ae',NULL,NULL,NULL,NULL,NULL,NULL);
-							
+			
 			INSERT INTO global_property 
 			(property,property_value,description,uuid,datatype,datatype_config,preferred_handler,handler_config,date_changed,changed_by) 
 			VALUES ('disa.api.mail.to','','Recipients','2686097c-871b-11e9-898c-0242ac128882',NULL,NULL,NULL,NULL,NULL,NULL);
-			
-			INSERT INTO global_property 
-			(property,property_value,description,uuid,datatype,datatype_config,preferred_handler,handler_config,date_changed,changed_by) 
-			VALUES ('disa.api.mail.others.to','','Other Recipients','2686097c-871b-11e9-191c-0242ac128992',NULL,NULL,NULL,NULL,NULL,NULL);
-			
-			INSERT INTO global_property 
-			(property,property_value,description,uuid,datatype,datatype_config,preferred_handler,handler_config,date_changed,changed_by) 
-			VALUES ('disa.api.mail.from','vlstaging@fgh.org.mz','Sender','2686097c-871b-11e9-898c-0242ac121172',NULL,NULL,NULL,NULL,NULL,NULL);
-							
-			INSERT INTO global_property 
-			(property,property_value,description,uuid,datatype,datatype_config,preferred_handler,handler_config,date_changed,changed_by) 
-			VALUES ('disa.api.mail.host','smtp.gmail.com','Host','0baa0527-9667-4a9a-be7a-60acae797333',NULL,NULL,NULL,NULL,NULL,NULL);
-							
-			INSERT INTO global_property 
-			(property,property_value,description,uuid,datatype,datatype_config,preferred_handler,handler_config,date_changed,changed_by) 
-			VALUES ('disa.api.mail.from.password','P@ssword123*','From password','e07cdb3f-871a-11e9-898c-0242ac124442',NULL,NULL,NULL,NULL,NULL,NULL);
-							
-			INSERT INTO global_property 
-			(property,property_value,description,uuid,datatype,datatype_config,preferred_handler,handler_config,date_changed,changed_by) 
-			VALUES ('disa.api.mail.from.port','465','Port','e07cdb3f-871a-11e9-898c-0242ac127772',NULL,NULL,NULL,NULL,NULL,NULL);
 			
 			INSERT INTO global_property 
 			(property,property_value,description,uuid,datatype,datatype_config,preferred_handler,handler_config,date_changed,changed_by) 

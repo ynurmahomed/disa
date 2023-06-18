@@ -131,5 +131,10 @@ public class Constants {
 	public static final String DUPLICATED_NID = "duplicate";
 
 	public static final String MORE_THAN = ">";
-
+	
+	public static final String DISA_API_NOTIFICATION_URL = "disa.api.notification.url";
+	public static final String DISA_API_MAIL_TO = "disa.api.mail.to";
+	public static final String DISA_NOTIFICATION_ERROR_SUBJECT = "Notificação de Erro de Interoperabilidade Disa: ";
+	public static final String DISA_MODULE = "disa-module";
+	public static final String PROVIDER_ERROR = "Provedor generic.provider ou provedor.desconhecido nao foi encontrado no openmrs.";
 }
