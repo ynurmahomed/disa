@@ -58,6 +58,9 @@
 							<spring:message code="disa.request.id" />
 						</th>
 						<th>
+							<spring:message code="disa.harvest.date" />
+						</th>
+						<th>
 							<spring:message code="disa.authorised.date.time" />
 						</th>
 						<th>
@@ -95,6 +98,7 @@
 							<td>${labResult.gender}</td>
 							<td>${labResult.ageInYears}</td>
 							<td>${labResult.requestId}</td>
+							<td>${labResult.harvestDate.toString().substring(0,10)}</td>
 							<td>${labResult.labResultDate.toString().substring(0,10)}</td>
 							<td>${labResult.finalResult}</td>
 							<td>${labResult.typeOfResult}</td>
@@ -212,13 +216,14 @@
 		"GENDER": 6,
 		"AGE": 7,
 		"REQUEST_ID": 8,
-		"RESULT_DATE": 9,
-		"FINAL_RESULT": 10,
-		"TYPE_OF_RESULT": 11,
-		"STATUS": 12,
-		"CREATED_AT": 13,
-		"UPDATED_AT": 14,
-		"NOT_PROCESSING_CAUSE": 15,
+		"HARVEST_DATE":9,
+		"RESULT_DATE": 10,
+		"FINAL_RESULT": 11,
+		"TYPE_OF_RESULT": 12,
+		"STATUS": 13,
+		"CREATED_AT": 14,
+		"UPDATED_AT": 15,
+		"NOT_PROCESSING_CAUSE": 16,
 	}
 
 	/**
@@ -416,6 +421,7 @@
 						columns.FULL_NAME,
 						columns.GENDER,
 						columns.REQUEST_ID,
+						columns.HARVEST_DATE,
 						columns.RESULT_DATE,
 						columns.TYPE_OF_RESULT,
 						columns.FINAL_RESULT,
@@ -465,6 +471,10 @@
 					render: (data) => data || null
 				},
 				{ data: "requestId" },
+				{
+					data: "harvestDate",
+					render: (data, type, row, meta) => data && data.substring(0, 10)
+				},
 				{
 					data: "labResultDate",
 					render: (data, type, row, meta) => data && data.substring(0, 10)
