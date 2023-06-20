@@ -186,7 +186,7 @@
     </changeSet>
     
     <!-- global_property migration starts here -->
-    <changeSet id="disa-2023-06-18-11:28" author="helio">
+    <changeSet id="disa-2023-06-18-11:29" author="helio">
     	<insert tableName="global_property">
     		<column name="property">disa.api.notification.url</column>
     		<column name="property_value">https://disa-api.fgh.org.mz/notification</column> 
@@ -225,7 +225,7 @@
 		</delete>
     </changeSet>
     
-    <changeSet id="disa.api.location.attribute.type.uuid-2023-06-19-16:14" author="helio">
+    <changeSet id="disa.api.location.attribute.type.uuid-2023-06-19-16:15" author="helio">
         <sql>
             INSERT INTO global_property
             (property, property_value, description, uuid, datatype, datatype_config, preferred_handler, handler_config, date_changed, changed_by)
@@ -233,7 +233,7 @@
         </sql>
     </changeSet>
     
-    <changeSet id="disa.api.password-2023-06-19-16:16" author="helio">
+    <changeSet id="disa.api.password-2023-06-19-16:17" author="helio">
         <sql>
 			INSERT INTO global_property 
 			(property,property_value,description,uuid,datatype,datatype_config,preferred_handler,handler_config,date_changed,changed_by) 
@@ -241,7 +241,7 @@
         </sql>
     </changeSet>
     
-    <changeSet id="disa.api.username-2023-06-19-16:18" author="helio">
+    <changeSet id="disa.api.username-2023-06-19-16:19" author="helio">
         <sql>
 			INSERT INTO global_property 
 			(property,property_value,description,uuid,datatype,datatype_config,preferred_handler,handler_config,date_changed,changed_by) 
@@ -249,7 +249,7 @@
         </sql>
     </changeSet>
     
-    <changeSet id="disa.api.url-2023-06-19-16:29" author="helio">
+    <changeSet id="disa.api.url-2023-06-19-16:30" author="helio">
         <sql>
 			INSERT INTO global_property 
 			(property,property_value,description,uuid,datatype,datatype_config,preferred_handler,handler_config,date_changed,changed_by) 
@@ -257,7 +257,7 @@
         </sql>
     </changeSet>
     
-    <changeSet id="disa.database_version-2023-06-19-16:31" author="helio">
+    <changeSet id="disa.database_version-2023-06-19-16:32" author="helio">
         <sql>
             INSERT INTO global_property 
 			(property,property_value,description,uuid,datatype,datatype_config,preferred_handler,handler_config,date_changed,changed_by) 
@@ -266,7 +266,7 @@
         </sql>
     </changeSet>
     
-    <changeSet id="disa.mandatory-2023-06-19-16:32" author="helio">
+    <changeSet id="disa.mandatory-2023-06-19-16:33" author="helio">
         <sql>
 			INSERT INTO global_property 
 			(property,property_value,description,uuid,datatype,datatype_config,preferred_handler,handler_config,date_changed,changed_by) 
@@ -274,7 +274,7 @@
         </sql>
     </changeSet>
     
-    <changeSet id="disa.openmrs.user-2023-06-19-16:41" author="helio">
+    <changeSet id="disa.openmrs.user-2023-06-19-16:42" author="helio">
         <sql>
 			INSERT INTO global_property 
 			(property,property_value,description,uuid,datatype,datatype_config,preferred_handler,handler_config,date_changed,changed_by) 
@@ -282,7 +282,7 @@
         </sql>
     </changeSet>
     
-    <changeSet id="disa.started-2023-06-19-16:43" author="helio">
+    <changeSet id="disa.started-2023-06-19-16:44" author="helio">
         <sql>
 			INSERT INTO global_property 
 			(property,property_value,description,uuid,datatype,datatype_config,preferred_handler,handler_config,date_changed,changed_by) 
@@ -290,7 +290,7 @@
         </sql>
     </changeSet>
     
-    <changeSet id="disa.api.mail.to-2023-06-19-16:44" author="helio">
+    <changeSet id="disa.api.mail.to-2023-06-19-16:45" author="helio">
         <sql>
 			INSERT INTO global_property 
 			(property,property_value,description,uuid,datatype,datatype_config,preferred_handler,handler_config,date_changed,changed_by) 
@@ -298,7 +298,7 @@
         </sql>
     </changeSet>
     
-    <changeSet id="disa.province.request-2023-06-19-16:44" author="helio">
+    <changeSet id="disa.province.request-2023-06-19-16:46" author="helio">
         <sql>
 			INSERT INTO global_property 
 			(property,property_value,description,uuid,datatype,datatype_config,preferred_handler,handler_config,date_changed,changed_by) 
@@ -306,7 +306,7 @@
         </sql>
     </changeSet>
     
-    <changeSet id="disa.api.sisma.code-2023-06-19-17:11" author="helio">
+    <changeSet id="disa.api.sisma.code-2023-06-19-17:12" author="helio">
         <sql>
 			INSERT INTO global_property 
 			(property,property_value,description,uuid,datatype,datatype_config,preferred_handler,handler_config,date_changed,changed_by) 
