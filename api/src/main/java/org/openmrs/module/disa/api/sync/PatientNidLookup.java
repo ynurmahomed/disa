@@ -1,5 +1,6 @@
 package org.openmrs.module.disa.api.sync;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.openmrs.Patient;
@@ -7,6 +8,9 @@ import org.openmrs.module.disa.LabResult;
 import org.openmrs.module.disa.LabResultStatus;
 import org.openmrs.module.disa.NotProcessingCause;
 import org.openmrs.module.disa.api.DisaService;
+import org.openmrs.module.disa.api.util.Constants;
+import org.openmrs.module.disa.api.util.GenericUtil;
+import org.openmrs.module.disa.api.util.Notifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +36,12 @@ public class PatientNidLookup extends BaseLabResultHandler {
 
     private DisaService disaService;
 
+    private Notifier notifier;
+
     @Autowired
-    public PatientNidLookup(DisaService disaService) {
+    public PatientNidLookup(DisaService disaService, Notifier notifier) {
         this.disaService = disaService;
+        this.notifier = notifier;
     }
 
     @Override
@@ -54,6 +61,7 @@ public class PatientNidLookup extends BaseLabResultHandler {
     }
 
     private void lookupPatient(LabResult labResult) {
+
         String nid = labResult.getNid().trim();
         List<Integer> patientIds = disaService.getPatientByNid(nid);
         if (patientIds.isEmpty()) {
@@ -61,8 +69,12 @@ public class PatientNidLookup extends BaseLabResultHandler {
             labResult.setNotProcessingCause(NotProcessingCause.NID_NOT_FOUND);
             logger.debug(PATIENT_KEY + " not found for nid {}", labResult.getNid());
         } else if (patientIds.size() > 1) {
-            // notify duplication
-            logger.info("Os pacientes do OpenMRS com os Ids: {} partilham o mesmo NID: {}", patientIds, nid);
+            String notification = "Os pacientes do OpenMRS com os Ids: " + Arrays.toString(patientIds.toArray())
+                    + " partilham o mesmo NID: " + labResult;
+            notifier.notify(
+                    Constants.DISA_NOTIFICATION_ERROR_SUBJECT,
+                    GenericUtil.getStackTrace(new Throwable(notification)),
+                    Constants.DISA_MODULE);
             labResult.setLabResultStatus(LabResultStatus.NOT_PROCESSED);
             labResult.setNotProcessingCause(NotProcessingCause.DUPLICATE_NID);
         } else {

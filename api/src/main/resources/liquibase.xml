@@ -149,7 +149,46 @@
             <where>type_of_result is NULL</where>
         </update>
     </changeSet>
-
+    
+    <changeSet id="disa-2023-06-18-11:28" author="helio">
+    	<insert tableName="global_property">
+    		<column name="property">disa.api.notification.url</column>
+    		<column name="property_value">https://disa-api.fgh.org.mz/notification</column> 
+    		<column name="description">url notification endpoint</column> 
+    		<column name="uuid">2686087c-871b-11e9-798c-0292ac129983</column>  
+    	</insert>
+    </changeSet>
+    
+    <changeSet id="delete-disa.api.mail.from" author="helio">
+		<delete tableName="global_property">
+			<where>property = 'disa.api.mail.from'</where> 
+		</delete>
+    </changeSet>
+    
+    <changeSet id="delete-disa.api.mail.from.password" author="helio">
+		<delete tableName="global_property">
+			<where>property = 'disa.api.mail.from.password'</where> 
+		</delete>
+    </changeSet>
+    
+    <changeSet id="delete-disa.api.mail.from.port" author="helio">
+		<delete tableName="global_property">
+			<where>property = 'disa.api.mail.from.port'</where> 
+		</delete>
+    </changeSet>
+    
+    <changeSet id="delete-disa.api.mail.host" author="helio">
+		<delete tableName="global_property">
+			<where>property = 'disa.api.mail.host'</where> 
+		</delete>
+    </changeSet>
+    
+    <changeSet id="delete-disa.api.mail.others.to" author="helio">
+		<delete tableName="global_property">
+			<where>property = 'disa.api.mail.others.to'</where> 
+		</delete>
+    </changeSet>
+    	
     <changeSet id="disa-2023-06-05" author="yassin">
         <renameTable
             newTableName="disa_sync_log"

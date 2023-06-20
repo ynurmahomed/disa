@@ -7,6 +7,7 @@ import org.openmrs.api.UserService;
 import org.openmrs.module.disa.LabResult;
 import org.openmrs.module.disa.LabResultStatus;
 import org.openmrs.module.disa.api.exception.DisaModuleAPIException;
+import org.openmrs.module.disa.api.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,13 +16,13 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class ProviderLookup extends BaseLabResultHandler {
-
+	
     public static final String PROVIDER_KEY = "PROVIDER";
 
     private UserService userService;
 
     private ProviderService providerService;
-
+    
     @Autowired
     public ProviderLookup(UserService userService, ProviderService providerService) {
         this.userService = userService;
@@ -30,7 +31,7 @@ public class ProviderLookup extends BaseLabResultHandler {
 
     @Override
     public LabResultStatus handle(LabResult labResult) {
-
+    	
         if (labResult.isPending()) {
 
             User user = userService.getUserByUsername("generic.provider");
@@ -39,8 +40,7 @@ public class ProviderLookup extends BaseLabResultHandler {
             }
 
             if (user == null) {
-                throw new DisaModuleAPIException(
-                        "O erro O provedor generic.provider ou provedor.desconhecido nao foi encontrado no OpenMRS.");
+  			  throw new DisaModuleAPIException(Constants.PROVIDER_ERROR);  
             }
 
             Provider provider = providerService.getProvidersByPerson(user.getPerson()).iterator().next();
