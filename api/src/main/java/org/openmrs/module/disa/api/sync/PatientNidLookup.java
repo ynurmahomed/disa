@@ -4,19 +4,16 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.openmrs.Patient;
-import org.openmrs.api.AdministrationService;
-import org.openmrs.api.LocationService;
 import org.openmrs.module.disa.LabResult;
 import org.openmrs.module.disa.LabResultStatus;
 import org.openmrs.module.disa.NotProcessingCause;
 import org.openmrs.module.disa.api.DisaService;
 import org.openmrs.module.disa.api.util.Constants;
 import org.openmrs.module.disa.api.util.GenericUtil;
-import org.openmrs.module.disa.api.util.NotificationUtil;
+import org.openmrs.module.disa.api.util.Notifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 /**
@@ -38,20 +35,13 @@ public class PatientNidLookup extends BaseLabResultHandler {
     public static final String PATIENT_KEY = "PATIENT";
 
     private DisaService disaService;
-    
-	private AdministrationService administrationService;
-	
-	private LocationService locationService;
 
-	private String disaNotificationUrl;
-
-	private String disaNotificationMailTo;
+    private Notifier notifier;
 
     @Autowired
-    public PatientNidLookup(DisaService disaService, LocationService locationService, @Qualifier("adminServiceTarget") AdministrationService administrationService) {
+    public PatientNidLookup(DisaService disaService, Notifier notifier) {
         this.disaService = disaService;
-        this.locationService = locationService;
-        this.administrationService = administrationService;
+        this.notifier = notifier;
     }
 
     @Override
@@ -71,10 +61,7 @@ public class PatientNidLookup extends BaseLabResultHandler {
     }
 
     private void lookupPatient(LabResult labResult) {
-    	
-		disaNotificationUrl = administrationService.getGlobalPropertyObject(Constants.DISA_API_NOTIFICATION_URL).getPropertyValue();
-		disaNotificationMailTo = administrationService.getGlobalPropertyObject(Constants.DISA_API_MAIL_TO).getPropertyValue();
-    	
+
         String nid = labResult.getNid().trim();
         List<Integer> patientIds = disaService.getPatientByNid(nid);
         if (patientIds.isEmpty()) {
@@ -82,13 +69,12 @@ public class PatientNidLookup extends BaseLabResultHandler {
             labResult.setNotProcessingCause(NotProcessingCause.NID_NOT_FOUND);
             logger.debug(PATIENT_KEY + " not found for nid {}", labResult.getNid());
         } else if (patientIds.size() > 1) {
-        	String notification = "Os pacientes do OpenMRS com os Ids: " + Arrays.toString(patientIds.toArray()) + " partilham o mesmo NID: " + labResult;
-            NotificationUtil.sendEmail(
-      			  disaNotificationUrl,   
-      			  disaNotificationMailTo,   
-      			  Constants.DISA_NOTIFICATION_ERROR_SUBJECT+locationService.getDefaultLocation().getName(),
-      			  GenericUtil.getStackTrace(new Throwable(notification)),    
-      			  Constants.DISA_MODULE);
+            String notification = "Os pacientes do OpenMRS com os Ids: " + Arrays.toString(patientIds.toArray())
+                    + " partilham o mesmo NID: " + labResult;
+            notifier.notify(
+                    Constants.DISA_NOTIFICATION_ERROR_SUBJECT,
+                    GenericUtil.getStackTrace(new Throwable(notification)),
+                    Constants.DISA_MODULE);
             labResult.setLabResultStatus(LabResultStatus.NOT_PROCESSED);
             labResult.setNotProcessingCause(NotProcessingCause.DUPLICATE_NID);
         } else {

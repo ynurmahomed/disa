@@ -3,15 +3,13 @@ package org.openmrs.module.disa.scheduler;
 import java.util.List;
 
 import org.apache.http.conn.HttpHostConnectException;
-import org.openmrs.api.AdministrationService;
-import org.openmrs.api.LocationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.disa.LabResult;
 import org.openmrs.module.disa.api.LabResultService;
 import org.openmrs.module.disa.api.sync.LabResultProcessor;
 import org.openmrs.module.disa.api.util.Constants;
-import org.openmrs.module.disa.extension.util.GenericUtil;
-import org.openmrs.module.disa.extension.util.NotificationUtil;
+import org.openmrs.module.disa.api.util.GenericUtil;
+import org.openmrs.module.disa.api.util.Notifier;
 import org.openmrs.scheduler.tasks.AbstractTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,29 +26,20 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 	private LabResultService labResultService;
 
 	private LabResultProcessor labResultProcessor;
-	
-	private String disaNotificationUrl;
-	
-	private String disaNotificationMailTo;
-	
-	private AdministrationService administrationService;
-	
-	private LocationService locationService;
-	
+
+	private Notifier notifier;
+
 	public ViralLoadFormSchedulerTask() {
 		this.labResultProcessor = Context.getRegisteredComponents(LabResultProcessor.class).get(0);
 		this.labResultService = Context.getRegisteredComponents(LabResultService.class).get(0);
-		this.administrationService = Context.getAdministrationService();
-		this.locationService = Context.getLocationService();
-		disaNotificationUrl = administrationService.
-				getGlobalPropertyObject(Constants.DISA_API_NOTIFICATION_URL).getPropertyValue();
-		disaNotificationMailTo = administrationService.
-				getGlobalPropertyObject(Constants.DISA_API_MAIL_TO).getPropertyValue();
+		this.notifier = Context.getRegisteredComponents(Notifier.class).get(0);
 	}
 
-	public ViralLoadFormSchedulerTask(LabResultProcessor labResultProcessor, LabResultService labResultService) {
+	public ViralLoadFormSchedulerTask(LabResultProcessor labResultProcessor, LabResultService labResultService,
+			Notifier notifier) {
 		this.labResultProcessor = labResultProcessor;
 		this.labResultService = labResultService;
+		this.notifier = notifier;
 	}
 
 	@Override
@@ -63,12 +52,10 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 			// ignora a exception
 		} catch (Exception e) {
 			logger.error("O erro ", e);
-			NotificationUtil.sendEmail(
-			  disaNotificationUrl,   
-			  disaNotificationMailTo,   
-			  Constants.DISA_NOTIFICATION_ERROR_SUBJECT+locationService.getDefaultLocation().getName(),
-			  GenericUtil.getStackTrace(e),   
-			  Constants.DISA_MODULE); 
+			notifier.notify(
+					Constants.DISA_NOTIFICATION_ERROR_SUBJECT,
+					GenericUtil.getStackTrace(e),
+					Constants.DISA_MODULE);
 		}
 		Context.closeSession();
 		logger.info("module ended...");
