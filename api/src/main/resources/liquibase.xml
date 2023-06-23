@@ -8,6 +8,54 @@
         See http://www.liquibase.org/manual/home#available_database_refactorings
         for a list of supported elements and attributes
     -->
+    
+    <!-- disa_sync_log migration starts here -->
+    <changeSet id="disa-2023-06-19-15:38" author="helio">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="fsr_log"/>
+            </not>
+        </preConditions>
+        <createTable tableName="fsr_log">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="patient_id" type="int"/>
+            <column name="encounter_id" type="int"/>
+            <column name="patient_identifier" type="varchar(50)"/>
+            <column name="request_id" type="varchar(50)"/>
+            <column name="creator" type="int"/>
+            <column name="date_created" type="datetime"/>
+        </createTable>
+        <createIndex tableName="fsr_log" indexName="idx_request_id">
+            <column name="request_id"/>
+        </createIndex>
+    </changeSet>
+    
+    <changeSet id="disa-2023-05-09" author="yassin">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="fsr_log" columnName="type_of_result"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="fsr_log">
+            <column name="type_of_result" type="varchar(50)">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <addUniqueConstraint tableName="fsr_log" columnNames="request_id, type_of_result" />
+        <update tableName="fsr_log">
+            <column name="type_of_result">HIVVL</column>
+            <where>type_of_result is NULL</where>
+        </update>
+    </changeSet>
+    
+    <changeSet id="disa-2023-06-05" author="yassin">
+        <renameTable
+            newTableName="disa_sync_log"
+            oldTableName="fsr_log"/>
+    </changeSet>
+    <!-- disa_sync_log ends here -->
 
     <changeSet id="disa-2022-11-29-10:41" author="yassin">
         <insert tableName="privilege">
@@ -136,24 +184,134 @@
             <column name="privilege">Reagendar resultados no Disa Interoperabilidade</column>
         </insert>
     </changeSet>
-
-    <changeSet id="disa-2023-05-09" author="yassin">
-        <addColumn tableName="fsr_log">
-            <column name="type_of_result" type="varchar(50)">
-                <constraints nullable="false" />
-            </column>
-        </addColumn>
-        <addUniqueConstraint tableName="fsr_log" columnNames="request_id, type_of_result" />
-        <update tableName="fsr_log">
-            <column name="type_of_result">HIVVL</column>
-            <where>type_of_result is NULL</where>
-        </update>
+    
+    <!-- global_property migration starts here -->
+    <changeSet id="disa-2023-06-18-11:29" author="helio">
+    	<insert tableName="global_property">
+    		<column name="property">disa.api.notification.url</column>
+    		<column name="property_value">https://disa-api.fgh.org.mz/notification</column> 
+    		<column name="description">url notification endpoint</column> 
+    		<column name="uuid">2686087c-871b-11e9-798c-0292ac129983</column>  
+    	</insert>
     </changeSet>
-
-    <changeSet id="disa-2023-06-05" author="yassin">
-        <renameTable
-            newTableName="disa_sync_log"
-            oldTableName="fsr_log"/>
+    
+    <changeSet id="delete-disa.api.mail.from" author="helio">
+		<delete tableName="global_property">
+			<where>property = 'disa.api.mail.from'</where> 
+		</delete>
     </changeSet>
-
+    
+    <changeSet id="delete-disa.api.mail.from.password" author="helio">
+		<delete tableName="global_property">
+			<where>property = 'disa.api.mail.from.password'</where> 
+		</delete>
+    </changeSet>
+    
+    <changeSet id="delete-disa.api.mail.from.port" author="helio">
+		<delete tableName="global_property">
+			<where>property = 'disa.api.mail.from.port'</where> 
+		</delete>
+    </changeSet>
+    
+    <changeSet id="delete-disa.api.mail.host" author="helio">
+		<delete tableName="global_property">
+			<where>property = 'disa.api.mail.host'</where> 
+		</delete>
+    </changeSet>
+    
+    <changeSet id="delete-disa.api.mail.others.to" author="helio">
+		<delete tableName="global_property">
+			<where>property = 'disa.api.mail.others.to'</where> 
+		</delete>
+    </changeSet>
+    
+    <changeSet id="disa.api.location.attribute.type.uuid-2023-06-19-16:15" author="helio">
+        <sql>
+            INSERT INTO global_property
+            (property, property_value, description, uuid, datatype, datatype_config, preferred_handler, handler_config, date_changed, changed_by)
+            VALUES ('disa.api.location.attribute.type.uuid', '132895aa-1c88-11e8-b6fd-7395830b63f3', 'location attribute type uuid', '2686097c-871b-11e9-898c-0242ac129982', NULL, NULL, NULL, NULL, NULL, NULL);
+        </sql>
+    </changeSet>
+    
+    <changeSet id="disa.api.password-2023-06-19-16:17" author="helio">
+        <sql>
+			INSERT INTO global_property 
+			(property,property_value,description,uuid,datatype,datatype_config,preferred_handler,handler_config,date_changed,changed_by) 
+			VALUES ('disa.api.password','','api password','2686097c-871b-11e9-898c-0242ac120002',NULL,NULL,NULL,NULL,NULL,NULL);
+        </sql>
+    </changeSet>
+    
+    <changeSet id="disa.api.username-2023-06-19-16:19" author="helio">
+        <sql>
+			INSERT INTO global_property 
+			(property,property_value,description,uuid,datatype,datatype_config,preferred_handler,handler_config,date_changed,changed_by) 
+			VALUES ('disa.api.username','disa','api username','23294c5c-871b-11e9-898c-0242ac120002',NULL,NULL,NULL,NULL,NULL,NULL);
+        </sql>
+    </changeSet>
+    
+    <changeSet id="disa.api.url-2023-06-19-16:30" author="helio">
+        <sql>
+			INSERT INTO global_property 
+			(property,property_value,description,uuid,datatype,datatype_config,preferred_handler,handler_config,date_changed,changed_by) 
+			VALUES ('disa.api.url','https://disa-api.fgh.org.mz/services/viralloads/requestProvince','APHL data source to collect viral load data','e07cdb3f-871a-11e9-898c-0242ac120002',NULL,NULL,NULL,NULL,NULL,NULL);
+        </sql>
+    </changeSet>
+    
+    <changeSet id="disa.database_version-2023-06-19-16:32" author="helio">
+        <sql>
+            INSERT INTO global_property 
+			(property,property_value,description,uuid,datatype,datatype_config,preferred_handler,handler_config,date_changed,changed_by) 
+			VALUES ('disa.database_version','1.0-SNAPSHOT','DO NOT MODIFY.  Current database version number for the disa module.','edd00864-b35e-4dd4-a765-2194a3c47c6e',NULL,NULL,NULL,NULL,NULL,NULL);
+        	
+        </sql>
+    </changeSet>
+    
+    <changeSet id="disa.mandatory-2023-06-19-16:33" author="helio">
+        <sql>
+			INSERT INTO global_property 
+			(property,property_value,description,uuid,datatype,datatype_config,preferred_handler,handler_config,date_changed,changed_by) 
+			VALUES ('disa.mandatory','false','true/false whether or not the disa module MUST start when openmrs starts.  This is used to make sure that mission critical modules are always running if openmrs is running.','e4705f4d-437b-454a-99cf-9bd6aa126ce7',NULL,NULL,NULL,NULL,NULL,NULL);
+        </sql>
+    </changeSet>
+    
+    <changeSet id="disa.openmrs.user-2023-06-19-16:42" author="helio">
+        <sql>
+			INSERT INTO global_property 
+			(property,property_value,description,uuid,datatype,datatype_config,preferred_handler,handler_config,date_changed,changed_by) 
+			VALUES ('disa.openmrs.user','b0fb57b1-43e7-46dc-ad93-5e2429866b30','disa openmrs user creator','bf2c082e-b50a-11e9-b627-941882ab9f93',NULL,NULL,NULL,NULL,NULL,NULL);
+        </sql>
+    </changeSet>
+    
+    <changeSet id="disa.started-2023-06-19-16:44" author="helio">
+        <sql>
+			INSERT INTO global_property 
+			(property,property_value,description,uuid,datatype,datatype_config,preferred_handler,handler_config,date_changed,changed_by) 
+			VALUES ('disa.started','false','DO NOT MODIFY. true/false whether or not the disa module has been started.  This is used to make sure modules that were running  prior to a restart are started again','d54c25dd-cbeb-4317-b306-4b1a3e68a8ae',NULL,NULL,NULL,NULL,NULL,NULL);
+        </sql>
+    </changeSet>
+    
+    <changeSet id="disa.api.mail.to-2023-06-19-16:45" author="helio">
+        <sql>
+			INSERT INTO global_property 
+			(property,property_value,description,uuid,datatype,datatype_config,preferred_handler,handler_config,date_changed,changed_by) 
+			VALUES ('disa.api.mail.to','','Recipients','2686097c-871b-11e9-898c-0242ac128882',NULL,NULL,NULL,NULL,NULL,NULL);
+        </sql>
+    </changeSet>
+    
+    <changeSet id="disa.province.request-2023-06-19-16:46" author="helio">
+        <sql>
+			INSERT INTO global_property 
+			(property,property_value,description,uuid,datatype,datatype_config,preferred_handler,handler_config,date_changed,changed_by) 
+			VALUES ('disa.province.request','','province requesting the viral load results','e07cdb3f-871a-11e9-898c-0242ac121112',NULL,NULL,NULL,NULL,NULL,NULL);
+        </sql>
+    </changeSet>
+    
+    <changeSet id="disa.api.sisma.code-2023-06-19-17:12" author="helio">
+        <sql>
+			INSERT INTO global_property 
+			(property,property_value,description,uuid,datatype,datatype_config,preferred_handler,handler_config,date_changed,changed_by) 
+			VALUES ('disa.api.sisma.code','',NULL,'0baa0527-9667-4a9a-be7a-60acae798458',NULL,NULL,NULL,NULL,NULL,NULL);
+        </sql>
+    </changeSet>
+    <!-- global_property migration ends here -->
 </databaseChangeLog>

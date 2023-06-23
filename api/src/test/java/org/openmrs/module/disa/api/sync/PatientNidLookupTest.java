@@ -4,7 +4,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -22,6 +22,7 @@ import org.openmrs.module.disa.LabResult;
 import org.openmrs.module.disa.LabResultStatus;
 import org.openmrs.module.disa.NotProcessingCause;
 import org.openmrs.module.disa.api.DisaService;
+import org.openmrs.module.disa.api.util.Notifier;
 import org.openmrs.test.BaseContextMockTest;
 
 public class PatientNidLookupTest extends BaseContextMockTest {
@@ -30,6 +31,9 @@ public class PatientNidLookupTest extends BaseContextMockTest {
 
     @Mock
     private LabResultHandler next;
+
+    @Mock
+    private Notifier notifier;
 
     @InjectMocks
     private PatientNidLookup patientNidHandler;
@@ -73,6 +77,23 @@ public class PatientNidLookupTest extends BaseContextMockTest {
 
         // Calls the next handler
         verify(next, times(1)).handle(labResult);
+    }
+
+    @Test
+    public void shouhouldSendANotificationForNotProcessedDuplicateNid() {
+        LabResult labResult = new HIVVLLabResult();
+        labResult.setNid("000000000/0000/00000");
+        labResult.setLabResultStatus(LabResultStatus.PENDING);
+
+        when(disaService.getPatientByNid(anyString()))
+                .thenReturn(Arrays.asList(1, 2));
+
+        doNothing().when(notifier).notify(anyString(), anyString(), anyString());
+
+        patientNidHandler.handle(labResult);
+
+        // Sends a notification
+        verify(notifier, times(1)).notify(anyString(), anyString(), anyString());
     }
 
     @Test
