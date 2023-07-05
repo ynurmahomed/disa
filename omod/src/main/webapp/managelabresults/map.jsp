@@ -20,7 +20,7 @@
 		<spring:message code="disa.patient" />
 	</b>
 	<div class="box">
-		<table class="resultsTable">
+		<table class="disa-table">
 			<tr>
 				<th><spring:message code="disa.nid" /></th>
 				<th><spring:message code="general.name" /></th>
@@ -68,7 +68,7 @@
 			</div>
 		</c:if>
 		<form method="post">
-			<table  id="patientListTable"  class="resultsTable" width="100%" cellpadding="2" cellspacing="0"
+			<table  id="patientListTable"  class="disa-table" width="100%" cellpadding="2" cellspacing="0"
 					style="font-size: 13px;">
 				<thead>
 					<tr>

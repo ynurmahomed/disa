@@ -1,29 +1,24 @@
-.resultsTable {
+.disa-table {
 	font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
 	border-collapse: collapse;
 	width: 100%;
 }
 
-.resultsTable tr th:first-child,
-.resultsTable tr td:first-child {
-	display: none;
-}
-
-.resultsTable td,
-.resultsTable th {
+.disa-table td,
+.disa-table th {
 	border: 1px solid #ddd;
 	padding: 8px;
 }
 
-.resultsTable tr:nth-child(even) {
+.disa-table tr:nth-child(even) {
 	background-color: #f2f2f2;
 }
 
-.resultsTable tr:hover {
+.disa-table tr:hover {
 	background-color: #ddd;
 }
 
-.resultsTable th {
+.disa-table th {
 	padding-top: 12px;
 	padding-bottom: 12px;
 	text-align: left;
@@ -31,26 +26,31 @@
 	color: white;
 }
 
-.resultsTable .actions {
+.disa-table-results tr th:first-child,
+.disa-table-results tr td:first-child {
+	display: none;
+}
+
+.disa-table-results .actions {
 	cursor: pointer;
 }
 
-.resultsTable .actions-tooltip {
+.disa-table-results .actions-tooltip {
 	display: none;
 	background-color: #ddd;
 }
 
-.resultsTable .actions-tooltip[data-show] {
+.disa-table-results .actions-tooltip[data-show] {
 	display: block;
 }
 
-.resultsTable .actions-tooltip ul {
+.disa-table-results .actions-tooltip ul {
 	padding: 0;
 	margin-top: 0;
 	margin-bottom: 0;
 }
 
-.resultsTable .actions-tooltip li {
+.disa-table-results .actions-tooltip li {
 	list-style: none;
 	padding: 0.5rem 0.5rem;
 }
