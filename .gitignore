@@ -30,4 +30,4 @@ disa-api-integ/.mvn/*
 .project
 .settings/
 api/target/
-
+.java-version

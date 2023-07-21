@@ -5,12 +5,10 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Base64;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.StatusLine;
-import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.fluent.Executor;
 import org.apache.http.client.fluent.Request;
@@ -25,10 +23,17 @@ import org.openmrs.module.disa.api.Page;
 import org.openmrs.module.disa.api.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * A HTTP client for the OrgUnit resource from DISA API.
@@ -39,18 +44,22 @@ public class DisaAPIHttpClient {
 	private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
 	private AdministrationService administrationService;
-	private Gson gson;
+	private ObjectMapper objectMapper;
 	private boolean isSetUp;
 	private String username;
 	private String password;
 	private String URLBase;
 
+	private RestTemplate restTemplate;
+
 	@Autowired
 	public DisaAPIHttpClient(
+			RestTemplate restTemplate,
 			@Qualifier("adminService") AdministrationService administrationService,
-			Gson gson) {
+			ObjectMapper objectMapper) {
+		this.restTemplate = restTemplate;
 		this.administrationService = administrationService;
-		this.gson = gson;
+		this.objectMapper = objectMapper;
 	}
 
 	public Page<LabResult> searchLabResults(
@@ -66,7 +75,7 @@ public class DisaAPIHttpClient {
 			int pageNumber,
 			int pageSize,
 			String orderBy,
-			String direction) throws URISyntaxException, IOException {
+			String direction) throws URISyntaxException {
 
 		setUp();
 
@@ -95,22 +104,13 @@ public class DisaAPIHttpClient {
 			builder.addParameter("healthFacilityLabCode", code);
 		}
 
-		URI url = builder.build();
-
-		Executor executor = Executor.newInstance()
-				.auth(username, password);
-
-		Request request = Request.Get(url);
-
-		ResponseHandler<String> responseHandler = new BasicResponseHandler();
-
-		String jsonResponse = executor.execute(request)
-				.handleResponse(responseHandler);
-
-		TypeToken<Page<LabResult>> pageType = new TypeToken<Page<LabResult>>() {
+		ParameterizedTypeReference<Page<LabResult>> typeRef = new ParameterizedTypeReference<Page<LabResult>>() {
 		};
+		ResponseEntity<Page<LabResult>> response = restTemplate.exchange(builder.build(), HttpMethod.GET,
+				new HttpEntity<>(getHeaders()),
+				typeRef);
 
-		return gson.fromJson(jsonResponse, pageType.getType());
+		return response.getBody();
 	}
 
 	public List<LabResult> getAllLabResults(
@@ -120,7 +120,7 @@ public class DisaAPIHttpClient {
 			String labResultStatus,
 			String notProcessingCause,
 			String nid,
-			List<String> healthFacilityLabCodes) throws URISyntaxException, IOException {
+			List<String> healthFacilityLabCodes) throws URISyntaxException {
 
 		setUp();
 
@@ -143,25 +143,16 @@ public class DisaAPIHttpClient {
 			builder.addParameter("healthFacilityLabCode", code);
 		}
 
-		URI url = builder.build();
-
-		Executor executor = Executor.newInstance()
-				.auth(username, password);
-
-		Request request = Request.Get(url);
-
-		ResponseHandler<String> responseHandler = new BasicResponseHandler();
-
-		String jsonResponse = executor.execute(request)
-				.handleResponse(responseHandler);
-
-		TypeToken<List<LabResult>> pageType = new TypeToken<List<LabResult>>() {
+		ParameterizedTypeReference<List<LabResult>> typeRef = new ParameterizedTypeReference<List<LabResult>>() {
 		};
+		ResponseEntity<List<LabResult>> response = restTemplate.exchange(builder.build(), HttpMethod.GET,
+				new HttpEntity<>(getHeaders()),
+				typeRef);
 
-		return gson.fromJson(jsonResponse, pageType.getType());
+		return response.getBody();
 	}
 
-	public List<OrgUnit> searchOrgUnits(String term) throws URISyntaxException, IOException {
+	public List<OrgUnit> searchOrgUnits(String term) throws URISyntaxException {
 
 		setUp();
 
@@ -170,23 +161,17 @@ public class DisaAPIHttpClient {
 				.addParameter("term", term)
 				.build();
 
-		Executor executor = Executor.newInstance()
-				.auth(username, password);
-
-		Request request = Request.Get(url);
-
-		ResponseHandler<String> responseHandler = new BasicResponseHandler();
-
-		String jsonResponse = executor.execute(request)
-				.handleResponse(responseHandler);
-
-		TypeToken<List<OrgUnit>> listType = new TypeToken<List<OrgUnit>>() {
+		ParameterizedTypeReference<List<OrgUnit>> typeRef = new ParameterizedTypeReference<List<OrgUnit>>() {
 		};
-		return gson.fromJson(jsonResponse, listType.getType());
+		ResponseEntity<List<OrgUnit>> response = restTemplate.exchange(url, HttpMethod.GET,
+				new HttpEntity<>(getHeaders()),
+				typeRef);
+
+		return response.getBody();
 
 	}
 
-	public OrgUnit getOrgUnitByCode(String code) throws URISyntaxException, IOException {
+	public OrgUnit getOrgUnitByCode(String code) throws URISyntaxException {
 
 		setUp();
 
@@ -194,21 +179,14 @@ public class DisaAPIHttpClient {
 				.setPathSegments("services", "v2", "orgunits", code)
 				.build();
 
-		Executor executor = Executor.newInstance()
-				.auth(username, password);
+		ResponseEntity<OrgUnit> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(getHeaders()),
+				OrgUnit.class);
 
-		Request request = Request.Get(url);
-
-		ResponseHandler<String> responseHandler = new BasicResponseHandler();
-
-		String jsonResponse = executor.execute(request)
-				.handleResponse(responseHandler);
-
-		return gson.fromJson(jsonResponse, OrgUnit.class);
+		return response.getBody();
 
 	}
 
-	public LabResult getResultById(long id) throws URISyntaxException, IOException {
+	public LabResult getResultById(long id) throws URISyntaxException {
 
 		setUp();
 
@@ -216,17 +194,11 @@ public class DisaAPIHttpClient {
 				.setPathSegments("services", "lab-results", String.valueOf(id))
 				.build();
 
-		Executor executor = Executor.newInstance()
-				.auth(username, password);
+		ResponseEntity<LabResult> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(getHeaders()),
+				LabResult.class);
 
-		Request request = Request.Get(url);
+		return response.getBody();
 
-		ResponseHandler<String> responseHandler = new BasicResponseHandler();
-
-		String jsonResponse = executor.execute(request)
-				.handleResponse(responseHandler);
-
-		return gson.fromJson(jsonResponse, LabResult.class);
 	}
 
 	public void deleteResultById(long id) throws IOException, URISyntaxException {
@@ -237,19 +209,7 @@ public class DisaAPIHttpClient {
 				.setPathSegments("services", "lab-results", String.valueOf(id))
 				.build();
 
-		Executor executor = Executor.newInstance()
-				.auth(username, password);
-
-		HttpResponse response = executor.execute(Request.Delete(url))
-				.returnResponse();
-
-		StatusLine status = response.getStatusLine();
-
-		if (status.getStatusCode() != 200) {
-			throw new HttpResponseException(
-					status.getStatusCode(),
-					status.getReasonPhrase());
-		}
+		restTemplate.exchange(url, HttpMethod.DELETE, new HttpEntity<>(getHeaders()), String.class);
 
 	}
 
@@ -261,16 +221,20 @@ public class DisaAPIHttpClient {
 				.setPathSegments("services", "lab-results", String.valueOf(labResult.getId()))
 				.build();
 
+		// We can't configure RestTemplate to use HttpComponentsClientHttpRequestFactory
+		// to support PATCH requests due to spring-web and httpcomponents being loaded
+		// by different classloaders in OpenMRS. So we'll use httpcomponents directly.
 		Executor executor = Executor.newInstance()
 				.auth(username, password);
 
 		Request request = Request.Patch(url)
-				.bodyString(gson.toJson(labResult), ContentType.APPLICATION_JSON);
+				.bodyString(objectMapper.writeValueAsString(labResult), ContentType.APPLICATION_JSON);
 
 		ResponseHandler<String> responseHandler = new BasicResponseHandler();
 
 		return executor.execute(request)
 				.handleResponse(responseHandler);
+
 	}
 
 	/**
@@ -287,29 +251,44 @@ public class DisaAPIHttpClient {
 
 		String code = null;
 
-		Executor executor = Executor.newInstance()
-				.auth(username, password);
-
 		try {
 			Iterator<String> iterator = healthFacilityLabCodes.iterator();
 			while (iterator.hasNext()) {
 				code = iterator.next();
-				URIBuilder builder = new URIBuilder(URLBase)
-						.setPathSegments("services", "v2", "viralloads", "search-form")
-						.addParameter("healthFacilityLabCode", code);
-				Request request = Request.Head(builder.build());
-				HttpResponse response = executor.execute(request).returnResponse();
-
-				if (response.getStatusLine().getStatusCode() == 403) {
+				if (!isAuthorised(code)) {
 					return code;
 				}
 			}
-		} catch (URISyntaxException | IOException e) {
+		} catch (URISyntaxException e) {
 			e.printStackTrace();
 			return null;
 		}
 
 		return code;
+	}
+
+	private boolean isAuthorised(String code) throws URISyntaxException {
+		try {
+			URIBuilder builder = new URIBuilder(URLBase)
+					.setPathSegments("services", "v2", "viralloads", "search-form")
+					.addParameter("healthFacilityLabCode", code);
+			restTemplate.exchange(builder.build(), HttpMethod.HEAD, new HttpEntity<>(getHeaders()),
+					String.class);
+		} catch (HttpClientErrorException e) {
+			if (e.getStatusCode() == HttpStatus.FORBIDDEN) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private HttpHeaders getHeaders() {
+		HttpHeaders httpHeaders = new HttpHeaders();
+		String credentials = username + ":" + password;
+		byte[] base64Credentials = Base64.getEncoder().encode(credentials.getBytes());
+		String basicAuthHeader = "Basic " + new String(base64Credentials);
+		httpHeaders.set("Authorization", basicAuthHeader);
+		return httpHeaders;
 	}
 
 	private void setUp() {

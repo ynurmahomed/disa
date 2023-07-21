@@ -1,5 +1,8 @@
 package org.openmrs.module.disa;
 
+import com.fasterxml.jackson.annotation.JsonTypeName;
+
+@JsonTypeName("HIVVL")
 public class HIVVLLabResult extends LabResult {
 
     private String viralLoadResultCopies;

@@ -61,7 +61,7 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 		logger.info("module ended...");
 	}
 
-	private void createViralLoadForm() throws HttpHostConnectException {
+	private void createViralLoadForm() throws HttpHostConnectException, InterruptedException {
 
 		List<LabResult> labResults = labResultService.getResultsToSync();
 

@@ -3,11 +3,16 @@ package org.openmrs.module.disa;
 import java.time.LocalDateTime;
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 /**
  *
  * @author machabane
  *
  */
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "typeOfResult")
+@JsonSubTypes({ @JsonSubTypes.Type(HIVVLLabResult.class), @JsonSubTypes.Type(CD4LabResult.class) })
 public abstract class LabResult {
 
 	private long id;
