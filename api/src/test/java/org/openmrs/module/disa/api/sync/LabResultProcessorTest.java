@@ -9,8 +9,10 @@ import static org.mockito.Mockito.when;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.openmrs.module.disa.LabResult;
-import org.openmrs.module.disa.LabResultStatus;
+import org.openmrs.module.disa.api.LabResult;
+import org.openmrs.module.disa.api.LabResultStatus;
+import org.openmrs.module.disa.api.sync.LabResultHandler;
+import org.openmrs.module.disa.api.sync.LabResultProcessor;
 import org.openmrs.test.BaseContextMockTest;
 
 public class LabResultProcessorTest extends BaseContextMockTest {

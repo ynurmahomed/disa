@@ -7,9 +7,9 @@ import javax.validation.Valid;
 
 import org.openmrs.api.context.Context;
 import org.openmrs.messagesource.MessageSourceService;
-import org.openmrs.module.disa.LabResult;
-import org.openmrs.module.disa.OrgUnit;
+import org.openmrs.module.disa.api.LabResult;
 import org.openmrs.module.disa.api.LabResultService;
+import org.openmrs.module.disa.api.OrgUnit;
 import org.openmrs.module.disa.api.OrgUnitService;
 import org.openmrs.module.disa.web.model.ReallocateForm;
 import org.openmrs.module.disa.web.model.SearchForm;

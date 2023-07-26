@@ -24,8 +24,8 @@ import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.openmrs.LocationAttribute;
 import org.openmrs.Patient;
-import org.openmrs.module.disa.SyncLog;
-import org.openmrs.module.disa.TypeOfResult;
+import org.openmrs.module.disa.api.SyncLog;
+import org.openmrs.module.disa.api.TypeOfResult;
 import org.openmrs.module.disa.api.db.DisaDAO;
 
 /**

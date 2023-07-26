@@ -1,8 +1,5 @@
-package org.openmrs.module.disa;
+package org.openmrs.module.disa.api;
 
-import com.fasterxml.jackson.annotation.JsonTypeName;
-
-@JsonTypeName("CD4")
 public class CD4LabResult extends LabResult {
 
     private String cd4Percentage;

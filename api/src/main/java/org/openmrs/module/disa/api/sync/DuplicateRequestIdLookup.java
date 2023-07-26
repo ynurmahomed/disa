@@ -1,9 +1,9 @@
 package org.openmrs.module.disa.api.sync;
 
-import org.openmrs.module.disa.LabResult;
-import org.openmrs.module.disa.LabResultStatus;
-import org.openmrs.module.disa.NotProcessingCause;
 import org.openmrs.module.disa.api.DisaService;
+import org.openmrs.module.disa.api.LabResult;
+import org.openmrs.module.disa.api.LabResultStatus;
+import org.openmrs.module.disa.api.NotProcessingCause;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
