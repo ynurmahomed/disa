@@ -29,7 +29,7 @@
 <c:if test="${not empty disaPage.resultList}">
 	<div>
 		<div class="box">
-			<table id="vlResultsTable" class="resultsTable" style="width:100%; font-size:12px;">
+			<table id="vlResultsTable" class="disa-table disa-table-results" style="width:100%; font-size:12px;">
 				<thead>
 					<tr>
 						<th>id</th>

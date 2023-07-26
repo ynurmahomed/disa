@@ -314,4 +314,10 @@
         </sql>
     </changeSet>
     <!-- global_property migration ends here -->
+
+    <changeSet id="disa-2023-07-17" author="yassin">
+		<delete tableName="global_property">
+			<where>property = 'disa.province.request'</where>
+		</delete>
+    </changeSet>
 </databaseChangeLog>

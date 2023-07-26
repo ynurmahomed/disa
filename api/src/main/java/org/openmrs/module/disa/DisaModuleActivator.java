@@ -13,14 +13,18 @@
  */
 package org.openmrs.module.disa;
 
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.api.AdministrationService;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.BaseModuleActivator;
 import org.openmrs.module.ModuleActivator;
+import org.openmrs.module.disa.api.client.DisaAPIHttpClient;
+import org.openmrs.module.disa.api.util.Constants;
 
 /**
- * This class contains the logic that is run every time this module is either started or stopped.
+ * This class contains the logic that is run every time this module is either
+ * started or stopped.
  */
 public class DisaModuleActivator extends BaseModuleActivator {
 
@@ -38,6 +42,8 @@ public class DisaModuleActivator extends BaseModuleActivator {
 	 */
 	public void contextRefreshed() {
 		log.info("Disa Module Module refreshed");
+
+		setUpDisaHttpClient();
 	}
 
 	/**
@@ -52,6 +58,8 @@ public class DisaModuleActivator extends BaseModuleActivator {
 	 */
 	public void started() {
 		log.info("Disa Module Module started");
+
+		setUpDisaHttpClient();
 	}
 
 	/**
@@ -66,6 +74,14 @@ public class DisaModuleActivator extends BaseModuleActivator {
 	 */
 	public void stopped() {
 		log.info("Disa Module Module stopped");
+	}
+
+	private void setUpDisaHttpClient() {
+		DisaAPIHttpClient disaAPIHttpClient = Context.getRegisteredComponents(DisaAPIHttpClient.class).get(0);
+		AdministrationService administrationService = Context.getAdministrationService();
+		disaAPIHttpClient.setURLBase(administrationService.getGlobalPropertyValue(Constants.DISA_URL, ""));
+		disaAPIHttpClient.setUsername(administrationService.getGlobalPropertyValue(Constants.DISA_USERNAME, ""));
+		disaAPIHttpClient.setPassword(administrationService.getGlobalPropertyValue(Constants.DISA_PASSWORD, ""));
 	}
 
 }
