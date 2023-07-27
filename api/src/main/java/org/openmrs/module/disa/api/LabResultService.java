@@ -5,9 +5,6 @@ import java.util.List;
 
 import org.openmrs.annotation.Authorized;
 import org.openmrs.api.OpenmrsService;
-import org.openmrs.module.disa.LabResult;
-import org.openmrs.module.disa.OrgUnit;
-import org.openmrs.module.disa.TypeOfResult;
 
 public interface LabResultService extends OpenmrsService {
         @Authorized({ "Pesquisar resultados no Disa Interoperabilidade" })

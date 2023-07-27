@@ -1,4 +1,4 @@
-package org.openmrs.module.disa;
+package org.openmrs.module.disa.api;
 
 public class HIVVLLabResult extends LabResult {
 

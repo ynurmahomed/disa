@@ -13,7 +13,7 @@ import javax.validation.Valid;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.messagesource.MessageSourceService;
-import org.openmrs.module.disa.LabResult;
+import org.openmrs.module.disa.api.LabResult;
 import org.openmrs.module.disa.api.LabResultService;
 import org.openmrs.module.disa.api.Page;
 import org.openmrs.module.disa.api.exception.DisaModuleAPIException;
@@ -42,7 +42,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.google.gson.Gson;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Controller
 @RequestMapping("/module/disa/managelabresults")
@@ -57,18 +58,18 @@ public class ManageLabResultsController {
 
     private AdministrationService administrationService;
 
-    private Gson gson;
+    private ObjectMapper objectMapper;
 
     @Autowired
     public ManageLabResultsController(
             LabResultService labResultService,
             MessageSourceService messageSourceService,
             @Qualifier("adminService") AdministrationService administrationService,
-            Gson gson) {
+            ObjectMapper objectMapper) {
         this.labResultService = labResultService;
         this.messageSourceService = messageSourceService;
         this.administrationService = administrationService;
-        this.gson = gson;
+        this.objectMapper = objectMapper;
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
@@ -107,8 +108,8 @@ public class ManageLabResultsController {
 
     @ResponseBody
     @RequestMapping(value = "/json", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public String searchJson(@Valid SearchForm searchForm) {
-        return gson.toJson(searchLabResults(searchForm));
+    public String searchJson(@Valid SearchForm searchForm) throws JsonProcessingException {
+        return objectMapper.writeValueAsString(searchLabResults(searchForm));
     }
 
     @RequestMapping(value = "/export", method = RequestMethod.GET)

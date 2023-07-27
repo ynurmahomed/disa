@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.apache.http.conn.HttpHostConnectException;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.disa.LabResult;
+import org.openmrs.module.disa.api.LabResult;
 import org.openmrs.module.disa.api.LabResultService;
 import org.openmrs.module.disa.api.sync.LabResultProcessor;
 import org.openmrs.module.disa.api.util.Constants;
@@ -61,7 +61,7 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 		logger.info("module ended...");
 	}
 
-	private void createViralLoadForm() throws HttpHostConnectException {
+	private void createViralLoadForm() throws HttpHostConnectException, InterruptedException {
 
 		List<LabResult> labResults = labResultService.getResultsToSync();
 

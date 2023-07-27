@@ -1,4 +1,4 @@
-package org.openmrs.module.disa;
+package org.openmrs.module.disa.api;
 
 import java.io.Serializable;
 import java.util.Date;

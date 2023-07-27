@@ -4,8 +4,8 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyListOf;
+import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
@@ -17,7 +17,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
 
-import org.apache.http.client.HttpResponseException;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -25,15 +24,12 @@ import org.junit.rules.ExpectedException;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.openmrs.module.disa.HIVVLLabResult;
-import org.openmrs.module.disa.LabResult;
-import org.openmrs.module.disa.LabResultStatus;
-import org.openmrs.module.disa.OrgUnit;
-import org.openmrs.module.disa.TypeOfResult;
 import org.openmrs.module.disa.api.client.DisaAPIHttpClient;
 import org.openmrs.module.disa.api.exception.DisaModuleAPIException;
 import org.openmrs.module.disa.api.impl.LabResultServiceImpl;
 import org.openmrs.test.BaseContextMockTest;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.client.HttpClientErrorException;
 
 public class LabResultServiceImplTest extends BaseContextMockTest {
 
@@ -123,7 +119,7 @@ public class LabResultServiceImplTest extends BaseContextMockTest {
             anyInt(),
             anyString(),
             anyString()))
-        .thenThrow(new HttpResponseException(403, "Forbidden"));
+        .thenThrow(new HttpClientErrorException(HttpStatus.FORBIDDEN, "Forbidden"));
 
         String sismaCode = "1100811";
 

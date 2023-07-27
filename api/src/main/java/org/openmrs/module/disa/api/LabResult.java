@@ -1,4 +1,4 @@
-package org.openmrs.module.disa;
+package org.openmrs.module.disa.api;
 
 import java.time.LocalDateTime;
 import java.util.Date;

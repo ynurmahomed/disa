@@ -19,9 +19,11 @@ import org.openmrs.Provider;
 import org.openmrs.User;
 import org.openmrs.api.ProviderService;
 import org.openmrs.api.UserService;
-import org.openmrs.module.disa.HIVVLLabResult;
-import org.openmrs.module.disa.LabResult;
-import org.openmrs.module.disa.LabResultStatus;
+import org.openmrs.module.disa.api.HIVVLLabResult;
+import org.openmrs.module.disa.api.LabResult;
+import org.openmrs.module.disa.api.LabResultStatus;
+import org.openmrs.module.disa.api.sync.LabResultHandler;
+import org.openmrs.module.disa.api.sync.ProviderLookup;
 import org.openmrs.test.BaseContextMockTest;
 
 public class ProviderLookupTest extends BaseContextMockTest {

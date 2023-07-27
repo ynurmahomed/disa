@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.openmrs.module.disa.OrgUnit;
+import org.openmrs.module.disa.api.OrgUnit;
 import org.openmrs.module.disa.api.OrgUnitService;
 import org.openmrs.module.disa.api.exception.DisaModuleAPIException;
 import org.slf4j.Logger;

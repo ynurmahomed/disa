@@ -1,7 +1,7 @@
 package org.openmrs.module.disa.api.sync;
 
-import org.openmrs.module.disa.LabResult;
-import org.openmrs.module.disa.LabResultStatus;
+import org.openmrs.module.disa.api.LabResult;
+import org.openmrs.module.disa.api.LabResultStatus;
 
 /**
  * Represents a link in the chain of responsibility for handling lab results.

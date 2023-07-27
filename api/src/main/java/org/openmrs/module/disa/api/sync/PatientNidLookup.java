@@ -4,10 +4,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.openmrs.Patient;
-import org.openmrs.module.disa.LabResult;
-import org.openmrs.module.disa.LabResultStatus;
-import org.openmrs.module.disa.NotProcessingCause;
 import org.openmrs.module.disa.api.DisaService;
+import org.openmrs.module.disa.api.LabResult;
+import org.openmrs.module.disa.api.LabResultStatus;
+import org.openmrs.module.disa.api.NotProcessingCause;
 import org.openmrs.module.disa.api.util.Constants;
 import org.openmrs.module.disa.api.util.GenericUtil;
 import org.openmrs.module.disa.api.util.Notifier;

@@ -6,7 +6,7 @@ import java.util.Date;
 
 import javax.validation.constraints.Size;
 
-import org.openmrs.module.disa.TypeOfResult;
+import org.openmrs.module.disa.api.TypeOfResult;
 import org.openmrs.module.disa.api.util.Constants;
 import org.springframework.util.StringUtils;
 

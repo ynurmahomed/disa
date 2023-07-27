@@ -1,13 +1,10 @@
 package org.openmrs.module.disa.api.config;
 
-import java.lang.reflect.Type;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.util.Collections;
+import java.util.List;
 
-import org.openmrs.module.disa.CD4LabResult;
-import org.openmrs.module.disa.HIVVLLabResult;
-import org.openmrs.module.disa.LabResult;
-import org.openmrs.module.disa.TypeOfResult;
+import org.openmrs.module.disa.api.LabResult;
 import org.openmrs.module.disa.api.sync.CD4LabResultHandler;
 import org.openmrs.module.disa.api.sync.DuplicateRequestIdLookup;
 import org.openmrs.module.disa.api.sync.FinalLabResultHandler;
@@ -20,28 +17,34 @@ import org.openmrs.module.disa.api.sync.ProviderLookup;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.client.RestTemplate;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonPrimitive;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 
 @Configuration
 public class DisaModuleAPIConfig {
 
     @Bean
-    public Gson gson() {
-        return new GsonBuilder()
-                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeDeserializer())
-                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeSerializer())
-                .registerTypeAdapter(LabResult.class, new LabResultDeserializer())
-                .create();
+    public RestTemplate restTemplate() {
+        List<HttpMessageConverter<?>> messageConverters = Collections
+                .singletonList(new MappingJackson2HttpMessageConverter(objectMapper()));
+        return new RestTemplate(messageConverters);
+    }
+
+    @Bean
+    public ObjectMapper objectMapper() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        SimpleModule simpleModule = new SimpleModule();
+        simpleModule.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer());
+        simpleModule.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer());
+        simpleModule.addDeserializer(LabResult.class, new LabResultDeserializer());
+        objectMapper.registerModule(simpleModule);
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        return objectMapper;
     }
 
     @Bean
@@ -72,35 +75,5 @@ public class DisaModuleAPIConfig {
         }
 
         return new LabResultProcessor(chain[0]);
-    }
-
-    private class LocalDateTimeSerializer implements JsonSerializer<LocalDateTime> {
-        public JsonElement serialize(LocalDateTime src, Type typeOfSrc, JsonSerializationContext context) {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
-            return new JsonPrimitive(formatter.format(src));
-        }
-    }
-
-    private class LocalDateTimeDeserializer implements JsonDeserializer<LocalDateTime> {
-        public LocalDateTime deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-                throws JsonParseException {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
-            return LocalDateTime.parse(json.getAsJsonPrimitive().getAsString(), formatter);
-        }
-    }
-
-    private class LabResultDeserializer implements JsonDeserializer<LabResult> {
-        @Override
-        public LabResult deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-                throws JsonParseException {
-            JsonObject jsonObject = json.getAsJsonObject();
-            TypeOfResult typeOfResult = context.deserialize(jsonObject.get("typeOfResult"), TypeOfResult.class);
-            if (typeOfResult == TypeOfResult.HIVVL) {
-                return context.deserialize(json, HIVVLLabResult.class);
-            } else if (typeOfResult == TypeOfResult.CD4) {
-                return context.deserialize(json, CD4LabResult.class);
-            }
-            throw new JsonParseException("Unknown type of result: " + typeOfResult);
-        }
     }
 }

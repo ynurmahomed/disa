@@ -1,8 +1,17 @@
-package org.openmrs.module.disa;
+package org.openmrs.module.disa.api;
 
 public class CD4LabResult extends LabResult {
 
     private String cd4Percentage;
+
+    public CD4LabResult() {
+        setTypeOfResult(TypeOfResult.CD4);
+    }
+
+    public CD4LabResult(long l) {
+        super(l);
+        setTypeOfResult(TypeOfResult.CD4);
+    }
 
     public String getCd4Percentage() {
         return cd4Percentage;
