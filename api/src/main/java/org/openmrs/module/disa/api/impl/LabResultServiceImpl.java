@@ -31,6 +31,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.client.ResourceAccessException;
 
 @Service
 public class LabResultServiceImpl extends BaseOpenmrsService implements LabResultService {
@@ -95,11 +97,16 @@ public class LabResultServiceImpl extends BaseOpenmrsService implements LabResul
                     search,
                     pageNumber, pageSize, orderBy, direction);
 
-        } catch (HttpResponseException e) {
-            throw handleHttpResponseException(e, healthFacilityLabCodes, "disa.result.search.error");
-        } catch (UnknownHostException | ConnectException | SocketTimeoutException e) {
-            throw new DisaModuleAPIException("disa.result.no.internet", (Object[]) null, e);
-        } catch (IOException | URISyntaxException e) {
+        } catch (HttpStatusCodeException e) {
+            throw handleHttpResponseException(e.getStatusCode().value(), healthFacilityLabCodes,
+                    "disa.result.search.error");
+        } catch (ResourceAccessException e) {
+            if (probableConnectivityIssue(e)) {
+                throw new DisaModuleAPIException("disa.result.no.internet", (Object[]) null, e);
+            } else {
+                throw e;
+            }
+        } catch (URISyntaxException e) {
             throw new DisaModuleAPIException("disa.result.search.error", (Object[]) null, e);
         }
     }
@@ -137,11 +144,16 @@ public class LabResultServiceImpl extends BaseOpenmrsService implements LabResul
             return client.getAllLabResults(start, end, requestId,
                     labResultStatus,
                     notProcessingCause, nid, healthFacilityLabCodes);
-        } catch (HttpResponseException e) {
-            throw handleHttpResponseException(e, healthFacilityLabCodes, "disa.result.export.error");
-        } catch (UnknownHostException | ConnectException | SocketTimeoutException e) {
-            throw new DisaModuleAPIException("disa.result.no.internet", (Object[]) null, e);
-        } catch (IOException | URISyntaxException e) {
+        } catch (HttpStatusCodeException e) {
+            throw handleHttpResponseException(e.getStatusCode().value(), healthFacilityLabCodes,
+                    "disa.result.export.error");
+        } catch (ResourceAccessException e) {
+            if (probableConnectivityIssue(e)) {
+                throw new DisaModuleAPIException("disa.result.no.internet", (Object[]) null, e);
+            } else {
+                throw e;
+            }
+        } catch (URISyntaxException e) {
             throw new DisaModuleAPIException("disa.result.export.error", (Object[]) null, e);
         }
     }
@@ -150,11 +162,16 @@ public class LabResultServiceImpl extends BaseOpenmrsService implements LabResul
     public LabResult getById(long id) {
         try {
             return client.getResultById(id);
-        } catch (HttpResponseException e) {
-            throw handleHttpResponseException(e, Collections.emptyList(), "disa.result.get.error");
-        } catch (UnknownHostException | ConnectException | SocketTimeoutException e) {
-            throw new DisaModuleAPIException("disa.result.no.internet", (Object[]) null, e);
-        } catch (IOException | URISyntaxException e) {
+        } catch (HttpStatusCodeException e) {
+            throw handleHttpResponseException(e.getStatusCode().value(), Collections.emptyList(),
+                    "disa.result.get.error");
+        } catch (ResourceAccessException e) {
+            if (probableConnectivityIssue(e)) {
+                throw new DisaModuleAPIException("disa.result.no.internet", (Object[]) null, e);
+            } else {
+                throw e;
+            }
+        } catch (URISyntaxException e) {
             throw new DisaModuleAPIException("disa.result.get.error", (Object[]) null, e);
         }
     }
@@ -163,10 +180,15 @@ public class LabResultServiceImpl extends BaseOpenmrsService implements LabResul
     public void deleteById(long id) {
         try {
             client.deleteResultById(id);
-        } catch (HttpResponseException e) {
-            throw handleHttpResponseException(e, Collections.emptyList(), "disa.result.delete.error");
-        } catch (UnknownHostException | ConnectException | SocketTimeoutException e) {
-            throw new DisaModuleAPIException("disa.result.no.internet", (Object[]) null, e);
+        } catch (HttpStatusCodeException e) {
+            throw handleHttpResponseException(e.getStatusCode().value(), Collections.emptyList(),
+                    "disa.result.delete.error");
+        } catch (ResourceAccessException e) {
+            if (probableConnectivityIssue(e)) {
+                throw new DisaModuleAPIException("disa.result.no.internet", (Object[]) null, e);
+            } else {
+                throw e;
+            }
         } catch (IOException | URISyntaxException e) {
             throw new DisaModuleAPIException("disa.result.delete.error", (Object[]) null, e);
         }
@@ -212,7 +234,8 @@ public class LabResultServiceImpl extends BaseOpenmrsService implements LabResul
         try {
             client.updateResult(labResult);
         } catch (HttpResponseException e) {
-            throw handleHttpResponseException(e, Collections.singletonList(labResult.getHealthFacilityLabCode()),
+            throw handleHttpResponseException(e.getStatusCode(),
+                    Collections.singletonList(labResult.getHealthFacilityLabCode()),
                     "disa.result.update.error");
         } catch (UnknownHostException | ConnectException | SocketTimeoutException e) {
             throw new DisaModuleAPIException("disa.result.no.internet", (Object[]) null, e);
@@ -226,11 +249,18 @@ public class LabResultServiceImpl extends BaseOpenmrsService implements LabResul
         return getAll(null, null, null, LabResultStatus.PENDING.toString(), null, null, getHealthFacilityLabCodes());
     }
 
-    private DisaModuleAPIException handleHttpResponseException(HttpResponseException e,
+    private boolean probableConnectivityIssue(ResourceAccessException e) {
+        return e.getCause() instanceof ConnectException
+                || e.getCause() instanceof SocketTimeoutException
+                || e.getCause() instanceof UnknownHostException;
+    }
+
+    private DisaModuleAPIException handleHttpResponseException(int statusCode,
             List<String> healthFacilityLabCodes,
             String defaultMessage) {
 
-        if (e.getStatusCode() == HttpStatus.FORBIDDEN.value()) {
+        HttpStatus httpStatus = HttpStatus.valueOf(statusCode);
+        if (httpStatus == HttpStatus.FORBIDDEN) {
             String sismaCode = null;
 
             // If the search contains only one health facility, then we can use that one in
@@ -248,18 +278,18 @@ public class LabResultServiceImpl extends BaseOpenmrsService implements LabResul
             if (sismaCode != null) {
                 message = "disa.result.unauthorized";
             }
-            return new DisaModuleAPIException(message, new String[] { sismaCode }, e);
+            return new DisaModuleAPIException(message, new String[] { sismaCode });
         }
 
-        if (e.getStatusCode() == HttpStatus.UNAUTHORIZED.value()) {
-            return new DisaModuleAPIException("disa.api.authentication.error", new String[] {}, e);
+        if (httpStatus == HttpStatus.UNAUTHORIZED) {
+            return new DisaModuleAPIException("disa.api.authentication.error", new String[] {});
         }
 
-        if (e.getStatusCode() == HttpStatus.NOT_FOUND.value()) {
-            return new DisaModuleAPIException("disa.result.not.found", (Object[]) null, e);
+        if (httpStatus == HttpStatus.NOT_FOUND) {
+            return new DisaModuleAPIException("disa.result.not.found", (Object[]) null);
         }
 
-        return new DisaModuleAPIException(defaultMessage, (Object[]) null, e);
+        return new DisaModuleAPIException(defaultMessage, (Object[]) null);
     }
 
     private String findUnauthorisedSismaCode(List<String> healthFacilityLabCodes) {
