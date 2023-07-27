@@ -15,7 +15,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.openmrs.messagesource.MessageSourceService;
-import org.openmrs.module.disa.LabResult;
+import org.openmrs.module.disa.api.LabResult;
 
 public class StagingServerReport {
 

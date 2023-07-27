@@ -31,3 +31,4 @@ disa-api-integ/.mvn/*
 .settings/
 api/target/
 .java-version
+.vscode/

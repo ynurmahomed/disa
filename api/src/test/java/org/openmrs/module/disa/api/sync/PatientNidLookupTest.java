@@ -17,11 +17,11 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.openmrs.Patient;
-import org.openmrs.module.disa.HIVVLLabResult;
-import org.openmrs.module.disa.LabResult;
-import org.openmrs.module.disa.LabResultStatus;
-import org.openmrs.module.disa.NotProcessingCause;
 import org.openmrs.module.disa.api.DisaService;
+import org.openmrs.module.disa.api.HIVVLLabResult;
+import org.openmrs.module.disa.api.LabResult;
+import org.openmrs.module.disa.api.LabResultStatus;
+import org.openmrs.module.disa.api.NotProcessingCause;
 import org.openmrs.module.disa.api.util.Notifier;
 import org.openmrs.test.BaseContextMockTest;
 

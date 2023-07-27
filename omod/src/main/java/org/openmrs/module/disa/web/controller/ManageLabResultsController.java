@@ -13,7 +13,7 @@ import javax.validation.Valid;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.messagesource.MessageSourceService;
-import org.openmrs.module.disa.LabResult;
+import org.openmrs.module.disa.api.LabResult;
 import org.openmrs.module.disa.api.LabResultService;
 import org.openmrs.module.disa.api.Page;
 import org.openmrs.module.disa.api.exception.DisaModuleAPIException;

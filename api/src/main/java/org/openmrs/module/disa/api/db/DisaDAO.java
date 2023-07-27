@@ -18,9 +18,9 @@ import java.util.List;
 
 import org.openmrs.LocationAttribute;
 import org.openmrs.Patient;
-import org.openmrs.module.disa.SyncLog;
-import org.openmrs.module.disa.TypeOfResult;
 import org.openmrs.module.disa.api.DisaService;
+import org.openmrs.module.disa.api.SyncLog;
+import org.openmrs.module.disa.api.TypeOfResult;
 
 /**
  *  Database methods for {@link DisaService}.

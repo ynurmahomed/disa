@@ -21,8 +21,6 @@ import org.openmrs.LocationAttribute;
 import org.openmrs.Patient;
 import org.openmrs.annotation.Authorized;
 import org.openmrs.api.OpenmrsService;
-import org.openmrs.module.disa.LabResult;
-import org.openmrs.module.disa.SyncLog;
 import org.springframework.transaction.annotation.Transactional;
 
 /**

@@ -433,7 +433,6 @@
 				}
 
 			],
-			displayStart: (+"${disaPage.pageNumber}" - 1) * +"${disaPage.pageSize}",
 			serverSide: true,
 			deferLoading: "${disaPage.totalResults}",
 			order: [
@@ -604,10 +603,7 @@
 				url: "managelabresults/json.form",
 				data: (data) => {
 					const pageSize = data.length;
-					let pageNumber = 1;
-					if (data.start > 0 && pageSize !== -1) {
-						pageNumber = (data.start / pageSize) + 1;
-					}
+					let pageNumber = data.start / pageSize;
 					const formData = Object.fromEntries(new FormData(searchForm));
 					const orderBy = data.columns[data.order[0].column].data;
 					const dir = data.order[0].dir;

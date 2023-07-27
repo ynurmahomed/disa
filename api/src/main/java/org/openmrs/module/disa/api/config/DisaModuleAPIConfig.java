@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
+import org.openmrs.module.disa.api.LabResult;
 import org.openmrs.module.disa.api.sync.CD4LabResultHandler;
 import org.openmrs.module.disa.api.sync.DuplicateRequestIdLookup;
 import org.openmrs.module.disa.api.sync.FinalLabResultHandler;
@@ -38,10 +39,9 @@ public class DisaModuleAPIConfig {
     public ObjectMapper objectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
         SimpleModule simpleModule = new SimpleModule();
-        simpleModule.addSerializer(LocalDateTime.class,
-                new org.openmrs.module.disa.api.config.LocalDateTimeSerializer());
-        simpleModule.addDeserializer(LocalDateTime.class,
-                new org.openmrs.module.disa.api.config.LocalDateTimeDeserializer());
+        simpleModule.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer());
+        simpleModule.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer());
+        simpleModule.addDeserializer(LabResult.class, new LabResultDeserializer());
         objectMapper.registerModule(simpleModule);
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         return objectMapper;

@@ -17,12 +17,15 @@ import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.LocationService;
-import org.openmrs.module.disa.HIVVLLabResult;
-import org.openmrs.module.disa.LabResult;
-import org.openmrs.module.disa.LabResultStatus;
-import org.openmrs.module.disa.NotProcessingCause;
 import org.openmrs.module.disa.api.DisaService;
+import org.openmrs.module.disa.api.HIVVLLabResult;
+import org.openmrs.module.disa.api.LabResult;
 import org.openmrs.module.disa.api.LabResultService;
+import org.openmrs.module.disa.api.LabResultStatus;
+import org.openmrs.module.disa.api.NotProcessingCause;
+import org.openmrs.module.disa.api.sync.BaseLabResultHandler;
+import org.openmrs.module.disa.api.sync.FinalLabResultHandler;
+import org.openmrs.module.disa.api.sync.LabResultHandler;
 import org.openmrs.test.BaseContextMockTest;
 
 public class FinalLabResultHandlerTest extends BaseContextMockTest {

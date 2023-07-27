@@ -1,10 +1,10 @@
 package org.openmrs.module.disa.api.sync;
 
 import org.openmrs.Encounter;
-import org.openmrs.module.disa.LabResult;
-import org.openmrs.module.disa.LabResultStatus;
 import org.openmrs.module.disa.api.DisaService;
+import org.openmrs.module.disa.api.LabResult;
 import org.openmrs.module.disa.api.LabResultService;
+import org.openmrs.module.disa.api.LabResultStatus;
 import org.openmrs.module.disa.api.exception.DisaModuleAPIException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

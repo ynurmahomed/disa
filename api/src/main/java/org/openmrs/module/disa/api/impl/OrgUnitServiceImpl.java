@@ -3,7 +3,7 @@ package org.openmrs.module.disa.api.impl;
 import java.net.URISyntaxException;
 import java.util.List;
 
-import org.openmrs.module.disa.OrgUnit;
+import org.openmrs.module.disa.api.OrgUnit;
 import org.openmrs.module.disa.api.OrgUnitService;
 import org.openmrs.module.disa.api.client.DisaAPIHttpClient;
 import org.openmrs.module.disa.api.exception.DisaModuleAPIException;

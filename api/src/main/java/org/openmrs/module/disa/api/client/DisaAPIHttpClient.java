@@ -15,10 +15,10 @@ import org.apache.http.client.fluent.Request;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.BasicResponseHandler;
-import org.openmrs.module.disa.LabResult;
-import org.openmrs.module.disa.OrgUnit;
-import org.openmrs.module.disa.TypeOfResult;
+import org.openmrs.module.disa.api.LabResult;
+import org.openmrs.module.disa.api.OrgUnit;
 import org.openmrs.module.disa.api.Page;
+import org.openmrs.module.disa.api.TypeOfResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -71,7 +71,7 @@ public class DisaAPIHttpClient {
 			String direction) throws URISyntaxException {
 
 		URIBuilder builder = new URIBuilder(URLBase)
-				.setPathSegments("services", "v2", "viralloads", "search-form")
+				.setPathSegments("services", "lab-results", "search")
 				.addParameter("requestId", requestId)
 				.addParameter("labResultStatus", labResultStatus)
 				.addParameter("notProcessingCause", notProcessingCause)
@@ -144,7 +144,7 @@ public class DisaAPIHttpClient {
 	public List<OrgUnit> searchOrgUnits(String term) throws URISyntaxException {
 
 		URI url = new URIBuilder(URLBase)
-				.setPathSegments("services", "v2", "orgunits", "search")
+				.setPathSegments("services", "orgunits", "search")
 				.addParameter("term", term)
 				.build();
 
@@ -161,7 +161,7 @@ public class DisaAPIHttpClient {
 	public OrgUnit getOrgUnitByCode(String code) throws URISyntaxException {
 
 		URI url = new URIBuilder(URLBase)
-				.setPathSegments("services", "v2", "orgunits", code)
+				.setPathSegments("services", "orgunits", code)
 				.build();
 
 		ResponseEntity<OrgUnit> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(getHeaders()),
@@ -247,7 +247,7 @@ public class DisaAPIHttpClient {
 	private boolean isAuthorised(String code) throws URISyntaxException {
 		try {
 			URIBuilder builder = new URIBuilder(URLBase)
-					.setPathSegments("services", "v2", "viralloads", "search-form")
+					.setPathSegments("services", "lab-results", "search")
 					.addParameter("healthFacilityLabCode", code);
 			restTemplate.exchange(builder.build(), HttpMethod.HEAD, new HttpEntity<>(getHeaders()),
 					String.class);
