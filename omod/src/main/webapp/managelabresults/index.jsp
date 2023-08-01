@@ -472,11 +472,11 @@
 				{ data: "requestId" },
 				{
 					data: "harvestDate",
-					render: (data, type, row, meta) => data && data.substring(0, 10)
+					render: (data, type, row, meta) => data && data.substring(0, 10) || null
 				},
 				{
 					data: "labResultDate",
-					render: (data, type, row, meta) => data && data.substring(0, 10)
+					render: (data, type, row, meta) => data && data.substring(0, 10) || null
 				},
 				{ data: "finalResult" },
 				{
