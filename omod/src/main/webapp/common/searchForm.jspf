@@ -110,13 +110,13 @@
 		</div>
 		<div>
 			<label for="selSisma">
-				<openmrs:message code="disa.sisma.code" />:
+				<openmrs:message code="disa.hf" />:
 			</label>
-			<form:select path="vlSisma" id="selSisma">
+			<form:select path="sismaCode" id="selSisma">
 				<form:option value="ALL">
-					<openmrs:message code='disa.sisma.code.ALL' />
+					<openmrs:message code='disa.hf.ALL' />
 				</form:option>
-				<form:options items="${sismaCodes}" />
+				<form:options items="${orgUnits}"/>
 			</form:select>
 		</div>
 		<div>
