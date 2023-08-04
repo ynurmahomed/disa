@@ -16,7 +16,9 @@ package org.openmrs.module.disa.api.db.hibernate;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -24,12 +26,13 @@ import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.openmrs.LocationAttribute;
 import org.openmrs.Patient;
+import org.openmrs.module.disa.api.LabResult;
 import org.openmrs.module.disa.api.SyncLog;
 import org.openmrs.module.disa.api.TypeOfResult;
 import org.openmrs.module.disa.api.db.DisaDAO;
 
 /**
- * It is a default implementation of  {@link DisaDAO}.
+ * It is a default implementation of {@link DisaDAO}.
  */
 @SuppressWarnings("unchecked")
 public class HibernateDisaDAO implements DisaDAO {
@@ -38,18 +41,18 @@ public class HibernateDisaDAO implements DisaDAO {
 	private SessionFactory sessionFactory;
 
 	/**
-     * @param sessionFactory the sessionFactory to set
-     */
-    public void setSessionFactory(SessionFactory sessionFactory) {
-	    this.sessionFactory = sessionFactory;
-    }
+	 * @param sessionFactory the sessionFactory to set
+	 */
+	public void setSessionFactory(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
+	}
 
 	/**
-     * @return the sessionFactory
-     */
-    public SessionFactory getSessionFactory() {
-	    return sessionFactory;
-    }
+	 * @return the sessionFactory
+	 */
+	public SessionFactory getSessionFactory() {
+		return sessionFactory;
+	}
 
 	private org.hibernate.Session getCurrentSession() {
 		try {
@@ -72,7 +75,7 @@ public class HibernateDisaDAO implements DisaDAO {
 	}
 
 	@Override
-	public Serializable saveFsrLog(SyncLog syncLog) {
+	public Serializable saveSyncLog(SyncLog syncLog) {
 		return this.getCurrentSession().save(syncLog);
 	}
 
@@ -81,22 +84,22 @@ public class HibernateDisaDAO implements DisaDAO {
 	public boolean existsByRequestIdAndTypeOfResult(String requestId, TypeOfResult typeOfResult) {
 		final String hql = "SELECT f FROM SyncLog f WHERE f.requestId = :requestId AND f.typeOfResult = :typeOfResult";
 		final Query query = this.getCurrentSession()
-			.createQuery(hql)
-			.setParameter("requestId", requestId)
-			.setParameter("typeOfResult", typeOfResult);
-		List list=query.list();
-		return list!=null && !list.isEmpty();
+				.createQuery(hql)
+				.setParameter("requestId", requestId)
+				.setParameter("typeOfResult", typeOfResult);
+		List list = query.list();
+		return list != null && !list.isEmpty();
 	}
 
 	@Override
 	public List<Integer> getPatientByNid(String identifier) {
 		final String sql = "SELECT distinct pi.patient_id FROM patient_identifier pi "
-		+ "INNER JOIN person pe ON pe.person_id = pi.patient_id "
-		+ "INNER JOIN patient p ON p.patient_id = p.patient_id "
-		+ "WHERE identifier = '"+identifier+"'"
-		+ "AND pi.voided = 0 "
-		+ "AND pe.voided = 0 "
-		+ "AND p.voided = 0";
+				+ "INNER JOIN person pe ON pe.person_id = pi.patient_id "
+				+ "INNER JOIN patient p ON p.patient_id = p.patient_id "
+				+ "WHERE identifier = '" + identifier + "'"
+				+ "AND pi.voided = 0 "
+				+ "AND pe.voided = 0 "
+				+ "AND p.voided = 0";
 		final Query query = this.sessionFactory.getCurrentSession().createSQLQuery(sql);
 		List<Object[]> objs = query.list();
 		List<Integer> patientIds = new ArrayList<Integer>();
@@ -111,6 +114,17 @@ public class HibernateDisaDAO implements DisaDAO {
 	public List<Patient> getPatientByPatientId(Integer patientId) {
 		final String hql = "SELECT p FROM Patient p WHERE p.patientId = :patientId";
 		final Query query = this.getCurrentSession().createQuery(hql).setParameter("patientId", patientId);
+		return query.list();
+	}
+
+	@Override
+	public List<SyncLog> getSyncLogsWithEncountersByLabResults(List<LabResult> labResults) {
+		if (labResults.isEmpty()) {
+			return Collections.emptyList();
+		}
+		String sql = "SELECT s FROM SyncLog s join FETCH s.encounter where s.requestId in :requestIds";
+		List<String> requestIds = labResults.stream().map(LabResult::getRequestId).collect(Collectors.toList());
+		Query query = this.getCurrentSession().createQuery(sql).setParameterList("requestIds", requestIds);
 		return query.list();
 	}
 }

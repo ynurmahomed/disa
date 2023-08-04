@@ -27,7 +27,7 @@ public class DuplicateRequestIdLookup extends BaseLabResultHandler {
     @Override
     public LabResultStatus handle(LabResult labResult) {
 
-        if (labResult.isPending() && disaService.existsInFsrLog(labResult)) {
+        if (labResult.isPending() && disaService.existsInSyncLog(labResult)) {
             labResult.setLabResultStatus(LabResultStatus.NOT_PROCESSED);
             labResult.setNotProcessingCause(NotProcessingCause.DUPLICATED_REQUEST_ID);
         }

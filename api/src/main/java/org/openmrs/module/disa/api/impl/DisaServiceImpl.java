@@ -42,10 +42,12 @@ import org.openmrs.module.disa.api.exception.DisaModuleAPIException;
 import org.openmrs.module.disa.api.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 
 /**
  * It is a default implementation of {@link DisaService}.
  */
+@Service
 public class DisaServiceImpl extends BaseOpenmrsService implements DisaService {
 
 	protected final Log log = LogFactory.getLog(this.getClass());
@@ -77,11 +79,11 @@ public class DisaServiceImpl extends BaseOpenmrsService implements DisaService {
 
 	@Override
 	public Serializable saveSyncLog(SyncLog fsrLog) {
-		return dao.saveFsrLog(fsrLog);
+		return dao.saveSyncLog(fsrLog);
 	}
 
 	@Override
-	public boolean existsInFsrLog(LabResult labResult) {
+	public boolean existsInSyncLog(LabResult labResult) {
 		return dao.existsByRequestIdAndTypeOfResult(labResult.getRequestId(), labResult.getTypeOfResult());
 	}
 
@@ -140,7 +142,7 @@ public class DisaServiceImpl extends BaseOpenmrsService implements DisaService {
 
 		SyncLog fsrLog = new SyncLog();
 		fsrLog.setPatientId(encounter.getPatient().getPatientId());
-		fsrLog.setEncounterId(encounter.getEncounterId());
+		fsrLog.setEncounter(encounter);
 		fsrLog.setPatientIdentifier(labResult.getNid());
 		fsrLog.setRequestId(labResult.getRequestId());
 		fsrLog.setCreator(Context.getAuthenticatedUser().getId());
@@ -151,5 +153,19 @@ public class DisaServiceImpl extends BaseOpenmrsService implements DisaService {
 		String defaultLocationUuid = locationService.getDefaultLocation().getUuid();
 		labResult.setSynchronizedBy(defaultLocationUuid);
 		labResultService.updateLabResult(labResult);
+	}
+
+	@Override
+	public void loadEncounters(List<LabResult> labResults) {
+
+		List<SyncLog> syncLogs = dao.getSyncLogsWithEncountersByLabResults(labResults);
+
+		for (SyncLog syncLog : syncLogs) {
+			for (LabResult labResult : labResults) {
+				if (syncLog.belongsTo(labResult)) {
+					labResult.setEncounterId(syncLog.getEncounter().getEncounterId());
+				}
+			}
+		}
 	}
 }

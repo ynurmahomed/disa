@@ -9,7 +9,11 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import org.openmrs.Encounter;
 
 @Entity
 @Table(name = "disa_sync_log")
@@ -24,8 +28,9 @@ public class SyncLog implements Serializable {
 	@Column(name = "patient_id")
 	private Integer patientId;
 
-	@Column(name = "encounter_id")
-	private Integer encounterId;
+	@OneToOne
+	@JoinColumn(name = "encounter_id")
+	private Encounter encounter;
 
 	@Column(name = "patient_identifier")
 	private String patientIdentifier;
@@ -43,6 +48,14 @@ public class SyncLog implements Serializable {
 	@Enumerated(EnumType.STRING)
 	private TypeOfResult typeOfResult;
 
+	public SyncLog() {
+	}
+
+	public SyncLog(String requestId, TypeOfResult typeOfResult) {
+		this.requestId = requestId;
+		this.typeOfResult = typeOfResult;
+	}
+
 	public Integer getPatientId() {
 		return patientId;
 	}
@@ -51,12 +64,12 @@ public class SyncLog implements Serializable {
 		this.patientId = patientId;
 	}
 
-	public Integer getEncounterId() {
-		return encounterId;
+	public Encounter getEncounter() {
+		return encounter;
 	}
 
-	public void setEncounterId(Integer encounterId) {
-		this.encounterId = encounterId;
+	public void setEncounter(Encounter encounter) {
+		this.encounter = encounter;
 	}
 
 	public String getPatientIdentifier() {
@@ -94,4 +107,37 @@ public class SyncLog implements Serializable {
 	public void setTypOfResult(TypeOfResult typeOfResult) {
 		this.typeOfResult = typeOfResult;
 	}
+
+	public boolean belongsTo(LabResult labResult) {
+		return this.equals(new SyncLog(labResult.getRequestId(), labResult.getTypeOfResult()));
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((requestId == null) ? 0 : requestId.hashCode());
+		result = prime * result + ((typeOfResult == null) ? 0 : typeOfResult.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		SyncLog other = (SyncLog) obj;
+		if (requestId == null) {
+			if (other.requestId != null)
+				return false;
+		} else if (!requestId.equals(other.requestId))
+			return false;
+		if (typeOfResult != other.typeOfResult)
+			return false;
+		return true;
+	}
+
 }

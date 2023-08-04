@@ -16,6 +16,7 @@ import org.apache.http.client.HttpResponseException;
 import org.openmrs.GlobalProperty;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.impl.BaseOpenmrsService;
+import org.openmrs.module.disa.api.DisaService;
 import org.openmrs.module.disa.api.LabResult;
 import org.openmrs.module.disa.api.LabResultService;
 import org.openmrs.module.disa.api.LabResultStatus;
@@ -40,6 +41,7 @@ public class LabResultServiceImpl extends BaseOpenmrsService implements LabResul
     private DisaAPIHttpClient client;
     private OrgUnitService orgUnitService;
     private AdministrationService administrationService;
+    private DisaService disaService;
 
     @Autowired
     public LabResultServiceImpl(
@@ -89,13 +91,17 @@ public class LabResultServiceImpl extends BaseOpenmrsService implements LabResul
                 end = endDate.atTime(23, 0);
             }
 
-            return client.searchLabResults(start, end, requestId,
+            Page<LabResult> page = client.searchLabResults(start, end, requestId,
                     labResultStatus,
                     notProcessingCause,
                     typeOfResult,
                     nid, healthFacilityLabCodes,
                     search,
                     pageNumber, pageSize, orderBy, direction);
+
+            disaService.loadEncounters(page.getResultList());
+
+            return page;
 
         } catch (HttpStatusCodeException e) {
             throw handleHttpResponseException(e.getStatusCode().value(), healthFacilityLabCodes,
@@ -295,4 +301,10 @@ public class LabResultServiceImpl extends BaseOpenmrsService implements LabResul
     private String findUnauthorisedSismaCode(List<String> healthFacilityLabCodes) {
         return client.findUnauthorisedSismaCode(healthFacilityLabCodes);
     }
+
+    @Autowired
+    public void setDisaService(DisaService disaService) {
+        this.disaService = disaService;
+    }
+
 }
