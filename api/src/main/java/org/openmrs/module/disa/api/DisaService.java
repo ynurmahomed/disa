@@ -15,6 +15,7 @@ package org.openmrs.module.disa.api;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 import org.openmrs.Encounter;
 import org.openmrs.LocationAttribute;
@@ -24,7 +25,8 @@ import org.openmrs.api.OpenmrsService;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * This service exposes module's core functionality. It is a Spring managed bean which is configured in moduleApplicationContext.xml.
+ * This service exposes module's core functionality. It is a Spring managed bean
+ * which is configured in moduleApplicationContext.xml.
  * <p>
  * It can be accessed only via Context:<br>
  * <code>
@@ -45,11 +47,13 @@ public interface DisaService extends OpenmrsService {
 
 	public Serializable saveSyncLog(SyncLog syncLog);
 
-	public boolean existsInFsrLog(LabResult labResult);
+	public boolean existsInSyncLog(LabResult labResult);
 
 	public List<Integer> getPatientByNid(String identifier);
 
 	public List<Patient> getPatientByPatientId(Integer patientId);
+
+	public void loadEncounters(List<LabResult> labResult);
 
 	@Authorized("Mapear pacientes no Disa Interoperabilidade")
 	Patient mapIdentifier(String patientUuid, LabResult disa);

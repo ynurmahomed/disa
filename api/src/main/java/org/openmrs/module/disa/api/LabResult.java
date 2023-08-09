@@ -40,6 +40,8 @@ public abstract class LabResult {
 
 	private String encounter;
 
+	private Integer encounterId;
+
 	private String pregnant;
 
 	private String breastFeeding;
@@ -421,5 +423,13 @@ public abstract class LabResult {
 
 	public void setRegisteredDateTime(LocalDateTime registeredDateTime) {
 		this.registeredDateTime = registeredDateTime;
+	}
+
+	public Integer getEncounterId() {
+		return encounterId;
+	}
+
+	public void setEncounterId(Integer encounterId) {
+		this.encounterId = encounterId;
 	}
 }

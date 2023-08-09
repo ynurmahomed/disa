@@ -78,7 +78,7 @@ public class DisaServiceUnitTest extends BaseContextMockTest {
 
         disaService.handleProcessedLabResult(labResult, encounter);
 
-        verify(disaDAO, times(1)).saveFsrLog(any(SyncLog.class));
+        verify(disaDAO, times(1)).saveSyncLog(any(SyncLog.class));
     }
 
     @Test

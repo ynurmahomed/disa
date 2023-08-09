@@ -82,7 +82,11 @@
 				<tbody>
 					<c:forEach items="${patientList}" var="patient">
 						<tr>
-							<td>${patient.identifiers.iterator().next()}</td>
+							<td>
+								<a target="_blank" href="/openmrs/patientDashboard.form?patientId=${patient.patientId}">
+									${patient.identifiers.iterator().next()}
+								</a>
+							</td>
 							<td>${patient.givenName} ${patient.middleName} ${patient.familyName}</td>
 							<td>${patient.gender}</td>
 							<td>${patient.getAge()}</td>

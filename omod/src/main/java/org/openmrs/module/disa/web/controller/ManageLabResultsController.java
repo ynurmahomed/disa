@@ -115,6 +115,7 @@ public class ManageLabResultsController {
     @RequestMapping(value = "/export", method = RequestMethod.GET)
     public String export(@Valid SearchForm searchForm, ModelMap model) {
 
+        @SuppressWarnings("unchecked")
         String query = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .queryParams((MultiValueMap<String, String>) model.get("lastSearchParams"))
@@ -133,8 +134,7 @@ public class ManageLabResultsController {
     @RequestMapping(value = "/download", method = RequestMethod.GET)
     public ResponseEntity<byte[]> download(
             @Valid SearchForm searchForm,
-            ModelMap model,
-            HttpServletResponse response) throws IOException {
+            ModelMap model) throws IOException {
 
         if (searchForm.getStartDate() == null || searchForm.getEndDate() == null) {
             model.addAttribute("flashMessage", messageSourceService.getMessage("disa.error.date.range", null,

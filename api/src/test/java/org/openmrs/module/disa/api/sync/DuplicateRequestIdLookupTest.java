@@ -33,7 +33,7 @@ public class DuplicateRequestIdLookupTest extends BaseContextMockTest {
         LabResult labResult = new HIVVLLabResult();
         labResult.setLabResultStatus(LabResultStatus.PENDING);
 
-        when(disaService.existsInFsrLog(labResult))
+        when(disaService.existsInSyncLog(labResult))
                 .thenReturn(true);
 
         duplicateRequestIdHandler.handle(labResult);
@@ -47,7 +47,7 @@ public class DuplicateRequestIdLookupTest extends BaseContextMockTest {
         LabResult labResult = new HIVVLLabResult();
         labResult.setLabResultStatus(LabResultStatus.PENDING);
 
-        when(disaService.existsInFsrLog(labResult))
+        when(disaService.existsInSyncLog(labResult))
                 .thenReturn(true);
 
         LabResultHandler next = Mockito.mock(LabResultHandler.class);
