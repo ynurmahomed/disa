@@ -1,9 +1,10 @@
 package org.openmrs.module.disa.web.controller;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -15,6 +16,8 @@ import org.openmrs.api.context.Context;
 import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.disa.api.LabResult;
 import org.openmrs.module.disa.api.LabResultService;
+import org.openmrs.module.disa.api.OrgUnit;
+import org.openmrs.module.disa.api.OrgUnitService;
 import org.openmrs.module.disa.api.Page;
 import org.openmrs.module.disa.api.exception.DisaModuleAPIException;
 import org.openmrs.module.disa.api.report.StagingServerReport;
@@ -60,16 +63,20 @@ public class ManageLabResultsController {
 
     private ObjectMapper objectMapper;
 
+    private OrgUnitService orgUnitService;
+
     @Autowired
     public ManageLabResultsController(
             LabResultService labResultService,
             MessageSourceService messageSourceService,
             @Qualifier("adminService") AdministrationService administrationService,
-            ObjectMapper objectMapper) {
+            ObjectMapper objectMapper,
+            OrgUnitService orgUnitService) {
         this.labResultService = labResultService;
         this.messageSourceService = messageSourceService;
         this.administrationService = administrationService;
         this.objectMapper = objectMapper;
+        this.orgUnitService = orgUnitService;
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
@@ -179,11 +186,16 @@ public class ManageLabResultsController {
         String propertyValue = administrationService.getGlobalPropertyObject(Constants.DISA_SISMA_CODE)
                 .getPropertyValue();
         List<String> sismaCodes = Arrays.asList(propertyValue.split(","));
-        List<String> sismaCodesTodos = new ArrayList<>();
+        Map<String, String> orgUnits = new HashMap<>();
 
-        sismaCodesTodos.addAll(sismaCodes);
+        for (String code : sismaCodes) {
+            OrgUnit ou = orgUnitService.getOrgUnitByCode(code);
+            if (ou != null) {
+                orgUnits.put(ou.getCode(), ou.getFacility() + " - " + ou.getCode());
+            }
+        }
 
-        model.addAttribute("sismaCodes", sismaCodesTodos);
+        model.addAttribute("orgUnits", orgUnits);
     }
 
     private Page<LabResult> searchLabResults(SearchForm searchForm) {
@@ -195,7 +207,9 @@ public class ManageLabResultsController {
                 searchForm.getNotProcessingCause(),
                 searchForm.getTypeOfResult(),
                 searchForm.getNid(),
-                labResultService.getHealthFacilityLabCodes(),
+                searchForm.getSismaCode().equals(Constants.ALL)
+                        ? labResultService.getHealthFacilityLabCodes()
+                        : Arrays.asList(searchForm.getSismaCode()),
                 searchForm.getSearch(),
                 searchForm.getPageNumber(),
                 searchForm.getPageSize(),
@@ -211,8 +225,8 @@ public class ManageLabResultsController {
                 searchForm.getVlState(),
                 searchForm.getNotProcessingCause(),
                 searchForm.getNid(),
-                searchForm.getVlSisma().equals(Constants.ALL)
+                searchForm.getSismaCode().equals(Constants.ALL)
                         ? labResultService.getHealthFacilityLabCodes()
-                        : Arrays.asList(searchForm.getVlSisma()));
+                        : Arrays.asList(searchForm.getSismaCode()));
     }
 }

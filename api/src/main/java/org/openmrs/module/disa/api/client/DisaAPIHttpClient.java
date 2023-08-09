@@ -250,7 +250,7 @@ public class DisaAPIHttpClient {
 					.setPathSegments("services", "lab-results", "search")
 					.addParameter("healthFacilityLabCode", code);
 			restTemplate.exchange(builder.build(), HttpMethod.HEAD, new HttpEntity<>(getHeaders()),
-					String.class);
+					Void.class);
 		} catch (HttpClientErrorException e) {
 			if (e.getStatusCode() == HttpStatus.FORBIDDEN) {
 				return false;

@@ -20,7 +20,7 @@ public class SearchForm {
     @Size(max = 21)
     private String nid;
 
-    private String vlSisma;
+    private String sismaCode;
 
     private String vlState;
 
@@ -45,7 +45,7 @@ public class SearchForm {
     public SearchForm() {
         this.vlState = Constants.ALL;
         this.notProcessingCause = Constants.ALL;
-        this.vlSisma = Constants.ALL;
+        this.sismaCode = Constants.ALL;
     }
 
     public String getRequestId() {
@@ -73,12 +73,12 @@ public class SearchForm {
         this.nid = clearWhiteSpace(nid);
     }
 
-    public String getVlSisma() {
-        return this.vlSisma;
+    public String getSismaCode() {
+        return this.sismaCode;
     }
 
-    public void setVlSisma(String vlSisma) {
-        this.vlSisma = vlSisma;
+    public void setSismaCode(String vlSisma) {
+        this.sismaCode = vlSisma;
     }
 
     public String getVlState() {
@@ -183,7 +183,7 @@ public class SearchForm {
 
     @Override
     public String toString() {
-        return "SearchForm [requestId=" + requestId + ", nid=" + nid + ", vlSisma=" + vlSisma
+        return "SearchForm [requestId=" + requestId + ", nid=" + nid + ", sismaCode=" + sismaCode
                 + ", vlState=" + vlState + ", notProcessingCause=" + notProcessingCause + ", startDate="
                 + startDate + ", endDate=" + endDate + ", pageNumber=" + pageNumber + ", pageSize=" + pageSize
                 + ", orderBy=" + orderBy + ", dir=" + dir + ", search=" + search + "]";
