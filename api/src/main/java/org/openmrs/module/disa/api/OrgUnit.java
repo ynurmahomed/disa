@@ -13,6 +13,13 @@ public class OrgUnit {
         this.code = code;
     }
 
+    public OrgUnit(String code, String province, String district, String facility) {
+        this.code = code;
+        this.province = province;
+        this.district = district;
+        this.facility = facility;
+    }
+
     public String getCode() {
         return code;
     }

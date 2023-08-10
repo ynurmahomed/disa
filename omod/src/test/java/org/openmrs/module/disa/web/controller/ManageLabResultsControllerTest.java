@@ -1,9 +1,12 @@
 package org.openmrs.module.disa.web.controller;
 
+import static org.hamcrest.Matchers.anEmptyMap;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasValue;
 import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyListOf;
@@ -35,6 +38,8 @@ import org.openmrs.module.disa.api.CD4LabResult;
 import org.openmrs.module.disa.api.LabResult;
 import org.openmrs.module.disa.api.LabResultService;
 import org.openmrs.module.disa.api.LabResultStatus;
+import org.openmrs.module.disa.api.OrgUnit;
+import org.openmrs.module.disa.api.OrgUnitService;
 import org.openmrs.module.disa.api.Page;
 import org.openmrs.module.disa.api.TypeOfResult;
 import org.openmrs.module.disa.api.exception.DisaModuleAPIException;
@@ -64,12 +69,17 @@ public class ManageLabResultsControllerTest extends BaseContextMockTest {
     @Spy
     private ObjectMapper objectMapper;
 
+    @Mock
+    private OrgUnitService orgUnitService;
+
     @InjectMocks
     private ManageLabResultsController manageLabResultsController;
 
     private MockMvc mockMvc;
 
     private GlobalProperty sismaCodesGP = new GlobalProperty(Constants.DISA_SISMA_CODE, SISMA_CODE);
+
+    private OrgUnit cs24deJulho = new OrgUnit(SISMA_CODE, "Zambezia", "Quelimane", "24 de Julho CSURB");
 
     @Before
     public void setUp() {
@@ -81,6 +91,9 @@ public class ManageLabResultsControllerTest extends BaseContextMockTest {
 
         when(administrationService.getGlobalPropertyObject(Constants.DISA_SISMA_CODE))
             .thenReturn(sismaCodesGP);
+
+        when(orgUnitService.getOrgUnitByCode(SISMA_CODE))
+            .thenReturn(cs24deJulho);
 
         mockMvc.perform(get("/module/disa/managelabresults/"))
                 .andExpect(status().isOk())
@@ -94,9 +107,27 @@ public class ManageLabResultsControllerTest extends BaseContextMockTest {
         when(administrationService.getGlobalPropertyObject(Constants.DISA_SISMA_CODE))
             .thenReturn(sismaCodesGP);
 
+            when(orgUnitService.getOrgUnitByCode(SISMA_CODE))
+            .thenReturn(cs24deJulho);
+
         mockMvc.perform(get("/module/disa/managelabresults/"))
                 .andExpect(status().isOk())
-                .andExpect(model().attribute("sismaCodes", hasItem(SISMA_CODE)))
+                .andExpect(model().attribute("orgUnits", hasValue("24 de Julho CSURB - " + SISMA_CODE)))
+                .andExpect(view().name("/module/disa/managelabresults/index"));
+    }
+
+    @Test
+    public void searchShouldNotPopulateSismaCodesWithUnknownOrgUnit() throws Exception {
+
+        when(administrationService.getGlobalPropertyObject(Constants.DISA_SISMA_CODE))
+            .thenReturn(sismaCodesGP);
+
+            when(orgUnitService.getOrgUnitByCode(SISMA_CODE))
+            .thenReturn(null);
+
+        mockMvc.perform(get("/module/disa/managelabresults/"))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("orgUnits", is(anEmptyMap())))
                 .andExpect(view().name("/module/disa/managelabresults/index"));
     }
 
@@ -105,6 +136,9 @@ public class ManageLabResultsControllerTest extends BaseContextMockTest {
 
         when(administrationService.getGlobalPropertyObject(Constants.DISA_SISMA_CODE))
             .thenReturn(sismaCodesGP);
+
+            when(orgUnitService.getOrgUnitByCode(SISMA_CODE))
+            .thenReturn(cs24deJulho);
 
         mockMvc.perform(get("/module/disa/managelabresults/"))
                 .andExpect(status().isOk())
@@ -117,6 +151,9 @@ public class ManageLabResultsControllerTest extends BaseContextMockTest {
 
         when(administrationService.getGlobalPropertyObject(Constants.DISA_SISMA_CODE))
             .thenReturn(sismaCodesGP);
+
+            when(orgUnitService.getOrgUnitByCode(SISMA_CODE))
+            .thenReturn(cs24deJulho);
 
         Page<LabResult> labResults = new Page<>(0, 5, 0, Collections.emptyList());
 
@@ -148,6 +185,9 @@ public class ManageLabResultsControllerTest extends BaseContextMockTest {
         when(administrationService.getGlobalPropertyObject(Constants.DISA_SISMA_CODE))
             .thenReturn(sismaCodesGP);
 
+            when(orgUnitService.getOrgUnitByCode(SISMA_CODE))
+            .thenReturn(cs24deJulho);
+
         mockMvc.perform(get("/module/disa/managelabresults").param("vlState", "NOT_PROCESSED"))
             .andExpect(status().isOk())
             .andExpect(model().attribute("lastSearchParams",
@@ -161,6 +201,9 @@ public class ManageLabResultsControllerTest extends BaseContextMockTest {
 
         when(administrationService.getGlobalPropertyObject(Constants.DISA_SISMA_CODE))
             .thenReturn(sismaCodesGP);
+
+            when(orgUnitService.getOrgUnitByCode(SISMA_CODE))
+            .thenReturn(cs24deJulho);
 
         when(labResultService.search(
             any(LocalDate.class),
