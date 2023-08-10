@@ -97,7 +97,16 @@
 							<td>${labResult.firstName} ${labResult.lastName}</td>
 							<td>${labResult.gender}</td>
 							<td>${labResult.ageInYears}</td>
-							<td>${labResult.requestId}</td>
+							<td>
+								<c:if test="${labResult.encounterId != null}">
+									<a target="_blank" href="/openmrs/module/htmlformentry/htmlFormEntry.form?encounterId=${labResult.encounterId}">
+										${labResult.requestId}
+									</a>
+								</c:if>
+								<c:if test="${labResult.encounterId == null}">
+									${labResult.requestId}
+								</c:if>
+							</td>
 							<td>${labResult.harvestDate.toString().substring(0,10)}</td>
 							<td>${labResult.labResultDate.toString().substring(0,10)}</td>
 							<td>${labResult.finalResult}</td>
@@ -469,7 +478,20 @@
 					data: "ageInYears",
 					render: (data) => data || null
 				},
-				{ data: "requestId" },
+				{
+					data: "requestId",
+					render: (data, type, row, meta) => {
+						if (row.encounterId) {
+							const link = document.createElement("a");
+							link.target = "_blank";
+							link.href = `/openmrs/module/htmlformentry/htmlFormEntry.form?encounterId=\${row.encounterId}`;
+							link.innerText = data;
+							return link.outerHTML;
+						} else {
+							return data;
+						}
+					}
+				},
 				{
 					data: "harvestDate",
 					render: (data, type, row, meta) => data && data.substring(0, 10) || null
