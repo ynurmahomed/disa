@@ -204,6 +204,7 @@ public class DisaAPIHttpClient {
 		// to support PATCH requests due to spring-web and httpcomponents being loaded
 		// by different classloaders in OpenMRS. So we'll use httpcomponents directly.
 		Executor executor = Executor.newInstance()
+				.authPreemptive(URLBase)
 				.auth(username, password);
 
 		Request request = Request.Patch(url)
