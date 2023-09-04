@@ -16,6 +16,7 @@ import org.openmrs.module.disa.web.model.SearchForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,7 +26,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 
 @Controller
 @RequestMapping("/module/disa/managelabresults/{id}/reallocate")
-@SessionAttributes({"flashMessage"})
+@SessionAttributes({ "flashMessage" })
 public class ReallocateLabResultsController {
 
     private OrgUnitService orgUnitService;
@@ -67,6 +68,12 @@ public class ReallocateLabResultsController {
             BindingResult result,
             ModelMap model,
             HttpSession session) {
+
+        // Because @Valid is not yet supported by controller in OpenMRS
+        // we have to manually validate the form :/
+        if (StringUtils.isEmpty(reallocateForm.getHealthFacilityLabCode())) {
+            result.rejectValue("healthFacilityLabCode", "NotBlank.reallocateForm.healthFacilityLabCode");
+        }
 
         if (result.hasErrors()) {
             LabResult labResult = labResultService.getById(id);
