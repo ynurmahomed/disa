@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
@@ -88,26 +87,28 @@ public class ManageLabResultsController {
             HttpSession session,
             HttpServletRequest request) {
 
-        populateSismaCodes(model);
+        try {
 
-        if (result.hasErrors()) {
-            model.addAttribute(searchForm);
-        } else {
-            String exportUri = ServletUriComponentsBuilder.fromServletMapping(request)
-                    .queryParams(params)
-                    .pathSegment("module", "disa", "managelabresults", "export.form")
-                    .build()
-                    .toUriString();
-            model.addAttribute("exportUri", exportUri);
+            populateSismaCodes(model);
 
-            try {
+            if (result.hasErrors()) {
+                model.addAttribute(searchForm);
+            } else {
+                String exportUri = ServletUriComponentsBuilder.fromServletMapping(request)
+                        .queryParams(params)
+                        .pathSegment("module", "disa", "managelabresults", "export.form")
+                        .build()
+                        .toUriString();
+                model.addAttribute("exportUri", exportUri);
+
                 model.addAttribute("disaPage", searchLabResults(searchForm));
                 model.addAttribute("lastSearchParams", params);
-            } catch (DisaModuleAPIException e) {
-                log.error("", e);
-                model.addAttribute("flashMessage", e.getLocalizedMessage());
-                return "/module/disa/managelabresults/error";
             }
+
+        } catch (DisaModuleAPIException e) {
+            log.error("", e);
+            model.addAttribute("flashMessage", e.getLocalizedMessage());
+            return "/module/disa/managelabresults/error";
         }
 
         return "/module/disa/managelabresults/index";
@@ -155,7 +156,7 @@ public class ManageLabResultsController {
         return ResponseEntity.ok()
                 .contentType(new MediaType("application", "ms-excel"))
                 .header(HttpHeaders.CONTENT_DISPOSITION,
-                        "attachment; filename=Lab Results Data Details Staging Server.xls")
+                        "attachment; filename=" + StagingServerReport.REPORT_NAME + ".xls")
                 .body(report.generateReport());
     }
 
