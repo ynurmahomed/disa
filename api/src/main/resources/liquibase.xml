@@ -320,4 +320,53 @@
 			<where>property = 'disa.province.request'</where>
 		</delete>
     </changeSet>
+
+    <changeSet id="disa-2023-09-19-15:00" author="yassin">
+        <comment>
+            Clean up sync log by removing duplicated entries, and entries without references to encounters.
+        </comment>
+		<delete tableName="disa_sync_log">
+			<where>encounter_id not in (select encounter_id from encounter)</where>
+		</delete>
+        <sql>
+            DELETE log
+            FROM
+                disa_sync_log log
+                JOIN (
+                    SELECT
+                        MIN(id) id,
+                        request_id
+                    FROM
+                        disa_sync_log
+                    GROUP BY
+                        request_id
+                    HAVING
+                        COUNT(request_id) &gt; 1
+                ) dup ON log.request_id = dup.request_id
+            WHERE
+                log.id != dup.id;
+        </sql>
+    </changeSet>
+    <changeSet id="disa-2023-09-19-15:30" author="yassin">
+        <comment>Set type of result to HIVVL when it is empty.</comment>
+        <update tableName="disa_sync_log">
+            <column name="type_of_result">HIVVL</column>
+            <where>type_of_result = ''</where>
+        </update>
+    </changeSet>
+    <changeSet id="disa-2023-09-19-16:00" author="yassin">
+        <addUniqueConstraint
+            constraintName="request_id_type_of_result"
+            tableName="disa_sync_log"
+            columnNames="request_id, type_of_result" />
+    </changeSet>
+    <changeSet id="disa-2023-09-19-16:30" author="yassin">
+        <comment>Create foreign key to encounter on sync log.</comment>
+        <addForeignKeyConstraint
+            baseColumnNames="encounter_id"
+            baseTableName="disa_sync_log"
+            constraintName="sync_log_encounter"
+            referencedColumnNames="encounter_id"
+            referencedTableName="encounter"/>
+    </changeSet>
 </databaseChangeLog>

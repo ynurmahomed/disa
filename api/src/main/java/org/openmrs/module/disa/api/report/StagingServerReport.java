@@ -19,6 +19,8 @@ import org.openmrs.module.disa.api.LabResult;
 
 public class StagingServerReport {
 
+    public static final String REPORT_NAME = "Lab Results Data Details Staging Server";
+
     private static final int HF_NAME = 0;
     private static final int DISTRICT_NAME = 1;
     private static final int SISMA_CODE = 2;
@@ -47,7 +49,7 @@ public class StagingServerReport {
     }
 
     public void addStagingServerSheet(List<LabResult> labResults) {
-        HSSFSheet sheet = (HSSFSheet) workbook.createSheet("ViralLoadData Staging Server");
+        HSSFSheet sheet = (HSSFSheet) workbook.createSheet("Lab Results Data Details");
 
         addHeaderRow(sheet);
 
