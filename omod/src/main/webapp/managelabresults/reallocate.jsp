@@ -45,59 +45,12 @@
 </div>
 
 <openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/js/selectize/0.15.2/selectize.min.js" />
-
+<%@ include file="../common/translations.jspf" %>
+<openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/js/reallocateForm.js" />
 <script type="text/javascript">
-
     $j(document).ready(() => {
-
-        const errorMsgBox = document.getElementById("error_msg");
-        const reallocateForm = document.getElementById("reallocateForm");
-
-        // Ask for confirmation before submit
-        reallocateForm.addEventListener("submit", (event) => {
-            const requestId = "${requestId}";
-            const options = event.currentTarget.querySelector("#healthFacilityLabCode").options;
-            const orgUnit = options[options.selectedIndex].label;
-            if (orgUnit.length
-                    && !confirm(`<spring:message code='disa.viralload.reallocate.confirmation.javascript'/>`)) {
-                event.preventDefault();
-            }
-        });
-
-        $j(".facility-search").selectize({
-            placeholder: '<spring:message code="disa.viralload.reallocate.select.placeholder" htmlEscape="false"/>',
-            plugins: ["clear_button"],
-            load: async (term, callback) => {
-                let results = [];
-
-                errorMsgBox.innerText = "";
-
-                if (!term.length) return callback(results);
-
-                try {
-                    document.body.style.cursor = 'wait';
-                    const url = `/openmrs/module/disa/orgunits/search.form?term=\${term}`;
-                    const fetchResponse = await fetch(url);
-                    if (fetchResponse.status !== 200) {
-                        const error = await fetchResponse.json();
-                        throw new Error(error.message);
-                    }
-                    const data = await fetchResponse.json();
-                    results = data.map((r) => ({
-                        text: `\${r.province} > \${r.district} > \${r.facility}`,
-                        value: r.code
-                    }));
-                } catch (error) {
-                    errorMsgBox.innerText = error.message;
-                    console.log(error);
-                } finally {
-                    document.body.style.cursor = 'default';
-                    callback(results);
-                }
-            }
-
-        });
-    })
+        ReallocateForm("#reallocateForm", {requestId: "${requestId}"});
+    });
 </script>
 
 <%@ include file="/WEB-INF/template/footer.jsp"%>
