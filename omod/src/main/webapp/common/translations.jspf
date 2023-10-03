@@ -1,0 +1,27 @@
+<%-- This loads translations to be used in javascript files --%>
+<script type="text/javascript">
+    const locale = "${locale}";
+    const t = {
+		"disa.viralload.reschedule.successful": "<spring:message code='disa.viralload.reschedule.successful'/>",
+		"disa.viralload.delete.successful": "<spring:message code='disa.viralload.delete.successful'/>",
+		"disa.unexpected.error": "<spring:message code='disa.unexpected.error'/>",
+		"disa.viralload.reschedule": "<spring:message code='disa.viralload.reschedule' />",
+		"disa.map.nid": "<spring:message code='disa.map.nid' />",
+		"disa.viralload.reallocate": "<spring:message code='disa.viralload.reallocate' />",
+		"disa.viralload.delete": "<spring:message code='disa.viralload.delete' />",
+		"disa.manage.actions": "<spring:message htmlEscape='false' code='disa.manage.actions' />",
+		"disa.viral.load.status.PROCESSED": "<openmrs:message code='disa.viral.load.status.PROCESSED' />",
+		"disa.viral.load.status.NOT_PROCESSED": "<openmrs:message code='disa.viral.load.status.NOT_PROCESSED' />",
+		"disa.viral.load.status.PENDING": "<openmrs:message code='disa.viral.load.status.PENDING' />",
+		"disa.notProcessingCause.NID_NOT_FOUND": "<openmrs:message code='disa.notProcessingCause.NID_NOT_FOUND' />",
+		"disa.notProcessingCause.INVALID_RESULT": "<openmrs:message code='disa.notProcessingCause.INVALID_RESULT'/>",
+		"disa.notProcessingCause.DUPLICATE_NID": "<openmrs:message code='disa.notProcessingCause.DUPLICATE_NID'/>",
+		"disa.notProcessingCause.DUPLICATED_REQUEST_ID": "<openmrs:message code='disa.notProcessingCause.DUPLICATED_REQUEST_ID'/>",
+		"disa.typeOfResult.ALL": "<openmrs:message code='disa.typeOfResult.ALL' />",
+		"disa.typeOfResult.HIVVL": "<openmrs:message code='disa.typeOfResult.HIVVL'/>",
+		"disa.typeOfResult.CD4": "<openmrs:message code='disa.typeOfResult.CD4'/>",
+		"disa.viralload.delete.confirmation.javascript":"<spring:message code='disa.viralload.delete.confirmation.javascript'/>",
+		"disa.viralload.reallocate.confirmation.javascript":"<spring:message code='disa.viralload.reallocate.confirmation.javascript'/>",
+		"disa.viralload.reallocate.select.placeholder":"<spring:message code='disa.viralload.reallocate.select.placeholder' htmlEscape='false'/>"
+	};
+</script>

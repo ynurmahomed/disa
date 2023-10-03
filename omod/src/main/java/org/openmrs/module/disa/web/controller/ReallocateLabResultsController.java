@@ -53,11 +53,12 @@ public class ReallocateLabResultsController {
             SearchForm searchForm,
             HttpSession session) {
 
-        LabResult vl = labResultService.getById(id);
-        OrgUnit orgUnit = orgUnitService.getOrgUnitByCode(vl.getHealthFacilityLabCode());
+        LabResult labResult = labResultService.getById(id);
+        OrgUnit orgUnit = orgUnitService.getOrgUnitByCode(labResult.getHealthFacilityLabCode());
 
         model.addAttribute(new ReallocateForm());
         model.addAttribute(orgUnit);
+        model.addAttribute("requestId", labResult.getRequestId());
 
         return "/module/disa/managelabresults/reallocate";
     }
@@ -80,6 +81,7 @@ public class ReallocateLabResultsController {
             OrgUnit orgUnit = orgUnitService.getOrgUnitByCode(labResult.getHealthFacilityLabCode());
             model.addAttribute(reallocateForm);
             model.addAttribute(orgUnit);
+            model.addAttribute("requestId", labResult.getRequestId());
             return "/module/disa/managelabresults/reallocate";
         }
 
