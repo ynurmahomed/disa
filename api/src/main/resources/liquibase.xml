@@ -369,4 +369,11 @@
             referencedColumnNames="encounter_id"
             referencedTableName="encounter"/>
     </changeSet>
+    <changeSet id="disa-2023-10-09-11:00" author="yassin">
+        <comment>Move task class to api module</comment>
+        <update tableName="scheduler_task_config">
+            <column name="schedulable_class">org.openmrs.module.disa.api.sync.scheduler.ViralLoadFormSchedulerTask</column>
+            <where>schedulable_class = 'org.openmrs.module.disa.scheduler.ViralLoadFormSchedulerTask'</where>
+        </update>
+    </changeSet>
 </databaseChangeLog>

@@ -1,4 +1,4 @@
-package org.openmrs.module.disa.scheduler;
+package org.openmrs.module.disa.api.sync.scheduler;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
@@ -15,9 +15,12 @@ import org.openmrs.module.disa.api.HIVVLLabResult;
 import org.openmrs.module.disa.api.LabResult;
 import org.openmrs.module.disa.api.LabResultService;
 import org.openmrs.module.disa.api.sync.LabResultProcessor;
+import org.openmrs.scheduler.TaskDefinition;
 import org.openmrs.test.BaseContextMockTest;
 
 public class ViralLoadFormSchedulerTaskTest extends BaseContextMockTest {
+
+	private static final Long REPEAT_INTERVAL = 3600l; // 1h
 
 	@Mock
 	private LabResultService labResultService;
@@ -27,6 +30,9 @@ public class ViralLoadFormSchedulerTaskTest extends BaseContextMockTest {
 	// Used in Context.openSession()
 	@Mock
 	private ContextDAO contextDAO;
+
+	@Mock
+	private TaskDefinition taskDefinition;
 
 	@InjectMocks
 	private ViralLoadFormSchedulerTask task;
@@ -44,6 +50,10 @@ public class ViralLoadFormSchedulerTaskTest extends BaseContextMockTest {
 		labResult.setReasonForTest("");
 		labResult.setPrimeiraLinha("");
 		labResult.setSegundaLinha("");
+
+		when(taskDefinition.getRepeatInterval()).thenReturn(REPEAT_INTERVAL);
+		
+		task.initialize(taskDefinition);
 	}
 
 	@Test

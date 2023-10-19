@@ -23,8 +23,6 @@ import org.openmrs.api.LocationService;
 import org.openmrs.module.disa.api.HIVVLLabResult;
 import org.openmrs.module.disa.api.LabResult;
 import org.openmrs.module.disa.api.exception.DisaModuleAPIException;
-import org.openmrs.module.disa.api.sync.LabResultHandler;
-import org.openmrs.module.disa.api.sync.LocationLookup;
 import org.openmrs.module.disa.api.util.Constants;
 import org.openmrs.test.BaseContextMockTest;
 
