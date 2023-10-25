@@ -1,12 +1,12 @@
-package org.openmrs.module.disa.scheduler;
+package org.openmrs.module.disa.api.sync.scheduler;
 
 import java.util.List;
 
-import org.apache.http.conn.HttpHostConnectException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.disa.api.LabResult;
 import org.openmrs.module.disa.api.LabResultService;
 import org.openmrs.module.disa.api.sync.LabResultProcessor;
+import org.openmrs.module.disa.api.sync.SyncStatus;
 import org.openmrs.module.disa.api.util.Constants;
 import org.openmrs.module.disa.api.util.GenericUtil;
 import org.openmrs.module.disa.api.util.Notifier;
@@ -23,11 +23,21 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 
 	private static final Logger logger = LoggerFactory.getLogger(ViralLoadFormSchedulerTask.class);
 
+	private static SyncStatus syncStatus = SyncStatus.initial();
+
 	private LabResultService labResultService;
 
 	private LabResultProcessor labResultProcessor;
 
 	private Notifier notifier;
+
+	public static SyncStatus getSyncStatus() {
+		return syncStatus;
+	}
+
+	public static void setSyncStatus(SyncStatus status) {
+		syncStatus = status;
+	}
 
 	public ViralLoadFormSchedulerTask() {
 		this.labResultProcessor = Context.getRegisteredComponents(LabResultProcessor.class).get(0);
@@ -46,37 +56,41 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 	public void execute() {
 		logger.info("module started...");
 		Context.openSession();
+		syncStatus = syncStatus.withRepeatInterval(getTaskDefinition().getRepeatInterval());
 		try {
+			Thread.sleep(3000);
+			syncStatus = syncStatus.started();
 			createViralLoadForm();
-		} catch (HttpHostConnectException e) {
-			// ignora a exception
 		} catch (Exception e) {
 			logger.error("O erro ", e);
 			notifier.notify(
 					Constants.DISA_NOTIFICATION_ERROR_SUBJECT,
 					GenericUtil.getStackTrace(e),
 					Constants.DISA_MODULE);
+		} finally {
+			syncStatus = syncStatus.ended();
 		}
 		Context.closeSession();
 		logger.info("module ended...");
 	}
 
-	private void createViralLoadForm() throws HttpHostConnectException, InterruptedException {
-
+	private void createViralLoadForm() {
 		List<LabResult> labResults = labResultService.getResultsToSync();
-
 		logger.info("There is {} pending items to be processed", labResults.size());
 
 		logger.info("Syncing started...");
 
 		// iterate the viral load list and create the encounters
-		for (LabResult labResult : labResults) {
+		for (int i = 0; i < labResults.size(); i++) {
+			LabResult labResult = labResults.get(i);
 			logger.debug("Processing {}", labResult);
 			labResultProcessor.processResult(labResult);
+			syncStatus = syncStatus.withProgress(i / (float) labResults.size());
 		}
 
 		logger.debug("Sync summary: PENDING={}, PROCESSED={}, NOT_PROCESSED={} ",
-				labResults.size(), labResultProcessor.getProcessedCount(), labResultProcessor.getNotProcessedCount());
+				labResults.size(), labResultProcessor.getProcessedCount(),
+				labResultProcessor.getNotProcessedCount());
 
 		logger.info("Syncing ended...");
 	}

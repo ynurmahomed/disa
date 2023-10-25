@@ -20,6 +20,7 @@ import org.openmrs.module.disa.api.OrgUnitService;
 import org.openmrs.module.disa.api.Page;
 import org.openmrs.module.disa.api.exception.DisaModuleAPIException;
 import org.openmrs.module.disa.api.report.StagingServerReport;
+import org.openmrs.module.disa.api.sync.SyncStatusService;
 import org.openmrs.module.disa.api.util.Constants;
 import org.openmrs.module.disa.web.model.SearchForm;
 import org.slf4j.Logger;
@@ -64,18 +65,22 @@ public class ManageLabResultsController {
 
     private OrgUnitService orgUnitService;
 
+    private SyncStatusService syncStatusService;
+
     @Autowired
     public ManageLabResultsController(
             LabResultService labResultService,
             MessageSourceService messageSourceService,
             @Qualifier("adminService") AdministrationService administrationService,
             ObjectMapper objectMapper,
-            OrgUnitService orgUnitService) {
+            OrgUnitService orgUnitService,
+            SyncStatusService syncStatusService) {
         this.labResultService = labResultService;
         this.messageSourceService = messageSourceService;
         this.administrationService = administrationService;
         this.objectMapper = objectMapper;
         this.orgUnitService = orgUnitService;
+        this.syncStatusService = syncStatusService;
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
@@ -170,6 +175,15 @@ public class ManageLabResultsController {
     @ResponseStatus(HttpStatus.OK)
     public void reschedule(@PathVariable long id) {
         labResultService.rescheduleLabResult(id);
+
+    }
+
+    @ModelAttribute("syncStatus")
+    private Map<String, String> getSyncStatus() {
+        HashMap<String, String> syncStatus = new HashMap<>();
+        syncStatus.put("lastExecution", syncStatusService.getLastExecutionMessage());
+        syncStatus.put("currentExecution", syncStatusService.getCurrentExecutionMessage());
+        return syncStatus;
     }
 
     @ModelAttribute("pageTitle")

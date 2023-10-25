@@ -43,6 +43,7 @@ import org.openmrs.module.disa.api.OrgUnitService;
 import org.openmrs.module.disa.api.Page;
 import org.openmrs.module.disa.api.TypeOfResult;
 import org.openmrs.module.disa.api.exception.DisaModuleAPIException;
+import org.openmrs.module.disa.api.sync.SyncStatusService;
 import org.openmrs.module.disa.api.util.Constants;
 import org.openmrs.test.BaseContextMockTest;
 import org.springframework.http.MediaType;
@@ -71,6 +72,9 @@ public class ManageLabResultsControllerTest extends BaseContextMockTest {
 
     @Mock
     private OrgUnitService orgUnitService;
+
+    @Mock
+    private SyncStatusService syncStatusService;
 
     @InjectMocks
     private ManageLabResultsController manageLabResultsController;

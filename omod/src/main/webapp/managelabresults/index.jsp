@@ -13,7 +13,13 @@
 	<openmrs:message code="disa.list.viral.load.results.manage" />
 </h2>
 
-<br />
+
+<p>
+	<small>
+		<span class="last-execution ${(syncStatus.currentExecution != null || syncStatus.lastExecution == null) ? 'hidden' : ''}">${syncStatus.lastExecution}</span>
+		<span class="current-execution ${(syncStatus.currentExecution == null) ? 'hidden' : ''}">${syncStatus.currentExecution}</span>
+	</small>
+</p>
 
 <div>
 	<b class="boxHeader">
@@ -194,6 +200,8 @@
 <%@ include file="../common/translations.jspf" %>
 
 <openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/js/resultsTable.js" />
+<openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/js/syncStatus.js" />
+
 <script type="text/javascript">
 	window.addEventListener("DOMContentLoaded", () => {
 		ResultsTable("#vlResultsTable", {locale: "${locale}", totalResults: +"${disaPage.totalResults}"});
