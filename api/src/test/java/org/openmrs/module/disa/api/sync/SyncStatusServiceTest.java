@@ -21,15 +21,21 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.openmrs.messagesource.MessageSourceService;
+import org.openmrs.module.disa.api.DisaService;
 import org.openmrs.module.disa.api.sync.scheduler.ViralLoadFormSchedulerTask;
 import org.openmrs.test.BaseContextMockTest;
 
 public class SyncStatusServiceTest extends BaseContextMockTest {
 
+    private static final long REPEAT_INTERVAL = 3600l; // 1h
+
     private static final String HOUR = "h";
 
     @Mock
     private MessageSourceService messageSourceService;
+
+    @Mock
+    private DisaService disaService;
 
     @InjectMocks
     private SyncStatusService syncStatusService;
@@ -38,14 +44,13 @@ public class SyncStatusServiceTest extends BaseContextMockTest {
     public void setUp() {
         when(userContext.getLocale()).thenReturn(Locale.getDefault());
         when(messageSourceService.getMessage("Scheduler.scheduleForm.repeatInterval.units.hours")).thenReturn(HOUR);
+        when(disaService.getSyncTaskRepeatInterval()).thenReturn(REPEAT_INTERVAL);
     }
 
     @Test
     public void getLastExecutionMessageShouldContainLastExecutionAndRepeatInterval() {
         LocalDateTime lastExecutionTime = LocalDateTime.now();
-        long repeatInterval = 3600l; // 1 h
-        SyncStatus syncStatus = new SyncStatus(lastExecutionTime, repeatInterval, false, lastExecutionTime,
-                repeatInterval);
+        SyncStatus syncStatus = new SyncStatus(lastExecutionTime, 0l, false, lastExecutionTime, 0f);
 
         ViralLoadFormSchedulerTask.setSyncStatus(syncStatus);
 
@@ -61,8 +66,8 @@ public class SyncStatusServiceTest extends BaseContextMockTest {
                 arrayContaining(
                         allOf(containsString("" + lastExecutionTime.getDayOfMonth()),
                                 containsStringIgnoringCase(lastExecutionTime.getMonth().name()),
-                                containsString("" + lastExecutionTime.getYear()),
-                                containsString("" + lastExecutionTime.getHour()),
+                                containsString("" + lastExecutionTime.getYear())),
+                        allOf(containsString("" + lastExecutionTime.getHour()),
                                 containsString("" + lastExecutionTime.getMinute())),
                         allOf(containsString("1"),
                                 containsString(HOUR))));
@@ -102,8 +107,8 @@ public class SyncStatusServiceTest extends BaseContextMockTest {
                                 containsString("%")),
                         allOf(containsString("" + startedExecutionTime.getDayOfMonth()),
                                 containsStringIgnoringCase(startedExecutionTime.getMonth().name()),
-                                containsString("" + startedExecutionTime.getYear()),
-                                containsString("" + startedExecutionTime.getHour()),
+                                containsString("" + startedExecutionTime.getYear())),
+                        allOf(containsString("" + startedExecutionTime.getHour()),
                                 containsString("" + startedExecutionTime.getMinute()))));
     }
 

@@ -1,5 +1,6 @@
 package org.openmrs.module.disa.api.sync;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 /**
