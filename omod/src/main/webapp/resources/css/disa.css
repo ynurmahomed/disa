@@ -26,6 +26,16 @@
 	color: white;
 }
 
+table.disa-table.disa-table-clear th {
+    background-color: white;
+    color: black;
+}
+
+.disa-table-search {
+	float: left;
+	margin: 5px 0 10px;
+}
+
 .disa-table-results tr th:first-child,
 .disa-table-results tr td:first-child {
 	display: none;
@@ -146,6 +156,10 @@ div.success {
 	font-weight: bold;
 }
 
+.float-left {
+	float: left;
+}
+
 .float-right {
 	float: right;
 }
@@ -205,4 +219,17 @@ button.dt-button.buttons-columnVisibility.active:before {
 	font-weight: bold;
 	color: gray;
 	padding: 0 2px;
+}
+
+.boxHeader.disaHeader {
+	background-color: #e0a2b4;
+}
+
+.boxHeader.disaHeader {
+	background-color: #e0a2b4;
+	border-color: #e0a2b4;
+}
+
+.box.disaBox {
+	border-color: #d48d92;
 }

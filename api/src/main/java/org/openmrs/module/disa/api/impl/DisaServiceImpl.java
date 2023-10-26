@@ -107,6 +107,10 @@ public class DisaServiceImpl extends BaseOpenmrsService implements DisaService {
 		}
 
 		Patient patient = patientService.getPatientByUuid(patientUuid);
+		if (patient.getActiveIdentifiers().isEmpty()) {
+			throw new DisaModuleAPIException("disa.map.no.identifiers", new Object[]{});
+		}
+
 		PatientIdentifierType disaNIDIdentifier = patientService
 				.getPatientIdentifierTypeByUuid(Constants.DISA_NID);
 		List<PatientIdentifier> identifiers = patientService.getPatientIdentifiers(disa.getNid(),
@@ -114,7 +118,6 @@ public class DisaServiceImpl extends BaseOpenmrsService implements DisaService {
 
 		if (identifiers.isEmpty()) {
 
-			// TODO handle network error!!!
 			labResultService.rescheduleLabResult(disa.getId());
 
 			PatientIdentifier patientIdentifier = new PatientIdentifier();
