@@ -1,5 +1,7 @@
 package org.openmrs.module.disa.api.sync.scheduler;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.openmrs.api.context.Context;
@@ -58,7 +60,6 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 		Context.openSession();
 		syncStatus = syncStatus.withRepeatInterval(getTaskDefinition().getRepeatInterval());
 		try {
-			Thread.sleep(3000);
 			syncStatus = syncStatus.started();
 			createViralLoadForm();
 		} catch (Exception e) {
@@ -71,7 +72,7 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 			syncStatus = syncStatus.ended();
 		}
 		Context.closeSession();
-		logger.info("module ended...");
+		logger.info("module ended.");
 	}
 
 	private void createViralLoadForm() {
@@ -92,6 +93,7 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 				labResults.size(), labResultProcessor.getProcessedCount(),
 				labResultProcessor.getNotProcessedCount());
 
-		logger.info("Syncing ended...");
+		logger.info("Syncing ended ({}s).",
+				Duration.between(syncStatus.getStartedExecutionTime(), LocalDateTime.now()).getSeconds());
 	}
 }

@@ -15,7 +15,6 @@ package org.openmrs.module.disa.api;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
 
 import org.openmrs.Encounter;
 import org.openmrs.LocationAttribute;
@@ -61,4 +60,16 @@ public interface DisaService extends OpenmrsService {
 	List<Patient> getPatientsToMapSuggestion(LabResult disa);
 
 	void handleProcessedLabResult(LabResult labResult, Encounter encounter);
+
+	/**
+	 * Get
+	 * {@link org.openmrs.module.disa.api.sync.scheduler.ViralLoadFormSchedulerTask}
+	 * repeat interval.
+	 * This method was created to get around the "Manage Scheduler" privilege
+	 * required on {@link org.openmrs.scheduler.SchedulerService}
+	 * methods.
+	 * 
+	 * @return The sync interval.
+	 */
+	long getSyncTaskRepeatInterval();
 }

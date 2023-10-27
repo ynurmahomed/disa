@@ -30,6 +30,7 @@ import org.openmrs.module.disa.api.LabResult;
 import org.openmrs.module.disa.api.SyncLog;
 import org.openmrs.module.disa.api.TypeOfResult;
 import org.openmrs.module.disa.api.db.DisaDAO;
+import org.openmrs.module.disa.api.sync.scheduler.ViralLoadFormSchedulerTask;
 
 /**
  * It is a default implementation of {@link DisaDAO}.
@@ -122,9 +123,21 @@ public class HibernateDisaDAO implements DisaDAO {
 		if (labResults.isEmpty()) {
 			return Collections.emptyList();
 		}
-		String sql = "SELECT s FROM SyncLog s join FETCH s.encounter where s.requestId in :requestIds";
+		String hql = "SELECT s FROM SyncLog s join FETCH s.encounter where s.requestId in :requestIds";
 		List<String> requestIds = labResults.stream().map(LabResult::getRequestId).collect(Collectors.toList());
-		Query query = this.getCurrentSession().createQuery(sql).setParameterList("requestIds", requestIds);
+		Query query = this.getCurrentSession().createQuery(hql).setParameterList("requestIds", requestIds);
 		return query.list();
+	}
+
+	@Override
+	public long getSyncTaskRepeatInterval() {
+		String sql = "select repeat_interval "
+				+ "from scheduler_task_config "
+				+ "where schedulable_class=:schedulableClass";
+		Query query = this.getCurrentSession()
+				.createSQLQuery(sql)
+				.setParameter("schedulableClass",
+						ViralLoadFormSchedulerTask.class.getName());
+		return Integer.toUnsignedLong((int) query.list().get(0));
 	}
 }
