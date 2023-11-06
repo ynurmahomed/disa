@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 public class SyncStatusService {
     private static final String DATE_PATTERN = "d 'de' MMMM 'de' y";
 
-    private static final String TIME_PATTERN = "HH:mm";
+    private static final String TIME_PATTERN = "HH:mm'h'";
 
     private MessageSourceService messageSourceService;
 
