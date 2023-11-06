@@ -96,6 +96,9 @@
 				<form:option value="CD4">
 					<openmrs:message code="disa.typeOfResult.CD4" />
 				</form:option>
+				<form:option value="TBLAM">
+					<openmrs:message code="disa.typeOfResult.TBLAM" />
+				</form:option>
 			</form:select>
 		</div>
 		<div class="divider"></div>

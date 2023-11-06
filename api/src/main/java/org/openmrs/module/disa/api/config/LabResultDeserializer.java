@@ -5,6 +5,7 @@ import java.io.IOException;
 import org.openmrs.module.disa.api.CD4LabResult;
 import org.openmrs.module.disa.api.HIVVLLabResult;
 import org.openmrs.module.disa.api.LabResult;
+import org.openmrs.module.disa.api.TBLamLabResult;
 import org.openmrs.module.disa.api.TypeOfResult;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -23,6 +24,8 @@ public class LabResultDeserializer extends JsonDeserializer<LabResult> {
             return p.getCodec().treeToValue(node, HIVVLLabResult.class);
         } else if (TypeOfResult.CD4 == typeOfResult) {
             return p.getCodec().treeToValue(node, CD4LabResult.class);
+        } else if (TypeOfResult.TBLAM == typeOfResult) {
+            return p.getCodec().treeToValue(node, TBLamLabResult.class);
         } else {
             throw new JsonParseException(p, "Unknown type of result: " + typeOfResult);
         }
