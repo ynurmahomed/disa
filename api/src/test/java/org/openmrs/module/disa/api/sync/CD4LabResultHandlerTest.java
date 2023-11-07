@@ -17,10 +17,6 @@ import org.openmrs.api.PersonService;
 import org.openmrs.module.disa.api.CD4LabResult;
 import org.openmrs.module.disa.api.LabResultStatus;
 import org.openmrs.module.disa.api.NotProcessingCause;
-import org.openmrs.module.disa.api.sync.CD4LabResultHandler;
-import org.openmrs.module.disa.api.sync.LocationLookup;
-import org.openmrs.module.disa.api.sync.PatientNidLookup;
-import org.openmrs.module.disa.api.sync.ProviderLookup;
 import org.openmrs.test.BaseContextMockTest;
 
 public class CD4LabResultHandlerTest extends BaseContextMockTest {

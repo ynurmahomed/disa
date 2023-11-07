@@ -3,56 +3,22 @@ package org.openmrs.module.disa.api.sync;
 import java.util.Date;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.StringUtils;
-import org.openmrs.Concept;
 import org.openmrs.Encounter;
-import org.openmrs.EncounterRole;
-import org.openmrs.EncounterType;
 import org.openmrs.Location;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.Person;
 import org.openmrs.Provider;
-import org.openmrs.api.ConceptService;
-import org.openmrs.api.EncounterService;
-import org.openmrs.api.FormService;
-import org.openmrs.api.ObsService;
-import org.openmrs.api.PersonService;
 import org.openmrs.module.disa.api.HIVVLLabResult;
 import org.openmrs.module.disa.api.LabResult;
 import org.openmrs.module.disa.api.LabResultStatus;
 import org.openmrs.module.disa.api.NotProcessingCause;
 import org.openmrs.module.disa.api.exception.DisaModuleAPIException;
 import org.openmrs.module.disa.api.util.Constants;
-import org.openmrs.module.disa.api.util.DateUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 @Component
 public class HIVVLLabResultHandler extends BaseLabResultHandler {
-
-    private EncounterService encounterService;
-
-    private FormService formService;
-
-    private PersonService personService;
-
-    private ConceptService conceptService;
-
-    @Autowired
-    public HIVVLLabResultHandler(
-            @Qualifier("encounterService") EncounterService encounterService,
-            @Qualifier("formService") FormService formService,
-            @Qualifier("personService") PersonService personService,
-            @Qualifier("conceptService") ConceptService conceptService,
-            @Qualifier("obsService") ObsService obsService) {
-
-        this.encounterService = encounterService;
-        this.formService = formService;
-        this.personService = personService;
-        this.conceptService = conceptService;
-    }
 
     @Override
     public LabResultStatus handle(LabResult labResult) {
@@ -80,20 +46,9 @@ public class HIVVLLabResultHandler extends BaseLabResultHandler {
             validateResult(vl);
 
             if (LabResultStatus.NOT_PROCESSED != labResult.getLabResultStatus()) {
-                Encounter encounter = new Encounter();
-                Date dateWithLeadingZeros = DateUtil.dateWithLeadingZeros();
-                EncounterType encounterType = encounterService.getEncounterTypeByUuid(Constants.DISA_ENCOUNTER_TYPE);
-                EncounterRole encounterRole = encounterService
-                        .getEncounterRoleByUuid(EncounterRole.UNKNOWN_ENCOUNTER_ROLE_UUID);
+                Encounter encounter = getElabEncounter(patient, provider, location, vl);
 
-                encounter.setEncounterDatetime(dateWithLeadingZeros);
-                encounter.setPatient(patient);
-                encounter.setEncounterType(encounterType);
-                encounter.setLocation(location);
-                encounter.setForm(formService.getFormByUuid(Constants.DISA_FORM));
-                encounter.setProvider(encounterRole, provider);
-
-                createFsrObs(vl, encounter);
+                addVlObs(vl, encounter);
 
                 labResult.setLabResultStatus(LabResultStatus.PROCESSED);
                 getSyncContext().put(ENCOUNTER_KEY, encounter);
@@ -140,114 +95,10 @@ public class HIVVLLabResultHandler extends BaseLabResultHandler {
                 .replace(Constants.ML, "");
     }
 
-    private void createFsrObs(HIVVLLabResult labResult, Encounter encounter) {
-        Obs obs23835 = new Obs();
+    private void addVlObs(HIVVLLabResult labResult, Encounter encounter) {
         Person person = personService.getPersonByUuid(encounter.getPatient().getUuid());
         Date obsDatetime = encounter.getEncounterDatetime();
         Location location = encounter.getLocation();
-
-        // Request ID
-        Obs obs22771 = new Obs();
-        obs22771.setPerson(person);
-        obs22771.setObsDatetime(obsDatetime);
-        obs22771.setConcept(conceptService.getConceptByUuid(Constants.ORDER_ID));
-        obs22771.setLocation(location);
-        obs22771.setEncounter(encounter);
-        if (!(labResult.getRequestId() == null) && StringUtils.isNotEmpty(labResult.getRequestId().trim())) {
-            obs22771.setValueText(labResult.getRequestId().trim());
-            encounter.addObs(obs22771);
-        }
-
-        // Requesting Laboratory ID
-        obs23835.setPerson(person);
-        obs23835.setObsDatetime(obsDatetime);
-        obs23835.setConcept(conceptService.getConceptByUuid(Constants.LAB_NUMBER));
-        obs23835.setLocation(location);
-        obs23835.setEncounter(encounter);
-        if (StringUtils.isNotEmpty(labResult.getHealthFacilityLabCode())) {
-            obs23835.setValueText(labResult.getHealthFacilityLabCode());
-            encounter.addObs(obs23835);
-        }
-
-        // Currently pregnant?
-        Obs obs1982 = new Obs();
-        obs1982.setPerson(person);
-        obs1982.setObsDatetime(obsDatetime);
-        obs1982.setConcept(conceptService.getConceptByUuid(Constants.PREGNANT));
-        obs1982.setLocation(location);
-        obs1982.setEncounter(encounter);
-        if (labResult.getPregnant().trim().equalsIgnoreCase(Constants.YES)
-                || labResult.getPregnant().trim().equalsIgnoreCase(Constants.SIM)) {// Pregnant
-            obs1982.setValueCoded(conceptService.getConceptByUuid(Constants.GESTATION));
-            encounter.addObs(obs1982);
-        } else if (labResult.getPregnant().trim().equalsIgnoreCase(Constants.NO)
-                || StringUtils.stripAccents(labResult.getPregnant().trim()).equalsIgnoreCase(Constants.NAO)) {
-            obs1982.setValueCoded(conceptService.getConceptByUuid(Constants.CONCEPT_NO));
-            encounter.addObs(obs1982);
-        } else {
-            obs1982.setValueCoded(conceptService.getConceptByUuid(Constants.CONCEPT_NOT_FILLED));
-            encounter.addObs(obs1982);
-        }
-
-        // Currently breastfeeding?
-        Obs obs6332 = new Obs();
-        obs6332.setPerson(person);
-        obs6332.setObsDatetime(obsDatetime);
-        obs6332.setConcept(conceptService.getConceptByUuid(Constants.LACTATION));
-        obs6332.setLocation(location);
-        obs6332.setEncounter(encounter);
-        if (labResult.getBreastFeeding().trim().equalsIgnoreCase(Constants.YES)
-                || labResult.getPregnant().trim().equalsIgnoreCase(Constants.SIM)) {
-            obs6332.setValueCoded(conceptService.getConceptByUuid(Constants.CONCEPT_YES));
-            encounter.addObs(obs6332);
-        } else if (labResult.getBreastFeeding().trim().equalsIgnoreCase(Constants.NO)
-                || StringUtils.stripAccents(labResult.getPregnant().trim()).equalsIgnoreCase(Constants.NAO)) {
-            obs6332.setValueCoded(conceptService.getConceptByUuid(Constants.CONCEPT_NO));
-            encounter.addObs(obs6332);
-        } else {
-            obs6332.setValueCoded(conceptService.getConceptByUuid(Constants.CONCEPT_NOT_FILLED));
-            encounter.addObs(obs6332);
-        }
-
-        // Requesting facility name
-        Obs obs23883 = new Obs();
-        obs23883.setPerson(person);
-        obs23883.setObsDatetime(obsDatetime);
-        obs23883.setConcept(conceptService.getConceptByUuid(Constants.PICKING_LOCATION));
-        obs23883.setLocation(location);
-        obs23883.setEncounter(encounter);
-        if (StringUtils.isNotEmpty(labResult.getRequestingFacilityName())) {
-            obs23883.setValueText(labResult.getRequestingFacilityName());
-            encounter.addObs(obs23883);
-        }
-
-        // Specimen collection Date
-        Obs obs23821 = new Obs();
-        obs23821.setPerson(person);
-        obs23821.setObsDatetime(obsDatetime);
-        obs23821.setConcept(conceptService.getConceptByUuid(Constants.SAMPLE_COLLECTION_DATE));
-        obs23821.setLocation(location);
-        obs23821.setEncounter(encounter);
-        if (labResult.getHarvestDate() != null) {
-            obs23821.setValueDate(DateUtil.toDate(labResult.getHarvestDate()));
-            encounter.addObs(obs23821);
-        }
-
-        // Specimen registration date
-        if (labResult.getRegisteredDateTime() != null) {
-            Concept sampleCollectionDate = conceptService.getConceptByUuid(Constants.SAMPLE_REGISTRATION_DATE);
-            Obs obs165461 = new Obs(person, sampleCollectionDate, obsDatetime, location);
-            obs165461.setValueDate(DateUtil.toDate(labResult.getRegisteredDateTime()));
-            encounter.addObs(obs165461);
-        }
-
-        // Result authorization date
-        if (labResult.getLabResultDate() != null) {
-            Concept resultApprovalDate = conceptService.getConceptByUuid(Constants.RESULT_APPROVAL_DATE);
-            Obs obs165462 = new Obs(person, resultApprovalDate, obsDatetime, location);
-            obs165462.setValueDate(DateUtil.toDate(labResult.getLabResultDate()));
-            encounter.addObs(obs165462);
-        }
 
         // Reason for requesting viral load
         Obs obs23818 = new Obs();

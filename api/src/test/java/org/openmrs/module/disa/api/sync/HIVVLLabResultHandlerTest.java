@@ -45,12 +45,6 @@ import org.openmrs.module.disa.api.LabResultService;
 import org.openmrs.module.disa.api.LabResultStatus;
 import org.openmrs.module.disa.api.NotProcessingCause;
 import org.openmrs.module.disa.api.exception.DisaModuleAPIException;
-import org.openmrs.module.disa.api.sync.BaseLabResultHandler;
-import org.openmrs.module.disa.api.sync.HIVVLLabResultHandler;
-import org.openmrs.module.disa.api.sync.LabResultHandler;
-import org.openmrs.module.disa.api.sync.LocationLookup;
-import org.openmrs.module.disa.api.sync.PatientNidLookup;
-import org.openmrs.module.disa.api.sync.ProviderLookup;
 import org.openmrs.module.disa.api.util.Constants;
 import org.openmrs.test.BaseContextMockTest;
 

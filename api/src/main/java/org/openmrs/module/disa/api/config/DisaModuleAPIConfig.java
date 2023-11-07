@@ -14,6 +14,7 @@ import org.openmrs.module.disa.api.sync.LabResultProcessor;
 import org.openmrs.module.disa.api.sync.LocationLookup;
 import org.openmrs.module.disa.api.sync.PatientNidLookup;
 import org.openmrs.module.disa.api.sync.ProviderLookup;
+import org.openmrs.module.disa.api.sync.TBLamLabResultHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
@@ -58,6 +59,7 @@ public class DisaModuleAPIConfig {
             LocationLookup locationLookup,
             HIVVLLabResultHandler vlHandler,
             CD4LabResultHandler cd4Handler,
+            TBLamLabResultHandler tbLamHandler,
             FinalLabResultHandler finalLabResultHandler) {
 
         LabResultHandler[] chain = new LabResultHandler[] {
@@ -67,6 +69,7 @@ public class DisaModuleAPIConfig {
                 locationLookup,
                 vlHandler,
                 cd4Handler,
+                tbLamHandler,
                 finalLabResultHandler
         };
 

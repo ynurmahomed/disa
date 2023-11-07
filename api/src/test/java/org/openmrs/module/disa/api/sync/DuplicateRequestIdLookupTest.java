@@ -2,7 +2,6 @@ package org.openmrs.module.disa.api.sync;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -16,8 +15,6 @@ import org.openmrs.module.disa.api.HIVVLLabResult;
 import org.openmrs.module.disa.api.LabResult;
 import org.openmrs.module.disa.api.LabResultStatus;
 import org.openmrs.module.disa.api.NotProcessingCause;
-import org.openmrs.module.disa.api.sync.DuplicateRequestIdLookup;
-import org.openmrs.module.disa.api.sync.LabResultHandler;
 import org.openmrs.test.BaseContextMockTest;
 
 public class DuplicateRequestIdLookupTest extends BaseContextMockTest {

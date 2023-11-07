@@ -23,9 +23,6 @@ import org.openmrs.module.disa.api.LabResult;
 import org.openmrs.module.disa.api.LabResultService;
 import org.openmrs.module.disa.api.LabResultStatus;
 import org.openmrs.module.disa.api.NotProcessingCause;
-import org.openmrs.module.disa.api.sync.BaseLabResultHandler;
-import org.openmrs.module.disa.api.sync.FinalLabResultHandler;
-import org.openmrs.module.disa.api.sync.LabResultHandler;
 import org.openmrs.test.BaseContextMockTest;
 
 public class FinalLabResultHandlerTest extends BaseContextMockTest {
