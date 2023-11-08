@@ -170,7 +170,7 @@ public class DisaServiceImpl extends BaseOpenmrsService implements DisaService {
 	}
 
 	@Override
-	public long getSyncTaskRepeatInterval() {
+	public Long getSyncTaskRepeatInterval() {
 		return dao.getSyncTaskRepeatInterval();
 	}
 }

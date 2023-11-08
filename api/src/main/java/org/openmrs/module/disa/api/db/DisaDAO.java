@@ -44,5 +44,5 @@ public interface DisaDAO {
 
 	public List<Patient> getPatientByPatientId(Integer patientId);
 
-	public long getSyncTaskRepeatInterval();
+	public Long getSyncTaskRepeatInterval();
 }

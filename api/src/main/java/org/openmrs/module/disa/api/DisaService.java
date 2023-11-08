@@ -71,5 +71,5 @@ public interface DisaService extends OpenmrsService {
 	 * 
 	 * @return The sync interval.
 	 */
-	long getSyncTaskRepeatInterval();
+	Long getSyncTaskRepeatInterval();
 }

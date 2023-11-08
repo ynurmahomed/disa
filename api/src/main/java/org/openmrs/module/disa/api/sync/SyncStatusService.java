@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 public class SyncStatusService {
     private static final String DATE_PATTERN = "d 'de' MMMM 'de' y";
 
-    private static final String TIME_PATTERN = "HH:mm";
+    private static final String TIME_PATTERN = "HH:mm'h'";
 
     private MessageSourceService messageSourceService;
 
@@ -29,11 +29,12 @@ public class SyncStatusService {
         DateTimeFormatter dateFmt = DateTimeFormatter.ofPattern(DATE_PATTERN, Context.getLocale());
         DateTimeFormatter timeFmt = DateTimeFormatter.ofPattern(TIME_PATTERN, Context.getLocale());
         SyncStatus syncStatus = ViralLoadFormSchedulerTask.getSyncStatus();
-        if (syncStatus.getLastExecutionTime() != null) {
+        Long repeatInterval = disaService.getSyncTaskRepeatInterval();
+        if (syncStatus.getLastExecutionTime() != null && repeatInterval != null) {
             String[] args = new String[] {
                     syncStatus.getLastExecutionTime().format(dateFmt),
                     syncStatus.getLastExecutionTime().format(timeFmt),
-                    formatInterval(disaService.getSyncTaskRepeatInterval()),
+                    formatInterval(repeatInterval),
             };
             return messageSourceService.getMessage("disa.syncStatus.lastExecution", args,
                     Context.getLocale());

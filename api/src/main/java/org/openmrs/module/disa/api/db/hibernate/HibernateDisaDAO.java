@@ -130,7 +130,7 @@ public class HibernateDisaDAO implements DisaDAO {
 	}
 
 	@Override
-	public long getSyncTaskRepeatInterval() {
+	public Long getSyncTaskRepeatInterval() {
 		String sql = "select repeat_interval "
 				+ "from scheduler_task_config "
 				+ "where schedulable_class=:schedulableClass";
@@ -138,6 +138,10 @@ public class HibernateDisaDAO implements DisaDAO {
 				.createSQLQuery(sql)
 				.setParameter("schedulableClass",
 						ViralLoadFormSchedulerTask.class.getName());
-		return Integer.toUnsignedLong((int) query.list().get(0));
+		Object repeatInterval = query.uniqueResult();
+		if (repeatInterval == null) {
+			return null;
+		}
+		return Integer.toUnsignedLong((int) repeatInterval);
 	}
 }
