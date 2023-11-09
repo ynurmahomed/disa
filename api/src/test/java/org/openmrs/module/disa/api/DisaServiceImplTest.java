@@ -54,6 +54,7 @@ public class DisaServiceImplTest extends BaseContextMockTest {
         disa.setNid("12345");
         disa.setRequestId("requestId");
         Patient patient = new Patient();
+        patient.addIdentifier(new PatientIdentifier());
 
         when(patientService.getPatientByUuid(patientUuid)).thenReturn(patient);
         PatientIdentifierType identifierType = new PatientIdentifierType();
