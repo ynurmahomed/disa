@@ -131,15 +131,6 @@ public class DisaServiceImpl extends BaseOpenmrsService implements DisaService {
 		return patient;
 	}
 
-	public List<Patient> getPatientsToMapSuggestion(LabResult disa) {
-		String name = disa.getFirstName() + " " + disa.getLastName();
-		List<Patient> patients = patientService.getPatients(name, null, null, false);
-		// return only patients with identifiers
-		return patients.stream()
-				.filter(p -> !p.getActiveIdentifiers().isEmpty())
-				.collect(Collectors.toList());
-	}
-
 	public void handleProcessedLabResult(LabResult labResult, Encounter encounter) {
 		encounterService.saveEncounter(encounter);
 

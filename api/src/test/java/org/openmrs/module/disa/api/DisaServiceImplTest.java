@@ -114,23 +114,4 @@ public class DisaServiceImplTest extends BaseContextMockTest {
         verify(labResultService, never()).rescheduleLabResult(disa.getId());
     }
 
-    @Test
-    public void getPatientsToMapSuggestionShouldReturnPatientsWithIdentifiers() {
-        LabResult disa = new HIVVLLabResult();
-        disa.setFirstName("John");
-        disa.setLastName("Doe");
-        Patient patient = new Patient();
-
-        when(patientService.getPatients(
-                any(String.class),
-                any(String.class),
-                anyListOf(PatientIdentifierType.class),
-                any(Boolean.class)))
-                .thenReturn(Arrays.asList(patient));
-
-        List<Patient> suggestion = disaServiceImpl.getPatientsToMapSuggestion(disa);
-
-        assertThat(suggestion, hasSize(0));
-    }
-
 }
