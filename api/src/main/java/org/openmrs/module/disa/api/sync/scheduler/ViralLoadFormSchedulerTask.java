@@ -58,7 +58,6 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 	public void execute() {
 		logger.info("module started...");
 		Context.openSession();
-		syncStatus = syncStatus.withRepeatInterval(getTaskDefinition().getRepeatInterval());
 		try {
 			syncStatus = syncStatus.started();
 			createViralLoadForm();

@@ -35,10 +35,6 @@ public final class SyncStatus {
         return new SyncStatus(LocalDateTime.now(), repeatInterval, false, startedExecutionTime, progress);
     }
 
-    public SyncStatus withRepeatInterval(long repeatInterval) {
-        return new SyncStatus(lastExecutionTime, repeatInterval, executing, startedExecutionTime, progress);
-    }
-
     public SyncStatus withProgress(float progress) {
         return new SyncStatus(lastExecutionTime, repeatInterval, executing, startedExecutionTime, progress);
     }
