@@ -136,4 +136,12 @@ public class Constants {
 	public static final String DISA_NOTIFICATION_ERROR_SUBJECT = "Notificação de Erro de Interoperabilidade Disa: ";
 	public static final String DISA_MODULE = "disa-module";
 	public static final String PROVIDER_ERROR = "Provedor generic.provider ou provedor.desconhecido nao foi encontrado no openmrs.";
+    public static final String TB_LAM = "ef139cb2-97c1-4c0f-9189-5e0711a45b8f";
+	public static final String NEGATIVE = "e1d446cc-1d5f-11e0-b929-000c29ad1d07";
+	public static final String POSITIVE = "e1d47386-1d5f-11e0-b929-000c29ad1d07";
+    public static final String POSITIVITY_LEVEL = "303a4480-f2b3-4192-a446-725a401ebb09";
+    public static final String LEVEL_1 = "03d4b7c8-c8cd-4f84-be40-67975bd5b667";
+    public static final String LEVEL_2 = "79f4bd59-0dbb-41ba-9d78-3efc0b737b75";
+    public static final String LEVEL_3 = "a4e43a4d-37ea-4767-a700-9fe1d43a8042";
+    public static final String LEVEL_4 = "16c13c13-2f85-4492-ae9b-4358b34070e7";
 }

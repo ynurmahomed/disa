@@ -21,4 +21,8 @@ public class TBLamLabResult extends LabResult {
         this.positivityLevel = positivityLevel;
     }
 
+    @Override
+    public String toString() {
+        return "TBLamLabResult [requestId=" + getRequestId() + "]";
+    }
 }
