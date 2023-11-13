@@ -107,6 +107,10 @@ public class DisaServiceImpl extends BaseOpenmrsService implements DisaService {
 		}
 
 		Patient patient = patientService.getPatientByUuid(patientUuid);
+		if (patient.getActiveIdentifiers().isEmpty()) {
+			throw new DisaModuleAPIException("disa.map.no.identifiers", new Object[]{});
+		}
+
 		PatientIdentifierType disaNIDIdentifier = patientService
 				.getPatientIdentifierTypeByUuid(Constants.DISA_NID);
 		List<PatientIdentifier> identifiers = patientService.getPatientIdentifiers(disa.getNid(),
@@ -114,7 +118,6 @@ public class DisaServiceImpl extends BaseOpenmrsService implements DisaService {
 
 		if (identifiers.isEmpty()) {
 
-			// TODO handle network error!!!
 			labResultService.rescheduleLabResult(disa.getId());
 
 			PatientIdentifier patientIdentifier = new PatientIdentifier();
@@ -126,15 +129,6 @@ public class DisaServiceImpl extends BaseOpenmrsService implements DisaService {
 		}
 
 		return patient;
-	}
-
-	public List<Patient> getPatientsToMapSuggestion(LabResult disa) {
-		String name = disa.getFirstName() + " " + disa.getLastName();
-		List<Patient> patients = patientService.getPatients(name, null, null, false);
-		// return only patients with identifiers
-		return patients.stream()
-				.filter(p -> !p.getActiveIdentifiers().isEmpty())
-				.collect(Collectors.toList());
 	}
 
 	public void handleProcessedLabResult(LabResult labResult, Encounter encounter) {
