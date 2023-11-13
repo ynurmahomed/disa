@@ -1,5 +1,5 @@
 package org.openmrs.module.disa.api;
 
 public enum TypeOfResult {
-    ALL, HIVVL, CD4;
+    ALL, HIVVL, CD4, TBLAM;
 }
