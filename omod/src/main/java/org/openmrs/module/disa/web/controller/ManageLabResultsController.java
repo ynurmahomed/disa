@@ -126,12 +126,12 @@ public class ManageLabResultsController {
     }
 
     @RequestMapping(value = "/export", method = RequestMethod.GET)
-    public String export(@Valid SearchForm searchForm, ModelMap model) {
+    public String export(@Valid SearchForm searchForm, ModelMap model, HttpSession session) {
 
         @SuppressWarnings("unchecked")
         String query = ServletUriComponentsBuilder
                 .fromCurrentRequest()
-                .queryParams((MultiValueMap<String, String>) model.get("lastSearchParams"))
+                .queryParams((MultiValueMap<String, String>) session.getAttribute("lastSearchParams"))
                 .build()
                 .getQuery();
 

@@ -26,7 +26,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @Controller
 @RequestMapping("/module/disa/managelabresults/{id}/map")
-@SessionAttributes({ "flashMessage", "errorSelectPatient" })
+@SessionAttributes({ "flashMessage" })
 public class MapUnprocessedLabResultsController {
 
 	private LabResultService labResultService;
@@ -104,9 +104,6 @@ public class MapUnprocessedLabResultsController {
 				model.addAllAttributes(lastSearchParams);
 			}
 
-			// Remove id after successfully mapping, so that id does not filter
-			// in managelabresults.
-			model.remove("id");
 			model.addAttribute("flashMessage", mapSuccessfulMsg);
 
 			return "redirect:/module/disa/managelabresults.form";
