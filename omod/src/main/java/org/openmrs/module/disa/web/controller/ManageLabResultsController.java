@@ -50,7 +50,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Controller
 @RequestMapping("/module/disa/managelabresults")
-@SessionAttributes({ "flashMessage", "lastSearchParams" })
+@SessionAttributes({ "flashMessage" })
 public class ManageLabResultsController {
 
     private static final Logger log = LoggerFactory.getLogger(ManageLabResultsController.class);
@@ -107,7 +107,7 @@ public class ManageLabResultsController {
                 model.addAttribute("exportUri", exportUri);
 
                 model.addAttribute("disaPage", searchLabResults(searchForm));
-                model.addAttribute("lastSearchParams", params);
+                session.setAttribute("lastSearchParams", params);
             }
 
         } catch (DisaModuleAPIException e) {

@@ -3,6 +3,7 @@ package org.openmrs.module.disa.web.controller;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
@@ -25,7 +26,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @Controller
 @RequestMapping("/module/disa/managelabresults/{id}/map")
-@SessionAttributes({ "lastSearchParams", "flashMessage", "errorSelectPatient" })
+@SessionAttributes({ "flashMessage", "errorSelectPatient" })
 public class MapUnprocessedLabResultsController {
 
 	private LabResultService labResultService;
@@ -48,6 +49,7 @@ public class MapUnprocessedLabResultsController {
 	public String patientIdentifierMapping(
 			@PathVariable long id,
 			ModelMap model,
+			HttpSession session,
 			HttpServletRequest request) {
 
 		LabResult labResult = labResultService.getById(id);
@@ -57,9 +59,10 @@ public class MapUnprocessedLabResultsController {
 
 		// Build uri back to search results with used parameters.
 		ServletUriComponentsBuilder builder = ServletUriComponentsBuilder.fromServletMapping(request);
-		if (model.containsAttribute("lastSearchParams")) {
+		if (session.getAttribute("lastSearchParams") != null) {
 			@SuppressWarnings("unchecked")
-			MultiValueMap<String, String> params = (MultiValueMap<String, String>) model.get("lastSearchParams");
+			MultiValueMap<String, String> params = (MultiValueMap<String, String>) session
+					.getAttribute("lastSearchParams");
 			builder.queryParams(params);
 		}
 		String searchUri = builder
