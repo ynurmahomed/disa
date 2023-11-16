@@ -128,7 +128,7 @@ public class TbLamLabResultHandlerTest extends BaseContextMockTest {
         when(conceptService.getConceptByUuid(Constants.LEVEL_3)).thenReturn(level3);
 
         labResult.setFinalResult("Positiv");
-        labResult.setPositivityLevel("GRAIII");
+        labResult.setPositivityLevel("GRIII");
         tbLamLabResultHandler.handle(labResult);
 
         Encounter encounter = (Encounter) tbLamLabResultHandler.getSyncContext()
