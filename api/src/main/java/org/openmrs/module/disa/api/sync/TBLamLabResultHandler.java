@@ -101,9 +101,9 @@ public class TBLamLabResultHandler extends BaseLabResultHandler {
                 return conceptService.getConceptByUuid(Constants.LEVEL_1);
             case "GRAII":
                 return conceptService.getConceptByUuid(Constants.LEVEL_2);
-            case "GRAIII":
+            case "GRIII":
                 return conceptService.getConceptByUuid(Constants.LEVEL_3);
-            case "GRAIV":
+            case "GRIV":
                 return conceptService.getConceptByUuid(Constants.LEVEL_4);
             default:
                 return null;
