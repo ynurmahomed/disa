@@ -13,6 +13,9 @@
  */
 package org.openmrs.module.disa;
 
+import java.util.Collection;
+import java.util.Optional;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.AdministrationService;
@@ -20,7 +23,9 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.BaseModuleActivator;
 import org.openmrs.module.ModuleActivator;
 import org.openmrs.module.disa.api.client.DisaAPIHttpClient;
+import org.openmrs.module.disa.api.sync.scheduler.ViralLoadFormSchedulerTask;
 import org.openmrs.module.disa.api.util.Constants;
+import org.openmrs.scheduler.TaskDefinition;
 
 /**
  * This class contains the logic that is run every time this module is either
@@ -60,6 +65,7 @@ public class DisaModuleActivator extends BaseModuleActivator {
 		log.info("Disa Module Module started");
 
 		setUpDisaHttpClient();
+		setUpViralLoadFormSchedulerTask();
 	}
 
 	/**
@@ -84,4 +90,20 @@ public class DisaModuleActivator extends BaseModuleActivator {
 		disaAPIHttpClient.setPassword(administrationService.getGlobalPropertyValue(Constants.DISA_PASSWORD, ""));
 	}
 
+	private void setUpViralLoadFormSchedulerTask() {
+		Collection<TaskDefinition> scheduledTasks = Context.getSchedulerService().getRegisteredTasks();
+		Optional<TaskDefinition> taskDefinition = scheduledTasks.stream()
+				.filter(s -> s.getTaskClass().equals(ViralLoadFormSchedulerTask.class.getName()))
+				.findFirst();
+
+		if (!taskDefinition.isPresent()) {
+			TaskDefinition task = new TaskDefinition();
+			task.setName("ViralLoadSchedulerTask");
+			task.setTaskClass(ViralLoadFormSchedulerTask.class.getName());
+			task.setStartOnStartup(true);
+			task.setRepeatInterval(30 * 60l);
+			task.setStarted(true);
+			Context.getSchedulerService().saveTaskDefinition(task);
+		}
+	}
 }
