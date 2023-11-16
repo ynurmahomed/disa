@@ -1,235 +1,245 @@
 .disa-table {
-	font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-	border-collapse: collapse;
-	width: 100%;
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
 }
 
 .disa-table td,
 .disa-table th {
-	border: 1px solid #ddd;
-	padding: 8px;
+  border: 1px solid #ddd;
+  padding: 8px;
 }
 
 .disa-table tr:nth-child(even) {
-	background-color: #f2f2f2;
+  background-color: #f2f2f2;
 }
 
 .disa-table tr:hover {
-	background-color: #ddd;
+  background-color: #ddd;
 }
 
 .disa-table th {
-	padding-top: 12px;
-	padding-bottom: 12px;
-	text-align: left;
-	background-color: #1aac9b;
-	color: white;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #1aac9b;
+  color: white;
 }
 
 table.disa-table.disa-table-clear th {
-    background-color: white;
-    color: black;
+  background-color: white;
+  color: black;
+}
+
+#disaPatient td:last-child,
+#disaPatient th:last-child {
+  border: none;
+  background-color: white;
+}
+
+#disaPatient.no-footer {
+  border-bottom: none;
 }
 
 .disa-table-search {
-	float: left;
-	margin: 5px 0 10px;
+  float: left;
+  margin: 5px 0 10px;
 }
 
 .disa-table-results tr th:first-child,
 .disa-table-results tr td:first-child {
-	display: none;
+  display: none;
 }
 
 .disa-table-results .actions {
-	cursor: pointer;
+  cursor: pointer;
 }
 
 .disa-table-results .actions-tooltip {
-	display: none;
-	background-color: #ddd;
+  display: none;
+  background-color: #ddd;
 }
 
 .disa-table-results .actions-tooltip[data-show] {
-	display: block;
+  display: block;
 }
 
 .disa-table-results .actions-tooltip ul {
-	padding: 0;
-	margin-top: 0;
-	margin-bottom: 0;
+  padding: 0;
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
 .disa-table-results .actions-tooltip li {
-	list-style: none;
-	padding: 0.5rem 0.5rem;
+  list-style: none;
+  padding: 0.5rem 0.5rem;
 }
 
 .submit-btn {
-	display: flex;
-	margin: 10px 15px;
-	gap: 10px;
+  display: flex;
+  margin: 10px 15px;
+  gap: 10px;
 }
 
 .submit-btn.center {
-	justify-content: center;
+  justify-content: center;
 }
 
 .submit-btn button {
-	color: #fff;
-	background: #1aac9b;
-	padding: 8px;
-	width: 12.8em;
-	font-weight: bold;
-	text-shadow: 0 0 .3em black;
-	font-size: 9pt;
-	border-radius: 5px 5px;
+  color: #fff;
+  background: #1aac9b;
+  padding: 8px;
+  width: 12.8em;
+  font-weight: bold;
+  text-shadow: 0 0 0.3em black;
+  font-size: 9pt;
+  border-radius: 5px 5px;
 }
 
 #error_msg {
-	background-color: #FFB6C1;
+  background-color: #ffb6c1;
 }
 
 #searchForm .searchFields {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 10px;
-	padding: 5px;
-	justify-content: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 5px;
+  justify-content: center;
 }
 
-#searchForm .searchFields>div {
-	display: flex;
-	flex-direction: column;
+#searchForm .searchFields > div {
+  display: flex;
+  flex-direction: column;
 }
 
 #searchForm .error {
-	font-size: small;
+  font-size: small;
 }
 
 .searchFields .divider {
-	width: 1px;
-	background: gray;
-	margin: 5px 15px;
+  width: 1px;
+  background: gray;
+  margin: 5px 15px;
 }
 
-.searchFields button[type=submit] {
-	cursor: pointer;
-	color: #fff;
-	background: #1aac9b;
-	padding: 8px;
-	height: 36px;
-	font-weight: bold;
-	font-size: 9pt;
-	border-radius: 5px 5px;
-	border-width: 1px;
-	margin-left: 15px;
+.searchFields button[type="submit"] {
+  cursor: pointer;
+  color: #fff;
+  background: #1aac9b;
+  padding: 8px;
+  height: 36px;
+  font-weight: bold;
+  font-size: 9pt;
+  border-radius: 5px 5px;
+  border-width: 1px;
+  margin-left: 15px;
 }
 
 .reallocate-form .field {
-	display: flex;
+  display: flex;
 }
 
-.reallocate-form .field>.label {
-	margin: 0 10px;
-	display: flex;
-	align-items: center;
+.reallocate-form .field > .label {
+  margin: 0 10px;
+  display: flex;
+  align-items: center;
 }
 
-.reallocate-form .field>.input {
-	width: 405px;
+.reallocate-form .field > .input {
+  width: 405px;
 }
 
 .success {
-	background-color: #93fbef;
+  background-color: #93fbef;
 }
 
 span.success,
 div.success {
-	border: 1px dashed #0e5c52;
-	padding: 1px 6px 1px 6px;
-	margin: 4px 0;
-	vertical-align: middle;
+  border: 1px dashed #0e5c52;
+  padding: 1px 6px 1px 6px;
+  margin: 4px 0;
+  vertical-align: middle;
 }
 
 #openmrs_msg {
-	font-weight: bold;
+  font-weight: bold;
 }
 
 .float-left {
-	float: left;
+  float: left;
 }
 
 .float-right {
-	float: right;
+  float: right;
 }
 
 .clear {
-	clear: both;
+  clear: both;
 }
 
 /* Add in-height so that popover does not get clipped */
 .dataTables_scrollBody {
-	min-height: 500px;
+  min-height: 500px;
 }
 
 /* Datatables processing indicator */
-div.dataTables_processing>div:last-child>div {
-	background-color: #00b69b;
+div.dataTables_processing > div:last-child > div {
+  background-color: #00b69b;
 }
 
 /* Datatables column visibility buttons */
 button.dt-button.buttons-columnVisibility:before {
-	content: "+ ";
+  content: "+ ";
 }
 
 button.dt-button.buttons-columnVisibility.active:before {
-	content: "- ";
+  content: "- ";
 }
 
 .input-wrapper {
-	display: flex;
-	border: 1px solid cadetblue;
+  display: flex;
+  border: 1px solid cadetblue;
 }
 
 .input-wrapper:focus-within {
-    outline: 1px solid black;
-    border-radius: 3px;
-    border: 1px solid black;
+  outline: 1px solid black;
+  border-radius: 3px;
+  border: 1px solid black;
 }
 
 .input-wrapper .prefix {
-	color: gray;
-	font-size: 0.9em;
-	padding: 1px 0 1px 1px;
+  color: gray;
+  font-size: 0.9em;
+  padding: 1px 0 1px 1px;
 }
 
 .input-wrapper input {
-	border: none;
-	outline: none;
+  border: none;
+  outline: none;
 }
 
 .input-wrapper:hover .clear {
-	visibility: visible;
+  visibility: visible;
 }
 
 .input-wrapper .clear {
-	cursor: default;
-	visibility: hidden;
-	font-weight: bold;
-	color: gray;
-	padding: 0 2px;
+  cursor: default;
+  visibility: hidden;
+  font-weight: bold;
+  color: gray;
+  padding: 0 2px;
 }
 
 .boxHeader.disaHeader {
-	background-color: #e0a2b4;
+  background-color: #e0a2b4;
 }
 
 .boxHeader.disaHeader {
-	background-color: #e0a2b4;
-	border-color: #e0a2b4;
+  background-color: #e0a2b4;
+  border-color: #e0a2b4;
 }
 
 .box.disaBox {
-	border-color: #d48d92;
+  border-color: #d48d92;
 }

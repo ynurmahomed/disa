@@ -7,6 +7,7 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasValue;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyListOf;
@@ -25,6 +26,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+
+import javax.servlet.http.HttpSession;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -192,11 +195,13 @@ public class ManageLabResultsControllerTest extends BaseContextMockTest {
             when(orgUnitService.getOrgUnitByCode(SISMA_CODE))
             .thenReturn(cs24deJulho);
 
-        mockMvc.perform(get("/module/disa/managelabresults").param("vlState", "NOT_PROCESSED"))
+        HttpSession session = mockMvc.perform(get("/module/disa/managelabresults").param("vlState", "NOT_PROCESSED"))
             .andExpect(status().isOk())
-            .andExpect(model().attribute("lastSearchParams",
-                hasEntry(equalTo("vlState"), hasItem("NOT_PROCESSED"))))
-            .andExpect(view().name("/module/disa/managelabresults/index"));
+            .andExpect(view().name("/module/disa/managelabresults/index"))
+            .andReturn().getRequest().getSession();
+
+        assertThat((MultiValueMap<String, String>) session.getAttribute("lastSearchParams"), 
+            hasEntry(equalTo("vlState"), hasItem("NOT_PROCESSED")));
 
     }
 

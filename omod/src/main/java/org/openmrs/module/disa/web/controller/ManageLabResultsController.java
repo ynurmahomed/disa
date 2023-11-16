@@ -50,7 +50,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Controller
 @RequestMapping("/module/disa/managelabresults")
-@SessionAttributes({ "flashMessage", "lastSearchParams" })
+@SessionAttributes({ "flashMessage" })
 public class ManageLabResultsController {
 
     private static final Logger log = LoggerFactory.getLogger(ManageLabResultsController.class);
@@ -107,7 +107,7 @@ public class ManageLabResultsController {
                 model.addAttribute("exportUri", exportUri);
 
                 model.addAttribute("disaPage", searchLabResults(searchForm));
-                model.addAttribute("lastSearchParams", params);
+                session.setAttribute("lastSearchParams", params);
             }
 
         } catch (DisaModuleAPIException e) {
@@ -126,12 +126,12 @@ public class ManageLabResultsController {
     }
 
     @RequestMapping(value = "/export", method = RequestMethod.GET)
-    public String export(@Valid SearchForm searchForm, ModelMap model) {
+    public String export(@Valid SearchForm searchForm, ModelMap model, HttpSession session) {
 
         @SuppressWarnings("unchecked")
         String query = ServletUriComponentsBuilder
                 .fromCurrentRequest()
-                .queryParams((MultiValueMap<String, String>) model.get("lastSearchParams"))
+                .queryParams((MultiValueMap<String, String>) session.getAttribute("lastSearchParams"))
                 .build()
                 .getQuery();
 

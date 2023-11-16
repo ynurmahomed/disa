@@ -9,6 +9,8 @@
 
 <openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/disa/css/datatables.net/1.13.2/jquery.dataTables.min.css" />
 
+<a href="${lastSearchUri}">Voltar</a>
+
 <h2>
 	<openmrs:message code="disa.map.identifiers"/>
 </h2>
@@ -23,19 +25,25 @@
 		</b>
 	</div>
 	<div class="box disaBox">
-		<table class="disa-table disa-table-clear">
-			<tr>
-				<th><spring:message code="disa.nid" /></th>
-				<th><spring:message code="general.name" /></th>
-				<th><spring:message code="disa.gender" /></th>
-				<th><spring:message code="disa.age" /></th>
-			</tr>
-			<tr>
-				<td>${labResult.nid}</td>
-				<td>${labResult.firstName} ${labResult.lastName}</td>
-				<td>${labResult.gender}</td>
-				<td>${labResult.getAge()}</td>
-			</tr>
+		<table id="disaPatient" class="disa-table disa-table-clear" width="100%">
+			<thead>
+				<tr>
+					<th><spring:message code="disa.nid" /></th>
+					<th><spring:message code="general.name" /></th>
+					<th><spring:message code="disa.gender" /></th>
+					<th><spring:message code="disa.age" /></th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>${labResult.nid}</td>
+					<td>${labResult.firstName} ${labResult.lastName}</td>
+					<td>${labResult.gender}</td>
+					<td>${labResult.getAge()}</td>
+					<td></td>
+				</tr>
+			</tbody>
 		</table>
 	</div>
 </div>
@@ -54,14 +62,14 @@
 	<div class="box">
 		<form method="post">
 			<input id="search" name="search" type="hidden"/>
-			<table  id="patientListTable"  class="disa-table disa-table-clear" width="100%" cellpadding="2" cellspacing="0" style="font-size: 13px;">
+			<table  id="patientListTable"  class="disa-table disa-table-clear" width="100%">
 				<thead>
 					<tr>
 						<th><spring:message code="disa.nid" /></th>
 						<th><spring:message code="general.name" /></th>
 						<th><spring:message code="disa.gender" /></th>
 						<th><spring:message code="disa.age" /></th>
-						<th></th>
+						<th><spring:message code="general.select" /></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -85,9 +93,6 @@
 			
 			
 			<div class="submit-btn center">
-				<button type="button" onclick="location.href='${lastSearchUri}'">
-					<spring:message code="general.previous"/>
-				</button>
 				<button type="submit">
 					<spring:message code="disa.btn.map"/>
 				</button>
@@ -102,6 +107,16 @@
 <script type="text/javascript">
 	const nidTarv = i => i.identifierType.uuid === 'e2b966d0-1d5f-11e0-b929-000c29ad1d07';
 	window.addEventListener('DOMContentLoaded', () => {
+		new DataTable("#disaPatient", {
+			dom: 't',
+			columns: [
+				{data:"nid", orderable:false, width: "30%"},
+				{data:"name", orderable:false, width: "30%"},
+				{data:"gender", orderable:false, width: "16%"},
+				{data:"age", orderable:false, width: "16%"},
+				{render: ()  => null, orderable: false, width: "8%"}
+			]
+		});
 		const table = new DataTable('#patientListTable', {
 			search: {
 				search: "${searchSuggestion}",
@@ -136,19 +151,23 @@
 						return link.outerHTML;
 					},
 					orderable: false,
+					width: "30%"
 				},
 				{
 					data: "name", 
 					render: (data, type, row) => `\${row.givenName} \${row.familyName}`,
 					orderable: false,
+					width: "30%"
 				},
 				{
 					data: "gender",
 					orderable: false,
+					width: "16%"
 				},
 				{
 					data: "age",
 					orderable: false,
+					width: "16%"
 				},
 				{
 					render: (data, type, row) => {
@@ -159,7 +178,7 @@
 						return radio.outerHTML;
 					},
 					orderable: false,
-					width: '3%',
+					width: "8%",
 				}
 			]
 		});
