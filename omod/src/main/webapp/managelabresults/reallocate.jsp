@@ -33,7 +33,7 @@
                 </div>
             </div>
             <div class="submit-btn center">
-                <button onclick="history.back()">
+                <button type="button" onclick="history.back()">
                     <spring:message code="general.previous"/>
                 </button>
                 <button type="submit">
