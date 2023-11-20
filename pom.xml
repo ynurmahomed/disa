@@ -9,12 +9,15 @@
 	<version>2.3.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Disa Interoperability Module</name>
-	<description>Allows integration with disa data</description>
+	<description>Allows integration of Disa Lab results with SESP</description>
 	<url>https://wiki.openmrs.org/display/docs/Disa+Module+Module+Module</url>
 
 	<developers>
 		<developer>
 			<name>Helio Machabane</name>
+		</developer>
+		<developer>
+			<name>Yassin Nurmahomed</name>
 		</developer>
 	</developers>
 
