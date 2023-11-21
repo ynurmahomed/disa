@@ -84,10 +84,27 @@ public class DisaModuleActivator extends BaseModuleActivator {
 
 	private void setUpDisaHttpClient() {
 		DisaAPIHttpClient disaAPIHttpClient = Context.getRegisteredComponents(DisaAPIHttpClient.class).get(0);
+
 		AdministrationService administrationService = Context.getAdministrationService();
 		disaAPIHttpClient.setURLBase(administrationService.getGlobalPropertyValue(Constants.DISA_URL, ""));
-		disaAPIHttpClient.setUsername(administrationService.getGlobalPropertyValue(Constants.DISA_USERNAME, ""));
-		disaAPIHttpClient.setPassword(administrationService.getGlobalPropertyValue(Constants.DISA_PASSWORD, ""));
+
+		try {
+			ViralLoadFormSchedulerTask.setEnvironment(System.getenv("DISA_ENVIRONMENT"));
+		} catch (NullPointerException e) {
+			// No problem if environment is not configured. Task won't sync lab results.
+		}
+
+		try {
+			disaAPIHttpClient.setUsername(System.getenv("DISA_API_USERNAME"));
+		} catch (NullPointerException e) {
+			disaAPIHttpClient.setUsername("");
+		}
+
+		try {
+			disaAPIHttpClient.setPassword(System.getenv("DISA_API_PASSWORD"));
+		} catch (NullPointerException e) {
+			disaAPIHttpClient.setPassword("");
+		}
 	}
 
 	private void setUpViralLoadFormSchedulerTask() {

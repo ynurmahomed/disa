@@ -27,6 +27,8 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 
 	private static SyncStatus syncStatus = SyncStatus.initial();
 
+	private static String environment;
+
 	private LabResultService labResultService;
 
 	private LabResultProcessor labResultProcessor;
@@ -39,6 +41,10 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 
 	public static void setSyncStatus(SyncStatus status) {
 		syncStatus = status;
+	}
+
+	public static void setEnvironment(String env) {
+		environment = env;
 	}
 
 	public ViralLoadFormSchedulerTask() {
@@ -75,6 +81,12 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 	}
 
 	private void createViralLoadForm() {
+
+		if (environment == null || !environment.equalsIgnoreCase("PROD")) {
+			logger.info("Will not sync lab results because environment is not PROD.");
+			return;
+		}
+
 		List<LabResult> labResults = labResultService.getResultsToSync();
 		logger.info("There is {} pending items to be processed", labResults.size());
 

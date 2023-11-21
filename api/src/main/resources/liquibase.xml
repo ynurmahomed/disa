@@ -376,4 +376,9 @@
             <where>schedulable_class = 'org.openmrs.module.disa.scheduler.ViralLoadFormSchedulerTask'</where>
         </update>
     </changeSet>
+    <changeSet id="disa-2023-11-20" author="yassin">
+		<delete tableName="global_property">
+			<where>property = 'disa.api.username' OR property = 'disa.api.password'</where>
+		</delete>
+    </changeSet>
 </databaseChangeLog>
