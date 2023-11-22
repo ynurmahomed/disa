@@ -30,36 +30,15 @@ public class DisaAPIHttpClientConfigurer implements GlobalPropertyListener {
         String property = newValue.getProperty();
         String value = newValue.getPropertyValue() != null ? newValue.getPropertyValue() : "";
 
-        switch (property) {
-            case Constants.DISA_URL:
-                disaAPIHttpClient.setURLBase(value);
-                break;
-            case Constants.DISA_USERNAME:
-                disaAPIHttpClient.setUsername(value);
-                break;
-            case Constants.DISA_PASSWORD:
-                disaAPIHttpClient.setPassword(value);
-                break;
-            default:
-                break;
+        if (Constants.DISA_URL.equals(property)) {
+            disaAPIHttpClient.setURLBase(value);
         }
     }
 
     @Override
     public void globalPropertyDeleted(String propertyName) {
-        switch (propertyName) {
-            case Constants.DISA_URL:
-                disaAPIHttpClient.setURLBase("");
-                break;
-            case Constants.DISA_USERNAME:
-                disaAPIHttpClient.setUsername("");
-                break;
-            case Constants.DISA_PASSWORD:
-                disaAPIHttpClient.setPassword("");
-                break;
-            default:
-                break;
+        if (Constants.DISA_URL.equals(propertyName)) {
+            disaAPIHttpClient.setURLBase("");
         }
     }
-
 }
