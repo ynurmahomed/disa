@@ -31,10 +31,12 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 public class DisaModuleAPIConfig {
 
     @Bean
-    public RestTemplate restTemplate() {
+    public RestTemplate restTemplate(DisaUserAgentInterceptor disaUserAgentInterceptor) {
         List<HttpMessageConverter<?>> messageConverters = Collections
                 .singletonList(new MappingJackson2HttpMessageConverter(objectMapper()));
-        return new RestTemplate(messageConverters);
+        RestTemplate restTemplate = new RestTemplate(messageConverters);
+        restTemplate.getInterceptors().add(disaUserAgentInterceptor);
+        return restTemplate;
     }
 
     @Bean
