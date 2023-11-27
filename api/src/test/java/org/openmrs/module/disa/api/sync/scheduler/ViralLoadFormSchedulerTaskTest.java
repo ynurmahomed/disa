@@ -1,6 +1,7 @@
 package org.openmrs.module.disa.api.sync.scheduler;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -52,7 +53,9 @@ public class ViralLoadFormSchedulerTaskTest extends BaseContextMockTest {
 		labResult.setSegundaLinha("");
 
 		when(taskDefinition.getRepeatInterval()).thenReturn(REPEAT_INTERVAL);
-		
+
+		ViralLoadFormSchedulerTask.setEnvironment("PROD");
+
 		task.initialize(taskDefinition);
 	}
 
@@ -72,6 +75,16 @@ public class ViralLoadFormSchedulerTaskTest extends BaseContextMockTest {
 		task.execute();
 
 		verify(labResultProcessor).processResult(any(HIVVLLabResult.class));
+	}
+
+	@Test
+	public void executeShouldNotSyncWhenEnvironmentIsNotProd() {
+
+		ViralLoadFormSchedulerTask.setEnvironment(null);
+
+		task.execute();
+
+		verify(labResultProcessor, never()).processResult(any(HIVVLLabResult.class));
 	}
 
 }
