@@ -77,7 +77,7 @@ public class OrgUnitServiceImpl implements OrgUnitService {
 		}
 
 		if (httpStatus == HttpStatus.NOT_FOUND) {
-			return new DisaModuleAPIException("disa.result.not.found", (Object[]) null);
+			return new DisaModuleAPIException("disa.orgunit.not.found", (Object[]) null);
 		}
 
 		return new DisaModuleAPIException(defaultMessage, (Object[]) null);
