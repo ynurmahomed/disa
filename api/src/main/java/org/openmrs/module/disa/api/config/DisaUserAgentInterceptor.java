@@ -9,21 +9,16 @@ import org.springframework.http.client.ClientHttpResponse;
 
 public class DisaUserAgentInterceptor implements ClientHttpRequestInterceptor {
 
-    private final String userAgent;
+    private final DisaUserAgentHolder userAgent;
 
-    public DisaUserAgentInterceptor(String userAgent) {
+    public DisaUserAgentInterceptor(DisaUserAgentHolder userAgent) {
         this.userAgent = userAgent;
     }
 
     @Override
     public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution)
             throws IOException {
-        request.getHeaders().add("User-Agent", userAgent);
+        request.getHeaders().add("User-Agent", userAgent.get());
         return execution.execute(request, body);
     }
-
-    public String getUserAgent() {
-        return userAgent;
-    }
-
 }
