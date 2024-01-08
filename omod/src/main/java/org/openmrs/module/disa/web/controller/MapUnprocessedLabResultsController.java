@@ -93,9 +93,9 @@ public class MapUnprocessedLabResultsController {
 			}
 
 			Patient mapped = disaService.mapIdentifier(patientUuid, labResult);
-			String mapSuccessfulMsg = messageSourceService.getMessage("disa.viralload.map.successful",
-					// If successfully mapped, we can trust that the mapped indentifier is not null.
-					new String[] { labResult.getNid(), mapped.getPatientIdentifier().getIdentifier() },
+			// If successfully mapped, we can trust that the mapped indentifier is not null.
+			String[] args = new String[] { labResult.getNid(), mapped.getPatientIdentifier().getIdentifier() };
+			String mapSuccessfulMsg = messageSourceService.getMessage("disa.viralload.map.successful", args,
 					Context.getLocale());
 
 			if (model.containsAttribute("lastSearchParams")) {
