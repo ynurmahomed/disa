@@ -104,6 +104,7 @@ public class HIVVLLabResultHandlerTest extends BaseContextMockTest {
         labResult.setReasonForTest("");
         labResult.setPrimeiraLinha("");
         labResult.setSegundaLinha("");
+        labResult.setLabResultDate(LocalDateTime.now());
 
         person = new Person();
         user = new User(person);

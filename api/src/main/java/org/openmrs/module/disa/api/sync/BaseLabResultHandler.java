@@ -103,8 +103,8 @@ public abstract class BaseLabResultHandler implements LabResultHandler {
         EncounterRole encounterRole = encounterService
                 .getEncounterRoleByUuid(EncounterRole.UNKNOWN_ENCOUNTER_ROLE_UUID);
 
-        LocalDateTime todayMidnight = LocalDateTime.now().with(LocalTime.MIDNIGHT);
-        encounter.setEncounterDatetime(DateUtil.toDate(todayMidnight));
+        LocalDateTime authorisedDate = labResult.getLabResultDate().with(LocalTime.MIDNIGHT);
+        encounter.setEncounterDatetime(DateUtil.toDate(authorisedDate));
         encounter.setPatient(patient);
         encounter.setEncounterType(encounterType);
         encounter.setLocation(location);
