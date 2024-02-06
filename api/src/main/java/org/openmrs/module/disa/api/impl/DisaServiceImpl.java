@@ -17,7 +17,6 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -31,6 +30,7 @@ import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
+import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.disa.api.DisaService;
 import org.openmrs.module.disa.api.LabResult;
 import org.openmrs.module.disa.api.LabResultService;
@@ -56,6 +56,7 @@ public class DisaServiceImpl extends BaseOpenmrsService implements DisaService {
 	private LabResultService labResultService;
 	private PatientService patientService;
 	private LocationService locationService;
+	private MessageSourceService messageSourceService;
 	private DisaDAO dao;
 
 	@Autowired
@@ -64,12 +65,14 @@ public class DisaServiceImpl extends BaseOpenmrsService implements DisaService {
 			LabResultService labResultService,
 			@Qualifier("patientService") PatientService patientService,
 			@Qualifier("locationService") LocationService locationService,
-			EncounterService encounterService) {
+			EncounterService encounterService,
+			MessageSourceService messageSourceService) {
 		this.dao = dao;
 		this.labResultService = labResultService;
 		this.patientService = patientService;
 		this.locationService = locationService;
 		this.encounterService = encounterService;
+		this.messageSourceService = messageSourceService;
 	}
 
 	@Override
@@ -102,13 +105,16 @@ public class DisaServiceImpl extends BaseOpenmrsService implements DisaService {
 
 		if (disa.getLabResultStatus() != LabResultStatus.NOT_PROCESSED
 				|| disa.getNotProcessingCause() != NotProcessingCause.NID_NOT_FOUND) {
-			throw new DisaModuleAPIException("The result to map is " + disa.getLabResultStatus()
-					+ ". It should be NOT_PROCESSED with cause NID_NOT_FOUND.");
+
+			String labResultStatus = messageSourceService
+					.getMessage("disa.viral.load.status." + disa.getLabResultStatus());
+			throw new DisaModuleAPIException("disa.viralload.map.wrong.status",
+					new String[] { labResultStatus });
 		}
 
 		Patient patient = patientService.getPatientByUuid(patientUuid);
 		if (patient.getActiveIdentifiers().isEmpty()) {
-			throw new DisaModuleAPIException("disa.map.no.identifiers", new Object[]{});
+			throw new DisaModuleAPIException("disa.map.no.identifiers", new Object[] {});
 		}
 
 		PatientIdentifierType disaNIDIdentifier = patientService

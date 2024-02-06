@@ -1,7 +1,5 @@
 package org.openmrs.module.disa.api;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.eq;
@@ -11,8 +9,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -22,6 +18,7 @@ import org.openmrs.PatientIdentifier;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
+import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.disa.api.db.DisaDAO;
 import org.openmrs.module.disa.api.exception.DisaModuleAPIException;
 import org.openmrs.module.disa.api.impl.DisaServiceImpl;
@@ -38,6 +35,9 @@ public class DisaServiceImplTest extends BaseContextMockTest {
 
     @Mock
     private LocationService locationService;
+
+    @Mock
+    private MessageSourceService messageSourceService;
 
     @Mock
     private DisaDAO dao;
@@ -60,7 +60,8 @@ public class DisaServiceImplTest extends BaseContextMockTest {
         PatientIdentifierType identifierType = new PatientIdentifierType();
         identifierType.setUuid(Constants.DISA_NID);
         when(patientService.getPatientIdentifierTypeByUuid(Constants.DISA_NID)).thenReturn(identifierType);
-        when(patientService.getPatientIdentifiers(eq(disa.getNid()), anyListOf(PatientIdentifierType.class), any(), any(), any()))
+        when(patientService.getPatientIdentifiers(eq(disa.getNid()), anyListOf(PatientIdentifierType.class), any(),
+                any(), any()))
                 .thenReturn(new ArrayList<>());
 
         disaServiceImpl.mapIdentifier(patientUuid, disa);
@@ -83,7 +84,8 @@ public class DisaServiceImplTest extends BaseContextMockTest {
         PatientIdentifierType identifierType = new PatientIdentifierType();
         identifierType.setUuid(Constants.DISA_NID);
         when(patientService.getPatientIdentifierTypeByUuid(Constants.DISA_NID)).thenReturn(identifierType);
-        when(patientService.getPatientIdentifiers(eq(disa.getNid()), anyListOf(PatientIdentifierType.class), any(), any(), any()))
+        when(patientService.getPatientIdentifiers(eq(disa.getNid()), anyListOf(PatientIdentifierType.class), any(),
+                any(), any()))
                 .thenReturn(new ArrayList<>());
 
         disaServiceImpl.mapIdentifier(patientUuid, disa);
@@ -106,7 +108,8 @@ public class DisaServiceImplTest extends BaseContextMockTest {
         PatientIdentifierType identifierType = new PatientIdentifierType();
         identifierType.setUuid(Constants.DISA_NID);
         when(patientService.getPatientIdentifierTypeByUuid(Constants.DISA_NID)).thenReturn(identifierType);
-        when(patientService.getPatientIdentifiers(eq(disa.getNid()), anyListOf(PatientIdentifierType.class), any(), any(), any()))
+        when(patientService.getPatientIdentifiers(eq(disa.getNid()), anyListOf(PatientIdentifierType.class), any(),
+                any(), any()))
                 .thenReturn(new ArrayList<>());
 
         disaServiceImpl.mapIdentifier(patientUuid, disa);
