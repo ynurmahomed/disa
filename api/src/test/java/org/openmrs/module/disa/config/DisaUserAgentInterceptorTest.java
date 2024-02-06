@@ -8,6 +8,7 @@ import java.io.IOException;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.openmrs.module.disa.api.config.DisaUserAgentHolder;
 import org.openmrs.module.disa.api.config.DisaUserAgentInterceptor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
@@ -21,7 +22,7 @@ public class DisaUserAgentInterceptorTest {
 
     @Before
     public void setUp() {
-        disaUserAgentInterceptor = new DisaUserAgentInterceptor(userAgent);
+        disaUserAgentInterceptor = new DisaUserAgentInterceptor(new DisaUserAgentHolder(userAgent));
     }
 
     @Test

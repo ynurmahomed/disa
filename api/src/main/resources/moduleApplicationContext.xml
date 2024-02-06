@@ -75,9 +75,16 @@
 		</property>
 	</bean>
 
-	<!-- Configures DisaUserAgentInterceptor to use the projects artifactId and version -->
-	<bean id="disaUserAgentInterceptor" class="org.openmrs.module.disa.api.config.DisaUserAgentInterceptor">
-		<constructor-arg name="userAgent" value="${project.parent.artifactId}/${project.parent.version}"/>
+	<!-- Configures DisaUserAgentHolder to use the projects artifactId and version -->
+	<bean id="disaUserAgentHolder"
+		class="org.openmrs.module.disa.api.config.DisaUserAgentHolder">
+		<constructor-arg name="userAgent"
+			value="${project.parent.artifactId}/${project.parent.version}" />
+	</bean>
+
+	<bean id="disaUserAgentInterceptor"
+		class="org.openmrs.module.disa.api.config.DisaUserAgentInterceptor">
+		<constructor-arg name="userAgent" ref="disaUserAgentHolder" />
 	</bean>
 
 </beans>
