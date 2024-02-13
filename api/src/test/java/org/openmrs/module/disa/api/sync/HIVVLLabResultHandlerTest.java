@@ -44,481 +44,511 @@ import org.openmrs.module.disa.api.HIVVLLabResult;
 import org.openmrs.module.disa.api.LabResultService;
 import org.openmrs.module.disa.api.LabResultStatus;
 import org.openmrs.module.disa.api.NotProcessingCause;
+import org.openmrs.module.disa.api.SampleType;
 import org.openmrs.module.disa.api.exception.DisaModuleAPIException;
 import org.openmrs.module.disa.api.util.Constants;
 import org.openmrs.test.BaseContextMockTest;
 
 public class HIVVLLabResultHandlerTest extends BaseContextMockTest {
-    @Mock
-    private LabResultService labResultService;
-    @Mock
-    private LocationService locationService;
-    @Mock
-    private EncounterService encounterService;
-    @Mock
-    private FormService formService;
-    @Mock
-    private AdministrationService administrationService;
-    @Mock
-    private PersonService personService;
-    @Mock
-    private ConceptService conceptService;
-
-    @Mock
-    private LabResultHandler next;
-
-    @InjectMocks
-    private HIVVLLabResultHandler hivvlLabResultHandler;
-
-    private HIVVLLabResult labResult;
-    private Person person;
-    private User user;
-    private Provider provider;
-    private String province;
-    private EncounterType encounterType;
-    private Patient patient;
-    private Concept viralLoadCopies;
-    private Concept viralLoadQualitative;
-    private Concept lessThan;
-    private Concept undetectable;
-    private Concept labNumber;
-    private Concept pickingLocation;
-    private Concept recomendingEncounter;
-    private Concept pregnant;
-    private Concept orderId;
-    private Location location;
-
-    @Before
-    public void setUp() throws Exception {
-
-        hivvlLabResultHandler.setNext(next);
-
-        labResult = new HIVVLLabResult();
-        labResult.setLabResultStatus(LabResultStatus.PENDING);
-        labResult.setRequestId("MZDISAPQM0000000");
-        labResult.setNid("000000000/0000/00000");
-        labResult.setFinalResult("INDETECTAVEL");
-        labResult.setHealthFacilityLabCode("1040107");
-        labResult.setPregnant("");
-        labResult.setBreastFeeding("");
-        labResult.setReasonForTest("");
-        labResult.setPrimeiraLinha("");
-        labResult.setSegundaLinha("");
-
-        person = new Person();
-        user = new User(person);
-        province = "Zambézia";
-
-        provider = new Provider();
-        hivvlLabResultHandler.getSyncContext().put(ProviderLookup.PROVIDER_KEY, provider);
-
-        encounterType = new EncounterType();
-        when(encounterService.getEncounterTypeByUuid(anyString()))
-                .thenReturn(encounterType);
-
-        patient = new Patient();
-        hivvlLabResultHandler.getSyncContext().put(PatientNidLookup.PATIENT_KEY, patient);
-
-        location = new Location();
-        location.setUuid("c5242910-b396-41d1-9729-a3fbc03057b1");
-        hivvlLabResultHandler.getSyncContext().put(LocationLookup.LOCATION_KEY, location);
-
-        Form form = new Form();
-        when(formService.getFormByUuid(anyString()))
-                .thenReturn(form);
-
-        EncounterRole encounterRole = new EncounterRole();
-        when(encounterService.getEncounterRoleByUuid(anyString()))
-                .thenReturn(encounterRole);
-
-        viralLoadCopies = new Concept(856);
-        viralLoadCopies.setUuid(Constants.VIRAL_LOAD_COPIES);
-        when(conceptService.getConceptByUuid(Constants.VIRAL_LOAD_COPIES))
-                .thenReturn(viralLoadCopies);
-
-        viralLoadQualitative = new Concept(1305);
-        viralLoadQualitative.setUuid(Constants.HIV_VIRAL_LOAD_QUALITATIVE);
-        when(conceptService.getConceptByUuid(Constants.HIV_VIRAL_LOAD_QUALITATIVE))
-                .thenReturn(viralLoadQualitative);
-
-        lessThan = new Concept(165331);
-        lessThan.setUuid(Constants.LESSTHAN);
-        when(conceptService.getConceptByUuid(Constants.LESSTHAN))
-                .thenReturn(lessThan);
-
-        undetectable = new Concept(23814);
-        undetectable.setUuid(Constants.UNDETECTABLE_VIRAL_LOAD);
-        when(conceptService.getConceptByUuid(Constants.UNDETECTABLE_VIRAL_LOAD))
-                .thenReturn(undetectable);
+	@Mock
+	private LabResultService labResultService;
+	@Mock
+	private LocationService locationService;
+	@Mock
+	private EncounterService encounterService;
+	@Mock
+	private FormService formService;
+	@Mock
+	private AdministrationService administrationService;
+	@Mock
+	private PersonService personService;
+	@Mock
+	private ConceptService conceptService;
+
+	@Mock
+	private LabResultHandler next;
+
+	@InjectMocks
+	private HIVVLLabResultHandler hivvlLabResultHandler;
+
+	private HIVVLLabResult labResult;
+	private Person person;
+	private User user;
+	private Provider provider;
+	private String province;
+	private EncounterType encounterType;
+	private Patient patient;
+	private Concept viralLoadCopies;
+	private Concept viralLoadQualitative;
+	private Concept lessThan;
+	private Concept undetectable;
+	private Concept labNumber;
+	private Concept pickingLocation;
+	private Concept recomendingEncounter;
+	private Concept pregnant;
+	private Concept orderId;
+	private Concept sampleType;
+	private Concept dryBloodSpot;
+	private Location location;
+
+	@Before
+	public void setUp() throws Exception {
+
+		hivvlLabResultHandler.setNext(next);
+
+		labResult = new HIVVLLabResult();
+		labResult.setLabResultStatus(LabResultStatus.PENDING);
+		labResult.setRequestId("MZDISAPQM0000000");
+		labResult.setNid("000000000/0000/00000");
+		labResult.setFinalResult("INDETECTAVEL");
+		labResult.setHealthFacilityLabCode("1040107");
+		labResult.setPregnant("");
+		labResult.setBreastFeeding("");
+		labResult.setReasonForTest("");
+		labResult.setPrimeiraLinha("");
+		labResult.setSegundaLinha("");
+		labResult.setSampleType(SampleType.DBS);
+
+		person = new Person();
+		user = new User(person);
+		province = "Zambézia";
+
+		provider = new Provider();
+		hivvlLabResultHandler.getSyncContext().put(ProviderLookup.PROVIDER_KEY, provider);
+
+		encounterType = new EncounterType();
+		when(encounterService.getEncounterTypeByUuid(anyString()))
+				.thenReturn(encounterType);
+
+		patient = new Patient();
+		hivvlLabResultHandler.getSyncContext().put(PatientNidLookup.PATIENT_KEY, patient);
+
+		location = new Location();
+		location.setUuid("c5242910-b396-41d1-9729-a3fbc03057b1");
+		hivvlLabResultHandler.getSyncContext().put(LocationLookup.LOCATION_KEY, location);
+
+		Form form = new Form();
+		when(formService.getFormByUuid(anyString()))
+				.thenReturn(form);
+
+		EncounterRole encounterRole = new EncounterRole();
+		when(encounterService.getEncounterRoleByUuid(anyString()))
+				.thenReturn(encounterRole);
+
+		viralLoadCopies = new Concept(856);
+		viralLoadCopies.setUuid(Constants.VIRAL_LOAD_COPIES);
+		when(conceptService.getConceptByUuid(Constants.VIRAL_LOAD_COPIES))
+				.thenReturn(viralLoadCopies);
+
+		viralLoadQualitative = new Concept(1305);
+		viralLoadQualitative.setUuid(Constants.HIV_VIRAL_LOAD_QUALITATIVE);
+		when(conceptService.getConceptByUuid(Constants.HIV_VIRAL_LOAD_QUALITATIVE))
+				.thenReturn(viralLoadQualitative);
+
+		lessThan = new Concept(165331);
+		lessThan.setUuid(Constants.LESSTHAN);
+		when(conceptService.getConceptByUuid(Constants.LESSTHAN))
+				.thenReturn(lessThan);
+
+		undetectable = new Concept(23814);
+		undetectable.setUuid(Constants.UNDETECTABLE_VIRAL_LOAD);
+		when(conceptService.getConceptByUuid(Constants.UNDETECTABLE_VIRAL_LOAD))
+				.thenReturn(undetectable);
 
-        labNumber = new Concept(23835);
-        labNumber.setUuid(Constants.LAB_NUMBER);
-        when(conceptService.getConceptByUuid(Constants.LAB_NUMBER))
-                .thenReturn(labNumber);
+		labNumber = new Concept(23835);
+		labNumber.setUuid(Constants.LAB_NUMBER);
+		when(conceptService.getConceptByUuid(Constants.LAB_NUMBER))
+				.thenReturn(labNumber);
+
+		pickingLocation = new Concept(23883);
+		pickingLocation.setUuid(Constants.PICKING_LOCATION);
+		when(conceptService.getConceptByUuid(Constants.PICKING_LOCATION))
+				.thenReturn(pickingLocation);
+
+		recomendingEncounter = new Concept(23836);
+		recomendingEncounter.setUuid(Constants.ENCOUNTER_SERVICE);
+		when(conceptService.getConceptByUuid(Constants.ENCOUNTER_SERVICE))
+				.thenReturn(recomendingEncounter);
 
-        pickingLocation = new Concept(23883);
-        pickingLocation.setUuid(Constants.PICKING_LOCATION);
-        when(conceptService.getConceptByUuid(Constants.PICKING_LOCATION))
-                .thenReturn(pickingLocation);
+		pregnant = new Concept(1982);
+		pregnant.setUuid(Constants.PREGNANT);
+		when(conceptService.getConceptByUuid(Constants.PREGNANT))
+				.thenReturn(pregnant);
 
-        recomendingEncounter = new Concept(23836);
-        recomendingEncounter.setUuid(Constants.ENCOUNTER_SERVICE);
-        when(conceptService.getConceptByUuid(Constants.ENCOUNTER_SERVICE))
-                .thenReturn(recomendingEncounter);
+		orderId = new Concept(22771);
+		orderId.setUuid(Constants.ORDER_ID);
+		when(conceptService.getConceptByUuid(Constants.ORDER_ID))
+				.thenReturn(orderId);
 
-        pregnant = new Concept(1982);
-        pregnant.setUuid(Constants.PREGNANT);
-        when(conceptService.getConceptByUuid(Constants.PREGNANT))
-                .thenReturn(pregnant);
+		sampleType = new Concept(23832);
+		sampleType.setUuid(Constants.SAMPLE_TYPE);
+		when(conceptService.getConceptByUuid(Constants.SAMPLE_TYPE))
+				.thenReturn(sampleType);
 
-        orderId = new Concept(22771);
-        orderId.setUuid(Constants.ORDER_ID);
-        when(conceptService.getConceptByUuid(Constants.ORDER_ID))
-                .thenReturn(orderId);
-    }
+		dryBloodSpot = new Concept(23831);
+		dryBloodSpot.setUuid(SampleType.DBS.getConceptUuid());
+		when(conceptService.getConceptByUuid(SampleType.DBS.getConceptUuid()))
+				.thenReturn(dryBloodSpot);
+	}
 
-    @Test(expected = DisaModuleAPIException.class)
-    public void shouldNotRunWithoutPatient() {
-        hivvlLabResultHandler.getSyncContext().remove(PatientNidLookup.PATIENT_KEY);
-        hivvlLabResultHandler.handle(labResult);
-    }
+	@Test(expected = DisaModuleAPIException.class)
+	public void shouldNotRunWithoutPatient() {
+		hivvlLabResultHandler.getSyncContext().remove(PatientNidLookup.PATIENT_KEY);
+		hivvlLabResultHandler.handle(labResult);
+	}
 
-    @Test(expected = DisaModuleAPIException.class)
-    public void shouldNotRunWithoutLocation() {
-        hivvlLabResultHandler.getSyncContext().remove(LocationLookup.LOCATION_KEY);
-        hivvlLabResultHandler.handle(labResult);
-    }
+	@Test(expected = DisaModuleAPIException.class)
+	public void shouldNotRunWithoutLocation() {
+		hivvlLabResultHandler.getSyncContext().remove(LocationLookup.LOCATION_KEY);
+		hivvlLabResultHandler.handle(labResult);
+	}
 
-    @Test(expected = DisaModuleAPIException.class)
-    public void shouldNotRunWithoutGenericProvider() {
-        hivvlLabResultHandler.getSyncContext().remove(ProviderLookup.PROVIDER_KEY);
-        hivvlLabResultHandler.handle(labResult);
-    }
+	@Test(expected = DisaModuleAPIException.class)
+	public void shouldNotRunWithoutGenericProvider() {
+		hivvlLabResultHandler.getSyncContext().remove(ProviderLookup.PROVIDER_KEY);
+		hivvlLabResultHandler.handle(labResult);
+	}
 
-    @Test
-    public void shouldSetTheLabResultToPROCESSED() {
-        hivvlLabResultHandler.handle(labResult);
-        assertThat(labResult.getLabResultStatus(), is(LabResultStatus.PROCESSED));
-    }
+	@Test
+	public void shouldSetTheLabResultToPROCESSED() {
+		hivvlLabResultHandler.handle(labResult);
+		assertThat(labResult.getLabResultStatus(), is(LabResultStatus.PROCESSED));
+	}
 
-    @Test
-    public void shouldSetStatusToNotProcessedNoResultAndUpdateTheResult() {
+	@Test
+	public void shouldSetStatusToNotProcessedNoResultAndUpdateTheResult() {
 
-        labResult.setFinalResult("");
+		labResult.setFinalResult("");
 
-        hivvlLabResultHandler.handle(labResult);
+		hivvlLabResultHandler.handle(labResult);
 
-        assertThat(labResult.getLabResultStatus(), is(LabResultStatus.NOT_PROCESSED));
-        assertThat(labResult.getNotProcessingCause(), is(NotProcessingCause.INVALID_RESULT));
+		assertThat(labResult.getLabResultStatus(), is(LabResultStatus.NOT_PROCESSED));
+		assertThat(labResult.getNotProcessingCause(), is(NotProcessingCause.INVALID_RESULT));
 
-        // calls next handler
-        verify(next, times(1)).handle(labResult);
-    }
+		// calls next handler
+		verify(next, times(1)).handle(labResult);
+	}
 
-    @Test
-    public void shouldSetStatusToNotProcessedInvalidResultAndUpdateTheResult() {
+	@Test
+	public void shouldSetStatusToNotProcessedInvalidResultAndUpdateTheResult() {
 
-        labResult.setFinalResult("ABCDEFGH");
+		labResult.setFinalResult("ABCDEFGH");
 
-        hivvlLabResultHandler.handle(labResult);
+		hivvlLabResultHandler.handle(labResult);
 
-        assertThat(labResult.getLabResultStatus(), is(LabResultStatus.NOT_PROCESSED));
-        assertThat(labResult.getNotProcessingCause(), is(NotProcessingCause.INVALID_RESULT));
+		assertThat(labResult.getLabResultStatus(), is(LabResultStatus.NOT_PROCESSED));
+		assertThat(labResult.getNotProcessingCause(), is(NotProcessingCause.INVALID_RESULT));
 
-        // calls next handler
-        verify(next, times(1)).handle(labResult);
-    }
+		// calls next handler
+		verify(next, times(1)).handle(labResult);
+	}
 
-    @Test
-    public void shouldHandleIndetectavel() {
+	@Test
+	public void shouldHandleIndetectavel() {
 
-        hivvlLabResultHandler.handle(labResult);
+		hivvlLabResultHandler.handle(labResult);
 
-        Encounter encounter = (Encounter) hivvlLabResultHandler.getSyncContext()
-                .get(BaseLabResultHandler.ENCOUNTER_KEY);
+		Encounter encounter = (Encounter) hivvlLabResultHandler.getSyncContext()
+				.get(BaseLabResultHandler.ENCOUNTER_KEY);
 
-        assertThat(encounter.getEncounterType(), is(encounterType));
-        assertThat(encounter.getPatient(), is(patient));
+		assertThat(encounter.getEncounterType(), is(encounterType));
+		assertThat(encounter.getPatient(), is(patient));
 
-        // Viral load copies should be empty
-        assertThat(encounter.getObs(),
-                not(hasItem(hasProperty("concept", equalTo(viralLoadCopies)))));
+		// Viral load copies should be empty
+		assertThat(encounter.getObs(),
+				not(hasItem(hasProperty("concept", equalTo(viralLoadCopies)))));
 
-        // Viral load qualitative should be indetectável
-        assertThat(encounter.getObs(),
-                hasItem(both(hasProperty("concept", equalTo(viralLoadQualitative)))
-                        .and(hasProperty("valueCoded", equalTo(undetectable)))));
+		// Viral load qualitative should be indetectável
+		assertThat(encounter.getObs(),
+				hasItem(both(hasProperty("concept", equalTo(viralLoadQualitative)))
+						.and(hasProperty("valueCoded", equalTo(undetectable)))));
 
-        // calls next handler
-        verify(next, times(1)).handle(labResult);
+		// calls next handler
+		verify(next, times(1)).handle(labResult);
 
-    }
+	}
 
-    @Test
-    public void shouldHandleNumericValues() {
+	@Test
+	public void shouldHandleNumericValues() {
 
-        labResult.setFinalResult(" 123456     ");
+		labResult.setFinalResult(" 123456     ");
 
-        hivvlLabResultHandler.handle(labResult);
+		hivvlLabResultHandler.handle(labResult);
 
-        Encounter encounter = (Encounter) hivvlLabResultHandler.getSyncContext()
-                .get(BaseLabResultHandler.ENCOUNTER_KEY);
+		Encounter encounter = (Encounter) hivvlLabResultHandler.getSyncContext()
+				.get(BaseLabResultHandler.ENCOUNTER_KEY);
 
-        assertThat(encounter.getEncounterType(), is(encounterType));
-        assertThat(encounter.getPatient(), is(patient));
+		assertThat(encounter.getEncounterType(), is(encounterType));
+		assertThat(encounter.getPatient(), is(patient));
 
-        // Viral load copies should have finalViralLoadResult value
-        assertThat(encounter.getObs(),
-                hasItem(both(hasProperty("concept", equalTo(viralLoadCopies)))
-                        .and(hasProperty("valueNumeric", equalTo(123456.0)))));
+		// Viral load copies should have finalViralLoadResult value
+		assertThat(encounter.getObs(),
+				hasItem(both(hasProperty("concept", equalTo(viralLoadCopies)))
+						.and(hasProperty("valueNumeric", equalTo(123456.0)))));
 
-        // Viral load qualitative should be empty
-        assertThat(encounter.getObs(),
-                not(hasItem(hasProperty("concept", equalTo(viralLoadQualitative)))));
+		// Viral load qualitative should be empty
+		assertThat(encounter.getObs(),
+				not(hasItem(hasProperty("concept", equalTo(viralLoadQualitative)))));
 
-        // calls next handler
-        verify(next, times(1)).handle(labResult);
-    }
+		// calls next handler
+		verify(next, times(1)).handle(labResult);
+	}
 
-    @Test
-    public void shouldHandleLessThanValues() throws Exception {
+	@Test
+	public void shouldHandleLessThanValues() throws Exception {
 
-        labResult.setFinalResult("< 400 copias / ml");
+		labResult.setFinalResult("< 400 copias / ml");
 
-        hivvlLabResultHandler.handle(labResult);
+		hivvlLabResultHandler.handle(labResult);
 
-        Encounter encounter = (Encounter) hivvlLabResultHandler.getSyncContext()
-                .get(BaseLabResultHandler.ENCOUNTER_KEY);
+		Encounter encounter = (Encounter) hivvlLabResultHandler.getSyncContext()
+				.get(BaseLabResultHandler.ENCOUNTER_KEY);
 
-        assertThat(encounter.getEncounterType(), is(encounterType));
-        assertThat(encounter.getPatient(), is(patient));
+		assertThat(encounter.getEncounterType(), is(encounterType));
+		assertThat(encounter.getPatient(), is(patient));
 
-        // Viral load copies should be empty
-        assertThat(encounter.getObs(),
-                not(hasItem(hasProperty("concept", equalTo(viralLoadCopies)))));
+		// Viral load copies should be empty
+		assertThat(encounter.getObs(),
+				not(hasItem(hasProperty("concept", equalTo(viralLoadCopies)))));
 
-        // Viral load qualitative should be '<'
-        assertThat(encounter.getObs(),
-                hasItem(allOf(
-                        hasProperty("concept", equalTo(viralLoadQualitative)),
-                        hasProperty("valueCoded", equalTo(lessThan)),
-                        hasProperty("comment", equalTo("400")))));
+		// Viral load qualitative should be '<'
+		assertThat(encounter.getObs(),
+				hasItem(allOf(
+						hasProperty("concept", equalTo(viralLoadQualitative)),
+						hasProperty("valueCoded", equalTo(lessThan)),
+						hasProperty("comment", equalTo("400")))));
 
-        // calls next handler
-        verify(next, times(1)).handle(labResult);
-    }
+		// calls next handler
+		verify(next, times(1)).handle(labResult);
+	}
 
-    @Test
-    public void shouldHandleLessThanCpMl() throws Exception {
+	@Test
+	public void shouldHandleLessThanCpMl() throws Exception {
 
-        labResult.setFinalResult("< 400 CP / mL");
+		labResult.setFinalResult("< 400 CP / mL");
 
-        hivvlLabResultHandler.handle(labResult);
+		hivvlLabResultHandler.handle(labResult);
 
-        Encounter encounter = (Encounter) hivvlLabResultHandler.getSyncContext()
-                .get(BaseLabResultHandler.ENCOUNTER_KEY);
+		Encounter encounter = (Encounter) hivvlLabResultHandler.getSyncContext()
+				.get(BaseLabResultHandler.ENCOUNTER_KEY);
 
-        assertThat(encounter.getEncounterType(), is(encounterType));
-        assertThat(encounter.getPatient(), is(patient));
+		assertThat(encounter.getEncounterType(), is(encounterType));
+		assertThat(encounter.getPatient(), is(patient));
 
-        // Viral load copies should be empty
-        assertThat(encounter.getObs(),
-                not(hasItem(hasProperty("concept", equalTo(viralLoadCopies)))));
+		// Viral load copies should be empty
+		assertThat(encounter.getObs(),
+				not(hasItem(hasProperty("concept", equalTo(viralLoadCopies)))));
 
-        // Viral load qualitative should be '<'
-        assertThat(encounter.getObs(),
-                hasItem(allOf(
-                        hasProperty("concept", equalTo(viralLoadQualitative)),
-                        hasProperty("valueCoded", equalTo(lessThan)),
-                        hasProperty("comment", equalTo("400")))));
+		// Viral load qualitative should be '<'
+		assertThat(encounter.getObs(),
+				hasItem(allOf(
+						hasProperty("concept", equalTo(viralLoadQualitative)),
+						hasProperty("valueCoded", equalTo(lessThan)),
+						hasProperty("comment", equalTo("400")))));
 
-        // calls next handler
-        verify(next, times(1)).handle(labResult);
-    }
+		// calls next handler
+		verify(next, times(1)).handle(labResult);
+	}
 
-    @Test
-    public void shouldHandleLessThanCopiesMl() throws Exception {
+	@Test
+	public void shouldHandleLessThanCopiesMl() throws Exception {
 
-        labResult.setFinalResult("< 400 CoPiEs / Ml");
+		labResult.setFinalResult("< 400 CoPiEs / Ml");
 
-        hivvlLabResultHandler.handle(labResult);
+		hivvlLabResultHandler.handle(labResult);
 
-        Encounter encounter = (Encounter) hivvlLabResultHandler.getSyncContext()
-                .get(BaseLabResultHandler.ENCOUNTER_KEY);
+		Encounter encounter = (Encounter) hivvlLabResultHandler.getSyncContext()
+				.get(BaseLabResultHandler.ENCOUNTER_KEY);
 
-        assertThat(encounter.getEncounterType(), is(encounterType));
-        assertThat(encounter.getPatient(), is(patient));
+		assertThat(encounter.getEncounterType(), is(encounterType));
+		assertThat(encounter.getPatient(), is(patient));
 
-        // Viral load copies should be empty
-        assertThat(encounter.getObs(),
-                not(hasItem(hasProperty("concept", equalTo(viralLoadCopies)))));
+		// Viral load copies should be empty
+		assertThat(encounter.getObs(),
+				not(hasItem(hasProperty("concept", equalTo(viralLoadCopies)))));
 
-        // Viral load qualitative should be '<'
-        assertThat(encounter.getObs(),
-                hasItem(allOf(
-                        hasProperty("concept", equalTo(viralLoadQualitative)),
-                        hasProperty("valueCoded", equalTo(lessThan)),
-                        hasProperty("comment", equalTo("400")))));
+		// Viral load qualitative should be '<'
+		assertThat(encounter.getObs(),
+				hasItem(allOf(
+						hasProperty("concept", equalTo(viralLoadQualitative)),
+						hasProperty("valueCoded", equalTo(lessThan)),
+						hasProperty("comment", equalTo("400")))));
 
-        // calls next handler
-        verify(next, times(1)).handle(labResult);
-    }
+		// calls next handler
+		verify(next, times(1)).handle(labResult);
+	}
 
-    @Test
-    public void shouldNotSaveMoreThanValuesWithInvalidNumericValues() throws Exception {
+	@Test
+	public void shouldNotSaveMoreThanValuesWithInvalidNumericValues() throws Exception {
 
-        labResult.setFinalResult("> 10.000.000,00");
+		labResult.setFinalResult("> 10.000.000,00");
 
-        hivvlLabResultHandler.handle(labResult);
+		hivvlLabResultHandler.handle(labResult);
 
-        verify(encounterService, never()).saveEncounter(anyObject());
+		verify(encounterService, never()).saveEncounter(anyObject());
 
-        assertThat(labResult.getLabResultStatus(), is(LabResultStatus.NOT_PROCESSED));
-        assertThat(labResult.getNotProcessingCause(), is(NotProcessingCause.INVALID_RESULT));
+		assertThat(labResult.getLabResultStatus(), is(LabResultStatus.NOT_PROCESSED));
+		assertThat(labResult.getNotProcessingCause(), is(NotProcessingCause.INVALID_RESULT));
 
-        // calls next handler
-        verify(next, times(1)).handle(labResult);
-    }
+		// calls next handler
+		verify(next, times(1)).handle(labResult);
+	}
 
-    @Test
-    public void shouldSetResultsWithMoreThanValuesWithInvalidNumericValuesAsInvalidResult() throws Exception {
+	@Test
+	public void shouldSetResultsWithMoreThanValuesWithInvalidNumericValuesAsInvalidResult() throws Exception {
 
-        labResult.setFinalResult("> 10.000.000,00");
+		labResult.setFinalResult("> 10.000.000,00");
 
-        hivvlLabResultHandler.handle(labResult);
+		hivvlLabResultHandler.handle(labResult);
 
-        assertThat(labResult.getLabResultStatus(), is(LabResultStatus.NOT_PROCESSED));
-        assertThat(labResult.getNotProcessingCause(), is(NotProcessingCause.INVALID_RESULT));
+		assertThat(labResult.getLabResultStatus(), is(LabResultStatus.NOT_PROCESSED));
+		assertThat(labResult.getNotProcessingCause(), is(NotProcessingCause.INVALID_RESULT));
 
-        // calls next handler
-        verify(next, times(1)).handle(labResult);
-    }
+		// calls next handler
+		verify(next, times(1)).handle(labResult);
+	}
 
-    @Test
-    public void shouldHandleMoreThanValues() throws Exception {
+	@Test
+	public void shouldHandleMoreThanValues() throws Exception {
 
-        labResult.setFinalResult("> 10000000");
+		labResult.setFinalResult("> 10000000");
 
-        hivvlLabResultHandler.handle(labResult);
+		hivvlLabResultHandler.handle(labResult);
 
-        Encounter encounter = (Encounter) hivvlLabResultHandler.getSyncContext()
-                .get(BaseLabResultHandler.ENCOUNTER_KEY);
+		Encounter encounter = (Encounter) hivvlLabResultHandler.getSyncContext()
+				.get(BaseLabResultHandler.ENCOUNTER_KEY);
 
-        assertThat(encounter.getEncounterType(), is(encounterType));
-        assertThat(encounter.getPatient(), is(patient));
+		assertThat(encounter.getEncounterType(), is(encounterType));
+		assertThat(encounter.getPatient(), is(patient));
 
-        // Viral load copies should be the numeric value
-        assertThat(encounter.getObs(),
-                hasItem(allOf(
-                        hasProperty("concept", equalTo(viralLoadCopies)),
-                        hasProperty("valueNumeric", equalTo(10_000_000.0)))));
+		// Viral load copies should be the numeric value
+		assertThat(encounter.getObs(),
+				hasItem(allOf(
+						hasProperty("concept", equalTo(viralLoadCopies)),
+						hasProperty("valueNumeric", equalTo(10_000_000.0)))));
 
-        // Viral load qualitative should empty
-        assertThat(encounter.getObs(),
-                not(hasItem(hasProperty("concept", equalTo(viralLoadQualitative)))));
+		// Viral load qualitative should empty
+		assertThat(encounter.getObs(),
+				not(hasItem(hasProperty("concept", equalTo(viralLoadQualitative)))));
 
-        // calls next handler
-        verify(next, times(1)).handle(labResult);
-    }
+		// calls next handler
+		verify(next, times(1)).handle(labResult);
+	}
 
-    @Test
-    public void shouldHandleMoreThanValuesWithCpMl() throws Exception {
+	@Test
+	public void shouldHandleMoreThanValuesWithCpMl() throws Exception {
 
-        labResult.setFinalResult("> 10000000 cp/ml");
+		labResult.setFinalResult("> 10000000 cp/ml");
 
-        hivvlLabResultHandler.handle(labResult);
+		hivvlLabResultHandler.handle(labResult);
 
-        Encounter encounter = (Encounter) hivvlLabResultHandler.getSyncContext()
-                .get(BaseLabResultHandler.ENCOUNTER_KEY);
+		Encounter encounter = (Encounter) hivvlLabResultHandler.getSyncContext()
+				.get(BaseLabResultHandler.ENCOUNTER_KEY);
 
-        assertThat(encounter.getEncounterType(), is(encounterType));
-        assertThat(encounter.getPatient(), is(patient));
+		assertThat(encounter.getEncounterType(), is(encounterType));
+		assertThat(encounter.getPatient(), is(patient));
 
-        // Viral load copies should be the numeric value
-        assertThat(encounter.getObs(),
-                hasItem(allOf(
-                        hasProperty("concept", equalTo(viralLoadCopies)),
-                        hasProperty("valueNumeric", equalTo(10_000_000.0)))));
+		// Viral load copies should be the numeric value
+		assertThat(encounter.getObs(),
+				hasItem(allOf(
+						hasProperty("concept", equalTo(viralLoadCopies)),
+						hasProperty("valueNumeric", equalTo(10_000_000.0)))));
 
-        // Viral load qualitative should empty
-        assertThat(encounter.getObs(),
-                not(hasItem(hasProperty("concept", equalTo(viralLoadQualitative)))));
+		// Viral load qualitative should empty
+		assertThat(encounter.getObs(),
+				not(hasItem(hasProperty("concept", equalTo(viralLoadQualitative)))));
 
-        // calls next handler
-        verify(next, times(1)).handle(labResult);
-    }
+		// calls next handler
+		verify(next, times(1)).handle(labResult);
+	}
 
-    @Test
-    public void shouldHandleMoreThanValuesWithCopiesMl() throws Exception {
+	@Test
+	public void shouldHandleMoreThanValuesWithCopiesMl() throws Exception {
 
-        labResult.setFinalResult("> 10000000 copies / ml");
+		labResult.setFinalResult("> 10000000 copies / ml");
 
-        hivvlLabResultHandler.handle(labResult);
+		hivvlLabResultHandler.handle(labResult);
 
-        Encounter encounter = (Encounter) hivvlLabResultHandler.getSyncContext()
-                .get(BaseLabResultHandler.ENCOUNTER_KEY);
+		Encounter encounter = (Encounter) hivvlLabResultHandler.getSyncContext()
+				.get(BaseLabResultHandler.ENCOUNTER_KEY);
 
-        assertThat(encounter.getEncounterType(), is(encounterType));
-        assertThat(encounter.getPatient(), is(patient));
+		assertThat(encounter.getEncounterType(), is(encounterType));
+		assertThat(encounter.getPatient(), is(patient));
 
-        // Viral load copies should be the numeric value
-        assertThat(encounter.getObs(),
-                hasItem(allOf(
-                        hasProperty("concept", equalTo(viralLoadCopies)),
-                        hasProperty("valueNumeric", equalTo(10_000_000.0)))));
+		// Viral load copies should be the numeric value
+		assertThat(encounter.getObs(),
+				hasItem(allOf(
+						hasProperty("concept", equalTo(viralLoadCopies)),
+						hasProperty("valueNumeric", equalTo(10_000_000.0)))));
 
-        // Viral load qualitative should empty
-        assertThat(encounter.getObs(),
-                not(hasItem(hasProperty("concept", equalTo(viralLoadQualitative)))));
+		// Viral load qualitative should empty
+		assertThat(encounter.getObs(),
+				not(hasItem(hasProperty("concept", equalTo(viralLoadQualitative)))));
 
-        // calls next handler
-        verify(next, times(1)).handle(labResult);
-    }
+		// calls next handler
+		verify(next, times(1)).handle(labResult);
+	}
 
-    @Test
-    public void shouldHandleMoreThanValuesWithCopiasMl() throws Exception {
+	@Test
+	public void shouldHandleMoreThanValuesWithCopiasMl() throws Exception {
 
-        labResult.setFinalResult("> 10000000 copias / ml");
+		labResult.setFinalResult("> 10000000 copias / ml");
 
-        hivvlLabResultHandler.handle(labResult);
+		hivvlLabResultHandler.handle(labResult);
 
-        Encounter encounter = (Encounter) hivvlLabResultHandler.getSyncContext()
-                .get(BaseLabResultHandler.ENCOUNTER_KEY);
+		Encounter encounter = (Encounter) hivvlLabResultHandler.getSyncContext()
+				.get(BaseLabResultHandler.ENCOUNTER_KEY);
 
-        assertThat(encounter.getEncounterType(), is(encounterType));
-        assertThat(encounter.getPatient(), is(patient));
+		assertThat(encounter.getEncounterType(), is(encounterType));
+		assertThat(encounter.getPatient(), is(patient));
 
-        // Viral load copies should be the numeric value
-        assertThat(encounter.getObs(),
-                hasItem(allOf(
-                        hasProperty("concept", equalTo(viralLoadCopies)),
-                        hasProperty("valueNumeric", equalTo(10_000_000.0)))));
+		// Viral load copies should be the numeric value
+		assertThat(encounter.getObs(),
+				hasItem(allOf(
+						hasProperty("concept", equalTo(viralLoadCopies)),
+						hasProperty("valueNumeric", equalTo(10_000_000.0)))));
 
-        // Viral load qualitative should empty
-        assertThat(encounter.getObs(),
-                not(hasItem(hasProperty("concept", equalTo(viralLoadQualitative)))));
+		// Viral load qualitative should empty
+		assertThat(encounter.getObs(),
+				not(hasItem(hasProperty("concept", equalTo(viralLoadQualitative)))));
 
-        // calls next handler
-        verify(next, times(1)).handle(labResult);
-    }
+		// calls next handler
+		verify(next, times(1)).handle(labResult);
+	}
 
-    @Test
-    public void shouldCreateEncounterAtStartOfDay() throws Exception {
+	@Test
+	public void shouldCreateEncounterAtStartOfDay() throws Exception {
 
-        labResult.setFinalResult(" 123456     ");
+		labResult.setFinalResult(" 123456     ");
 
-        hivvlLabResultHandler.handle(labResult);
+		hivvlLabResultHandler.handle(labResult);
 
-        Encounter encounter = (Encounter) hivvlLabResultHandler.getSyncContext()
-                .get(BaseLabResultHandler.ENCOUNTER_KEY);
+		Encounter encounter = (Encounter) hivvlLabResultHandler.getSyncContext()
+				.get(BaseLabResultHandler.ENCOUNTER_KEY);
 
-        Date date = encounter.getEncounterDatetime();
-        LocalDateTime encounterDateTime = Instant.ofEpochMilli(date.getTime())
-                .atZone(ZoneId.systemDefault())
-                .toLocalDateTime();
+		Date date = encounter.getEncounterDatetime();
+		LocalDateTime encounterDateTime = Instant.ofEpochMilli(date.getTime())
+				.atZone(ZoneId.systemDefault())
+				.toLocalDateTime();
 
-        assertThat(encounterDateTime.getHour(), is(0));
-        assertThat(encounterDateTime.getMinute(), is(0));
-        assertThat(encounterDateTime.getSecond(), is(0));
-    }
+		assertThat(encounterDateTime.getHour(), is(0));
+		assertThat(encounterDateTime.getMinute(), is(0));
+		assertThat(encounterDateTime.getSecond(), is(0));
+	}
+
+	@Test
+	public void shouldHandleSampleType() throws Exception {
+
+		labResult.setFinalResult("INDETECTAVEL");
+
+		hivvlLabResultHandler.handle(labResult);
+
+		Encounter encounter = (Encounter) hivvlLabResultHandler.getSyncContext()
+				.get(BaseLabResultHandler.ENCOUNTER_KEY);
+
+		assertThat(encounter.getObs(),
+				hasItem(allOf(
+						hasProperty("concept", equalTo(sampleType)),
+						hasProperty("valueCoded", equalTo(dryBloodSpot)))));
+	}
 }
