@@ -54,7 +54,7 @@ function MapIdentifiers(disaEl, patientListEl, { locale, searchSuggestion }) {
         render: (data, type, row) => {
           const link = document.createElement("a");
           link.target = "_blank";
-          link.href = `/openmrs/patientDashboard.form?patientId=\${row.patientId}`;
+          link.href = `/openmrs/patientDashboard.form?patientId=${row.patientId}`;
           link.innerText = row.identifier;
           return link.outerHTML;
         },
