@@ -56,7 +56,7 @@ public abstract class LabResult {
 
 	private LocalDateTime processingDate;
 
-	private String sampleType;
+	private SampleType sampleType;
 
 	private LocalDateTime labResultDate;
 
@@ -297,11 +297,11 @@ public abstract class LabResult {
 		this.processingDate = processingDate;
 	}
 
-	public String getSampleType() {
+	public SampleType getSampleType() {
 		return sampleType;
 	}
 
-	public void setSampleType(String sampleType) {
+	public void setSampleType(SampleType sampleType) {
 		this.sampleType = sampleType;
 	}
 

@@ -3,6 +3,7 @@ package org.openmrs.module.disa.api.sync;
 import java.util.Date;
 import java.util.regex.Pattern;
 
+import org.openmrs.Concept;
 import org.openmrs.Encounter;
 import org.openmrs.Location;
 import org.openmrs.Obs;
@@ -13,6 +14,7 @@ import org.openmrs.module.disa.api.HIVVLLabResult;
 import org.openmrs.module.disa.api.LabResult;
 import org.openmrs.module.disa.api.LabResultStatus;
 import org.openmrs.module.disa.api.NotProcessingCause;
+import org.openmrs.module.disa.api.SampleType;
 import org.openmrs.module.disa.api.exception.DisaModuleAPIException;
 import org.openmrs.module.disa.api.util.Constants;
 import org.springframework.stereotype.Component;
@@ -170,6 +172,15 @@ public class HIVVLLabResultHandler extends BaseLabResultHandler {
                     finalResult.substring(finalResult.indexOf(Constants.MORE_THAN) + 1));
             obs856.setValueNumeric(Double.valueOf(numericPart));
             encounter.addObs(obs856);
+        }
+
+        // Specimen type
+        SampleType sampleType = labResult.getSampleType();
+        if (sampleType != null) {
+            Concept concept = conceptService.getConceptByUuid(Constants.SAMPLE_TYPE);
+            Obs obs23832 = new Obs(person, concept, obsDatetime, location);
+            obs23832.setValueCoded(conceptService.getConceptByUuid(sampleType.getConceptUuid()));
+            encounter.addObs(obs23832);
         }
     }
 
