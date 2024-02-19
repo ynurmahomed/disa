@@ -5,6 +5,8 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDateTime;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -60,6 +62,7 @@ public class TbLamLabResultHandlerTest extends BaseContextMockTest {
         labResult.setReasonForTest("");
         labResult.setPrimeiraLinha("");
         labResult.setSegundaLinha("");
+        labResult.setLabResultDate(LocalDateTime.now());
 
         Provider provider = new Provider();
         tbLamLabResultHandler.getSyncContext().put(ProviderLookup.PROVIDER_KEY, provider);

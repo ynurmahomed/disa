@@ -50,6 +50,7 @@ import org.openmrs.module.disa.api.util.Constants;
 import org.openmrs.test.BaseContextMockTest;
 
 public class HIVVLLabResultHandlerTest extends BaseContextMockTest {
+
 	@Mock
 	private LabResultService labResultService;
 	@Mock
@@ -108,6 +109,7 @@ public class HIVVLLabResultHandlerTest extends BaseContextMockTest {
 		labResult.setPrimeiraLinha("");
 		labResult.setSegundaLinha("");
 		labResult.setSampleType(SampleType.DBS);
+    labResult.setLabResultDate(LocalDateTime.now());
 
 		person = new Person();
 		user = new User(person);

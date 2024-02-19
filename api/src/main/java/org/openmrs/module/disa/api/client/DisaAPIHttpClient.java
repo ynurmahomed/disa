@@ -19,6 +19,7 @@ import org.openmrs.module.disa.api.LabResult;
 import org.openmrs.module.disa.api.OrgUnit;
 import org.openmrs.module.disa.api.Page;
 import org.openmrs.module.disa.api.TypeOfResult;
+import org.openmrs.module.disa.api.config.DisaUserAgentHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -42,17 +43,19 @@ public class DisaAPIHttpClient {
 
 	private RestTemplate restTemplate;
 	private ObjectMapper objectMapper;
+	private DisaUserAgentHolder userAgent;
 	private String username;
 	private String password;
 	private String URLBase;
 
-
 	@Autowired
 	public DisaAPIHttpClient(
 			RestTemplate restTemplate,
-			ObjectMapper objectMapper) {
+			ObjectMapper objectMapper,
+			DisaUserAgentHolder userAgent) {
 		this.restTemplate = restTemplate;
 		this.objectMapper = objectMapper;
+		this.userAgent = userAgent;
 	}
 
 	public Page<LabResult> searchLabResults(
@@ -208,6 +211,7 @@ public class DisaAPIHttpClient {
 				.auth(username, password);
 
 		Request request = Request.Patch(url)
+				.addHeader("User-Agent", userAgent.get())
 				.bodyString(objectMapper.writeValueAsString(labResult), ContentType.APPLICATION_JSON);
 
 		ResponseHandler<String> responseHandler = new BasicResponseHandler();
