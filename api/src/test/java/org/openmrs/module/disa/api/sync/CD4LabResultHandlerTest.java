@@ -3,6 +3,8 @@ package org.openmrs.module.disa.api.sync;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
+import java.time.LocalDateTime;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -51,6 +53,7 @@ public class CD4LabResultHandlerTest extends BaseContextMockTest {
         labResult.setReasonForTest("");
         labResult.setPrimeiraLinha("");
         labResult.setSegundaLinha("");
+        labResult.setLabResultDate(LocalDateTime.now());
 
         Provider provider = new Provider();
         cd4LabResultHandler.getSyncContext().put(ProviderLookup.PROVIDER_KEY, provider);
