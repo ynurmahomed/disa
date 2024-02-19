@@ -18,10 +18,12 @@ import java.util.Optional;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Location;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.BaseModuleActivator;
 import org.openmrs.module.ModuleActivator;
+import org.openmrs.module.ModuleException;
 import org.openmrs.module.disa.api.client.DisaAPIHttpClient;
 import org.openmrs.module.disa.api.sync.scheduler.ViralLoadFormSchedulerTask;
 import org.openmrs.module.disa.api.util.Constants;
@@ -56,6 +58,12 @@ public class DisaModuleActivator extends BaseModuleActivator {
 	 */
 	public void willStart() {
 		log.info("Starting Disa Module Module");
+		Location defaultLocation = Context.getLocationService().getDefaultLocation();
+		if (defaultLocation == null
+				|| "Unknown Location".equals(defaultLocation.getName())) {
+			throw new ModuleException(
+					"Não foi possivel carregar a default location. Certifique que foi devidamente configurada.");
+		}
 	}
 
 	/**
