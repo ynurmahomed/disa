@@ -1,0 +1,308 @@
+<htmlform>
+  <html>
+
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title></title>
+    <style>
+      .e-lab {
+        width: 977px;
+        margin: 0 auto 50px auto;
+        border: 1px solid #1AAC9B;
+      }
+
+      .e-lab div {
+        display: flex;
+      }
+
+      .e-lab .header,
+      .e-lab .form-row,
+      .e-lab .header-row {
+        height: 30px;
+      }
+
+      .e-lab .header {
+        background: #1AAC9B;
+        justify-content: start;
+        align-items: center;
+        padding-left: 10px;
+      }
+
+      .e-lab .header:first-child {
+        justify-content: center;
+      }
+
+      .e-lab .header-row {
+        justify-content: space-evenly;
+        height: 60px;
+        flex-direction: column;
+        align-items: center;
+        border-bottom: 1px solid lightgray;
+      }
+
+      .e-lab .form-row {
+        justify-content: space-evenly;
+      }
+
+      .e-lab .form-row.patient {
+        height: 125px;
+      }
+
+      .patient ul {
+        list-style: none;
+        padding-left: 0;
+      }
+
+
+      .e-lab .form-row div {
+        padding-left: 10px;
+        border-left: 1px solid lightgray;
+        border-bottom: 1px solid lightgray;
+        flex-wrap: wrap;
+        align-items: center;
+        flex: 1;
+      }
+
+      .e-lab .form-row.tb>div {
+        gap: 30px;
+      }
+
+      .pregnant-breastfeeding {
+        flex-direction: column;
+        padding-left: 0;
+      }
+
+      .e-lab .form-row .pregnant-breastfeeding div {
+        border: none;
+      }
+
+      .e-lab .form-row.patient .pregnant-breastfeeding {
+        align-items: flex-start;
+      }
+
+      .e-lab .form-row div:first-child {
+        border-left: none;
+      }
+
+      h2 {
+        border-bottom: 3px solid red;
+      }
+
+      p {
+        border: 1px solid black;
+      }
+
+      .obs {
+        font-size: 11px;
+        font-weight: bold;
+      }
+
+      .submit-btn {
+        flex: 1;
+        margin: 10px 15px;
+      }
+
+      .submit-btn input {
+        color: #fff;
+        background: #1AAC9B;
+        padding: 8px;
+        width: 12.8em;
+        font-weight: bold;
+        text-shadow: 0 0 .3em black;
+        font-size: 9pt;
+        border-radius: 5px 5px;
+      }
+    </style>
+
+    <script>
+      $j(document).ready(function () {
+        $j('.htmlform input').prop('disabled', true);
+      });
+    </script>
+
+  </head>
+
+  <body>
+    <div class="e-lab">
+      <div class="header">
+        REPÚBLICA DE MOÇAMBIQUE
+      </div>
+      <div class="header-row">
+        MINISTÉRIO DA SAÚDE
+        <b>Formulário Electrónico de Laboratório</b>
+      </div>
+      <div class="form-row">
+        <div>
+          ID da requisição:
+          <obs conceptId="e8c63cd6-9113-48b2-99cd-6112103f1448" labelText="" />
+        </div>
+        <div>
+          N° do Laboratório:
+          <obs conceptId="e173835b-135c-4fab-9b5e-b255565980e5" labelText="" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div>
+          Província: <b>
+            <lookup expression="patient.personAddress.stateProvince" />
+          </b>
+        </div>
+        <div>
+          Distrito: <b>
+            <lookup expression="patient.personAddress.countyDistrict" />
+          </b>
+        </div>
+        <div>
+          Unidade Sanitária:
+          <encounterLocation id="localConsulta" default="GlobalProperty:default_location" />
+        </div>
+      </div>
+      <div class="header">
+        <b>1. Informação sobre o Paciente</b>
+      </div>
+      <div class="form-row patient">
+        <div>
+          <ul>
+            <li>
+              NID do paciente: <b>
+                <lookup expression="patient.getPatientIdentifier(2)" />
+              </b>
+            </li>
+            <li>
+              Nome e Apelido: <b>
+                <lookup expression="patient.personName" />
+              </b>
+            </li>
+            <li>
+              Sexo: <b>
+                <lookup expression="patient.gender" />
+              </b>
+            </li>
+            <li>
+              Data de Nascimento: <b>
+                <lookup expression="patient.birthdate" />
+              </b>
+            </li>
+            <li>
+              Idade(em anos): <b>
+                <lookup expression="patient.age" />
+              </b>
+            </li>
+            <li>
+              Contacto telefónico: <b>
+                <lookup expression="patient.getAttribute(9)" />
+              </b>
+            </li>
+          </ul>
+        </div>
+        <div class="pregnant-breastfeeding">
+          <div>
+            Actualmente encontra-se grávida?
+            <obs conceptId="e1e056a6-1d5f-11e0-b929-000c29ad1d07" labelText=""
+              answerConceptIds="1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,1066AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,e1d8e10a-1d5f-11e0-b929-000c29ad1d07"
+              answerLabels="Sim,Não,Não Aplicavel" style="radio" />
+          </div>
+          <div>
+            Actualmente está a amamentar?
+            <obs conceptId="bc4fe755-fc8f-49b8-9956-baf2477e8313" labelText=""
+              answerConceptIds="1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,1066AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,e1d8e10a-1d5f-11e0-b929-000c29ad1d07"
+              answerLabels="Sim,Não,Não Aplicavel" style="radio" />
+          </div>
+        </div>
+      </div>
+      <div class="header">
+        <b>2. Exame</b>
+      </div>
+      <div class="form-row">
+        <div>
+          Local da Colheita:
+          <obs conceptId="e5269927-e25d-464e-9584-dc6ea2d8af64" />
+        </div>
+        <div>
+          Tipo de Amostra:
+          <obs conceptId="47ee9ffd-8103-4788-ab23-e185c144cf1e" />
+        </div>
+        <div>
+          Nome do técnico:
+          <encounterProvider role="Provider" type="autocomplete" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div>
+          Data da Colheita:
+          <obs conceptId="f85e3f84-a255-412a-aa43-40174f69c305" />
+        </div>
+        <div>
+          Data de registo:
+          <obs conceptId="a01695c6-71d9-4b5b-874f-892fba0a0b7b" />
+        </div>
+        <div>
+          Data do resultado:
+          <encounterDate id="dataConsulta" required="true" />
+        </div>
+        <div>
+          Data de sincronizção:
+          <lookup class="value" complexExpression="#set( $syncDay = $encounter.dateCreated.date)
+                                                   #if( $syncDay &lt; 10 )
+                                                       #set( $syncDay = &quot;0$syncDay&quot;)
+                                                   #end" />
+          <lookup class="value" complexExpression="#set( $syncMonth = $encounter.dateCreated.month + 1)
+                                                   #if( $syncMonth &lt; 10 )
+                                                       #set( $syncMonth = &quot;0$syncMonth&quot;)
+                                                   #end" />
+          <lookup class="value" complexExpression="#set( $syncYear = $encounter.dateCreated.year + 1900)" />
+          <lookup class="value" expression="syncDay" />-
+          <lookup class="value" expression="syncMonth" />-
+          <lookup class="value" expression="syncYear" />
+        </div>
+      </div>
+      <div class="header">
+        <b>3. Monitoria de tratamento de HIV</b>
+      </div>
+      <div class="form-row">
+        <div style="flex: 0.5;">
+          CD4 Absoluto:
+          <obs conceptId="e1dd5ab4-1d5f-11e0-b929-000c29ad1d07" />
+        </div>
+        <div style="flex: 0.5;">
+          CD4%:
+          <obs conceptId="e1d48fba-1d5f-11e0-b929-000c29ad1d07" />
+        </div>
+        <div>
+          Razão de Solicitação da Carga Viral:
+          <obs conceptId="a97ab290-5b66-4755-bd49-d82f944cd093"
+            answerConceptIds="971cf484-2751-40ce-9f89-d23f544d06e2, e1d616b4-1d5f-11e0-b929-000c29ad1d07, df6aa98d-0124-4fb7-b4fb-5dc99f6ddcc9, 14ef99f0-88b2-4210-9e85-bfa002743728, 6f60eaa1-886d-4891-9d3d-7ade75d67606, 1067AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+            answerLabels="Rotina, Suspeita de Falência Viral, Suspeita de falência imunológica, Suspeita Clínica, Repetir Após o Aleitamento, Não Preenchido" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div>
+          <obs labelText="Resultado do teste de Carga Viral (cópias/ml):"
+            conceptId="e1d6247e-1d5f-11e0-b929-000c29ad1d07" />
+          <span>&#160;|&#160;</span>
+          <obs conceptId="e1da2704-1d5f-11e0-b929-000c29ad1d07"
+            answerConceptIds="e1da2812-1d5f-11e0-b929-000c29ad1d07,cc8ef88c-6ab6-4404-a036-d415bc42cc1c,4df535db-b8c9-4759-85bb-f4bcb5bebdc6"
+            answerLabels="Nivel de detecção baixo,Indetectável,&#60;" commentFieldLabel="&#160;| Valor:" />
+        </div>
+      </div>
+      <div class="header">
+        <b>4. Diagnóstico Laboratorial para TB</b>
+      </div>
+      <div class="form-row tb">
+        <div>
+          <obs id="tbLam" conceptId="ef139cb2-97c1-4c0f-9189-5e0711a45b8f"
+            answerConceptIds="e1d47386-1d5f-11e0-b929-000c29ad1d07, e1d446cc-1d5f-11e0-b929-000c29ad1d07"
+            labelText="TB LAM" answerLabels="Positivo,Negativo" style="radio" />
+          <obs id="nivelPositividadeTbLam" conceptId="303a4480-f2b3-4192-a446-725a401ebb09"
+            labelText="Nível de positividade (TB LAM)" answerConceptIds="16c13c13-2f85-4492-ae9b-4358b34070e7,
+                                         a4e43a4d-37ea-4767-a700-9fe1d43a8042,
+                                         79f4bd59-0dbb-41ba-9d78-3efc0b737b75,
+                                         03d4b7c8-c8cd-4f84-be40-67975bd5b667" answerLabels="4+,3+,2+,1+"
+            style="radio" />
+        </div>
+      </div>
+    </div>
+  </body>
+
+  </html>
+</htmlform>
