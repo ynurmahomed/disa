@@ -10,7 +10,7 @@ public enum SampleType {
     // Plasma
     PL("1002AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"),
     // Plasma Seco
-    PSC("41621b9f-49d9-48f7-aea8-92a70c7db2c0");
+    PSC("f17b6cf1-7bed-4d1f-bf70-e09e3a0e4357");
 
     private String conceptUuid;
 
