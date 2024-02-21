@@ -6,7 +6,7 @@
     <title></title>
     <style>
       .e-lab {
-        width: 977px;
+        width: 1079px;
         margin: 0 auto 50px auto;
         border: 1px solid #1AAC9B;
       }
@@ -243,7 +243,7 @@
           <encounterDate id="dataConsulta" required="true" />
         </div>
         <div>
-          Data de sincronizção:
+          Data de sincronização:
           <lookup class="value" complexExpression="#set( $syncDay = $encounter.dateCreated.date)
                                                    #if( $syncDay &lt; 10 )
                                                        #set( $syncDay = &quot;0$syncDay&quot;)
