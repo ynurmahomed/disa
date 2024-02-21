@@ -6,7 +6,7 @@
     <title></title>
     <style>
       .e-lab {
-        width: 1079px;
+        width: 1084px;
         margin: 0 auto 50px auto;
         border: 1px solid #1AAC9B;
       }
@@ -18,7 +18,7 @@
       .e-lab .header,
       .e-lab .form-row,
       .e-lab .header-row {
-        height: 30px;
+        height: 35px;
       }
 
       .e-lab .header {
