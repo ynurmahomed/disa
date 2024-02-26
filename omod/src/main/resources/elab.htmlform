@@ -222,7 +222,7 @@
           Tipo de Amostra:
           <obs conceptId="47ee9ffd-8103-4788-ab23-e185c144cf1e"
           answerConceptIds="7c288beb-548c-4440-8f12-4f62cd45305a,1002AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,f17b6cf1-7bed-4d1f-bf70-e09e3a0e4357"
-          answerLabels="Sangue Seco em Papel de Filtro,Plasma,Plasma Seco"/>
+          answerLabels="Sangue Seco em Papel de Filtro (DBS),Plasma,Plasma Seco (PSC)"/>
         </div>
         <div>
           Nome do técnico:
