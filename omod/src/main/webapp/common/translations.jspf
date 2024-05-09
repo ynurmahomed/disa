@@ -21,6 +21,7 @@
 		"disa.typeOfResult.HIVVL": "<openmrs:message code='disa.typeOfResult.HIVVL'/>",
 		"disa.typeOfResult.CD4": "<openmrs:message code='disa.typeOfResult.CD4'/>",
 		"disa.typeOfResult.TBLAM": "<openmrs:message code='disa.typeOfResult.TBLAM'/>",
+		"disa.typeOfResult.CRAG": "<openmrs:message code='disa.typeOfResult.CRAG'/>",
 		"disa.viralload.delete.confirmation.javascript":"<spring:message code='disa.viralload.delete.confirmation.javascript'/>",
 		"disa.viralload.reallocate.confirmation.javascript":"<spring:message code='disa.viralload.reallocate.confirmation.javascript'/>",
 		"disa.viralload.reallocate.select.placeholder":"<spring:message code='disa.viralload.reallocate.select.placeholder' htmlEscape='false'/>"

@@ -3,6 +3,7 @@ package org.openmrs.module.disa.api.config;
 import java.io.IOException;
 
 import org.openmrs.module.disa.api.CD4LabResult;
+import org.openmrs.module.disa.api.CRAGLabResult;
 import org.openmrs.module.disa.api.HIVVLLabResult;
 import org.openmrs.module.disa.api.LabResult;
 import org.openmrs.module.disa.api.TBLamLabResult;
@@ -26,6 +27,8 @@ public class LabResultDeserializer extends JsonDeserializer<LabResult> {
             return p.getCodec().treeToValue(node, CD4LabResult.class);
         } else if (TypeOfResult.TBLAM == typeOfResult) {
             return p.getCodec().treeToValue(node, TBLamLabResult.class);
+        } else if (TypeOfResult.CRAG == typeOfResult) {
+            return p.getCodec().treeToValue(node, CRAGLabResult.class);
         } else {
             throw new JsonParseException(p, "Unknown type of result: " + typeOfResult);
         }
