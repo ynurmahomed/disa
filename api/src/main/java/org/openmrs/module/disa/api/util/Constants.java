@@ -144,4 +144,5 @@ public class Constants {
     public static final String LEVEL_2 = "79f4bd59-0dbb-41ba-9d78-3efc0b737b75";
     public static final String LEVEL_3 = "a4e43a4d-37ea-4767-a700-9fe1d43a8042";
     public static final String LEVEL_4 = "16c13c13-2f85-4492-ae9b-4358b34070e7";
+	public static final String CRAG = "f3883e12-4883-461b-8440-2a02f3312a84";
 }
