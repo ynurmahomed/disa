@@ -1,6 +1,8 @@
 package org.openmrs.module.disa.api.sync;
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import org.openmrs.Concept;
@@ -176,7 +178,8 @@ public class HIVVLLabResultHandler extends BaseLabResultHandler {
 
         // Specimen type
         SampleType sampleType = labResult.getSampleType();
-        if (sampleType != null) {
+        List<SampleType> validSampleTypes = Arrays.asList(SampleType.DBS, SampleType.PL, SampleType.PSC);
+        if (sampleType != null && validSampleTypes.contains(sampleType)) {
             Concept concept = conceptService.getConceptByUuid(Constants.SAMPLE_TYPE);
             Obs obs23832 = new Obs(person, concept, obsDatetime, location);
             obs23832.setValueCoded(conceptService.getConceptByUuid(sampleType.getConceptUuid()));

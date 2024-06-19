@@ -10,7 +10,11 @@ public enum SampleType {
     // Plasma
     PL("1002AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"),
     // Plasma Seco
-    PSC("f17b6cf1-7bed-4d1f-bf70-e09e3a0e4357");
+    PSC("f17b6cf1-7bed-4d1f-bf70-e09e3a0e4357"),
+    // Soro
+    SER("1001AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"),
+    // Liquido Cefalo raquidiano
+    LCR("159995AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 
     private String conceptUuid;
 

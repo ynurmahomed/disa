@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.openmrs.module.disa.api.LabResult;
 import org.openmrs.module.disa.api.sync.CD4LabResultHandler;
+import org.openmrs.module.disa.api.sync.CRAGLabResultHandler;
 import org.openmrs.module.disa.api.sync.DuplicateRequestIdLookup;
 import org.openmrs.module.disa.api.sync.FinalLabResultHandler;
 import org.openmrs.module.disa.api.sync.HIVVLLabResultHandler;
@@ -62,6 +63,7 @@ public class DisaModuleAPIConfig {
             HIVVLLabResultHandler vlHandler,
             CD4LabResultHandler cd4Handler,
             TBLamLabResultHandler tbLamHandler,
+            CRAGLabResultHandler cragHandler,
             FinalLabResultHandler finalLabResultHandler) {
 
         LabResultHandler[] chain = new LabResultHandler[] {
@@ -72,6 +74,7 @@ public class DisaModuleAPIConfig {
                 vlHandler,
                 cd4Handler,
                 tbLamHandler,
+                cragHandler,
                 finalLabResultHandler
         };
 
