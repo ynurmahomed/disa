@@ -72,7 +72,11 @@ public class ViralLoadFormSchedulerTask extends AbstractTask {
 			notifier.notify(
 					Constants.DISA_NOTIFICATION_ERROR_SUBJECT,
 					GenericUtil.getStackTrace(e),
-					Constants.DISA_MODULE);
+					Constants.DISA_MODULE,
+					"",
+					"",
+					"",
+					null); 
 		} finally {
 			syncStatus = syncStatus.ended();
 		}

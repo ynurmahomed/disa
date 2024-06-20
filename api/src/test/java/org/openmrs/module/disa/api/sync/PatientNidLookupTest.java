@@ -88,12 +88,12 @@ public class PatientNidLookupTest extends BaseContextMockTest {
         when(disaService.getPatientByNid(anyString()))
                 .thenReturn(Arrays.asList(1, 2));
 
-        doNothing().when(notifier).notify(anyString(), anyString(), anyString());
+        doNothing().when(notifier).notify(anyString(), anyString(), anyString(), anyString(), anyString(), anyString(), null);
 
         patientNidHandler.handle(labResult);
 
         // Sends a notification
-        verify(notifier, times(1)).notify(anyString(), anyString(), anyString());
+        verify(notifier, times(1)).notify(anyString(), anyString(), anyString(), anyString(), anyString(), anyString(), null);
     }
 
     @Test

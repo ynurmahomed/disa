@@ -31,6 +31,6 @@ public class NotifierTest extends BaseContextMockTest {
     public void notifyShouldNotSendEmailWithoutRecipients() {
         GlobalProperty mailToGp = new GlobalProperty("disa.api.mail.to", "");
         when(administrationService.getGlobalPropertyObject(anyString())).thenReturn(mailToGp);
-        verify(notificationUtil, never()).sendEmail(anyString(), anyString(), anyString(), anyString(), anyString());
+        verify(notificationUtil, never()).sendEmail(anyString(), anyString(), anyString(), anyString(), anyString(), anyString(), anyString(), anyString(), anyString());
     }
 }
