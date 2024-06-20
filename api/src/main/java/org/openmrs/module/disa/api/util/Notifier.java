@@ -29,7 +29,7 @@ public class Notifier {
         this.notificationUtil = notificationUtil;
     }
 
-    public void notify(String subject, String body, String module) {
+    public void notify(String subject, String body, String module, String startDate, String endDate, String repoLink ,String resultFlag) {
         String endpointUrl = administrationService.getGlobalPropertyObject(Constants.DISA_API_NOTIFICATION_URL)
                 .getPropertyValue();
 
@@ -41,7 +41,11 @@ public class Notifier {
                     to,
                     subject + locationService.getDefaultLocation().getName(),
                     body,
-                    module);
+                    module,
+                    startDate,
+                    endDate,
+                    repoLink,
+                    resultFlag);
         } else {
             log.info("No configured recipients. Skiping notification.");
         }

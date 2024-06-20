@@ -74,7 +74,11 @@ public class PatientNidLookup extends BaseLabResultHandler {
             notifier.notify(
                     Constants.DISA_NOTIFICATION_ERROR_SUBJECT,
                     GenericUtil.getStackTrace(new Throwable(notification)),
-                    Constants.DISA_MODULE);
+                    Constants.DISA_MODULE,
+                    "",
+                    "",
+                    "",
+                    null);
             labResult.setLabResultStatus(LabResultStatus.NOT_PROCESSED);
             labResult.setNotProcessingCause(NotProcessingCause.DUPLICATE_NID);
         } else {

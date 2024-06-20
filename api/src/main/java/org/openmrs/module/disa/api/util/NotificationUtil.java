@@ -27,7 +27,7 @@ public class NotificationUtil {
 
     public void sendEmail(String endpointUrl, String to,
             String subject, String body,
-            String module) {
+            String module, String startDate, String endDate, String repoLink ,String resultFlag) {
 
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.setErrorHandler(new DisaResponseErrorHandler());
@@ -37,7 +37,7 @@ public class NotificationUtil {
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
         MultiValueMap<String, Object> requestBody = new LinkedMultiValueMap<>();
-        requestBody.add("data", getDataIntoJsonNode(to, subject, body, module));
+        requestBody.add("data", getDataIntoJsonNode(to, subject, body, module, startDate, endDate, repoLink, resultFlag));
 
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
 
@@ -54,7 +54,7 @@ public class NotificationUtil {
         }
     }
 
-    private Object getDataIntoJsonNode(String to, String subject, String body, String module) {
+    private Object getDataIntoJsonNode(String to, String subject, String body, String module, String startDate, String endDate, String repoLink, String resultFlag) {
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode dataNode = objectMapper.createObjectNode();
         ArrayNode arrayNode = objectMapper.createArrayNode();
@@ -64,6 +64,8 @@ public class NotificationUtil {
         dataNode.put("module", module);
         dataNode.put("startDate", StringUtils.EMPTY);
         dataNode.put("endDate", StringUtils.EMPTY);
+        dataNode.put("repoLink", StringUtils.EMPTY);
+        dataNode.put("resultFlag", StringUtils.EMPTY);
 
         return dataNode;
     }
