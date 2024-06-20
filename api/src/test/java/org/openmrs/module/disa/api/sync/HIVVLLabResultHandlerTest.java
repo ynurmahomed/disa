@@ -90,6 +90,7 @@ public class HIVVLLabResultHandlerTest extends BaseContextMockTest {
 	private Concept orderId;
 	private Concept sampleType;
 	private Concept dryBloodSpot;
+	private Concept serum;
 	private Location location;
 
 	@Before
@@ -109,7 +110,7 @@ public class HIVVLLabResultHandlerTest extends BaseContextMockTest {
 		labResult.setPrimeiraLinha("");
 		labResult.setSegundaLinha("");
 		labResult.setSampleType(SampleType.DBS);
-    labResult.setLabResultDate(LocalDateTime.now());
+		labResult.setLabResultDate(LocalDateTime.now());
 
 		person = new Person();
 		user = new User(person);
@@ -191,6 +192,11 @@ public class HIVVLLabResultHandlerTest extends BaseContextMockTest {
 		dryBloodSpot.setUuid(SampleType.DBS.getConceptUuid());
 		when(conceptService.getConceptByUuid(SampleType.DBS.getConceptUuid()))
 				.thenReturn(dryBloodSpot);
+
+		serum = new Concept(1001);
+		serum.setUuid(SampleType.SER.getConceptUuid());
+		when(conceptService.getConceptByUuid(SampleType.SER.getConceptUuid()))
+				.thenReturn(serum);
 	}
 
 	@Test(expected = DisaModuleAPIException.class)
@@ -552,5 +558,22 @@ public class HIVVLLabResultHandlerTest extends BaseContextMockTest {
 				hasItem(allOf(
 						hasProperty("concept", equalTo(sampleType)),
 						hasProperty("valueCoded", equalTo(dryBloodSpot)))));
+	}
+
+	@Test
+	public void shouldNotSaveInvalidSampleType() {
+
+		labResult.setSampleType(SampleType.SER);
+		labResult.setFinalResult("INDETECTAVEL");
+
+		hivvlLabResultHandler.handle(labResult);
+
+		Encounter encounter = (Encounter) hivvlLabResultHandler.getSyncContext()
+				.get(BaseLabResultHandler.ENCOUNTER_KEY);
+
+		assertThat(encounter.getObs(),
+				not(hasItem(allOf(
+						hasProperty("concept", equalTo(sampleType)),
+						hasProperty("valueCoded", equalTo(serum))))));
 	}
 }

@@ -221,8 +221,8 @@
         <div>
           Tipo de Amostra:
           <obs conceptId="47ee9ffd-8103-4788-ab23-e185c144cf1e"
-          answerConceptIds="7c288beb-548c-4440-8f12-4f62cd45305a,1002AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,f17b6cf1-7bed-4d1f-bf70-e09e3a0e4357"
-          answerLabels="Sangue Seco em Papel de Filtro (DBS),Plasma,Plasma Seco (PSC)"/>
+          answerConceptIds="7c288beb-548c-4440-8f12-4f62cd45305a,1002AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,f17b6cf1-7bed-4d1f-bf70-e09e3a0e4357,1001AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,159995AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,"
+          answerLabels="Sangue Seco em Papel de Filtro (DBS),Plasma,Plasma Seco (PSC),Soro,LCR"/>
         </div>
         <div>
           Nome do técnico:
@@ -294,13 +294,25 @@
         <div>
           <obs id="tbLam" conceptId="ef139cb2-97c1-4c0f-9189-5e0711a45b8f"
             answerConceptIds="e1d47386-1d5f-11e0-b929-000c29ad1d07, e1d446cc-1d5f-11e0-b929-000c29ad1d07"
-            labelText="TB LAM" answerLabels="Positivo,Negativo" style="radio" />
+            labelText="TB LAM:" answerLabels="Positivo,Negativo" style="radio" />
           <obs id="nivelPositividadeTbLam" conceptId="303a4480-f2b3-4192-a446-725a401ebb09"
-            labelText="Nível de positividade (TB LAM)" answerConceptIds="16c13c13-2f85-4492-ae9b-4358b34070e7,
+            labelText="Nível de positividade (TB LAM):" answerConceptIds="16c13c13-2f85-4492-ae9b-4358b34070e7,
                                          a4e43a4d-37ea-4767-a700-9fe1d43a8042,
                                          79f4bd59-0dbb-41ba-9d78-3efc0b737b75,
                                          03d4b7c8-c8cd-4f84-be40-67975bd5b667" answerLabels="4+,3+,2+,1+"
             style="radio" />
+        </div>
+      </div>
+      <div class="header">
+        <b>5. Outros</b>
+      </div>
+      <div class="form-row">
+        <div>
+          <obs conceptId="f3883e12-4883-461b-8440-2a02f3312a84"
+            answerConceptIds="e1d47386-1d5f-11e0-b929-000c29ad1d07, e1d446cc-1d5f-11e0-b929-000c29ad1d07"
+            labelText="CRAG (Antígeno Criptocócico):"
+            answerLabels="Positivo,Negativo"
+            style="radio"/>
         </div>
       </div>
     </div>

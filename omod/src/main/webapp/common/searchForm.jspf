@@ -99,6 +99,9 @@
 				<form:option value="TBLAM">
 					<openmrs:message code="disa.typeOfResult.TBLAM" />
 				</form:option>
+				<form:option value="CRAG">
+					<openmrs:message code="disa.typeOfResult.CRAG" />
+				</form:option>
 			</form:select>
 		</div>
 		<div class="divider"></div>
