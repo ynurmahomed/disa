@@ -16,6 +16,8 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.openmrs.module.disa.api.LabResult;
+import org.openmrs.module.disa.api.LabResultStatus;
+import org.openmrs.module.disa.api.NotProcessingCause;
 import org.openmrs.module.disa.api.OrgUnit;
 import org.openmrs.module.disa.api.Page;
 import org.openmrs.module.disa.api.TypeOfResult;
@@ -62,8 +64,8 @@ public class DisaAPIHttpClient {
 			LocalDateTime startDate,
 			LocalDateTime endDate,
 			String requestId,
-			String labResultStatus,
-			String notProcessingCause,
+			LabResultStatus labResultStatus,
+			NotProcessingCause notProcessingCause,
 			TypeOfResult typeOfResult,
 			String nid,
 			List<String> healthFacilityLabCodes,
@@ -76,9 +78,9 @@ public class DisaAPIHttpClient {
 		URIBuilder builder = new URIBuilder(URLBase)
 				.setPathSegments("services", "lab-results", "search")
 				.addParameter("requestId", requestId)
-				.addParameter("labResultStatus", labResultStatus)
-				.addParameter("notProcessingCause", notProcessingCause)
-				.addParameter("typeOfResult", typeOfResult == TypeOfResult.ALL ? "" : typeOfResult.name())
+				.addParameter("labResultStatus", labResultStatus != null ? labResultStatus.name() : "")
+				.addParameter("notProcessingCause", notProcessingCause != null ? notProcessingCause.name() : "")
+				.addParameter("typeOfResult", typeOfResult != null ? typeOfResult.name() : "")
 				.addParameter("nid", nid)
 				.addParameter("pageNumber", String.valueOf(pageNumber))
 				.addParameter("pageSize", String.valueOf(pageSize))
@@ -111,16 +113,16 @@ public class DisaAPIHttpClient {
 			LocalDateTime startDate,
 			LocalDateTime endDate,
 			String requestId,
-			String labResultStatus,
-			String notProcessingCause,
+			LabResultStatus labResultStatus,
+			NotProcessingCause notProcessingCause,
 			String nid,
 			List<String> healthFacilityLabCodes) throws URISyntaxException {
 
 		URIBuilder builder = new URIBuilder(URLBase)
 				.setPathSegments("services", "lab-results", "export")
 				.addParameter("requestId", requestId)
-				.addParameter("labResultStatus", labResultStatus)
-				.addParameter("notProcessingCause", notProcessingCause)
+				.addParameter("labResultStatus", labResultStatus != null ? labResultStatus.name() : null)
+				.addParameter("notProcessingCause", notProcessingCause != null ? notProcessingCause.name() : null)
 				.addParameter("nid", nid);
 
 		if (startDate != null) {

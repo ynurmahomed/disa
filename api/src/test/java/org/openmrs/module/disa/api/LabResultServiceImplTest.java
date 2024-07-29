@@ -106,20 +106,20 @@ public class LabResultServiceImplTest extends BaseContextMockTest {
     @Test
     public void searchShouldFailIfUserIsNotAuthorized() throws IOException, URISyntaxException {
         when(client.searchLabResults(
-            any(LocalDateTime.class),
-            any(LocalDateTime.class),
-            anyString(),
-            anyString(),
-            anyString(),
-            any(TypeOfResult.class),
-            anyString(),
-            anyListOf(String.class),
-            anyString(),
-            anyInt(),
-            anyInt(),
-            anyString(),
-            anyString()))
-        .thenThrow(new HttpClientErrorException(HttpStatus.FORBIDDEN, "Forbidden"));
+                any(LocalDateTime.class),
+                any(LocalDateTime.class),
+                anyString(),
+                any(LabResultStatus.class),
+                any(NotProcessingCause.class),
+                any(TypeOfResult.class),
+                anyString(),
+                anyListOf(String.class),
+                anyString(),
+                anyInt(),
+                anyInt(),
+                anyString(),
+                anyString()))
+                .thenThrow(new HttpClientErrorException(HttpStatus.FORBIDDEN, "Forbidden"));
 
         String sismaCode = "1100811";
 
@@ -127,18 +127,18 @@ public class LabResultServiceImplTest extends BaseContextMockTest {
         // exceptionRule.expectMessage("The user does not have permission");
 
         labResultService.search(
-            LocalDate.now(),
-            LocalDate.now(),
-            "",
-            "",
-            "",
-            TypeOfResult.ALL,
-            "",
-            Collections.singletonList(sismaCode),
-            "",
-            0,
-            0,
-            "",
-            "");
+                LocalDate.now(),
+                LocalDate.now(),
+                "",
+                null,
+                null,
+                null,
+                "",
+                Collections.singletonList(sismaCode),
+                "",
+                0,
+                0,
+                "",
+                "");
     }
 }

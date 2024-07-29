@@ -12,8 +12,8 @@ public interface LabResultService extends OpenmrsService {
                         LocalDate startDate,
                         LocalDate endDate,
                         String requestId,
-                        String labResultStatus,
-                        String notProcessingCause,
+                        LabResultStatus labResultStatus,
+                        NotProcessingCause notProcessingCause,
                         TypeOfResult typeOfResult,
                         String nid,
                         List<String> healthFacilityLabCodes,
@@ -28,8 +28,8 @@ public interface LabResultService extends OpenmrsService {
                         LocalDate startDate,
                         LocalDate endDate,
                         String requestId,
-                        String labResultStatus,
-                        String notProcessingCause,
+                        LabResultStatus labResultStatus,
+                        NotProcessingCause notProcessingCause,
                         String nid,
                         List<String> healthFacilityLabCodes);
 

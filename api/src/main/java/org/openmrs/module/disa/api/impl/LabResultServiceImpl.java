@@ -20,6 +20,7 @@ import org.openmrs.module.disa.api.DisaService;
 import org.openmrs.module.disa.api.LabResult;
 import org.openmrs.module.disa.api.LabResultService;
 import org.openmrs.module.disa.api.LabResultStatus;
+import org.openmrs.module.disa.api.NotProcessingCause;
 import org.openmrs.module.disa.api.OrgUnit;
 import org.openmrs.module.disa.api.OrgUnitService;
 import org.openmrs.module.disa.api.Page;
@@ -57,7 +58,7 @@ public class LabResultServiceImpl extends BaseOpenmrsService implements LabResul
     public Page<LabResult> search(
             LocalDate startDate, LocalDate endDate,
             String requestId,
-            String labResultStatus, String notProcessingCause,
+            LabResultStatus labResultStatus, NotProcessingCause notProcessingCause,
             TypeOfResult typeOfResult,
             String nid, List<String> healthFacilityLabCodes,
             String search,
@@ -68,18 +69,6 @@ public class LabResultServiceImpl extends BaseOpenmrsService implements LabResul
 
             if (healthFacilityLabCodes.isEmpty()) {
                 throw new DisaModuleAPIException("disa.health.facility.required", (Object[]) null);
-            }
-
-            if (Constants.ALL.equals(labResultStatus)) {
-                labResultStatus = "";
-            }
-
-            if (Constants.ALL.equals(notProcessingCause)) {
-                notProcessingCause = "";
-            }
-
-            if (typeOfResult == null) {
-                typeOfResult = TypeOfResult.ALL;
             }
 
             LocalDateTime start = null;
@@ -121,21 +110,13 @@ public class LabResultServiceImpl extends BaseOpenmrsService implements LabResul
     public List<LabResult> getAll(
             LocalDate startDate, LocalDate endDate,
             String requestId,
-            String labResultStatus, String notProcessingCause,
+            LabResultStatus labResultStatus, NotProcessingCause notProcessingCause,
             String nid, List<String> healthFacilityLabCodes) {
 
         try {
 
             if (healthFacilityLabCodes.isEmpty()) {
                 throw new DisaModuleAPIException("disa.health.facility.required", (Object[]) null);
-            }
-
-            if (Constants.ALL.equals(labResultStatus)) {
-                labResultStatus = "";
-            }
-
-            if (Constants.ALL.equals(notProcessingCause)) {
-                notProcessingCause = "";
             }
 
             LocalDateTime start = null;
@@ -252,7 +233,7 @@ public class LabResultServiceImpl extends BaseOpenmrsService implements LabResul
 
     @Override
     public List<LabResult> getResultsToSync() {
-        return getAll(null, null, null, LabResultStatus.PENDING.toString(), null, null, getHealthFacilityLabCodes());
+        return getAll(null, null, null, LabResultStatus.PENDING, null, null, getHealthFacilityLabCodes());
     }
 
     private boolean probableConnectivityIssue(ResourceAccessException e) {
