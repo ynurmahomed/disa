@@ -63,7 +63,7 @@ function MapIdentifiers(disaEl, patientListEl, { locale, searchSuggestion }) {
       },
       {
         data: "name",
-        render: (data, type, row) => `${row.givenName} ${row.familyName}`,
+        render: (data, type, row) => `${row.givenName} ${row.middleName} ${row.familyName}`,
         orderable: false,
         width: "30%",
       },
