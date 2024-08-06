@@ -6,6 +6,8 @@ import java.util.Date;
 
 import javax.validation.constraints.Size;
 
+import org.openmrs.module.disa.api.LabResultStatus;
+import org.openmrs.module.disa.api.NotProcessingCause;
 import org.openmrs.module.disa.api.TypeOfResult;
 import org.openmrs.module.disa.api.util.Constants;
 import org.springframework.util.StringUtils;
@@ -40,7 +42,7 @@ public class SearchForm {
 
     private String search;
 
-    private TypeOfResult typeOfResult;
+    private String typeOfResult;
 
     public SearchForm() {
         this.vlState = Constants.ALL;
@@ -125,6 +127,11 @@ public class SearchForm {
         return notProcessingCause;
     }
 
+    public NotProcessingCause getNotProcessingCauseEnum() {
+        return notProcessingCause == null || Constants.ALL.equals(notProcessingCause) ? null
+                : NotProcessingCause.valueOf(notProcessingCause);
+    }
+
     public void setNotProcessingCause(String notProcessingCause) {
         this.notProcessingCause = notProcessingCause;
     }
@@ -169,12 +176,20 @@ public class SearchForm {
         this.search = search;
     }
 
-    public TypeOfResult getTypeOfResult() {
+    public String getTypeOfResult() {
         return typeOfResult;
     }
 
-    public void setTypeOfResult(TypeOfResult typeOfResult) {
+    public void setTypeOfResult(String typeOfResult) {
         this.typeOfResult = typeOfResult;
+    }
+
+    public TypeOfResult getTypeOfResultEnum() {
+        return typeOfResult == null || Constants.ALL.equals(typeOfResult) ? null : TypeOfResult.valueOf(typeOfResult);
+    }
+
+    public LabResultStatus getLabResultStatus() {
+        return vlState == null || Constants.ALL.equals(vlState) ? null : LabResultStatus.valueOf(vlState);
     }
 
     private String clearWhiteSpace(String str) {

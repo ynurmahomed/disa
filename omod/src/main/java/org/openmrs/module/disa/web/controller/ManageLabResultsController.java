@@ -218,9 +218,9 @@ public class ManageLabResultsController {
                 searchForm.getStartLocalDate(),
                 searchForm.getEndLocalDate(),
                 searchForm.getNormalizedRequestId(),
-                searchForm.getVlState(),
-                searchForm.getNotProcessingCause(),
-                searchForm.getTypeOfResult(),
+                searchForm.getLabResultStatus(),
+                searchForm.getNotProcessingCauseEnum(),
+                searchForm.getTypeOfResultEnum(),
                 searchForm.getNid(),
                 searchForm.getSismaCode().equals(Constants.ALL)
                         ? labResultService.getHealthFacilityLabCodes()
@@ -237,8 +237,8 @@ public class ManageLabResultsController {
                 searchForm.getStartLocalDate(),
                 searchForm.getEndLocalDate(),
                 searchForm.getNormalizedRequestId(),
-                searchForm.getVlState(),
-                searchForm.getNotProcessingCause(),
+                searchForm.getLabResultStatus(),
+                searchForm.getNotProcessingCauseEnum(),
                 searchForm.getNid(),
                 searchForm.getSismaCode().equals(Constants.ALL)
                         ? labResultService.getHealthFacilityLabCodes()

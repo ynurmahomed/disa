@@ -41,6 +41,7 @@ import org.openmrs.module.disa.api.CD4LabResult;
 import org.openmrs.module.disa.api.LabResult;
 import org.openmrs.module.disa.api.LabResultService;
 import org.openmrs.module.disa.api.LabResultStatus;
+import org.openmrs.module.disa.api.NotProcessingCause;
 import org.openmrs.module.disa.api.OrgUnit;
 import org.openmrs.module.disa.api.OrgUnitService;
 import org.openmrs.module.disa.api.Page;
@@ -168,8 +169,8 @@ public class ManageLabResultsControllerTest extends BaseContextMockTest {
             any(LocalDate.class),
             any(LocalDate.class),
             any(String.class),
-            any(String.class),
-            any(String.class),
+            any(LabResultStatus.class),
+            any(NotProcessingCause.class),
             any(TypeOfResult.class),
             any(String.class),
             anyListOf(String.class),
@@ -218,8 +219,8 @@ public class ManageLabResultsControllerTest extends BaseContextMockTest {
             any(LocalDate.class),
             any(LocalDate.class),
             any(String.class),
-            any(String.class),
-            any(String.class),
+            any(LabResultStatus.class),
+            any(NotProcessingCause.class),
             any(TypeOfResult.class),
             any(String.class),
             anyListOf(String.class),
@@ -249,8 +250,8 @@ public class ManageLabResultsControllerTest extends BaseContextMockTest {
             any(LocalDate.class),
             any(LocalDate.class),
             any(String.class),
-            any(String.class),
-            any(String.class),
+            any(LabResultStatus.class),
+            any(NotProcessingCause.class),
             any(TypeOfResult.class),
             any(String.class),
             anyListOf(String.class),
@@ -324,8 +325,8 @@ public class ManageLabResultsControllerTest extends BaseContextMockTest {
                 any(LocalDate.class),
                 any(LocalDate.class),
                 any(String.class),
-                any(String.class),
-                any(String.class),
+                any(LabResultStatus.class),
+                any(NotProcessingCause.class),
                 any(String.class),
                 anyListOf(String.class)))
                 .thenReturn(labResults);

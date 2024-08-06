@@ -15,6 +15,7 @@ package org.openmrs.module.disa.api.impl;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -124,17 +125,25 @@ public class DisaServiceImpl extends BaseOpenmrsService implements DisaService {
 
 		if (identifiers.isEmpty()) {
 
-			labResultService.rescheduleLabResult(disa.getId());
-
 			PatientIdentifier patientIdentifier = new PatientIdentifier();
 			patientIdentifier.setPatient(patient);
 			patientIdentifier.setIdentifier(disa.getNid());
 			patientIdentifier.setIdentifierType(disaNIDIdentifier);
 			patientIdentifier.setLocation(locationService.getDefaultLocation());
 			patientService.savePatientIdentifier(patientIdentifier);
+
+			List<LabResult> notProcessed = getNotProcessedForPatient(disa);
+			for (LabResult l : notProcessed) {
+				labResultService.rescheduleLabResult(l.getId());
+			}
 		}
 
 		return patient;
+	}
+
+	private List<LabResult> getNotProcessedForPatient(LabResult disa) {
+		return labResultService.getAll(null, null, null, LabResultStatus.NOT_PROCESSED, null, disa.getNid(),
+				Collections.singletonList(disa.getHealthFacilityLabCode()));
 	}
 
 	public void handleProcessedLabResult(LabResult labResult, Encounter encounter) {
