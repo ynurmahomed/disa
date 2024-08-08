@@ -46,19 +46,12 @@ public class CD4LabResultHandler extends BaseLabResultHandler {
 
             CD4LabResult cd4 = (CD4LabResult) labResult;
 
-            Integer result = null;
-            try {
-                result = Integer.parseUnsignedInt(cd4.getFinalResult().trim());
-            } catch (NumberFormatException e) {
-                cd4.setLabResultStatus(LabResultStatus.NOT_PROCESSED);
-                // TODO change to invalid result
-                cd4.setNotProcessingCause(NotProcessingCause.INVALID_RESULT);
-            }
+            validateResult(cd4);
 
-            if (result != null) {
+            if (LabResultStatus.NOT_PROCESSED != cd4.getLabResultStatus()) {
                 Encounter encounter = getElabEncounter(patient, provider, location, cd4);
 
-                addCD4Obs(cd4, encounter, result);
+                addCD4Obs(cd4, encounter);
 
                 cd4.setLabResultStatus(LabResultStatus.PROCESSED);
                 getSyncContext().put(ENCOUNTER_KEY, encounter);
@@ -68,17 +61,69 @@ public class CD4LabResultHandler extends BaseLabResultHandler {
         return super.handle(labResult);
     }
 
-    private void addCD4Obs(CD4LabResult cd4, Encounter encounter, Integer result) {
+    private void validateResult(CD4LabResult cd4) {
+        boolean valid = true;
+        try {
+            if (cd4.getFinalResult() == null || cd4.getFinalResult().isEmpty()) {
+                valid = false;
+            } else {
+                String normalized = cd4.getFinalResult()
+                        .toLowerCase()
+                        .replaceAll("\\s", "")
+                        .replace(Constants.LESS_THAN, "")
+                        .replace(Constants.MORE_THAN, "")
+                        .replace("cells", "")
+                        .replace("celulas", "")
+                        .replace("células", "")
+                        .replace("cl", "")
+                        .replace(Constants.FORWARD_SLASH, "")
+                        .replace("ul", "");
+                Integer.parseUnsignedInt(normalized);
+            }
+        } catch (NumberFormatException e) {
+            valid = false;
+        }
+
+        if (!valid) {
+            cd4.setLabResultStatus(LabResultStatus.NOT_PROCESSED);
+            cd4.setNotProcessingCause(NotProcessingCause.INVALID_RESULT);
+        }
+    }
+
+    private void addCD4Obs(CD4LabResult cd4, Encounter encounter) {
 
         Person person = personService.getPersonByUuid(encounter.getPatient().getUuid());
         Date obsDatetime = encounter.getEncounterDatetime();
         Location location = encounter.getLocation();
 
-        // CD4 Absolute
-        Concept cd4Absolute = conceptService.getConceptByUuid(Constants.CD4_ABSOLUTE);
-        Obs obs1695 = new Obs(person, cd4Absolute, obsDatetime, location);
-        obs1695.setValueNumeric(result.doubleValue());
-        encounter.addObs(obs1695);
+        String normalized = cd4.getFinalResult()
+                .toLowerCase()
+                .replaceAll("\\s", "")
+                .replace("cells", "")
+                .replace("celulas", "")
+                .replace("células", "")
+                .replace("cl", "")
+                .replace(Constants.FORWARD_SLASH, "")
+                .replace("ul", "");
+
+        // CD4 Semi-quantitative
+        if (normalized.startsWith(Constants.MORE_THAN)) {
+            Concept cd4SemiQuantitative = conceptService.getConceptByUuid(Constants.CD4_SEMI_QUANTITATIVE);
+            Obs obs165515 = new Obs(person, cd4SemiQuantitative, obsDatetime, location);
+            obs165515.setValueCoded(conceptService.getConceptByUuid(Constants.CD4_GREATER_THAN_200));
+            encounter.addObs(obs165515);
+        } else if (normalized.startsWith(Constants.LESS_THAN)) {
+            Concept cd4SemiQuantitative = conceptService.getConceptByUuid(Constants.CD4_SEMI_QUANTITATIVE);
+            Obs obs165515 = new Obs(person, cd4SemiQuantitative, obsDatetime, location);
+            obs165515.setValueCoded(conceptService.getConceptByUuid(Constants.CD4_LESS_THAN_200));
+            encounter.addObs(obs165515);
+        } else {
+            // CD4 Absolute
+            Concept cd4Absolute = conceptService.getConceptByUuid(Constants.CD4_ABSOLUTE);
+            Obs obs1695 = new Obs(person, cd4Absolute, obsDatetime, location);
+            obs1695.setValueNumeric(Double.valueOf(normalized));
+            encounter.addObs(obs1695);
+        }
 
         // CD4 %
         if (StringUtils.isNotEmpty(cd4.getCd4Percentage())) {
