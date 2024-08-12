@@ -139,6 +139,7 @@ public class Constants {
     public static final String TB_LAM = "ef139cb2-97c1-4c0f-9189-5e0711a45b8f";
 	public static final String NEGATIVE = "e1d446cc-1d5f-11e0-b929-000c29ad1d07";
 	public static final String POSITIVE = "e1d47386-1d5f-11e0-b929-000c29ad1d07";
+	public static final String TB_LAM_POSITIVITY_LEVEL_LABSET = "5d11cf23-9c8b-4ee7-a2d4-b81993123d0d";
     public static final String POSITIVITY_LEVEL = "303a4480-f2b3-4192-a446-725a401ebb09";
     public static final String LEVEL_1 = "03d4b7c8-c8cd-4f84-be40-67975bd5b667";
     public static final String LEVEL_2 = "79f4bd59-0dbb-41ba-9d78-3efc0b737b75";
