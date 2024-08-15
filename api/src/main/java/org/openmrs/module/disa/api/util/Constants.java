@@ -31,8 +31,13 @@ public class Constants {
 	public static final String DISA_FORM = "5b7cecc3-4ba3-4710-85ae-fc0c13e83e27";
 	public static final String ORDER_ID = "e8c63cd6-9113-48b2-99cd-6112103f1448";
 	public static final String DISA_NID = "79ad599a-50df-48f8-865c-0095ec9a9d01";
+
 	public static final String CD4_ABSOLUTE = "e1dd5ab4-1d5f-11e0-b929-000c29ad1d07";
 	public static final String CD4_PERCENT = "e1d48fba-1d5f-11e0-b929-000c29ad1d07";
+	public static final String CD4_SEMI_QUANTITATIVE = "db7f1675-8850-476d-bc09-70be975c0867";
+	public static final String CD4_GREATER_THAN_200 = "e1d9ecf8-1d5f-11e0-b929-000c29ad1d07";
+	public static final String CD4_LESS_THAN_200 = "9395a2a8-21e9-4e06-bd2f-24c52f56cd21";
+
 	public static final String SAMPLE_REGISTRATION_DATE = "a01695c6-71d9-4b5b-874f-892fba0a0b7b";
 	public static final String RESULT_APPROVAL_DATE = "c5ed82fb-ba94-4ac4-b20b-a55ff453ca0a";
 
@@ -130,19 +135,20 @@ public class Constants {
 	public static final String DUPLICATED_NID = "duplicate";
 
 	public static final String MORE_THAN = ">";
-	
+
 	public static final String DISA_API_NOTIFICATION_URL = "disa.api.notification.url";
 	public static final String DISA_API_MAIL_TO = "disa.api.mail.to";
 	public static final String DISA_NOTIFICATION_ERROR_SUBJECT = "Notificação de Erro de Interoperabilidade Disa: ";
 	public static final String DISA_MODULE = "disa-module";
 	public static final String PROVIDER_ERROR = "Provedor generic.provider ou provedor.desconhecido nao foi encontrado no openmrs.";
-    public static final String TB_LAM = "ef139cb2-97c1-4c0f-9189-5e0711a45b8f";
+	public static final String TB_LAM = "ef139cb2-97c1-4c0f-9189-5e0711a45b8f";
 	public static final String NEGATIVE = "e1d446cc-1d5f-11e0-b929-000c29ad1d07";
 	public static final String POSITIVE = "e1d47386-1d5f-11e0-b929-000c29ad1d07";
-    public static final String POSITIVITY_LEVEL = "303a4480-f2b3-4192-a446-725a401ebb09";
-    public static final String LEVEL_1 = "03d4b7c8-c8cd-4f84-be40-67975bd5b667";
-    public static final String LEVEL_2 = "79f4bd59-0dbb-41ba-9d78-3efc0b737b75";
-    public static final String LEVEL_3 = "a4e43a4d-37ea-4767-a700-9fe1d43a8042";
-    public static final String LEVEL_4 = "16c13c13-2f85-4492-ae9b-4358b34070e7";
+	public static final String POSITIVITY_LEVEL = "303a4480-f2b3-4192-a446-725a401ebb09";
+	public static final String LEVEL_1 = "03d4b7c8-c8cd-4f84-be40-67975bd5b667";
+	public static final String LEVEL_2 = "79f4bd59-0dbb-41ba-9d78-3efc0b737b75";
+	public static final String LEVEL_3 = "a4e43a4d-37ea-4767-a700-9fe1d43a8042";
+	public static final String LEVEL_4 = "16c13c13-2f85-4492-ae9b-4358b34070e7";
 	public static final String CRAG = "f3883e12-4883-461b-8440-2a02f3312a84";
+
 }

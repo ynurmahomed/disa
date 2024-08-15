@@ -16,7 +16,9 @@ public enum SampleType {
     // Liquido Cefalo raquidiano
     LCR("159995AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"),
     // Urina
-    U("159994AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+    U("159994AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"),
+    // Sangue total
+    SA("1000AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 
     private String conceptUuid;
 

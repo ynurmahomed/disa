@@ -85,6 +85,15 @@ public class CD4LabResultHandlerTest extends BaseContextMockTest {
     }
 
     @Test
+    public void shouldNotProcessEmptyResult() {
+        labResult.setFinalResult("");
+        cd4LabResultHandler.handle(labResult);
+
+        assertThat(labResult.getLabResultStatus(), is(LabResultStatus.NOT_PROCESSED));
+        assertThat(labResult.getNotProcessingCause(), is(NotProcessingCause.INVALID_RESULT));
+    }
+
+    @Test
     public void shouldProcessZero() {
         labResult.setFinalResult("0");
         cd4LabResultHandler.handle(labResult);
@@ -105,6 +114,26 @@ public class CD4LabResultHandlerTest extends BaseContextMockTest {
         labResult.setFinalResult(" 123  ");
         cd4LabResultHandler.handle(labResult);
 
+        assertThat(labResult.getLabResultStatus(), is(LabResultStatus.PROCESSED));
+    }
+
+    @Test
+    public void shouldProcessSemiQualitativeResult() {
+        labResult.setFinalResult(" > 200  celulas/ul");
+        cd4LabResultHandler.handle(labResult);
+
+        assertThat(labResult.getLabResultStatus(), is(LabResultStatus.PROCESSED));
+
+        labResult.setFinalResult(" < 200  células/ul");
+        cd4LabResultHandler.handle(labResult);
+        assertThat(labResult.getLabResultStatus(), is(LabResultStatus.PROCESSED));
+
+        labResult.setFinalResult(" < 200  cells/uL");
+        cd4LabResultHandler.handle(labResult);
+        assertThat(labResult.getLabResultStatus(), is(LabResultStatus.PROCESSED));
+
+        labResult.setFinalResult(" < 200  CL/UL");
+        cd4LabResultHandler.handle(labResult);
         assertThat(labResult.getLabResultStatus(), is(LabResultStatus.PROCESSED));
     }
 
