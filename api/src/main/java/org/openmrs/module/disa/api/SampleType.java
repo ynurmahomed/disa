@@ -14,7 +14,9 @@ public enum SampleType {
     // Soro
     SER("1001AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"),
     // Liquido Cefalo raquidiano
-    LCR("159995AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+    LCR("159995AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"),
+    // Sangue total
+    SA("1000AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 
     private String conceptUuid;
 

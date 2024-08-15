@@ -221,8 +221,8 @@
         <div>
           Tipo de Amostra:
           <obs conceptId="47ee9ffd-8103-4788-ab23-e185c144cf1e"
-          answerConceptIds="7c288beb-548c-4440-8f12-4f62cd45305a,1002AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,f17b6cf1-7bed-4d1f-bf70-e09e3a0e4357,1001AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,159995AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,"
-          answerLabels="Sangue Seco em Papel de Filtro (DBS),Plasma,Plasma Seco (PSC),Soro,LCR"/>
+          answerConceptIds="7c288beb-548c-4440-8f12-4f62cd45305a,1002AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,f17b6cf1-7bed-4d1f-bf70-e09e3a0e4357,1001AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,159995AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,1000AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+          answerLabels="Sangue Seco em Papel de Filtro (DBS),Plasma,Plasma Seco (PSC),Soro,LCR,Sangue Total"/>
         </div>
         <div>
           Nome do técnico:
@@ -262,19 +262,17 @@
         <b>3. Monitoria de tratamento de HIV</b>
       </div>
       <div class="form-row">
-        <div style="flex: 0.5;">
+        <div>
           CD4 Absoluto:
           <obs conceptId="e1dd5ab4-1d5f-11e0-b929-000c29ad1d07" />
         </div>
-        <div style="flex: 0.5;">
-          CD4%:
-          <obs conceptId="e1d48fba-1d5f-11e0-b929-000c29ad1d07" />
+        <div>
+          CD4 Semi-quantitativo:
+          <obs conceptId="db7f1675-8850-476d-bc09-70be975c0867"/>
         </div>
         <div>
-          Razão de Solicitação da Carga Viral:
-          <obs conceptId="a97ab290-5b66-4755-bd49-d82f944cd093"
-            answerConceptIds="971cf484-2751-40ce-9f89-d23f544d06e2, e1d616b4-1d5f-11e0-b929-000c29ad1d07, df6aa98d-0124-4fb7-b4fb-5dc99f6ddcc9, 14ef99f0-88b2-4210-9e85-bfa002743728, 6f60eaa1-886d-4891-9d3d-7ade75d67606, 1067AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-            answerLabels="Rotina, Suspeita de Falência Viral, Suspeita de falência imunológica, Suspeita Clínica, Repetir Após o Aleitamento, Não Preenchido" />
+          CD4%:
+          <obs conceptId="e1d48fba-1d5f-11e0-b929-000c29ad1d07" />
         </div>
       </div>
       <div class="form-row">
@@ -285,6 +283,12 @@
           <obs conceptId="e1da2704-1d5f-11e0-b929-000c29ad1d07"
             answerConceptIds="e1da2812-1d5f-11e0-b929-000c29ad1d07,cc8ef88c-6ab6-4404-a036-d415bc42cc1c,4df535db-b8c9-4759-85bb-f4bcb5bebdc6"
             answerLabels="Nivel de detecção baixo,Indetectável,&#60;" commentFieldLabel="&#160;| Valor:" />
+        </div>
+        <div>
+          Razão de Solicitação da Carga Viral:
+          <obs conceptId="a97ab290-5b66-4755-bd49-d82f944cd093"
+            answerConceptIds="971cf484-2751-40ce-9f89-d23f544d06e2, e1d616b4-1d5f-11e0-b929-000c29ad1d07, df6aa98d-0124-4fb7-b4fb-5dc99f6ddcc9, 14ef99f0-88b2-4210-9e85-bfa002743728, 6f60eaa1-886d-4891-9d3d-7ade75d67606, 1067AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+            answerLabels="Rotina, Suspeita de Falência Viral, Suspeita de falência imunológica, Suspeita Clínica, Repetir Após o Aleitamento, Não Preenchido" />
         </div>
       </div>
       <div class="header">
