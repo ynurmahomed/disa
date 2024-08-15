@@ -86,7 +86,10 @@ public class TBLamLabResultHandler extends BaseLabResultHandler {
                 Concept positivityLevel = conceptService.getConceptByUuid(Constants.POSITIVITY_LEVEL);
                 Obs obs165185 = new Obs(person, positivityLevel, obsDatetime, location);
                 obs165185.setValueCoded(answer);
-                encounter.addObs(obs165185);
+                Concept tbLamLabSet = conceptService.getConceptByUuid(Constants.TB_LAM_POSITIVITY_LEVEL_LABSET);
+                Obs obsGroup = new Obs(person, tbLamLabSet, obsDatetime, location);
+                obsGroup.addGroupMember(obs165185);
+                encounter.addObs(obsGroup);
             }
         }
         encounter.addObs(obs23951);

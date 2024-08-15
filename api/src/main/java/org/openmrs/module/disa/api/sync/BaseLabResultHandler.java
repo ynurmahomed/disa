@@ -35,7 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * By default it does nothing with the lab result and passes it to the next
  * handler.
  *
- * A context object is available to handlers to share information between them.
+ * A context object {@link SyncContext} is available to handlers to share information between them.
  */
 public abstract class BaseLabResultHandler implements LabResultHandler {
 

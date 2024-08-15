@@ -46,6 +46,7 @@ public class TbLamLabResultHandlerTest extends BaseContextMockTest {
 
     private TBLamLabResult labResult;
 
+    private Concept tbLamPositivityLabSet;
     private Concept positivityLevel;
     private Concept level3;
 
@@ -76,6 +77,9 @@ public class TbLamLabResultHandlerTest extends BaseContextMockTest {
 
         positivityLevel = new Concept();
         positivityLevel.setUuid(Constants.POSITIVITY_LEVEL);
+
+        tbLamPositivityLabSet = new Concept();
+        tbLamPositivityLabSet.setUuid(Constants.TB_LAM_POSITIVITY_LEVEL_LABSET);
 
         level3 = new Concept();
         level3.setUuid(Constants.LEVEL_3);
@@ -135,16 +139,40 @@ public class TbLamLabResultHandlerTest extends BaseContextMockTest {
         tbLamLabResultHandler.handle(labResult);
 
         Encounter encounter = (Encounter) tbLamLabResultHandler.getSyncContext()
-            .get(BaseLabResultHandler.ENCOUNTER_KEY);
-        
+                .get(BaseLabResultHandler.ENCOUNTER_KEY);
+
         Obs positivityLevelObs = encounter.getObs().stream()
-            .filter(o -> o.getConcept()!=null)
-            .filter(o -> o.getConcept().equals(positivityLevel))
-            .findFirst()
-            .get();
-        
+                .filter(o -> o.getConcept() != null)
+                .filter(o -> o.getConcept().equals(positivityLevel))
+                .findFirst()
+                .get();
+
         assertThat(labResult.getLabResultStatus(), is(LabResultStatus.PROCESSED));
         assertThat(encounter, is(notNullValue()));
         assertThat(positivityLevelObs.getValueCoded(), is(level3));
+    }
+
+    @Test
+    public void shouldSavePositivityLevelInObsGroup() {
+
+        when(conceptService.getConceptByUuid(Constants.TB_LAM_POSITIVITY_LEVEL_LABSET))
+                .thenReturn(tbLamPositivityLabSet);
+        when(conceptService.getConceptByUuid(Constants.POSITIVITY_LEVEL)).thenReturn(positivityLevel);
+        when(conceptService.getConceptByUuid(Constants.LEVEL_3)).thenReturn(level3);
+
+        labResult.setFinalResult("Positiv");
+        labResult.setPositivityLevel("GRIII");
+        tbLamLabResultHandler.handle(labResult);
+
+        Encounter encounter = (Encounter) tbLamLabResultHandler.getSyncContext()
+                .get(BaseLabResultHandler.ENCOUNTER_KEY);
+
+        Obs positivityLevelObs = encounter.getObs().stream()
+                .filter(o -> o.getConcept() != null)
+                .filter(o -> o.getConcept().equals(positivityLevel))
+                .findFirst()
+                .get();
+
+        assertThat(positivityLevelObs.getObsGroup().getConcept(), is(tbLamPositivityLabSet));
     }
 }
