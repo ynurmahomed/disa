@@ -1,6 +1,8 @@
 package org.openmrs.module.disa.api.sync;
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.openmrs.Concept;
@@ -14,6 +16,7 @@ import org.openmrs.module.disa.api.CD4LabResult;
 import org.openmrs.module.disa.api.LabResult;
 import org.openmrs.module.disa.api.LabResultStatus;
 import org.openmrs.module.disa.api.NotProcessingCause;
+import org.openmrs.module.disa.api.SampleType;
 import org.openmrs.module.disa.api.exception.DisaModuleAPIException;
 import org.openmrs.module.disa.api.util.Constants;
 import org.slf4j.Logger;
@@ -137,6 +140,15 @@ public class CD4LabResultHandler extends BaseLabResultHandler {
             }
         }
 
+        // Specimen type
+        SampleType sampleType = cd4.getSampleType();
+        List<SampleType> validSampleTypes = Arrays.asList(SampleType.SA);
+        if (sampleType != null && validSampleTypes.contains(sampleType)) {
+            Concept concept = conceptService.getConceptByUuid(Constants.SAMPLE_TYPE);
+            Obs obs23832 = new Obs(person, concept, obsDatetime, location);
+            obs23832.setValueCoded(conceptService.getConceptByUuid(sampleType.getConceptUuid()));
+            encounter.addObs(obs23832);
+        }
     }
 
 }
