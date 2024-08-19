@@ -267,12 +267,14 @@
           <obs conceptId="e1dd5ab4-1d5f-11e0-b929-000c29ad1d07" />
         </div>
         <div>
-          CD4 Semi-quantitativo:
-          <obs conceptId="db7f1675-8850-476d-bc09-70be975c0867"/>
-        </div>
-        <div>
           CD4%:
           <obs conceptId="e1d48fba-1d5f-11e0-b929-000c29ad1d07" />
+        </div>
+        <div>
+          CD4 Semi-quantitativo:
+          <obs conceptId="db7f1675-8850-476d-bc09-70be975c0867"
+            answerConceptIds="9395a2a8-21e9-4e06-bd2f-24c52f56cd21,e1d9ecf8-1d5f-11e0-b929-000c29ad1d07"
+            answerLabels="≤ 200,&gt; 200"/>
         </div>
       </div>
       <div class="form-row">
