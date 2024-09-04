@@ -200,6 +200,10 @@ public class DisaAPIHttpClient {
 	}
 
 	public String updateResult(LabResult labResult) throws IOException, URISyntaxException {
+		
+		// Concatenate synchronizedBy with userAgent.get()
+		String updatedSynchronizedBy = labResult.getSynchronizedBy() +","+ userAgent.get();
+		labResult.setSynchronizedBy(updatedSynchronizedBy);   
 
 		URI url = new URIBuilder(URLBase)
 				.setPathSegments("services", "lab-results", String.valueOf(labResult.getId()))
