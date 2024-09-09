@@ -95,10 +95,10 @@ public class DisaServiceUnitTest extends BaseContextMockTest {
         labResult.setRequestId("MZDISAPQM0000000");
         labResult.setNid("000000000/0000/00000");
         labResult.setLabResultStatus(LabResultStatus.PROCESSED);
-        labResult.setSynchronizedBy(defaultLocation.getUuid()); 
 
         when(locationService.getDefaultLocation()).thenReturn(defaultLocation);
-
+        labResult.setSynchronizedBy(locationService.getDefaultLocation().getUuid()); 
+        
         disaService.handleProcessedLabResult(labResult, encounter);
 
         assertThat(labResult.getLabResultStatus(), is(LabResultStatus.PROCESSED));
