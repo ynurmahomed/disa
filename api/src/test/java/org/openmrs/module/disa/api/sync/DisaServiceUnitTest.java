@@ -100,6 +100,7 @@ public class DisaServiceUnitTest extends BaseContextMockTest {
         disaService.handleProcessedLabResult(labResult, encounter);
 
         assertThat(labResult.getLabResultStatus(), is(LabResultStatus.PROCESSED));
+        assertThat(labResult.getSynchronizedBy(), is(defaultLocation.getUuid()));
         verify(labResultService, times(1)).updateLabResult(any(LabResult.class));
     }
 

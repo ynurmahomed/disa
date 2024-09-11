@@ -15,7 +15,6 @@ import org.apache.http.client.fluent.Request;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.BasicResponseHandler;
-import org.openmrs.api.LocationService;
 import org.openmrs.module.disa.api.LabResult;
 import org.openmrs.module.disa.api.LabResultStatus;
 import org.openmrs.module.disa.api.NotProcessingCause;
@@ -50,18 +49,15 @@ public class DisaAPIHttpClient {
 	private String username;
 	private String password;
 	private String URLBase;
-	private LocationService locationService;
 
 	@Autowired
 	public DisaAPIHttpClient(
 			RestTemplate restTemplate,
 			ObjectMapper objectMapper,
-			DisaUserAgentHolder userAgent,
-			LocationService locationService) {
+			DisaUserAgentHolder userAgent) {
 		this.restTemplate = restTemplate;
 		this.objectMapper = objectMapper;
 		this.userAgent = userAgent;
-		this.locationService=locationService;
 	}
 
 	public Page<LabResult> searchLabResults(
@@ -204,10 +200,6 @@ public class DisaAPIHttpClient {
 	}
 
 	public String updateResult(LabResult labResult) throws IOException, URISyntaxException {
-		
-		// Concatenate synchronizedBy with userAgent.get()
-		String updatedSynchronizedBy = locationService.getDefaultLocation().getUuid() +","+ userAgent.get();
-		labResult.setSynchronizedBy(updatedSynchronizedBy);   
 
 		URI url = new URIBuilder(URLBase)
 				.setPathSegments("services", "lab-results", String.valueOf(labResult.getId()))

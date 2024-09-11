@@ -38,7 +38,6 @@ import org.openmrs.module.disa.api.LabResultService;
 import org.openmrs.module.disa.api.LabResultStatus;
 import org.openmrs.module.disa.api.NotProcessingCause;
 import org.openmrs.module.disa.api.SyncLog;
-import org.openmrs.module.disa.api.config.DisaUserAgentHolder;
 import org.openmrs.module.disa.api.db.DisaDAO;
 import org.openmrs.module.disa.api.exception.DisaModuleAPIException;
 import org.openmrs.module.disa.api.util.Constants;
@@ -62,10 +61,13 @@ public class DisaServiceImpl extends BaseOpenmrsService implements DisaService {
 	private DisaDAO dao;
 
 	@Autowired
-	public DisaServiceImpl(DisaDAO dao, LabResultService labResultService,
+	public DisaServiceImpl(
+			DisaDAO dao,
+			LabResultService labResultService,
 			@Qualifier("patientService") PatientService patientService,
-			@Qualifier("locationService") LocationService locationService, EncounterService encounterService,
-			MessageSourceService messageSourceService, DisaUserAgentHolder userAgent) {
+			@Qualifier("locationService") LocationService locationService,
+			EncounterService encounterService,
+			MessageSourceService messageSourceService) {
 		this.dao = dao;
 		this.labResultService = labResultService;
 		this.patientService = patientService;
@@ -107,7 +109,8 @@ public class DisaServiceImpl extends BaseOpenmrsService implements DisaService {
 
 			String labResultStatus = messageSourceService
 					.getMessage("disa.viral.load.status." + disa.getLabResultStatus());
-			throw new DisaModuleAPIException("disa.viralload.map.wrong.status", new String[] { labResultStatus });
+			throw new DisaModuleAPIException("disa.viralload.map.wrong.status",
+					new String[] { labResultStatus });
 		}
 
 		Patient patient = patientService.getPatientByUuid(patientUuid);
@@ -115,7 +118,8 @@ public class DisaServiceImpl extends BaseOpenmrsService implements DisaService {
 			throw new DisaModuleAPIException("disa.map.no.identifiers", new Object[] {});
 		}
 
-		PatientIdentifierType disaNIDIdentifier = patientService.getPatientIdentifierTypeByUuid(Constants.DISA_NID);
+		PatientIdentifierType disaNIDIdentifier = patientService
+				.getPatientIdentifierTypeByUuid(Constants.DISA_NID);
 		List<PatientIdentifier> identifiers = patientService.getPatientIdentifiers(disa.getNid(),
 				Arrays.asList(disaNIDIdentifier), null, null, null);
 
@@ -155,6 +159,8 @@ public class DisaServiceImpl extends BaseOpenmrsService implements DisaService {
 		fsrLog.setTypOfResult(labResult.getTypeOfResult());
 		saveSyncLog(fsrLog);
 
+		String defaultLocationUuid = locationService.getDefaultLocation().getUuid();
+		labResult.setSynchronizedBy(defaultLocationUuid);
 		labResultService.updateLabResult(labResult);
 	}
 
