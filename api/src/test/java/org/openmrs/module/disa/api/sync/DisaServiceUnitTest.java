@@ -88,21 +88,18 @@ public class DisaServiceUnitTest extends BaseContextMockTest {
         Patient patient = new Patient(1);
         encounter.setPatient(patient);
 
-        Location defaultLocation = new Location();
-        defaultLocation.setUuid("93377be8-1093-47f0-ad05-e014d3a14615");
-        
         LabResult labResult = new HIVVLLabResult();
         labResult.setRequestId("MZDISAPQM0000000");
         labResult.setNid("000000000/0000/00000");
         labResult.setLabResultStatus(LabResultStatus.PROCESSED);
 
+        Location defaultLocation = new Location();
+        defaultLocation.setUuid("93377be8-1093-47f0-ad05-e014d3a14615");
         when(locationService.getDefaultLocation()).thenReturn(defaultLocation);
-        labResult.setSynchronizedBy(locationService.getDefaultLocation().getUuid()); 
-        
+
         disaService.handleProcessedLabResult(labResult, encounter);
 
         assertThat(labResult.getLabResultStatus(), is(LabResultStatus.PROCESSED));
-        assertThat(labResult.getSynchronizedBy(), is(defaultLocation.getUuid()));
         verify(labResultService, times(1)).updateLabResult(any(LabResult.class));
     }
 
