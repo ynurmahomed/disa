@@ -38,18 +38,15 @@ import org.openmrs.module.disa.api.LabResultService;
 import org.openmrs.module.disa.api.LabResultStatus;
 import org.openmrs.module.disa.api.NotProcessingCause;
 import org.openmrs.module.disa.api.SyncLog;
-import org.openmrs.module.disa.api.config.DisaUserAgentHolder;
 import org.openmrs.module.disa.api.db.DisaDAO;
 import org.openmrs.module.disa.api.exception.DisaModuleAPIException;
 import org.openmrs.module.disa.api.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Service;
 
 /**
  * It is a default implementation of {@link DisaService}.
  */
-@Service
 public class DisaServiceImpl extends BaseOpenmrsService implements DisaService {
 
 	protected final Log log = LogFactory.getLog(this.getClass());
