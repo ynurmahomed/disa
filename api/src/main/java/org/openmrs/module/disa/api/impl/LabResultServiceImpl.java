@@ -283,6 +283,8 @@ public class LabResultServiceImpl extends BaseOpenmrsService implements LabResul
         return client.findUnauthorisedSismaCode(healthFacilityLabCodes);
     }
 
+    // Use setter injection to handle the circular dependency.
+    // TODO remove circular dependency
     @Autowired
     public void setDisaService(DisaService disaService) {
         this.disaService = disaService;
