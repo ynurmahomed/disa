@@ -4,7 +4,7 @@
 
 	<groupId>org.openmrs.module</groupId>
 	<artifactId>disa</artifactId>
-	<version>2.7.0</version>
+	<version>2.7.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Disa Interoperability Module</name>
 	<description>Allows integration of Disa Lab results with SESP</description>
@@ -26,7 +26,7 @@
 
 	<scm>
 		<developerConnection>scm:git:git@github.com:ynurmahomed/disa.git</developerConnection>
-	  <tag>2.7.0</tag>
+	  <tag>HEAD</tag>
   </scm>
 
 	<modules>
